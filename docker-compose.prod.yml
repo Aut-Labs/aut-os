@@ -1,0 +1,14 @@
+version: '3.7'
+
+services:
+
+  holders-app:
+    container_name: holders-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - '.:/app'
+      - '/app/node_modules'
+    ports:
+      - '5001:80'
