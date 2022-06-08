@@ -21,6 +21,7 @@ const Holder = () => {
   }, []);
 
   const handleCommunityClick = (communityAddress) => {
+    console.log(communityAddress);
     history.push(`community/${communityAddress}`);
   };
 
@@ -63,14 +64,18 @@ const Holder = () => {
           justifyContent: 'center',
         }}
       >
-        <Typography color="primary" variant="h2">
+        <Typography color="primary" variant="h1" sx={{ my: '24px' }}>
           Communities
         </Typography>
         <Box sx={{ border: 1, borderColor: 'primary' }}>
           {holderData.communities &&
-            holderData.communities.map((c) => {
+            holderData.communities.map((c, i) => {
               return (
-                <Box sx={{ display: 'flex', flexDirection: 'row' }} onClick={() => handleCommunityClick(c.communityAddress)}>
+                <Box
+                  key={i}
+                  sx={{ display: 'flex', flexDirection: 'row', cursor: 'pointer' }}
+                  onClick={() => handleCommunityClick(c.communityAddress)}
+                >
                   <Typography color="primary" variant="h3">
                     {c.communityName}
                   </Typography>

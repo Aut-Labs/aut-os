@@ -49,6 +49,6 @@ export const holderSlice = createSlice({
   },
 });
 
-export const HolderData = (state) => state.holder as Holder;
+export const HolderData = (state) => state.holder.holder as Holder;
 
 export default holderSlice.reducer;

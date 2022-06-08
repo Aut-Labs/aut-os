@@ -7,7 +7,7 @@ import NotFound from '@components/NotFound';
 import SWSnackbar from './components/snackbar';
 import './App.scss';
 import EmptyPage from './pages/EmptyPage/EmptyPage';
-import Holder from './pages/holder/Holder';
+import Holder from './pages/Holder/Holder';
 import Community from './pages/Community/Community';
 
 function App(props) {
@@ -29,7 +29,7 @@ function App(props) {
         <Switch>
           <Route exact component={EmptyPage} path="/" {...props} />
           <Route exact component={Holder} path="/:holderAddress" {...props} />
-          <Route exact component={Community} path="/:communityAddress" {...props} />
+          <Route exact component={Community} path="/community/:communityAddress" {...props} />
           {isAutheticated ? <Route component={NotFound} /> : <RedirectRoute to={{ pathname: '/', state: { from: location.pathname } }} />}
         </Switch>
       </Box>

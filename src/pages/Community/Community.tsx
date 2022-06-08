@@ -2,7 +2,7 @@ import { Box, Button, Slider, Typography } from '@mui/material';
 import { HolderData } from '@store/holder/holder.reducer';
 import { RootState } from '@store/store.model';
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import './Community.scss';
@@ -12,14 +12,26 @@ const Community = () => {
   const communityData = useSelector((state: RootState) => {
     return state.holder.holder.communities.find((x) => x.communityAddress === communityAddress);
   });
+  const [commitment, setCommitment] = useState(communityData.commitment);
   const {
     handleSubmit,
     control,
+    setValue,
     formState: { isValid },
   } = useForm({
     mode: 'onChange',
     defaultValues: { commitment: communityData.commitment },
   });
+
+  const isNotEqualToCurrent = async (commitment: number) => {
+    return commitment !== communityData.commitment;
+  };
+
+  const handleCommitmentChange = (event: any, newValue: number | number[]) => {
+    setValue('commitment', newValue as number, { shouldValidate: true });
+    setCommitment(newValue as number);
+    console.log(newValue as number);
+  };
 
   const handleWithdrawClick = () => {
     console.log('Withdraw!');
@@ -53,16 +65,54 @@ const Community = () => {
       <Typography color="primary" variant="h2">
         Role: {communityData.role}
       </Typography>
-      <Box sx={{ display: 'flex', flexDirection: 'row', border: 1, borderColor: 'primary' }}>
-        <Slider
-          sx={{ maxWidth: '166px', border: 2, borderRadius: 0, borderColor: '#000000', p: '10px' }}
-          defaultValue={communityData.commitment}
-          step={1}
-          min={1}
-          max={10}
-          value={communityData.commitment}
-        />
-        <Button onClick={() => handleWithdrawClick}>Withdraw</Button>
+      <Box
+        sx={{
+          my: '24px',
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'center',
+          flexDirection: 'row',
+          border: 1,
+          borderColor: 'primary',
+        }}
+      >
+        <Box
+          sx={{
+            flex: 1,
+            display: 'flex',
+            justifyContent: 'center',
+            flexDirection: 'column',
+          }}
+        >
+          <Controller
+            rules={{ validate: { isNotEqualToCurrent } }}
+            name="commitment"
+            control={control}
+            render={({ field, fieldState, formState }) => (
+              <Slider valueLabelDisplay="on" value={commitment} onChange={handleCommitmentChange} />
+            )}
+          />
+          <Button
+            sx={{
+              flex: 1,
+              mx: '14px',
+            }}
+            disabled={!isValid}
+            onClick={() => handleWithdrawClick}
+          >
+            Update
+          </Button>
+        </Box>
+
+        <Button
+          sx={{
+            flex: 1,
+            mx: '14px',
+          }}
+          onClick={() => handleWithdrawClick}
+        >
+          Withdraw
+        </Button>
       </Box>
     </Box>
   );
