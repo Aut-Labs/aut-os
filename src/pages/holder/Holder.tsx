@@ -30,63 +30,79 @@ const Holder = () => {
       sx={{
         height: '100%',
         width: '100%',
-        m: '24px',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
       }}
     >
-      <Box
-        component="img"
-        sx={{
-          height: 233,
-          width: 350,
-          maxHeight: { xs: 233, md: 167 },
-          maxWidth: { xs: 350, md: 250 },
-        }}
-        alt="Holder Profile Pic."
-        src={holderData.holderProfilePic}
-      />
-      <Typography color="primary" variant="h1">
-        {holderData.holderName}
-      </Typography>
-      <Typography color="primary" variant="h2">
-        {holderData.holderRepScore}
-      </Typography>
-      <Box
-        sx={{
-          height: '100%',
-          width: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        <Typography color="primary" variant="h1" sx={{ my: '24px' }}>
-          Communities
-        </Typography>
-        <Box sx={{ border: 1, borderColor: 'primary' }}>
-          {holderData.communities &&
-            holderData.communities.map((c, i) => {
-              return (
-                <Box
-                  key={i}
-                  sx={{ display: 'flex', flexDirection: 'row', cursor: 'pointer' }}
-                  onClick={() => handleCommunityClick(c.communityAddress)}
-                >
-                  <Typography color="primary" variant="h3">
-                    {c.communityName}
-                  </Typography>
-                  <Typography color="primary" variant="h3" sx={{ mx: '14px' }}>
-                    ACTIVE
-                  </Typography>
-                </Box>
-              );
-            })}
-        </Box>
-      </Box>
+      {holderData && (
+        <>
+          <Box
+            component="img"
+            sx={{
+              m: '24px',
+              height: '233px',
+              width: '350px',
+            }}
+            alt="Holder Profile Pic."
+            src={holderData.holderProfilePic}
+          />
+          <Typography color="primary" variant="h1">
+            {holderData.holderName}
+          </Typography>
+          <Typography color="primary" variant="h2">
+            Rep Score: {holderData.holderRepScore}
+          </Typography>
+          <Box
+            sx={{
+              width: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Typography color="primary" variant="h1" sx={{ my: '24px' }}>
+              Communities
+            </Typography>
+            <Box
+              sx={{
+                width: '450px',
+                border: 1,
+                borderColor: 'primary',
+              }}
+            >
+              {holderData.communities &&
+                holderData.communities.map((c, i) => {
+                  return (
+                    <Box
+                      key={i}
+                      sx={{
+                        height: '45px',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        display: 'flex',
+                        flexDirection: 'row',
+                        cursor: 'pointer',
+                        border: 1,
+                        borderColor: '#000',
+                      }}
+                      onClick={() => handleCommunityClick(c.communityAddress)}
+                    >
+                      <Typography color="primary" variant="h2">
+                        {c.communityName}
+                      </Typography>
+                      <Typography color="primary" variant="h2" sx={{ mx: '14px' }}>
+                        ACTIVE
+                      </Typography>
+                    </Box>
+                  );
+                })}
+            </Box>
+          </Box>
+        </>
+      )}
     </Box>
   );
 };
