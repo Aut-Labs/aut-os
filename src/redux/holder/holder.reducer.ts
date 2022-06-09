@@ -3,9 +3,10 @@ import { createSlice } from '@reduxjs/toolkit';
 import { fetchHolder } from '@api/holder.api';
 
 export interface Community {
-  communityAddress: string;
-  communityName: string;
-  communityPicture: string;
+  address: string;
+  name: string;
+  picture: string;
+  description: string;
   role: number;
   commitment: number;
 }

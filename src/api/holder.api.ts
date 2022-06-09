@@ -44,9 +44,10 @@ export const fetchHolder = holderSkillWalletProvider(
         console.log(communityJson);
         console.log(communityJson.rolesSets[0].roles.find((x) => x.id.toString() === details[1].toString()));
         return {
-          communityAddress,
-          communityPicture: ipfsCIDToHttpUrl(communityJson.image, false),
-          communityName: communityJson.name,
+          address: communityAddress,
+          picture: ipfsCIDToHttpUrl(communityJson.image, false),
+          name: communityJson.name,
+          description: communityJson.description,
           role: communityJson.rolesSets[0].roles.find((x) => x.id.toString() === details[1].toString()).roleName,
           commitment: details[2].toString(),
         };

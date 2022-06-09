@@ -11,7 +11,7 @@ const Community = () => {
   const { communityAddress } = useParams<any>();
   const communityData = useSelector((state: RootState) => {
     if (state && state.holder && state.holder.holder && state.holder.holder.communities) {
-      return state.holder.holder.communities.find((x) => x.communityAddress === communityAddress);
+      return state.holder.holder.communities.find((c) => c.address === communityAddress);
     }
     return null;
   });
@@ -70,10 +70,13 @@ const Community = () => {
               width: '350px',
             }}
             alt="Community Pic."
-            src={communityData.communityPicture}
+            src={communityData.picture}
           />
           <Typography color="primary" variant="h1">
-            {communityData.communityName}
+            {communityData.name}
+          </Typography>
+          <Typography sx={{ mb: '28px' }} color="primary" variant="h2">
+            {communityData.description}
           </Typography>
           <Typography color="primary" variant="h2">
             Role: {communityData.role}

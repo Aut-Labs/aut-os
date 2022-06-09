@@ -88,7 +88,7 @@ const Holder = () => {
                         border: 1,
                         borderColor: '#000',
                       }}
-                      onClick={() => handleCommunityClick(c.communityAddress)}
+                      onClick={() => handleCommunityClick(c.address)}
                     >
                       <Box
                         component="img"
@@ -97,10 +97,10 @@ const Holder = () => {
                           width: '45px',
                         }}
                         alt="Community Pic."
-                        src={c.communityPicture}
+                        src={c.picture}
                       />
                       <Typography color="primary" variant="h2">
-                        {c.communityName}
+                        {c.name}
                       </Typography>
                       <Typography color="primary" variant="h2" sx={{ mx: '14px' }}>
                         ACTIVE
