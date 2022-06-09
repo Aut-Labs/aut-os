@@ -90,6 +90,15 @@ const Holder = () => {
                       }}
                       onClick={() => handleCommunityClick(c.communityAddress)}
                     >
+                      <Box
+                        component="img"
+                        sx={{
+                          height: '45px',
+                          width: '45px',
+                        }}
+                        alt="Community Pic."
+                        src={c.communityPicture}
+                      />
                       <Typography color="primary" variant="h2">
                         {c.communityName}
                       </Typography>

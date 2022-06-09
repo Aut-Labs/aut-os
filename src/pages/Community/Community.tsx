@@ -66,13 +66,11 @@ const Community = () => {
           <Box
             component="img"
             sx={{
-              height: 233,
-              width: 350,
-              maxHeight: { xs: 233, md: 167 },
-              maxWidth: { xs: 350, md: 250 },
+              height: '233px',
+              width: '350px',
             }}
             alt="Community Pic."
-            src="https://media.istockphoto.com/photos/spaghetti-alla-puttanesca-italian-pasta-dish-with-tomatoes-black-picture-id1325172440?b=1&k=20&m=1325172440&s=170667a&w=0&h=WS2gPeU01_yzJYsiaHBhOSfrHVKMn-kBxzgsz61a2p8="
+            src={communityData.communityPicture}
           />
           <Typography color="primary" variant="h1">
             {communityData.communityName}

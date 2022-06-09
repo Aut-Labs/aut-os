@@ -1,4 +1,4 @@
-import { Web3SkillWalletProvider } from '@skill-wallet/sw-abi-types';
+import { Web3SkillWalletProvider, Web3CommunityExtensionProvider } from '@skill-wallet/sw-abi-types';
 import axios from 'axios';
 import { Web3ThunkProviderFactory } from './ProviderFactory/web3-thunk.provider';
 import { EnableAndChangeNetwork } from './ProviderFactory/web3.network';
@@ -27,6 +27,7 @@ export const fetchHolder = holderSkillWalletProvider(
     const uriCid = await contract.tokenURI(skillWallet);
     const res = await fetch(uriCid);
     const jsonMetadata = await res.json();
+    console.log(jsonMetadata);
     for (let i = 0; i < (holderCommunities as any).length; i += 1) {
       console.log(holderCommunities[i]);
     }
@@ -34,10 +35,19 @@ export const fetchHolder = holderSkillWalletProvider(
       (holderCommunities as any).map(async (communityAddress) => {
         const details = await contract.getCommunityData(ownerAddress, communityAddress);
         console.log(details);
+
+        const communityExtensioncontract = await Web3CommunityExtensionProvider('0x96dCCC06b1729CD8ccFe849CE9cA7e020e19515c');
+        const resp = await communityExtensioncontract.getComData();
+        console.log(resp);
+        const communityMetadata = await fetch(resp[2]);
+        const communityJson = await communityMetadata.json();
+        console.log(communityJson);
+        console.log(communityJson.rolesSets[0].roles.find((x) => x.id.toString() === details[1].toString()));
         return {
           communityAddress,
-          communityName: details[0],
-          role: details[1].toString(),
+          communityPicture: ipfsCIDToHttpUrl(communityJson.image, false),
+          communityName: communityJson.name,
+          role: communityJson.rolesSets[0].roles.find((x) => x.id.toString() === details[1].toString()).roleName,
           commitment: details[2].toString(),
         };
       })

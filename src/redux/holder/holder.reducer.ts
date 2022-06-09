@@ -5,6 +5,7 @@ import { fetchHolder } from '@api/holder.api';
 export interface Community {
   communityAddress: string;
   communityName: string;
+  communityPicture: string;
   role: number;
   commitment: number;
 }
