@@ -1,12 +1,14 @@
 /* eslint-disable react/button-has-type */
 import { IsAuthenticated } from '@auth/auth.reducer';
 import AutLoading from '@components/AutLoading';
-import { HolderStatus } from '@store/holder/holder.reducer';
-import { ResultState } from '@store/result-status';
-import { useSelector } from 'react-redux';
 import NotFound from '@components/NotFound';
 import { styled, useMediaQuery } from '@mui/material';
 import { BrowserRouter, Route, Switch, useHistory, useLocation, useParams, useRouteMatch } from 'react-router-dom';
+import Scrollbar from '@components/Scrollbar';
+import { HolderStatus } from '@store/holder/holder.reducer';
+import { ResultState } from '@store/result-status';
+import { useSelector } from 'react-redux';
+import { SwScrollbar } from 'sw-web-shared';
 import AutCommunityEdit from './AutCommunityEdit';
 import AutProfileEdit from './AutProfileEdit';
 import AutToolBar from './AutToolBar';
@@ -37,15 +39,19 @@ const AutLeft = ({ match }) => {
       {status === ResultState.Loading || status === ResultState.Idle ? (
         <AutLoading />
       ) : (
-        <Switch>
-          <Route exact path={`${match.path}`} component={AutUserInfo} />
-          {isAuthenticated && (
-            <>
-              <Route exact path={`${match.path}/edit-community/:communityAddress`} component={AutCommunityEdit} />
-              <Route exact path={`${match.path}/edit-profile`} render={(props) => <AutProfileEdit {...props} />} />
-            </>
-          )}
-        </Switch>
+        <>
+          <Scrollbar>
+            <Switch>
+              <Route exact path={`${match.path}`} component={AutUserInfo} />
+              {isAuthenticated && (
+                <>
+                  <Route exact path={`${match.path}/edit-community/:communityAddress`} component={AutCommunityEdit} />
+                  <Route exact path={`${match.path}/edit-profile`} render={(props) => <AutProfileEdit {...props} />} />
+                </>
+              )}
+            </Switch>
+          </Scrollbar>
+        </>
       )}
     </AutLeftContainer>
   );

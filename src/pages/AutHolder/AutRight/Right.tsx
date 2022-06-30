@@ -106,8 +106,7 @@ const AutTunnelRight = () => {
           <svg
             xmlns="http://www.w3.org/2000/svg"
             xmlnsXlink="http://www.w3.org/1999/xlink"
-            height="100%"
-            width="100%"
+            height={window.innerHeight}
             viewBox="0 0 960 1075"
           >
             <defs>
@@ -312,8 +311,7 @@ const AutTunnelRight = () => {
           <svg
             xmlns="http://www.w3.org/2000/svg"
             xmlnsXlink="http://www.w3.org/1999/xlink"
-            width="445.5"
-            height="474.073"
+            height={window.innerWidth}
             viewBox="0 0 445.5 474.073"
           >
             <defs>
