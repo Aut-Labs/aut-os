@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { withRouter, Switch, Route, Redirect as RedirectRoute, useLocation, useHistory, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { Box, CssBaseline } from '@mui/material';
+import { Box, CssBaseline, useMediaQuery } from '@mui/material';
 import { useAppDispatch } from '@store/store.model';
 import { ReactComponent as AutLogo } from '@assets/AutLogo.svg';
 import NotFound from '@components/NotFound';
@@ -9,6 +9,7 @@ import { ResultState } from '@store/result-status';
 import { updateHolderState } from '@store/holder/holder.reducer';
 import { IsAuthenticated, resetAuthState, setAuthenticated } from '@auth/auth.reducer';
 import { Init } from 'd-aut-alpha';
+import { pxToRem } from '@utils/text-size';
 import { AutID } from '@api/aut.model';
 import AutHolder from './pages/AutHolder/AutHolder';
 import SWSnackbar from './components/snackbar';
@@ -24,6 +25,7 @@ function App() {
   const dispatch = useAppDispatch();
   const location = useLocation<any>();
   const history = useHistory();
+  const desktop = useMediaQuery('(min-width:769px)');
   const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -39,7 +41,6 @@ function App() {
   useEffect(() => {
     const onSWLogin = async ({ detail }: any) => {
       const autID = new AutID(detail);
-      debugger;
       await dispatch(
         setAuthenticated({
           isAuthenticated: true,
@@ -91,6 +92,13 @@ function App() {
       <Box
         sx={{
           backgroundColor: '#000',
+          // height: '100vh',
+          // ...(desktop && {
+          //   height: `calc(100vh - ${pxToRem(30)} - 50px)`,
+          // }),
+          ...(!desktop && {
+            height: `calc(100% - ${pxToRem(120)})`,
+          }),
         }}
         className={isLoading ? 'sw-loading' : ''}
       >

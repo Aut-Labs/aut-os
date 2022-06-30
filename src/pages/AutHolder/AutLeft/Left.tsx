@@ -33,7 +33,7 @@ const AutLeft = ({ match }) => {
   return (
     <AutLeftContainer style={{ width: desktop ? '50%' : '100%', height: '100%' }}>
       <>
-        <AutToolBar />
+        <AutToolBar hideWebComponent={!desktop} />
       </>
 
       {status === ResultState.Loading || status === ResultState.Idle ? (

@@ -18,6 +18,7 @@ import { Mousewheel, Pagination } from 'swiper';
 
 import AutLeft from './AutLeft/Left';
 import AutTunnelRight from './AutRight/Right';
+import AutToolBar from './AutLeft/AutToolBar';
 
 const AutContainer = styled('div')(() => ({
   display: 'flex',
@@ -36,6 +37,7 @@ const AutHolder = (props) => {
   const isAuthenticated = useSelector(IsAuthenticated);
   const status = useSelector(HolderStatus);
   const params = useParams<{ holderAddress: string }>();
+  const desktop = useMediaQuery('(min-width:769px)');
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -43,7 +45,6 @@ const AutHolder = (props) => {
     }
   }, [isAuthenticated]);
 
-  const desktop = useMediaQuery('(min-width:769px)');
   return (
     <>
       {desktop ? (
@@ -52,26 +53,29 @@ const AutHolder = (props) => {
           {status === ResultState.Success && <AutTunnelRight />}
         </AutContainer>
       ) : (
-        <AutSwiper
-          direction="horizontal"
-          slidesPerView={1}
-          spaceBetween={30}
-          mousewheel
-          pagination={{
-            clickable: true,
-          }}
-          modules={[Pagination]}
-          className="mySwiper"
-        >
-          <SwiperSlide>
-            <AutLeft {...props} />
-          </SwiperSlide>
-          {status === ResultState.Success && (
+        <>
+          <AutSwiper
+            direction="horizontal"
+            slidesPerView={1}
+            spaceBetween={30}
+            mousewheel
+            pagination={{
+              clickable: true,
+            }}
+            modules={[Pagination]}
+            className="mySwiper"
+          >
             <SwiperSlide>
-              <AutTunnelRight />
+              <AutLeft {...props} />
             </SwiperSlide>
-          )}
-        </AutSwiper>
+            {status === ResultState.Success && (
+              <SwiperSlide>
+                <AutTunnelRight />
+              </SwiperSlide>
+            )}
+          </AutSwiper>
+          {!desktop && <AutToolBar hideLogo />}
+        </>
       )}
     </>
   );

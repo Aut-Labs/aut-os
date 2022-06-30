@@ -1,5 +1,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable react/button-has-type */
+import { useMediaQuery } from '@mui/material';
+import { pxToRem } from '@utils/text-size';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 
 const Scrollbar = ({ children, className, ...props }: React.ComponentPropsWithoutRef<'div'>) => {
@@ -7,6 +9,7 @@ const Scrollbar = ({ children, className, ...props }: React.ComponentPropsWithou
   const scrollTrackRef = useRef<HTMLDivElement>(null);
   const scrollThumbRef = useRef<HTMLDivElement>(null);
   const observer = useRef<ResizeObserver | null>(null);
+  const desktop = useMediaQuery('(min-width:769px)');
   const [thumbHeight, setThumbHeight] = useState(20);
   const [scrollStartPosition, setScrollStartPosition] = useState<number | null>(null);
   const [initialScrollTop, setInitialScrollTop] = useState<number>(0);
@@ -125,7 +128,19 @@ const Scrollbar = ({ children, className, ...props }: React.ComponentPropsWithou
 
   return (
     <div className="custom-scrollbars__container">
-      <div className="custom-scrollbars__content" ref={contentRef} {...props}>
+      <div
+        style={{
+          ...(desktop && {
+            height: `calc(100vh - ${pxToRem(30)} - 50px)`,
+          }),
+          ...(!desktop && {
+            height: `calc(100vh - ${pxToRem(60)} - 120px)`,
+          }),
+        }}
+        className="custom-scrollbars__content"
+        ref={contentRef}
+        {...props}
+      >
         {children}
       </div>
     </div>

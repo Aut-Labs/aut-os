@@ -17,12 +17,12 @@ const AutBar = styled(Toolbar)(({ theme }) => ({
   },
 }));
 
-const AutToolBar = () => {
+const AutToolBar = ({ hideWebComponent = false, hideLogo = false }) => {
   return (
     <>
       <AutBar>
-        <MyAutIDLogo />
-        <d-aut id="d-aut" community-address="0x89fdb37aB5bf8E81c6b049b635244B8A58d5363c" use-dev="true" />
+        {!hideLogo && <MyAutIDLogo />}
+        {!hideWebComponent && <d-aut id="d-aut" community-address="0x89fdb37aB5bf8E81c6b049b635244B8A58d5363c" use-dev="true" />}
       </AutBar>
     </>
   );
