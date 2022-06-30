@@ -7,19 +7,19 @@ const palette = {
     default: '#000000',
     paper: '#FFFFFF',
   },
-  text: {
-    secondary: '#D8D8D8',
-    primary: '#FFFFFF',
-    disabled: '#CCCCCC',
-  },
+  // text: {
+  //   secondary: '#D8D8D8',
+  //   primary: '#FFFFFF',
+  //   disabled: '#CCCCCC',
+  // },
   primary: {
-    main: '#000000',
+    main: '#009FE3',
+  },
+  secondary: {
+    main: '##5A2583',
   },
   error: {
     main: '#BF0909',
-  },
-  secondary: {
-    main: '#8F37AA',
   },
   info: {
     main: '#FFFFFF',
@@ -32,25 +32,34 @@ export const SwTheme = responsiveFontSizes(
     spacing: (factor) => `${0.25 * factor}rem`, // (Bootstrap strategy)
     components: {
       MuiCssBaseline: {
-        styleOverrides: `
-          .Mui-disabled {
-            color: ${palette.text.disabled};
-          }
-        `,
+        styleOverrides: {
+          '@global': {
+            '*::-webkit-scrollbar': {
+              width: '10px',
+            },
+            '*::-webkit-scrollbar-track': {
+              background: '#E4EFEF',
+            },
+            '*::-webkit-scrollbar-thumb': {
+              background: '#1D388F61',
+              borderRadius: '2px',
+            },
+          },
+        },
       },
       MuiTooltip: {
         defaultProps: {
           TransitionComponent: Fade,
         },
         styleOverrides: {
-          tooltip: {
-            fontSize: pxToRem(16),
-            border: '3px solid',
-            borderColor: palette.text.primary,
-            borderRadius: '4px',
-            backgroundColor: palette.background.default,
-            boxSizing: 'border-box',
-          },
+          // tooltip: {
+          //   fontSize: pxToRem(16),
+          //   border: '3px solid',
+          //   borderColor: palette.text.primary,
+          //   borderRadius: '4px',
+          //   backgroundColor: palette.background.default,
+          //   boxSizing: 'border-box',
+          // },
         },
       },
       MuiUseMediaQuery: {

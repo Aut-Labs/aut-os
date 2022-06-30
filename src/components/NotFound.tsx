@@ -13,10 +13,6 @@ function NotFound() {
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        position: 'absolute',
-        transform: 'translate(-50%, -50%)',
-        left: '50%',
-        top: '50%',
       }}
     >
       <Typography
@@ -26,6 +22,7 @@ function NotFound() {
           alignItems: 'center',
           mb: '10px',
           fontSize: '70px',
+          color: 'white',
         }}
       >
         404.
@@ -36,6 +33,7 @@ function NotFound() {
           justifyContent: 'center',
           alignItems: 'center',
           mb: '70px',
+          color: 'white',
         }}
         variant="h2"
       >

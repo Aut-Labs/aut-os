@@ -2,12 +2,13 @@ body,
 html {
   margin: 0;
   font-family: Josefin Sans, sans-serif;
-  overflow: hidden;
+  overflow: auto;
   background-color: #fff;
   height: 100%;
 
   #root {
     height: 100%;
+    background-color: #000;
   }
 }
 
@@ -45,7 +46,7 @@ code {
 //     top: 1rem;
 //     left: 1rem;
 //     z-index: 99;
-//   } 
+//   }
 // }
 
 .app-loading,
