@@ -1,20 +1,22 @@
 import { Dialog, DialogActions, DialogContent, Typography } from '@mui/material';
+import { pxToRem } from '@utils/text-size';
 import { SwButton } from 'sw-web-shared';
+import { AutButton } from './AutButton';
 
 const ErrorDialog = ({ mode = 'light', open, hasRetry = false, handleClose, subtitle, message, fullScreen = false }: any) => {
   const dialogSize = fullScreen
     ? {}
     : {
-        maxWidth: '400px',
-        minWidth: '400px',
-        minHeight: '200px',
+        maxWidth: pxToRem(400),
+        minWidth: pxToRem(400),
+        minHeight: pxToRem(250),
       };
   return (
     <Dialog open={open} fullScreen={fullScreen}>
       <DialogContent
         sx={{
           ...dialogSize,
-          bgcolor: mode === 'light' ? 'background.paper' : 'background.default',
+          bgcolor: 'background.default',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
@@ -45,10 +47,24 @@ const ErrorDialog = ({ mode = 'light', open, hasRetry = false, handleClose, subt
       </DialogContent>
       <DialogActions
         sx={{
-          backgroundColor: mode !== 'light' ? 'primary.main' : 'text.primary',
+          backgroundColor: 'background.default',
+          py: pxToRem(30),
+          justifyContent: 'center',
+          height: pxToRem(130),
         }}
       >
-        <SwButton type="button" mode={mode} onClick={() => handleClose('close')} label="Dismiss" />
+        <AutButton
+          onClick={() => handleClose('close')}
+          sx={{
+            width: pxToRem(250),
+            height: pxToRem(50),
+          }}
+          type="submit"
+          color="primary"
+          variant="outlined"
+        >
+          Dismiss
+        </AutButton>
       </DialogActions>
     </Dialog>
   );

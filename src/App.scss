@@ -8,6 +8,7 @@ html {
 
   #root {
     height: 100%;
+    background-color: #000;
   }
 }
 
@@ -45,7 +46,7 @@ code {
 //     top: 1rem;
 //     left: 1rem;
 //     z-index: 99;
-//   } 
+//   }
 // }
 
 .app-loading,
@@ -136,4 +137,54 @@ code {
   100% {
     transform: scale(0.8);
   }
+}
+
+
+.custom-scrollbars__container {
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.custom-scrollbars__content {
+  -ms-overflow-style: none;
+  overflow: auto;
+  scrollbar-width: none;
+}
+
+.custom-scrollbars__content::-webkit-scrollbar {
+  display: none;
+}
+
+.custom-scrollbars__scrollbar {
+  display: grid;
+  gap: 1rem;
+  grid-auto-flow: row;
+  grid-template: auto 1fr auto / 1fr;
+  padding: 1rem;
+  place-items: center;
+}
+
+.custom-scrollbars__track-and-thumb {
+  display: block;
+  height: 100%;
+  position: relative;
+  width: 16px;
+}
+
+.custom-scrollbars__track {
+  background-color: #ccc;
+  border-radius: 12px;
+  bottom: 0;
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  width: 16px;
+}
+
+.custom-scrollbars__thumb {
+  border-radius: 12px;
+  background-color: #333;
+  position: absolute;
+  width: 16px;
 }

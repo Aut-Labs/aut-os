@@ -1,20 +1,88 @@
-import { useState } from 'react';
-import { withRouter, Switch, Route, Redirect as RedirectRoute, useLocation, useHistory } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { withRouter, Switch, Route, Redirect as RedirectRoute, useLocation, useHistory, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { Box, CssBaseline } from '@mui/material';
-import { RootState, useAppDispatch } from '@store/store.model';
+import { Box, CssBaseline, useMediaQuery } from '@mui/material';
+import { useAppDispatch } from '@store/store.model';
+import { ReactComponent as AutLogo } from '@assets/AutLogo.svg';
 import NotFound from '@components/NotFound';
+import { ResultState } from '@store/result-status';
+import { updateHolderState } from '@store/holder/holder.reducer';
+import { IsAuthenticated, resetAuthState, setAuthenticated } from '@auth/auth.reducer';
+import { Init } from 'd-aut-alpha';
+import { pxToRem } from '@utils/text-size';
+import { AutID } from '@api/aut.model';
+import AutHolder from './pages/AutHolder/AutHolder';
 import SWSnackbar from './components/snackbar';
 import './App.scss';
-import EmptyPage from './pages/EmptyPage/EmptyPage';
-import Holder from './pages/holder/Holder';
-import Community from './pages/Community/Community';
 
-function App(props) {
+const LoadingMessage = () => (
+  <div className="app-loading">
+    <AutLogo width="80" height="80" />
+  </div>
+);
+
+function App() {
   const dispatch = useAppDispatch();
   const location = useLocation<any>();
   const history = useHistory();
-  const { isAutheticated } = useSelector((state: RootState) => state.auth);
+  const desktop = useMediaQuery('(min-width:769px)');
+  const [isLoading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const [, holderAddress] = location.pathname.split('/');
+    if (holderAddress) {
+      history.push(`/${holderAddress}`);
+    } else {
+      history.push(`/`);
+    }
+    dispatch(resetAuthState());
+  }, []);
+
+  useEffect(() => {
+    const onSWLogin = async ({ detail }: any) => {
+      const autID = new AutID(detail);
+      await dispatch(
+        setAuthenticated({
+          isAuthenticated: true,
+          userInfo: autID,
+        })
+      );
+      await dispatch(
+        updateHolderState({
+          autID,
+          fetchStatus: ResultState.Success,
+          status: ResultState.Idle,
+        })
+      );
+      history.push(`/${autID.name}`);
+    };
+
+    const onDisconnected = () => {
+      const [, holderAddress] = location.pathname.split('/');
+      if (holderAddress) {
+        history.push(`/${holderAddress}`);
+      } else {
+        history.push(`/`);
+      }
+      dispatch(resetAuthState());
+    };
+
+    const onSWInit = async () => setLoading(false);
+
+    window.addEventListener('aut-Init', onSWInit);
+    window.addEventListener('aut-onConnected', onSWLogin);
+    window.addEventListener('aut-onDisconnected', onDisconnected);
+
+    Init({
+      container: document.querySelector('#connect-wallet-container'),
+    });
+
+    return () => {
+      window.removeEventListener('aut-Init', onSWInit);
+      window.removeEventListener('aut-onConnected', onSWLogin);
+      window.removeEventListener('aut-onDisconnected', onSWLogin);
+    };
+  }, [dispatch, history, location.pathname, location.state?.from]);
 
   return (
     <>
@@ -23,15 +91,25 @@ function App(props) {
       <SWSnackbar />
       <Box
         sx={{
-          height: '100%',
+          backgroundColor: '#000',
+          // height: '100vh',
+          // ...(desktop && {
+          //   height: `calc(100vh - ${pxToRem(30)} - 50px)`,
+          // }),
+          ...(!desktop && {
+            height: `calc(100% - ${pxToRem(120)})`,
+          }),
         }}
+        className={isLoading ? 'sw-loading' : ''}
       >
-        <Switch>
-          <Route exact component={EmptyPage} path="/" {...props} />
-          <Route exact component={Holder} path="/:holderAddress" {...props} />
-          <Route exact component={Community} path="/:communityAddress" {...props} />
-          {isAutheticated ? <Route component={NotFound} /> : <RedirectRoute to={{ pathname: '/', state: { from: location.pathname } }} />}
-        </Switch>
+        {isLoading ? (
+          <LoadingMessage />
+        ) : (
+          <Switch>
+            <Route component={AutHolder} path="/:holderAddress" />
+            <Route component={NotFound} /> : <RedirectRoute to={{ pathname: '/', state: { from: location.pathname } }} />
+          </Switch>
+        )}
       </Box>
     </>
   );
