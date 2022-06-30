@@ -1,6 +1,6 @@
 import { AutTextField, FormHelperText } from '@components/Fields/AutFields';
 import AFileUpload from '@components/Fields/AutFileUpload';
-import { Avatar, Box, Card, CardContent, CardHeader, styled, SvgIcon, Typography } from '@mui/material';
+import { Avatar, Box, Button, Card, CardContent, CardHeader, styled, SvgIcon, Typography, useMediaQuery } from '@mui/material';
 import { pxToRem } from '@utils/text-size';
 import { Controller, useForm } from 'react-hook-form';
 import { SwUploadFile, toBase64 } from 'sw-web-shared';
@@ -19,6 +19,8 @@ import { editCommitment } from '@api/holder.api';
 
 const AutCommunityEdit = (props) => {
   const dispatch = useAppDispatch();
+  const desktop = useMediaQuery('(min-width:769px)');
+  const xs = useMediaQuery('(max-width:360px)');
   const location = useLocation();
   const params = useParams<{ communityAddress: string }>();
   const history = useHistory();
@@ -42,24 +44,16 @@ const AutCommunityEdit = (props) => {
   const BottomWrapper = styled('div')(({ theme }) => ({
     width: '100%',
     padding: pxToRem(50),
-    marginBottom: pxToRem(50),
     alignItems: "'center',",
     justifyContent: 'center',
     display: 'flex',
   }));
 
-  const FormWrapper = styled('form')({
-    display: 'flex',
-    flexDirection: 'column',
-    height: '100%',
-    width: '100%',
-    flex: '1',
-  });
-
   const community = {
     name: 'The Rabit Whole',
     market: 'Art, Events & NFTs',
-    description: 'The Rabit Whole is a collective of freelances who bring a creative spirit to everything they create.',
+    description:
+      'The Rabit Whole is a collective of freelances who bring a creative spirit to everything they create. he Rabit Whole is a collective of freelances who bring a creative spirit to everything they create.',
     commitment: 3,
     image: 'https://i.picsum.photos/id/417/150/150.jpg?hmac=yboAtr7dmL8WFVtIjh85ksGN27GFgp2VbyYBdFtiEKs',
   };
@@ -116,22 +110,21 @@ const AutCommunityEdit = (props) => {
       </Box>
       <Box
         sx={{
-          paddingLeft: pxToRem(100),
-          paddingTop: pxToRem(100),
-          paddingRight: pxToRem(100),
+          paddingLeft: desktop ? pxToRem(100) : !xs ? pxToRem(50) : pxToRem(20),
+          paddingRight: desktop ? pxToRem(100) : !xs ? pxToRem(50) : pxToRem(20),
+          paddingTop: desktop ? pxToRem(150) : !xs ? pxToRem(100) : pxToRem(30),
           width: '100%',
           display: 'flex',
           height: '100%',
           justifyContent: 'flex-start',
           flexDirection: 'column',
           alignItems: 'flex-start',
-          flex: '1',
         }}
       >
         <form
           autoComplete="off"
           onSubmit={handleSubmit(onSubmit)}
-          style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%', flex: '1' }}
+          style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%' }}
         >
           <div
             style={{
@@ -141,17 +134,32 @@ const AutCommunityEdit = (props) => {
               height: '100%',
               alignItems: 'flex-start',
               width: '100%',
+              flex: 1,
             }}
           >
             <AutCard sx={{ bgcolor: 'background.default', border: 'none' }}>
               <CardHeader
+                sx={{ alignSelf: 'flex-start' }}
                 avatar={
-                  <Avatar sx={{ bgcolor: 'background.default', width: 110, height: 110, borderRadius: 0 }} aria-label="community-avatar">
+                  <Avatar
+                    sx={{ bgcolor: 'background.default', width: pxToRem(110), height: pxToRem(110), borderRadius: 0 }}
+                    aria-label="community-avatar"
+                  >
                     <img alt="Avatar" src="https://i.picsum.photos/id/74/150/150.jpg?hmac=Nkwpn5J-2MQbfrVDIudLW8y8J1K3U01RBQ7QMkLDtG0" />
                   </Avatar>
                 }
               />
-              <CardContent sx={{ ml: pxToRem(30), mr: pxToRem(30), alignSelf: 'flex-end' }}>
+              <CardContent
+                sx={{
+                  ml: pxToRem(30),
+                  mr: pxToRem(30),
+                  alignSelf: 'flex-end',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  alignItems: 'flex-start',
+                }}
+              >
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                   <Typography fontSize={pxToRem(25)} color="background.paper" textAlign="left">
                     {community.name}
@@ -164,6 +172,12 @@ const AutCommunityEdit = (props) => {
                 <Typography variant="h3" color="background.paper" textAlign="left" sx={{ textWrap: 'wrap', pt: pxToRem(30) }}>
                   {community.description}
                 </Typography>
+                <Button
+                  color="error"
+                  sx={{ textDecoration: 'underline', textTransform: 'none', padding: '0', mt: pxToRem(15), fontSize: pxToRem(16) }}
+                >
+                  Withdraw from this community
+                </Button>
               </CardContent>
             </AutCard>
             <div style={{ marginTop: pxToRem(100) }}>

@@ -1,18 +1,18 @@
 /* eslint-disable react/button-has-type */
 import { IsAuthenticated } from '@auth/auth.reducer';
 import AutLoading from '@components/AutLoading';
-import { styled } from '@mui/material';
 import { HolderStatus } from '@store/holder/holder.reducer';
 import { ResultState } from '@store/result-status';
 import { useSelector } from 'react-redux';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import NotFound from '@components/NotFound';
+import { styled, useMediaQuery } from '@mui/material';
+import { BrowserRouter, Route, Switch, useHistory, useLocation, useParams, useRouteMatch } from 'react-router-dom';
 import AutCommunityEdit from './AutCommunityEdit';
 import AutProfileEdit from './AutProfileEdit';
 import AutToolBar from './AutToolBar';
 import AutUserInfo from './AutUserInfo';
 
 const AutLeftContainer = styled('div')(({ theme }) => ({
-  width: '50%',
   display: 'flex',
   flexDirection: 'column',
 }));
@@ -20,8 +20,16 @@ const AutLeftContainer = styled('div')(({ theme }) => ({
 const AutLeft = ({ match }) => {
   const status = useSelector(HolderStatus);
   const isAuthenticated = useSelector(IsAuthenticated);
+  const { pathname } = useLocation();
+  const params = useParams<any>();
+  const history = useHistory();
+  const { url } = useRouteMatch();
+  console.log(pathname, history, url, 'PATH', params);
+  console.log(match.path, ' MATCH PATH');
+  const desktop = useMediaQuery('(min-width:769px)');
+
   return (
-    <AutLeftContainer>
+    <AutLeftContainer style={{ width: desktop ? '50%' : '100%', height: '100%' }}>
       <>
         <AutToolBar />
       </>

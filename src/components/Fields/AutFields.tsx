@@ -168,6 +168,10 @@ export const SwCalendarPicker = ({ control, name, minDate, maxDate = null, other
 export const AutTextField = styled((props: TextFieldProps & { width: string }) => <TextField {...props} />)(
   ({ theme, width, multiline }) => ({
     width: pxToRem(width),
+
+    '&.MuiTextField-root': {
+      width: width.includes('%') ? width : pxToRem(width),
+    },
     '&.MuiFormControl-root': {
       marginBottom: '0',
       backgroundColor: theme.palette.background.default,

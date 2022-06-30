@@ -6,7 +6,7 @@ import { ReactComponent as GitHubIcon } from '@assets/SocialIcons/GitHubIcon.svg
 import { ReactComponent as LeafIcon } from '@assets/SocialIcons/LeafIcon.svg';
 import { ReactComponent as TelegramIcon } from '@assets/SocialIcons/TelegramIcon.svg';
 import { ReactComponent as TwitterIcon } from '@assets/SocialIcons/TwitterIcon.svg';
-import { Avatar, Box, Card, CardContent, CardHeader, styled, SvgIcon, Typography } from '@mui/material';
+import { Avatar, Box, Card, CardContent, CardHeader, styled, SvgIcon, Typography, useMediaQuery } from '@mui/material';
 import { pxToRem } from '@utils/text-size';
 import { useState } from 'react';
 import PencilEdit from '@assets/PencilEditicon';
@@ -54,11 +54,9 @@ const AutTable = styled('table')(({ theme }) => ({
 const IconContainer = styled('div')(({ theme }) => ({
   paddingTop: pxToRem(40),
   display: 'flex',
-}));
 
-const AutIcon = styled('div')(({ theme }) => ({
-  '&:not(:first-of-type)': {
-    paddingLeft: pxToRem(20),
+  '@media(max-width: 769px)': {
+    paddingTop: pxToRem(20),
   },
 }));
 
@@ -78,8 +76,11 @@ const AutCard = styled(Card)(({ theme }) => ({
 
 const AutUserInfo = ({ match }) => {
   const holderData = useSelector(HolderData);
-  const holderStaus = useSelector(HolderStatus);
+  const holderStatus = useSelector(HolderStatus);
   const isAuthenticated = useSelector(IsAuthenticated);
+  const desktop = useMediaQuery('(min-width:769px)');
+  const xs = useMediaQuery('(max-width:360px)');
+
   const [isActiveIndex, setIsActiveIndex] = useState(null);
   const history = useHistory();
 
@@ -99,25 +100,31 @@ const AutUserInfo = ({ match }) => {
   return (
     <>
       <Box>
-        {holderStaus === ResultState.Success ? (
-          <>
-            <Box sx={{ paddingLeft: pxToRem(100), paddingRight: pxToRem(100), paddingTop: pxToRem(150) }}>
+        {holderStatus === ResultState.Success ? (
+          <Box style={{ display: 'flex', flexDirection: 'column', flex: '1' }}>
+            <Box
+              sx={{
+                paddingLeft: desktop ? pxToRem(100) : !xs ? pxToRem(50) : pxToRem(20),
+                paddingRight: desktop ? pxToRem(100) : !xs ? pxToRem(50) : pxToRem(20),
+                paddingTop: desktop ? pxToRem(150) : !xs ? pxToRem(100) : pxToRem(30),
+              }}
+            >
               <AutCard sx={{ bgcolor: 'background.default', border: 'none' }}>
                 <CardHeader
                   avatar={
                     <Avatar
-                      src={holderData.image as string}
-                      sx={{ bgcolor: 'background.default', width: 150, height: 150, borderRadius: 0 }}
+                      sx={{ bgcolor: 'background.default', width: pxToRem(150), height: pxToRem(150), borderRadius: 0 }}
                       aria-label="recipe"
-                    />
+                    >
+                      <img alt="Avatar" src="https://i.picsum.photos/id/74/150/150.jpg?hmac=Nkwpn5J-2MQbfrVDIudLW8y8J1K3U01RBQ7QMkLDtG0" />
+                    </Avatar>
                   }
                 />
-                <CardContent sx={{ ml: pxToRem(30), mr: pxToRem(30), alignSelf: 'flex-end' }}>
+                <CardContent sx={{ ml: xs ? '0' : pxToRem(30), mr: xs ? 0 : pxToRem(30), alignSelf: 'flex-end' }}>
                   <div style={{ display: 'flex', alignItems: 'center' }}>
                     <Typography fontSize={pxToRem(50)} color="background.paper" textAlign="left">
                       {holderData.name}
                     </Typography>
-
                     {isAuthenticated && (
                       <div style={{ padding: pxToRem(20), cursor: 'pointer' }} onClick={onEdit}>
                         <PencilEdit height={pxToRem(24)} width={pxToRem(24)} />
@@ -178,12 +185,25 @@ const AutUserInfo = ({ match }) => {
                 </CardContent>
               </AutCard>
             </Box>
-            <Box sx={{ paddingLeft: pxToRem(100), paddingRight: pxToRem(100), paddingTop: pxToRem(100) }}>
+            <Box
+              sx={{
+                paddingLeft: desktop ? pxToRem(100) : !xs ? pxToRem(50) : pxToRem(20),
+                paddingRight: desktop ? pxToRem(100) : !xs ? pxToRem(50) : pxToRem(20),
+                paddingTop: desktop ? pxToRem(150) : !xs ? pxToRem(100) : pxToRem(30),
+              }}
+            >
               <Typography fontSize={pxToRem(47)} textTransform="uppercase" color="background.paper" textAlign="left">
                 Communities
               </Typography>
             </Box>
-            <Box sx={{ paddingLeft: pxToRem(100), paddingRight: pxToRem(100), paddingTop: pxToRem(50), paddingBottom: pxToRem(100) }}>
+            <Box
+              sx={{
+                paddingLeft: desktop ? pxToRem(100) : '0',
+                paddingRight: desktop ? pxToRem(100) : '0',
+                paddingTop: pxToRem(50),
+                paddingBottom: pxToRem(100),
+              }}
+            >
               <AutTable aria-label="table" cellSpacing="0">
                 <tbody>
                   <tr>
@@ -235,7 +255,7 @@ const AutUserInfo = ({ match }) => {
                 </tbody>
               </AutTable>
             </Box>
-          </>
+          </Box>
         ) : (
           <Typography
             sx={{

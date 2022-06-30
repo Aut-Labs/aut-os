@@ -1,4 +1,4 @@
-import MyAutIDLogo from '@assets/MyAutIdLogo';
+import { ReactComponent as MyAutIDLogo } from '@assets/MyAutIdLogo.svg';
 import { AppBar, styled, Toolbar } from '@mui/material';
 import { pxToRem } from '@utils/text-size';
 
@@ -8,6 +8,12 @@ const AutBar = styled(Toolbar)(({ theme }) => ({
     paddingRight: pxToRem(100),
     paddingTop: pxToRem(30),
     justifyContent: 'space-between',
+
+    '@media(max-width: 769px)': {
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
   },
 }));
 

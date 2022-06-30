@@ -1,4 +1,5 @@
 import { pxToRem } from '@utils/text-size';
+// @ts-ignore
 import Lottie from 'react-lottie';
 import * as animationData from '../assets/aut-load.json';
 
