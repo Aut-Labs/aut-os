@@ -6,12 +6,24 @@ import { Controller, useForm } from 'react-hook-form';
 import { SwUploadFile, toBase64 } from 'sw-web-shared';
 import { ReactComponent as UploadIcon } from '@assets/upload.svg';
 import { AutButton } from '@components/AutButton';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useHistory, useLocation, useParams } from 'react-router-dom';
 import { AutSlider } from '@components/AutSlider';
+import ErrorDialog from '@components/ErrorPopup';
+import LoadingDialog from '@components/LoadingPopup';
+import { useSelector } from 'react-redux';
+import { UpdateErrorMessage, updateHolderState, UpdateStatus } from '@store/holder/holder.reducer';
+import { useAppDispatch } from '@store/store.model';
+import { ResultState } from '@store/result-status';
+import { useEffect } from 'react';
+import { editCommitment } from '@api/holder.api';
 
 const AutCommunityEdit = (props) => {
+  const dispatch = useAppDispatch();
   const location = useLocation();
+  const params = useParams<{ communityAddress: string }>();
   const history = useHistory();
+  const status = useSelector(UpdateStatus);
+  const errorMessage = useSelector(UpdateErrorMessage);
 
   const AutCard = styled(Card)(({ theme }) => ({
     '&.MuiCard-root': {
@@ -66,12 +78,37 @@ const AutCommunityEdit = (props) => {
 
   const values = watch();
 
-  const onSubmit = (data: any) => {
-    // edit community
+  const onSubmit = async (data) => {
+    console.log(values, 'values');
+    const result = await dispatch(
+      editCommitment({
+        communityAddress: params.communityAddress,
+        commitment: data.commitment,
+      })
+    );
+    if (result.meta.requestStatus === 'fulfilled') {
+      // do somethhing on success
+    }
   };
+
+  const handleDialogClose = () => {
+    dispatch(
+      updateHolderState({
+        status: ResultState.Idle,
+      })
+    );
+  };
+
+  useEffect(() => {
+    return () => {
+      handleDialogClose();
+    };
+  }, []);
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', flex: '1' }}>
+      <ErrorDialog handleClose={handleDialogClose} open={status === ResultState.Failed} message={errorMessage} />
+      <LoadingDialog handleClose={handleDialogClose} open={status === ResultState.Loading} message="Creating community" />
       <Box sx={{ paddingLeft: pxToRem(100), paddingRight: pxToRem(100), paddingTop: pxToRem(150) }}>
         <Typography fontSize={pxToRem(40)} textTransform="uppercase" color="background.paper" textAlign="left">
           Edit your community

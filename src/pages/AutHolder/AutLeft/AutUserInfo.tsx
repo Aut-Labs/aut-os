@@ -9,10 +9,12 @@ import { ReactComponent as TwitterIcon } from '@assets/SocialIcons/TwitterIcon.s
 import { Avatar, Box, Card, CardContent, CardHeader, styled, SvgIcon, Typography } from '@mui/material';
 import { pxToRem } from '@utils/text-size';
 import { useState } from 'react';
-import EditIcon from '@mui/icons-material/Edit';
 import PencilEdit from '@assets/PencilEditicon';
 import { useHistory } from 'react-router-dom';
-import AutDataTable from './AutDataTable';
+import { useSelector } from 'react-redux';
+import { HolderData, HolderStatus } from '@store/holder/holder.reducer';
+import { IsAuthenticated } from '@auth/auth.reducer';
+import { ResultState } from '@store/result-status';
 
 const AutTable = styled('table')(({ theme }) => ({
   width: '100%',
@@ -52,7 +54,6 @@ const AutTable = styled('table')(({ theme }) => ({
 const IconContainer = styled('div')(({ theme }) => ({
   paddingTop: pxToRem(40),
   display: 'flex',
-  //   marginBottom: '-5px',
 }));
 
 const AutIcon = styled('div')(({ theme }) => ({
@@ -75,186 +76,184 @@ const AutCard = styled(Card)(({ theme }) => ({
   },
 }));
 
-const user = {
-  name: 'Eulalie',
-  address: '0x4727FC8c25462A73c637CC6b41e4A1116b55D1b8',
-};
-
-const communities = [
-  {
-    name: 'Mordor Troops',
-    address: '0xC6E3D973A7c1De85C2C1C9Bbc3767e8Db7D7B0A2',
-    role: 'Orc Grunt',
-    commitment: 2,
-    commitmentDesc: 'Casually Browsing',
-  },
-  {
-    name: 'Wonderland',
-    role: 'Mad Hatter',
-    address: '0xC6E3D973A7c1De85C2C1C9Bbc3767e8Db7D7B0A2',
-    commitment: 3,
-    commitmentDesc: 'Casual Commenter',
-  },
-  {
-    name: 'Rivendell',
-    role: 'Silver Elf',
-    address: '0xC6E3D973A7c1De85C2C1C9Bbc3767e8Db7D7B0A2',
-    commitment: 3,
-    commitmentDesc: 'Casual Commenter',
-  },
-  {
-    name: 'Hogwarts School of Witchcraft',
-    role: 'Caretaker',
-    address: '0xC6E3D973A7c1De85C2C1C9Bbc3767e8Db7D7B0A2',
-    commitment: 1,
-    commitmentDesc: 'Lurking',
-  },
-];
-
 const AutUserInfo = ({ match }) => {
+  const holderData = useSelector(HolderData);
+  const holderStaus = useSelector(HolderStatus);
+  const isAuthenticated = useSelector(IsAuthenticated);
   const [isActiveIndex, setIsActiveIndex] = useState(null);
   const history = useHistory();
-  // - Toolbar
 
-  const onEdit = (data: any) => {
+  const onEdit = () => {
     history.push(`${match.url}/edit-profile`);
   };
-  function clickRow(index) {
-    if (isActiveIndex === index) {
-      setIsActiveIndex(null);
-    } else {
-      setIsActiveIndex(index);
+  function clickRow(index, address: string) {
+    if (isAuthenticated) {
+      if (isActiveIndex === index) {
+        setIsActiveIndex(null);
+      } else {
+        setIsActiveIndex(index);
+      }
+      history.push(`${match.url}/edit-community/${address}`);
     }
-    history.push(`${match.url}/edit-community`);
   }
   return (
     <>
       <Box>
-        <Box sx={{ paddingLeft: pxToRem(100), paddingRight: pxToRem(100), paddingTop: pxToRem(150) }}>
-          <AutCard sx={{ bgcolor: 'background.default', border: 'none' }}>
-            <CardHeader
-              avatar={
-                <Avatar sx={{ bgcolor: 'background.default', width: 150, height: 150, borderRadius: 0 }} aria-label="recipe">
-                  <img alt="Avatar" src="https://i.picsum.photos/id/74/150/150.jpg?hmac=Nkwpn5J-2MQbfrVDIudLW8y8J1K3U01RBQ7QMkLDtG0" />
-                </Avatar>
-              }
-            />
-            <CardContent sx={{ ml: pxToRem(30), mr: pxToRem(30), alignSelf: 'flex-end' }}>
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                <Typography fontSize={pxToRem(50)} color="background.paper" textAlign="left">
-                  {user.name}
-                </Typography>
-                <div style={{ padding: pxToRem(20), cursor: 'pointer' }} onClick={onEdit}>
-                  <PencilEdit height={pxToRem(24)} width={pxToRem(24)} />
-                </div>
-              </div>
+        {holderStaus === ResultState.Success ? (
+          <>
+            <Box sx={{ paddingLeft: pxToRem(100), paddingRight: pxToRem(100), paddingTop: pxToRem(150) }}>
+              <AutCard sx={{ bgcolor: 'background.default', border: 'none' }}>
+                <CardHeader
+                  avatar={
+                    <Avatar
+                      src={holderData.image as string}
+                      sx={{ bgcolor: 'background.default', width: 150, height: 150, borderRadius: 0 }}
+                      aria-label="recipe"
+                    />
+                  }
+                />
+                <CardContent sx={{ ml: pxToRem(30), mr: pxToRem(30), alignSelf: 'flex-end' }}>
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <Typography fontSize={pxToRem(50)} color="background.paper" textAlign="left">
+                      {holderData.name}
+                    </Typography>
 
-              <Typography
-                variant="h2"
-                color="background.paper"
-                textAlign="left"
-                sx={{ textDecoration: 'underline', wordBreak: 'break-all' }}
-              >
-                {user.address}
+                    {isAuthenticated && (
+                      <div style={{ padding: pxToRem(20), cursor: 'pointer' }} onClick={onEdit}>
+                        <PencilEdit height={pxToRem(24)} width={pxToRem(24)} />
+                      </div>
+                    )}
+                  </div>
+
+                  <Typography
+                    variant="h2"
+                    color="background.paper"
+                    textAlign="left"
+                    sx={{ textDecoration: 'underline', wordBreak: 'break-all' }}
+                  >
+                    {holderData.properties.address}
+                  </Typography>
+                  <IconContainer>
+                    <SvgIcon
+                      sx={{
+                        height: pxToRem(34),
+                        width: pxToRem(31),
+                        mr: pxToRem(20),
+                      }}
+                      component={DiscordIcon}
+                    />
+                    <SvgIcon
+                      sx={{
+                        height: pxToRem(34),
+                        width: pxToRem(31),
+                        mr: pxToRem(20),
+                      }}
+                      component={GitHubIcon}
+                    />
+                    <SvgIcon
+                      sx={{
+                        height: pxToRem(34),
+                        width: pxToRem(31),
+                        mr: pxToRem(20),
+                      }}
+                      component={TwitterIcon}
+                    />
+                    <SvgIcon
+                      sx={{
+                        height: pxToRem(34),
+                        width: pxToRem(31),
+                        mr: pxToRem(20),
+                      }}
+                      component={TelegramIcon}
+                    />
+                    <SvgIcon
+                      sx={{
+                        height: pxToRem(34),
+                        width: pxToRem(31),
+                        mr: pxToRem(20),
+                      }}
+                      component={LeafIcon}
+                    />
+                  </IconContainer>
+                </CardContent>
+              </AutCard>
+            </Box>
+            <Box sx={{ paddingLeft: pxToRem(100), paddingRight: pxToRem(100), paddingTop: pxToRem(100) }}>
+              <Typography fontSize={pxToRem(47)} textTransform="uppercase" color="background.paper" textAlign="left">
+                Communities
               </Typography>
-              <IconContainer>
-                <SvgIcon
-                  sx={{
-                    height: pxToRem(34),
-                    width: pxToRem(31),
-                    mr: pxToRem(20),
-                  }}
-                  component={DiscordIcon}
-                />
-                <SvgIcon
-                  sx={{
-                    height: pxToRem(34),
-                    width: pxToRem(31),
-                    mr: pxToRem(20),
-                  }}
-                  component={GitHubIcon}
-                />
-                <SvgIcon
-                  sx={{
-                    height: pxToRem(34),
-                    width: pxToRem(31),
-                    mr: pxToRem(20),
-                  }}
-                  component={TwitterIcon}
-                />
-                <SvgIcon
-                  sx={{
-                    height: pxToRem(34),
-                    width: pxToRem(31),
-                    mr: pxToRem(20),
-                  }}
-                  component={TelegramIcon}
-                />
-                <SvgIcon
-                  sx={{
-                    height: pxToRem(34),
-                    width: pxToRem(31),
-                    mr: pxToRem(20),
-                  }}
-                  component={LeafIcon}
-                />
-              </IconContainer>
-            </CardContent>
-          </AutCard>
-        </Box>
-        <Box sx={{ paddingLeft: pxToRem(100), paddingRight: pxToRem(100), paddingTop: pxToRem(100) }}>
-          <Typography fontSize={pxToRem(47)} textTransform="uppercase" color="background.paper" textAlign="left">
-            Communities
+            </Box>
+            <Box sx={{ paddingLeft: pxToRem(100), paddingRight: pxToRem(100), paddingTop: pxToRem(50), paddingBottom: pxToRem(100) }}>
+              <AutTable aria-label="table" cellSpacing="0">
+                <tbody>
+                  <tr>
+                    <th>
+                      <Typography variant="subtitle2" color="background.paper" textAlign="left" fontWeight="bold">
+                        Community Name
+                      </Typography>
+                    </th>
+                    <th>
+                      <Typography variant="subtitle2" color="background.paper" textAlign="left" fontWeight="bold">
+                        Role
+                      </Typography>
+                    </th>
+                    <th>
+                      <Typography variant="subtitle2" color="background.paper" textAlign="left" fontWeight="bold">
+                        Commitment
+                      </Typography>
+                    </th>
+                  </tr>
+                  {holderData.properties.communities.map(({ name, properties }, index) => (
+                    <tr
+                      key={`row-key-${index}`}
+                      className={isActiveIndex === index ? 'isActive' : ''}
+                      onClick={() => clickRow(index, properties.address)}
+                    >
+                      <td>
+                        <Typography variant="h2" color="background.paper" sx={{ pb: '5px' }}>
+                          {name}
+                        </Typography>
+                        <Typography variant="h5" color="background.paper">
+                          {properties.address}
+                        </Typography>
+                      </td>
+                      <td>
+                        <Typography variant="h2" color="background.paper">
+                          {properties?.userData?.roleName}
+                        </Typography>
+                      </td>
+                      <td>
+                        <Typography variant="h2" color="background.paper" sx={{ pb: '5px' }}>
+                          {`${properties.userData.commitment}/10`}
+                        </Typography>
+                        <Typography variant="h5" color="background.paper">
+                          {properties.userData.commitmentDescription}
+                        </Typography>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </AutTable>
+            </Box>
+          </>
+        ) : (
+          <Typography
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              mb: '10px',
+              fontSize: pxToRem(50),
+              color: 'white',
+              position: 'absolute',
+              transform: 'translate(-50%, -50%)',
+              left: '50%',
+              top: '50%',
+            }}
+          >
+            This āutID hasn't been claimed yet
           </Typography>
-        </Box>
-        <Box sx={{ paddingLeft: pxToRem(100), paddingRight: pxToRem(100), paddingTop: pxToRem(50), paddingBottom: pxToRem(100) }}>
-          <AutTable aria-label="table" cellSpacing="0">
-            <tbody>
-              <tr>
-                <th>
-                  <Typography variant="subtitle2" color="background.paper" textAlign="left" fontWeight="bold">
-                    Community Name
-                  </Typography>
-                </th>
-                <th>
-                  <Typography variant="subtitle2" color="background.paper" textAlign="left" fontWeight="bold">
-                    Role
-                  </Typography>
-                </th>
-                <th>
-                  <Typography variant="subtitle2" color="background.paper" textAlign="left" fontWeight="bold">
-                    Commitment
-                  </Typography>
-                </th>
-              </tr>
-              {communities.map(({ name, role, address, commitment, commitmentDesc }, index) => (
-                <tr key={`row-key-${index}`} className={isActiveIndex === index ? 'isActive' : ''} onClick={() => clickRow(index)}>
-                  <td>
-                    <Typography variant="h2" color="background.paper" sx={{ pb: '5px' }}>
-                      {name}
-                    </Typography>
-                    <Typography variant="h5" color="background.paper">
-                      {address}
-                    </Typography>
-                  </td>
-                  <td>
-                    <Typography variant="h2" color="background.paper">
-                      {role}
-                    </Typography>
-                  </td>
-                  <td>
-                    <Typography variant="h2" color="background.paper" sx={{ pb: '5px' }}>
-                      {`${commitment}/10`}
-                    </Typography>
-                    <Typography variant="h5" color="background.paper">
-                      {commitmentDesc}
-                    </Typography>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </AutTable>
-        </Box>
+        )}
       </Box>
     </>
   );

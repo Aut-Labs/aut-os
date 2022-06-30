@@ -1,8 +1,9 @@
+import { AutID } from '@api/aut.model';
 import { createSlice } from '@reduxjs/toolkit';
 
 export interface AuthState {
   isAutheticated: boolean;
-  userInfo: any;
+  userInfo: AutID;
   userAddress: string;
 }
 
@@ -30,6 +31,7 @@ export const authSlice = createSlice({
 
 export const { setAuthenticated, setUserAddress, resetAuthState } = authSlice.actions;
 
-export const UserInfo = (state) => state.auth.userInfo as any;
+export const UserInfo = (state) => state.auth.userInfo as AutID;
+export const IsAuthenticated = (state) => state.auth.isAutheticated as boolean;
 
 export default authSlice.reducer;

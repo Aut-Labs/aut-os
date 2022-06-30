@@ -1,21 +1,18 @@
 import { useEffect, useState } from 'react';
-import { withRouter, Switch, Route, Redirect as RedirectRoute, useLocation, useHistory } from 'react-router-dom';
+import { withRouter, Switch, Route, Redirect as RedirectRoute, useLocation, useHistory, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { Box, CssBaseline } from '@mui/material';
-import { RootState, useAppDispatch } from '@store/store.model';
+import { useAppDispatch } from '@store/store.model';
 import { ReactComponent as AutLogo } from '@assets/AutLogo.svg';
-
 import NotFound from '@components/NotFound';
-import './App.scss';
-import { resetAuthState, setAuthenticated } from '@auth/auth.reducer';
-import detectEthereumProvider from '@metamask/detect-provider';
-import { openSnackbar } from '@store/ui-reducer';
-import { InitSwAuth } from '@skill-wallet/auth';
-import { environment } from '@api/environment';
-import { pxToRem } from '@utils/text-size';
+import { ResultState } from '@store/result-status';
+import { updateHolderState } from '@store/holder/holder.reducer';
+import { IsAuthenticated, resetAuthState, setAuthenticated } from '@auth/auth.reducer';
+import { Init } from 'd-aut-alpha';
+import { AutID } from '@api/aut.model';
 import AutHolder from './pages/AutHolder/AutHolder';
-import Community from './pages/Deprecated/Community/Community';
 import SWSnackbar from './components/snackbar';
+import './App.scss';
 
 const LoadingMessage = () => (
   <div className="app-loading">
@@ -23,71 +20,68 @@ const LoadingMessage = () => (
   </div>
 );
 
-function App(props) {
+function App() {
   const dispatch = useAppDispatch();
   const location = useLocation<any>();
   const history = useHistory();
-  const { isAutheticated } = useSelector((state: RootState) => state.auth);
-  const [isLoading, setLoading] = useState(true);
+  const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
-    const checkForEthereumProvider = async () => {
-      let ethereum: typeof window.ethereum;
-      try {
-        ethereum = await detectEthereumProvider();
-      } catch (e) {
-        console.log(e);
-      }
-      if (!ethereum) {
-        dispatch(
-          openSnackbar({
-            message: 'Please install MetaMask and refresh the page to use the full array of Partner features.',
-            severity: 'error',
-            duration: 30000,
-          })
-        );
-      }
-    };
-    checkForEthereumProvider();
+    const [, holderAddress] = location.pathname.split('/');
+    if (holderAddress) {
+      history.push(`/${holderAddress}`);
+    } else {
+      history.push(`/`);
+    }
+    dispatch(resetAuthState());
   }, []);
 
   useEffect(() => {
-    const onAutLogin = async ({ detail }: any) => {
-      const isLoggedIn = true;
-      if (isLoggedIn) {
-        dispatch(
-          setAuthenticated({
-            isAuthenticated: isLoggedIn,
-            userInfo: {},
-          })
-        );
-        // get the user address
-        const returnUrl = location.state?.from;
-        history.push(returnUrl);
-      } else {
-        dispatch(resetAuthState());
-        history.push('/');
-      }
+    const onSWLogin = async ({ detail }: any) => {
+      const autID = new AutID(detail);
+      debugger;
+      await dispatch(
+        setAuthenticated({
+          isAuthenticated: true,
+          userInfo: autID,
+        })
+      );
+      await dispatch(
+        updateHolderState({
+          autID,
+          fetchStatus: ResultState.Success,
+          status: ResultState.Idle,
+        })
+      );
+      history.push(`/${autID.name}`);
     };
 
-    const onAutInit = async () => setLoading(false);
-    onAutInit();
+    const onDisconnected = () => {
+      const [, holderAddress] = location.pathname.split('/');
+      if (holderAddress) {
+        history.push(`/${holderAddress}`);
+      } else {
+        history.push(`/`);
+      }
+      dispatch(resetAuthState());
+    };
 
-    window.addEventListener('initAutAuth', onAutInit);
-    window.addEventListener('onAutLogin', onAutLogin);
+    const onSWInit = async () => setLoading(false);
 
-    InitSwAuth({ container: document.querySelector('#connect-wallet-container') });
+    window.addEventListener('aut-Init', onSWInit);
+    window.addEventListener('aut-onConnected', onSWLogin);
+    window.addEventListener('aut-onDisconnected', onDisconnected);
+
+    Init({
+      container: document.querySelector('#connect-wallet-container'),
+    });
 
     return () => {
-      window.removeEventListener('initAutAuth', onAutInit);
-      window.removeEventListener('onAutLogin', onAutLogin);
+      window.removeEventListener('aut-Init', onSWInit);
+      window.removeEventListener('aut-onConnected', onSWLogin);
+      window.removeEventListener('aut-onDisconnected', onSWLogin);
     };
   }, [dispatch, history, location.pathname, location.state?.from]);
-
-  const isIntegrateFlow = location?.pathname?.includes('integrate');
-  const isRedirect = location?.pathname?.includes('redirect');
-  const isGetStarted = location?.pathname === '/';
-  const hideDashboard = !environment.hideDashboard || environment.hideDashboard === 'true';
 
   return (
     <>
@@ -104,9 +98,8 @@ function App(props) {
           <LoadingMessage />
         ) : (
           <Switch>
-            <Route component={AutHolder} path="/holders/:holderAddress" {...props} />
-            <Route exact component={Community} path="/community/:communityAddress" {...props} />
-            {isAutheticated ? <Route component={NotFound} /> : <RedirectRoute to={{ pathname: '/', state: { from: location.pathname } }} />}
+            <Route component={AutHolder} path="/:holderAddress" />
+            <Route component={NotFound} /> : <RedirectRoute to={{ pathname: '/', state: { from: location.pathname } }} />
           </Switch>
         )}
       </Box>
