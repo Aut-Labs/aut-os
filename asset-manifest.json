@@ -1,0 +1,26 @@
+{
+  "files": {
+    "main.css": "/aut-id/static/css/main.d8385609.css",
+    "main.js": "/aut-id/static/js/main.7f7c898a.js",
+    "static/js/787.412fa798.chunk.js": "/aut-id/static/js/787.412fa798.chunk.js",
+    "static/media/MyAutIdLogo.svg": "/aut-id/static/media/MyAutIdLogo.05f511ffdb9273735276d1c900269276.svg",
+    "static/media/AutLogo.svg": "/aut-id/static/media/AutLogo.201ff9f841defd32c8a9c49014c88c37.svg",
+    "static/media/EthIcon.svg": "/aut-id/static/media/EthIcon.11bdd968e54a22fbb2ed1ff9d2f7ce3c.svg",
+    "static/media/LeafIcon.svg": "/aut-id/static/media/LeafIcon.44006b39636f38bf8d9f16a69b89ce1d.svg",
+    "static/media/DiscordIcon.svg": "/aut-id/static/media/DiscordIcon.a5ae16f7fb137945ef80e96815e68f8a.svg",
+    "static/media/GitHubIcon.svg": "/aut-id/static/media/GitHubIcon.40acea353ef233e99bf4a286bc453208.svg",
+    "index.html": "/aut-id/index.html",
+    "static/media/TwitterIcon.svg": "/aut-id/static/media/TwitterIcon.0235c8b52de1788a28f0c13100c1c820.svg",
+    "static/media/TelegramIcon.svg": "/aut-id/static/media/TelegramIcon.9c9869ba2c74f624751a6ac6ab043665.svg",
+    "static/media/PersonIcon.svg": "/aut-id/static/media/PersonIcon.541907fc0bf2fbc49e1622e4f8882c0d.svg",
+    "static/media/upload.svg": "/aut-id/static/media/upload.99a2a584ae9e80f162595cce8bab1920.svg",
+    "static/media/ShareIcon.svg": "/aut-id/static/media/ShareIcon.d500717fafbb73ee482bb0777c0050e8.svg",
+    "main.d8385609.css.map": "/aut-id/static/css/main.d8385609.css.map",
+    "main.7f7c898a.js.map": "/aut-id/static/js/main.7f7c898a.js.map",
+    "787.412fa798.chunk.js.map": "/aut-id/static/js/787.412fa798.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.d8385609.css",
+    "static/js/main.7f7c898a.js"
+  ]
+}
