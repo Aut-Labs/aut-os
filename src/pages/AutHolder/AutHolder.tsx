@@ -65,14 +65,14 @@ const AutHolder = (props) => {
             modules={[Pagination]}
             className="mySwiper"
           >
-            <SwiperSlide>
-              <AutLeft {...props} />
-            </SwiperSlide>
             {status === ResultState.Success && (
               <SwiperSlide>
                 <AutTunnelRight />
               </SwiperSlide>
             )}
+            <SwiperSlide>
+              <AutLeft {...props} />
+            </SwiperSlide>
           </AutSwiper>
           {!desktop && <AutToolBar hideLogo />}
         </>

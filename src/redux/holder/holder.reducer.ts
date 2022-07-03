@@ -1,5 +1,5 @@
 import { ResultState } from '@store/result-status';
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSelector, createSlice } from '@reduxjs/toolkit';
 import { AutID } from '@api/aut.model';
 import { editCommitment, fetchHolderData, withdraw } from '@api/holder.api';
 import { ErrorParser } from '@utils/error-parser';
@@ -92,5 +92,9 @@ export const HolderData = (state) => state.holder.autID as AutID;
 export const HolderStatus = (state) => state.holder.fetchStatus as ResultState;
 export const UpdateStatus = (state) => state.holder.status as ResultState;
 export const UpdateErrorMessage = (state) => state.holder.errorMessage as string;
+export const SelectedCommunity = (communityAddress) =>
+  createSelector(HolderData, (autId) => {
+    return autId.properties.communities.find((item) => item.properties.address === communityAddress);
+  });
 
 export default holderSlice.reducer;

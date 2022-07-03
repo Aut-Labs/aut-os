@@ -139,7 +139,6 @@ code {
   }
 }
 
-
 .custom-scrollbars__container {
   height: 100%;
   overflow: hidden;
@@ -148,7 +147,8 @@ code {
 
 .custom-scrollbars__content {
   -ms-overflow-style: none;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   scrollbar-width: none;
 }
 

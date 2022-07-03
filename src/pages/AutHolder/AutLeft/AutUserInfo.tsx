@@ -104,8 +104,8 @@ const AutUserInfo = ({ match }) => {
           <Box style={{ display: 'flex', flexDirection: 'column', flex: '1' }}>
             <Box
               sx={{
-                paddingLeft: desktop ? pxToRem(100) : !xs ? pxToRem(50) : pxToRem(20),
-                paddingRight: desktop ? pxToRem(100) : !xs ? pxToRem(50) : pxToRem(20),
+                paddingLeft: desktop ? pxToRem(100) : !xs ? pxToRem(50) : pxToRem(30),
+                paddingRight: desktop ? pxToRem(100) : !xs ? pxToRem(50) : pxToRem(30),
                 paddingTop: desktop ? pxToRem(150) : !xs ? pxToRem(100) : pxToRem(30),
               }}
             >
@@ -116,7 +116,7 @@ const AutUserInfo = ({ match }) => {
                       sx={{ bgcolor: 'background.default', width: pxToRem(150), height: pxToRem(150), borderRadius: 0 }}
                       aria-label="recipe"
                     >
-                      <img alt="Avatar" src="https://i.picsum.photos/id/74/150/150.jpg?hmac=Nkwpn5J-2MQbfrVDIudLW8y8J1K3U01RBQ7QMkLDtG0" />
+                      <img alt="Avatar" src={holderData.image as string} style={{ width: 'auto', height: pxToRem(150) }} />
                     </Avatar>
                   }
                 />
@@ -187,8 +187,8 @@ const AutUserInfo = ({ match }) => {
             </Box>
             <Box
               sx={{
-                paddingLeft: desktop ? pxToRem(100) : !xs ? pxToRem(50) : pxToRem(20),
-                paddingRight: desktop ? pxToRem(100) : !xs ? pxToRem(50) : pxToRem(20),
+                paddingLeft: desktop ? pxToRem(100) : !xs ? pxToRem(50) : pxToRem(30),
+                paddingRight: desktop ? pxToRem(100) : !xs ? pxToRem(50) : pxToRem(30),
                 paddingTop: desktop ? pxToRem(150) : !xs ? pxToRem(100) : pxToRem(30),
               }}
             >

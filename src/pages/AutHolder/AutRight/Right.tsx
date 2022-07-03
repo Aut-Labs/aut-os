@@ -1,9 +1,10 @@
-import { styled, SvgIcon, Typography, useMediaQuery } from '@mui/material';
+import { Box, styled, SvgIcon, Typography, useMediaQuery } from '@mui/material';
 import { ReactComponent as IdCardBg } from '@assets/IdCardBackground.svg';
 import { ReactComponent as ShareIcon } from '@assets/ShareIcon.svg';
 import { pxToRem } from '@utils/text-size';
 import { useSelector } from 'react-redux';
 import { HolderData } from '@store/holder/holder.reducer';
+import AutToolBar from '../AutLeft/AutToolBar';
 
 const CardTilt = styled('div')(({ theme }) => ({
   borderRadius: 0,
@@ -11,13 +12,13 @@ const CardTilt = styled('div')(({ theme }) => ({
   background: theme.palette.background.paper,
   boxShadow: theme.shadows[1],
   position: 'relative',
-  width: 'calc(100% - 45px)',
-  height: 'calc(100% - 45px)',
+  width: 'calc(100% - 20px)',
+  height: 'calc(100% - 20px)',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  marginLeft: '22.5px',
-  marginTop: '22.5px',
+  marginLeft: '10px',
+  marginTop: '10px',
   backgroundColor: 'black',
   '@keyframes sw-card-tilt': {
     '0%': {
@@ -84,6 +85,11 @@ const AutTunnelRight = () => {
   const holderData = useSelector(HolderData);
   const desktop = useMediaQuery('(min-width:769px)');
 
+  const onShare = (data: any) => {
+    // share dialog profile
+    console.log('Share!!!!');
+  };
+
   return (
     <>
       {desktop ? (
@@ -91,8 +97,8 @@ const AutTunnelRight = () => {
           <>
             <SvgIcon
               sx={{
-                height: pxToRem(100),
-                width: pxToRem(100),
+                height: pxToRem(80),
+                width: pxToRem(80),
                 position: 'absolute',
                 top: '10px',
                 right: '10px',
@@ -101,6 +107,7 @@ const AutTunnelRight = () => {
                 cursor: 'pointer',
               }}
               component={ShareIcon}
+              onClick={onShare}
             />
           </>
           <svg
@@ -294,10 +301,13 @@ const AutTunnelRight = () => {
       ) : (
         <AutRightMobileContainer>
           <>
+            <>
+              <AutToolBar hideWebComponent={!desktop} />
+            </>
             <SvgIcon
               sx={{
-                height: pxToRem(50),
-                width: pxToRem(50),
+                height: pxToRem(40),
+                width: pxToRem(40),
                 position: 'absolute',
                 top: '10px',
                 right: '10px',
@@ -306,143 +316,378 @@ const AutTunnelRight = () => {
                 cursor: 'pointer',
               }}
               component={ShareIcon}
+              onClick={onShare}
             />
           </>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            xmlnsXlink="http://www.w3.org/1999/xlink"
-            height={window.innerWidth}
-            viewBox="0 0 445.5 474.073"
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginTop: pxToRem(50),
+            }}
           >
-            <defs>
-              <linearGradient id="linear-gradient" y1="0.5" x2="1" y2="0.5" gradientUnits="objectBoundingBox">
-                <stop offset="0" stopColor="#009fe3" />
-                <stop offset="0.08" stopColor="#0399de" />
-                <stop offset="0.19" stopColor="#0e8bd3" />
-                <stop offset="0.3" stopColor="#2072bf" />
-                <stop offset="0.41" stopColor="#3a50a4" />
-                <stop offset="0.53" stopColor="#5a2583" />
-                <stop offset="0.71" stopColor="#453f94" />
-                <stop offset="0.88" stopColor="#38519f" />
-                <stop offset="1" stopColor="#3458a4" />
-              </linearGradient>
-            </defs>
-            <g id="Group_12379" data-name="Group 12379" transform="translate(32.242 -112.45)">
-              <path id="Line_32" data-name="Line 32" d="M.5,318.033h-1V0h1Z" transform="translate(308.139 162.908)" fill="#fff" />
+            {/* <svg
+              xmlns="http://www.w3.org/2000/svg"
+              xmlnsXlink="http://www.w3.org/1999/xlink"
+              width="445.5"
+              height="474.074"
+              viewBox="0 0 445.5 474.074"
+            >
+              <defs>
+                <linearGradient id="linear-gradient" x2="1" y1="0.5" y2="0.5" gradientUnits="objectBoundingBox">
+                  <stop offset="0" stopColor="#009fe3" />
+                  <stop offset="0.08" stopColor="#0399de" />
+                  <stop offset="0.19" stopColor="#0e8bd3" />
+                  <stop offset="0.3" stopColor="#2072bf" />
+                  <stop offset="0.41" stopColor="#3a50a4" />
+                  <stop offset="0.53" stopColor="#5a2583" />
+                  <stop offset="0.71" stopColor="#453f94" />
+                  <stop offset="0.88" stopColor="#38519f" />
+                  <stop offset="1" stopColor="#3458a4" />
+                </linearGradient>
+                <clipPath id="clip-path">
+                  <path
+                    fill="#fff"
+                    stroke="#707070"
+                    strokeWidth="1"
+                    d="M0 0H206V325H0z"
+                    data-name="Rectangle 3377"
+                    transform="translate(-.06 -.325)"
+                  />
+                </clipPath>
+                <filter id="Rectangle_3376" width="224" height="343" x="112.644" y="88.222" filterUnits="userSpaceOnUse">
+                  <feOffset dx="6" dy="6" />
+                  <feGaussianBlur result="blur" stdDeviation="3" />
+                  <feFlood floodOpacity="0.545" />
+                  <feComposite in2="blur" operator="in" />
+                  <feComposite in="SourceGraphic" />
+                </filter>
+                <linearGradient id="linear-gradient-3" x1="0.061" x2="1.127" y1="0.343" y2="0.658" xlinkHref="#linear-gradient" />
+                <linearGradient id="linear-gradient-4" x1="0.063" x2="1.133" y1="0.343" y2="0.658" xlinkHref="#linear-gradient" />
+                <linearGradient id="linear-gradient-5" x1="-0.128" x2="1.167" y1="0.299" y2="0.619" xlinkHref="#linear-gradient" />
+                <linearGradient id="linear-gradient-6" x1="-0.137" x2="1.178" y1="0.298" y2="0.617" xlinkHref="#linear-gradient" />
+                <linearGradient id="linear-gradient-7" x1="-0.142" x2="0.952" y1="0.416" y2="0.559" xlinkHref="#linear-gradient" />
+                <linearGradient id="linear-gradient-8" x1="-0.156" x2="0.951" y1="0.418" y2="0.556" xlinkHref="#linear-gradient" />
+                <linearGradient id="linear-gradient-9" x1="0" y1="0.5" y2="0.5" xlinkHref="#linear-gradient" />
+                <linearGradient id="linear-gradient-10" x1="0" y1="0.5" y2="0.5" xlinkHref="#linear-gradient" />
+                <linearGradient id="linear-gradient-11" x2="1" y1="0.5" y2="0.5" gradientUnits="objectBoundingBox">
+                  <stop offset="0" stopColor="#0059a6" />
+                  <stop offset="0.1" stopColor="#0556a1" />
+                  <stop offset="0.22" stopColor="#134f93" />
+                  <stop offset="0.35" stopColor="#2c427d" />
+                  <stop offset="0.49" stopColor="#4e315e" />
+                  <stop offset="0.53" stopColor="#5a2c54" />
+                  <stop offset="0.67" stopColor="#353e75" />
+                  <stop offset="0.8" stopColor="#184c90" />
+                  <stop offset="0.92" stopColor="#0655a0" />
+                  <stop offset="1" stopColor="#0059a6" />
+                </linearGradient>
+                <linearGradient id="linear-gradient-13" x1="0" x2="1" y1="0.5" y2="0.5" xlinkHref="#linear-gradient-11" />
+                <linearGradient id="linear-gradient-14" x1="0" y1="0.5" y2="0.5" xlinkHref="#linear-gradient" />
+                <linearGradient id="linear-gradient-15" x1="0" x2="1" y1="0.5" y2="0.5" xlinkHref="#linear-gradient-11" />
+                <linearGradient id="linear-gradient-16" x1="0" x2="1" y1="0.5" y2="0.5" xlinkHref="#linear-gradient-11" />
+                <linearGradient id="linear-gradient-17" x1="0" y1="0.5" y2="0.5" xlinkHref="#linear-gradient" />
+                <linearGradient id="linear-gradient-18" x1="0" y1="0.5" y2="0.5" xlinkHref="#linear-gradient" />
+                <linearGradient id="linear-gradient-19" x1="0" x2="1" y1="0.5" y2="0.5" xlinkHref="#linear-gradient-11" />
+                <linearGradient id="linear-gradient-20" x1="0" x2="1.001" y1="0.5" y2="0.5" xlinkHref="#linear-gradient" />
+                <linearGradient id="linear-gradient-22" x1="0" x2="1.001" y1="0.5" y2="0.5" xlinkHref="#linear-gradient" />
+                <linearGradient id="linear-gradient-23" x1="-2.59" x2="-2.575" y1="-1.483" y2="-1.483" xlinkHref="#linear-gradient" />
+                <linearGradient id="linear-gradient-29" x1="0" y1="0.5" y2="0.5" xlinkHref="#linear-gradient" />
+                <linearGradient id="linear-gradient-33" x1="0" y1="0.501" y2="0.501" xlinkHref="#linear-gradient" />
+                <linearGradient id="linear-gradient-34" x1="0" x2="0.999" y1="0.5" y2="0.5" xlinkHref="#linear-gradient-11" />
+                <linearGradient id="linear-gradient-37" x1="0" y1="0.501" y2="0.501" xlinkHref="#linear-gradient" />
+              </defs>
+              <path fill="none" stroke="#fff" strokeWidth="1" d="M0 404.557L0 0" data-name="Line 30" transform="translate(380.602 1.817)" />
+              <path fill="none" stroke="#fff" strokeWidth="1" d="M0 318.033L0 0" data-name="Line 32" transform="translate(340.38 50.458)" />
               <path
-                id="Line_33"
+                fill="none"
+                stroke="#fff"
+                strokeWidth="1"
+                d="M0 207.657L193.626 0"
                 data-name="Line 33"
-                d="M.366,208l-.731-.682L193.26-.341l.731.682Z"
-                transform="translate(-31.876 378.516)"
-                fill="#fff"
+                transform="translate(.366 266.065)"
               />
-              <path id="Line_34" data-name="Line 34" d="M49.576.5H0v-1H49.576Z" transform="translate(161.75 378.516)" fill="#fff" />
               <path
-                id="Line_35"
-                data-name="Line 35"
-                d="M203.092,206.605-.356.351l.712-.7L203.8,205.9Z"
-                transform="translate(209.455 379.918)"
-                fill="#fff"
+                fill="none"
+                stroke="#fff"
+                strokeWidth="1"
+                d="M49.576 0L0 0"
+                data-name="Line 34"
+                transform="translate(193.992 266.065)"
               />
-              <g id="Layer_1" data-name="Layer 1" transform="translate(310.891 480.941) rotate(-180)">
-                <g id="Group_4" data-name="Group 4">
-                  <path id="Path_10" data-name="Path 10" d="M0,0,3.854,93.9,5.5,207.3,3.854,318.033Z" fill="#bfbfbf" />
+              <path
+                fill="none"
+                stroke="#fff"
+                strokeWidth="1"
+                d="M203.448 206.254L0 0"
+                data-name="Line 35"
+                transform="translate(241.697 267.469)"
+              />
+              <g data-name="Layer 1" transform="rotate(-180 191.677 203.304)">
+                <g data-name="Group 4">
+                  <path fill="#bfbfbf" d="M0 0l3.854 119.517L5.5 263.855 3.854 404.791z" data-name="Path 10" />
                   <path
-                    id="Path_11"
-                    data-name="Path 11"
-                    d="M0,0,2.371,67.492v43.947l1.478,57.093v149.5L0,208.753V0Z"
-                    transform="translate(0.828 0)"
                     fill="url(#linear-gradient)"
-                  />
-                </g>
-              </g>
-              <path id="Line_29" data-name="Line 29" d="M.5,404.557h-1V0h1Z" transform="translate(28.456 114.268)" fill="#fff" />
-              <path id="Line_31" data-name="Line 31" d="M.5,318.033h-1V0h1Z" transform="translate(67.743 162.908)" fill="#fff" />
-              <path id="Line_36" data-name="Line 36" d="M240.4.5H0v-1H240.4Z" transform="translate(67.743 162.908)" fill="#fff" />
-              <path id="Line_37" data-name="Line 37" d="M319.9.5H0v-1H319.9Z" transform="translate(28.456 114.268)" fill="#fff" />
-              <g id="Layer_1-2" data-name="Layer 1" transform="translate(31.209 520.6) rotate(-180)">
-                <g id="Group_4-2" data-name="Group 4">
-                  <path id="Path_10-2" data-name="Path 10" d="M0,0,3.854,119.972,5.5,264.859,3.854,406.332Z" fill="#bfbfbf" />
-                  <path
-                    id="Path_11-2"
+                    d="M0 0l2.371 85.9v55.935l1.478 72.667v190.289L0 265.7V0z"
                     data-name="Path 11"
-                    d="M0,0,2.371,86.23v56.148l1.478,72.944V406.332L0,266.711V0Z"
-                    transform="translate(0.828 0)"
-                    fill="url(#linear-gradient)"
+                    transform="translate(.828)"
                   />
                 </g>
               </g>
-              <g id="Layer_1-3" data-name="Layer 1" transform="translate(31.209 519.059) rotate(-180)">
-                <g id="Group_4-3" data-name="Group 4">
-                  <path id="Path_10-3" data-name="Path 10" d="M0,0,3.854,119.517,5.5,263.855,3.854,404.791Z" fill="#bfbfbf" />
+              <g data-name="Layer 1" transform="rotate(-180 171.566 184.245)">
+                <g data-name="Group 4">
+                  <path fill="#bfbfbf" d="M0 0l3.854 93.9L5.5 207.3 3.854 318.033z" data-name="Path 10" />
                   <path
-                    id="Path_11-3"
+                    fill="url(#linear-gradient)"
+                    d="M0 0l2.371 67.492v43.947l1.478 57.093v149.5L0 208.753V0z"
                     data-name="Path 11"
-                    d="M0,0,2.371,85.9v55.935l1.478,72.667V404.791L0,265.7V0Z"
-                    transform="translate(0.828 0)"
-                    fill="url(#linear-gradient)"
+                    transform="translate(.828)"
                   />
                 </g>
               </g>
-              <g id="Layer_1-4" data-name="Layer 1" transform="translate(67.688 480.941) rotate(-180)">
-                <g id="Group_4-4" data-name="Group 4">
-                  <path id="Path_10-4" data-name="Path 10" d="M0,0,3.854,93.9,5.5,207.3,3.854,318.033Z" fill="#bfbfbf" />
+              <g clipPath="url(#clip-path)" data-name="Mask Group 5" transform="translate(115.705 91.548)">
+                <g filter="url(#Rectangle_3376)" transform="translate(-115.7 -91.55)">
+                  <g stroke="#fff" strokeWidth="1" data-name="Rectangle 3376" transform="translate(115.64 91.22)">
+                    <foreignObject height="325" width="206">
+                      <AutIdCard avatar={holderData?.image as string} />
+                    </foreignObject>
+                  </g>
+                </g>
+              </g>
+              <path fill="none" stroke="#fff" strokeWidth="1" d="M0 404.557L0 0" data-name="Line 29" transform="translate(60.698 1.817)" />
+              <path fill="none" stroke="#fff" strokeWidth="1" d="M0 318.033L0 0" data-name="Line 31" transform="translate(99.985 50.458)" />
+              <path fill="none" stroke="#fff" strokeWidth="1" d="M0 0L240.396 0" data-name="Line 36" transform="translate(99.985 50.458)" />
+              <path fill="none" stroke="#fff" strokeWidth="1" d="M0 0L319.904 0" data-name="Line 37" transform="translate(60.698 1.817)" />
+              <g data-name="Layer 1" transform="rotate(-180 31.726 204.075)">
+                <g data-name="Group 4">
+                  <path fill="#bfbfbf" d="M0 0l3.854 119.972L5.5 264.859 3.854 406.332z" data-name="Path 10" />
                   <path
-                    id="Path_11-4"
+                    fill="url(#linear-gradient)"
+                    d="M0 0l2.371 86.23v56.148l1.478 72.944v191.01L0 266.711V0z"
                     data-name="Path 11"
-                    d="M0,0,2.371,67.492v43.947l1.478,57.093v149.5L0,208.753V0Z"
-                    transform="translate(0.828 0)"
-                    fill="url(#linear-gradient)"
+                    transform="translate(.828)"
                   />
                 </g>
               </g>
-              <g id="Layer_1-5" data-name="Layer 1" transform="translate(17.485 117.955) rotate(-90)">
-                <g id="Group_4-5" data-name="Group 4" transform="translate(0 0)">
+              <g data-name="Layer 1" transform="rotate(-180 31.726 203.304)">
+                <g data-name="Group 4">
+                  <path fill="#bfbfbf" d="M0 0l3.854 119.517L5.5 263.855 3.854 404.791z" data-name="Path 10" />
                   <path
-                    id="Path_10-5"
-                    data-name="Path 10"
-                    d="M0,0,3.854,100.646,5.5,222.193,3.854,340.876Z"
-                    transform="translate(0 0)"
-                    fill="#bfbfbf"
-                  />
-                  <path
-                    id="Path_11-5"
+                    fill="url(#linear-gradient)"
+                    d="M0 0l2.371 85.9v55.935l1.478 72.667v190.289L0 265.7V0z"
                     data-name="Path 11"
-                    d="M0,0,2.371,72.34v47.1l1.478,61.194v160.24L0,223.747V0Z"
-                    transform="translate(0.828 0)"
-                    fill="url(#linear-gradient)"
+                    transform="translate(.828)"
                   />
                 </g>
               </g>
-              <g id="Layer_1-6" data-name="Layer 1" transform="translate(53.053 166.129) rotate(-90)">
-                <g id="Group_4-6" data-name="Group 4" transform="translate(0 0)">
+              <g data-name="Layer 1" transform="rotate(-180 49.965 184.245)">
+                <g data-name="Group 4">
+                  <path fill="#bfbfbf" d="M0 0l3.854 93.9L5.5 207.3 3.854 318.033z" data-name="Path 10" />
                   <path
-                    id="Path_10-6"
-                    data-name="Path 10"
-                    d="M0,0,3.854,76.129,5.5,168.067,3.854,257.838Z"
-                    transform="translate(0 0)"
-                    fill="#bfbfbf"
-                  />
-                  <path
-                    id="Path_11-6"
+                    fill="url(#linear-gradient)"
+                    d="M0 0l2.371 67.492v43.947l1.478 57.093v149.5L0 208.753V0z"
                     data-name="Path 11"
-                    d="M0,0,2.371,54.718V90.347l1.478,46.287V257.838L0,169.242V0Z"
-                    transform="translate(0.828 0)"
-                    fill="url(#linear-gradient)"
+                    transform="translate(.828)"
                   />
                 </g>
               </g>
-            </g>
-            <g clipPath="url(#clip-path)" data-name="Mask Group 2" transform="translate(259.708 290.372)">
-              <g filter="url(#Rectangle_2301)" transform="translate(-259.71 -290.37)">
-                <g style={{ position: 'relative', cursor: 'pointer' }} data-name="Rectangle 2301" transform="translate(260 290)">
-                  <foreignObject height="695" width="440">
-                    <AutIdCard avatar={holderData?.image as string} />
-                  </foreignObject>
+              <g data-name="Layer 1" transform="rotate(-90 27.616 -22.111)">
+                <g data-name="Group 4">
+                  <path fill="#bfbfbf" d="M0 0l3.854 100.646L5.5 222.193 3.854 340.876z" data-name="Path 10" />
+                  <path
+                    fill="url(#linear-gradient)"
+                    d="M0 0l2.371 72.34v47.1l1.478 61.194v160.24L0 223.747V0z"
+                    data-name="Path 11"
+                    transform="translate(.828)"
+                  />
                 </g>
               </g>
-            </g>
-          </svg>
+              <g data-name="Layer 1" transform="rotate(-90 69.486 -15.808)">
+                <g data-name="Group 4">
+                  <path fill="#bfbfbf" d="M0 0l3.854 76.129L5.5 168.067l-1.646 89.771z" data-name="Path 10" />
+                  <path
+                    fill="url(#linear-gradient)"
+                    d="M0 0l2.371 54.718v35.629l1.478 46.287v121.204L0 169.242V0z"
+                    data-name="Path 11"
+                    transform="translate(.828)"
+                  />
+                </g>
+              </g>
+            </svg> */}
+
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              xmlnsXlink="http://www.w3.org/1999/xlink"
+              width="375.722"
+              height="439.391"
+              viewBox="0 0 375.722 439.391"
+            >
+              <defs>
+                <linearGradient id="linear-gradient" x2="1" y1="0.5" y2="0.5" gradientUnits="objectBoundingBox">
+                  <stop offset="0" stopColor="#009fe3" />
+                  <stop offset="0.08" stopColor="#0399de" />
+                  <stop offset="0.19" stopColor="#0e8bd3" />
+                  <stop offset="0.3" stopColor="#2072bf" />
+                  <stop offset="0.41" stopColor="#3a50a4" />
+                  <stop offset="0.53" stopColor="#5a2583" />
+                  <stop offset="0.71" stopColor="#453f94" />
+                  <stop offset="0.88" stopColor="#38519f" />
+                  <stop offset="1" stopColor="#3458a4" />
+                </linearGradient>
+                <clipPath id="clip-path">
+                  <path
+                    fill="#fff"
+                    stroke="#707070"
+                    strokeWidth="1"
+                    d="M0 0H206V325H0z"
+                    data-name="Rectangle 3377"
+                    transform="translate(-.06 -.325)"
+                  />
+                </clipPath>
+                <linearGradient id="linear-gradient-3" x1="0.061" x2="1.127" y1="0.343" y2="0.658" xlinkHref="#linear-gradient" />
+                <linearGradient id="linear-gradient-4" x1="0.063" x2="1.133" y1="0.343" y2="0.658" xlinkHref="#linear-gradient" />
+                <linearGradient id="linear-gradient-5" x1="-0.128" x2="1.167" y1="0.299" y2="0.619" xlinkHref="#linear-gradient" />
+                <linearGradient id="linear-gradient-6" x1="-0.137" x2="1.178" y1="0.298" y2="0.617" xlinkHref="#linear-gradient" />
+                <linearGradient id="linear-gradient-7" x1="-0.142" x2="0.952" y1="0.416" y2="0.559" xlinkHref="#linear-gradient" />
+                <linearGradient id="linear-gradient-8" x1="-0.156" x2="0.951" y1="0.418" y2="0.556" xlinkHref="#linear-gradient" />
+                <linearGradient id="linear-gradient-9" x1="0" y1="0.5" y2="0.5" xlinkHref="#linear-gradient" />
+                <linearGradient id="linear-gradient-10" x1="0" y1="0.5" y2="0.5" xlinkHref="#linear-gradient" />
+                <linearGradient id="linear-gradient-11" x2="1" y1="0.5" y2="0.5" gradientUnits="objectBoundingBox">
+                  <stop offset="0" stopColor="#0059a6" />
+                  <stop offset="0.1" stopColor="#0556a1" />
+                  <stop offset="0.22" stopColor="#134f93" />
+                  <stop offset="0.35" stopColor="#2c427d" />
+                  <stop offset="0.49" stopColor="#4e315e" />
+                  <stop offset="0.53" stopColor="#5a2c54" />
+                  <stop offset="0.67" stopColor="#353e75" />
+                  <stop offset="0.8" stopColor="#184c90" />
+                  <stop offset="0.92" stopColor="#0655a0" />
+                  <stop offset="1" stopColor="#0059a6" />
+                </linearGradient>
+                <linearGradient id="linear-gradient-13" x1="0" x2="1" y1="0.5" y2="0.5" xlinkHref="#linear-gradient-11" />
+                <linearGradient id="linear-gradient-14" x1="0" y1="0.5" y2="0.5" xlinkHref="#linear-gradient" />
+                <linearGradient id="linear-gradient-15" x1="0" x2="1" y1="0.5" y2="0.5" xlinkHref="#linear-gradient-11" />
+                <linearGradient id="linear-gradient-16" x1="0" x2="1" y1="0.5" y2="0.5" xlinkHref="#linear-gradient-11" />
+                <linearGradient id="linear-gradient-17" x1="0" y1="0.5" y2="0.5" xlinkHref="#linear-gradient" />
+                <linearGradient id="linear-gradient-18" x1="0" y1="0.5" y2="0.5" xlinkHref="#linear-gradient" />
+                <linearGradient id="linear-gradient-19" x1="0" x2="1" y1="0.5" y2="0.5" xlinkHref="#linear-gradient-11" />
+                <linearGradient id="linear-gradient-20" x1="0" x2="1.001" y1="0.5" y2="0.5" xlinkHref="#linear-gradient" />
+                <linearGradient id="linear-gradient-22" x1="0" x2="1.001" y1="0.5" y2="0.5" xlinkHref="#linear-gradient" />
+                <linearGradient id="linear-gradient-23" x1="-2.59" x2="-2.575" y1="-1.483" y2="-1.483" xlinkHref="#linear-gradient" />
+                <linearGradient id="linear-gradient-29" x1="0" y1="0.5" y2="0.5" xlinkHref="#linear-gradient" />
+                <linearGradient id="linear-gradient-33" x1="0" y1="0.501" y2="0.501" xlinkHref="#linear-gradient" />
+                <linearGradient id="linear-gradient-34" x1="0" x2="0.999" y1="0.5" y2="0.5" xlinkHref="#linear-gradient-11" />
+                <linearGradient id="linear-gradient-37" x1="0" y1="0.501" y2="0.501" xlinkHref="#linear-gradient" />
+              </defs>
+              <g data-name="Group 12379" transform="translate(-.134 -112.45)">
+                <path fill="#fff" d="M.5 404.557h-1V0h1z" data-name="Line 30" transform="translate(348.36 114.268)" />
+                <path fill="#fff" d="M.5 318.033h-1V0h1z" data-name="Line 32" transform="translate(308.139 162.908)" />
+                <path
+                  fill="#fff"
+                  d="M.366 173.325l-.731-.682L160.884-.341l.731.682z"
+                  data-name="Line 33"
+                  transform="translate(.5 378.516)"
+                />
+                <path fill="#fff" d="M49.576.5H0v-1h49.576z" data-name="Line 34" transform="translate(161.75 378.516)" />
+                <path
+                  fill="#fff"
+                  d="M165.689 168.932L-.356.351l.712-.7L166.4 168.23z"
+                  data-name="Line 35"
+                  transform="translate(209.455 379.919)"
+                />
+                <g data-name="Layer 1" transform="rotate(-180 175.556 259.53)">
+                  <g data-name="Group 4">
+                    <path fill="#bfbfbf" d="M0 0l3.854 119.517L5.5 263.855 3.854 404.791z" data-name="Path 10" />
+                    <path
+                      fill="url(#linear-gradient)"
+                      d="M0 0l2.371 85.9v55.935l1.478 72.667v190.289L0 265.7V0z"
+                      data-name="Path 11"
+                      transform="translate(.828)"
+                    />
+                  </g>
+                </g>
+                <g data-name="Layer 1" transform="rotate(-180 155.446 240.47)">
+                  <g data-name="Group 4">
+                    <path fill="#bfbfbf" d="M0 0l3.854 93.9L5.5 207.3 3.854 318.033z" data-name="Path 10" />
+                    <path
+                      fill="url(#linear-gradient)"
+                      d="M0 0l2.371 67.492v43.947l1.478 57.093v149.5L0 208.753V0z"
+                      data-name="Path 11"
+                      transform="translate(.828)"
+                    />
+                  </g>
+                </g>
+                <g clipPath="url(#clip-path)" fill="transparent" data-name="Mask Group 5" transform="translate(83.463 203.998)">
+                  <path d="M0 0H206V325H0z" data-name="Rectangle 3376" transform="translate(-.06 -.325)" />
+                  <g stroke="#fff" strokeWidth="1" data-name="Rectangle 3376" transform="translate(-.06 -.325)">
+                    <foreignObject height="325" width="206">
+                      <AutIdCard avatar={holderData?.image as string} />
+                    </foreignObject>
+                  </g>
+                </g>
+                <path fill="#fff" d="M.5 404.557h-1V0h1z" data-name="Line 29" transform="translate(28.456 114.268)" />
+                <path fill="#fff" d="M.5 318.033h-1V0h1z" data-name="Line 31" transform="translate(67.743 162.908)" />
+                <path fill="#fff" d="M240.4.5H0v-1h240.4z" data-name="Line 36" transform="translate(67.743 162.908)" />
+                <path fill="#fff" d="M319.9.5H0v-1h319.9z" data-name="Line 37" transform="translate(28.456 114.268)" />
+                <g data-name="Layer 1" transform="rotate(-180 15.605 260.3)">
+                  <g data-name="Group 4">
+                    <path fill="#bfbfbf" d="M0 0l3.854 119.972L5.5 264.859 3.854 406.332z" data-name="Path 10" />
+                    <path
+                      fill="url(#linear-gradient)"
+                      d="M0 0l2.371 86.23v56.148l1.478 72.944v191.01L0 266.711V0z"
+                      data-name="Path 11"
+                      transform="translate(.828)"
+                    />
+                  </g>
+                </g>
+                <g data-name="Layer 1" transform="rotate(-180 15.605 259.53)">
+                  <g data-name="Group 4">
+                    <path fill="#bfbfbf" d="M0 0l3.854 119.517L5.5 263.855 3.854 404.791z" data-name="Path 10" />
+                    <path
+                      fill="url(#linear-gradient)"
+                      d="M0 0l2.371 85.9v55.935l1.478 72.667v190.289L0 265.7V0z"
+                      data-name="Path 11"
+                      transform="translate(.828)"
+                    />
+                  </g>
+                </g>
+                <g data-name="Layer 1" transform="rotate(-180 33.844 240.47)">
+                  <g data-name="Group 4">
+                    <path fill="#bfbfbf" d="M0 0l3.854 93.9L5.5 207.3 3.854 318.033z" data-name="Path 10" />
+                    <path
+                      fill="url(#linear-gradient)"
+                      d="M0 0l2.371 67.492v43.947l1.478 57.093v149.5L0 208.753V0z"
+                      data-name="Path 11"
+                      transform="translate(.828)"
+                    />
+                  </g>
+                </g>
+                <g data-name="Layer 1" transform="rotate(-90 67.72 50.235)">
+                  <g data-name="Group 4">
+                    <path fill="#bfbfbf" d="M0 0l3.854 100.646L5.5 222.193 3.854 340.876z" data-name="Path 10" />
+                    <path
+                      fill="url(#linear-gradient)"
+                      d="M0 0l2.371 72.34v47.1l1.478 61.194v160.24L0 223.747V0z"
+                      data-name="Path 11"
+                      transform="translate(.828)"
+                    />
+                  </g>
+                </g>
+                <g data-name="Layer 1" transform="rotate(-90 109.59 56.537)">
+                  <g data-name="Group 4">
+                    <path fill="#bfbfbf" d="M0 0l3.854 76.129L5.5 168.067l-1.646 89.771z" data-name="Path 10" />
+                    <path
+                      fill="url(#linear-gradient)"
+                      d="M0 0l2.371 54.718v35.629l1.478 46.287v121.204L0 169.242V0z"
+                      data-name="Path 11"
+                      transform="translate(.828)"
+                    />
+                  </g>
+                </g>
+              </g>
+            </svg>
+          </Box>
         </AutRightMobileContainer>
       )}
     </>

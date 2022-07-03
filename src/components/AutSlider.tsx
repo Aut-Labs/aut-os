@@ -58,6 +58,12 @@ const StyledSlider = styled(Slider)({
   borderStyle: 'solid',
   padding: '0',
 
+  '@media(max-width: 769px)': {
+    alignContent: 'center',
+    justifyContent: 'center',
+    width: '100%',
+  },
+
   'span[data-index="10"].MuiSlider-mark': {
     display: 'none',
   },
@@ -109,7 +115,7 @@ export const AutSlider = (props: AutSliderProps) => {
     >
       <CommitmentMessage value={props.value} />
       <div style={{ position: 'relative' }}>
-        <StyledSlider {...props.sliderProps} />
+        <StyledSlider className="swiper-no-swiping" {...props.sliderProps} />
       </div>
       <div style={{ marginTop: '-3px', display: 'flex', justifyContent: 'flex-end' }}>
         <FormHelperText errorTypes={errorTypes} value={props.value} name={props.name} errors={props.errors} />
