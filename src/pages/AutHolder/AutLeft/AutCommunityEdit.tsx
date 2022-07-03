@@ -8,14 +8,14 @@ import { ReactComponent as UploadIcon } from '@assets/upload.svg';
 import { AutButton } from '@components/AutButton';
 import { useHistory, useLocation, useParams } from 'react-router-dom';
 import { AutSlider } from '@components/AutSlider';
-import ErrorDialog from '@components/ErrorPopup';
-import LoadingDialog from '@components/LoadingPopup';
 import { useSelector } from 'react-redux';
 import { UpdateErrorMessage, updateHolderState, UpdateStatus } from '@store/holder/holder.reducer';
 import { useAppDispatch } from '@store/store.model';
 import { ResultState } from '@store/result-status';
 import { useEffect } from 'react';
 import { editCommitment } from '@api/holder.api';
+import ErrorDialog from '@components/Dialog/ErrorPopup';
+import LoadingDialog from '@components/Dialog/LoadingPopup';
 
 const AutCommunityEdit = (props) => {
   const dispatch = useAppDispatch();
