@@ -1,9 +1,11 @@
 import { AutIDContractEventType, Web3AutIDProvider } from '@skill-wallet/sw-abi-types';
 import axios from 'axios';
+import { isBase64 } from 'sw-web-shared';
 import { HolderData, ipfsCIDToHttpUrl } from './api.model';
 import { AutID } from './aut.model';
 import { Community } from './community.model';
 import { environment } from './environment';
+import { storeAsBlob, storeImageAsBlob } from './storage.api';
 import { Web3ThunkProviderFactory } from './ProviderFactory/web3-thunk.provider';
 
 export const fetchHolderData = (holderName: string): Promise<AutID> => {
@@ -72,6 +74,29 @@ export const withdraw = autIDProvider(
   async (contract, communityAddress) => {
     const response = await contract.withdraw(communityAddress);
     return response;
+  }
+);
+
+export const updateProfile = autIDProvider(
+  {
+    type: 'holder/update',
+  },
+  () => Promise.resolve(environment.autIDAddress),
+  async (contract, user) => {
+    if (user.image && isBase64(user.image)) {
+      user.image = await storeImageAsBlob(user.image as File);
+    }
+
+    const newUser = new AutID(user);
+    delete newUser.properties.communities;
+    delete newUser.properties.tokenId;
+    delete newUser.properties.address;
+    debugger;
+
+    const uri = await storeAsBlob(newUser);
+    console.log('New metadata: ->', ipfsCIDToHttpUrl(uri));
+    const response = await contract.setMetadataUri(uri);
+    return user;
   }
 );
 

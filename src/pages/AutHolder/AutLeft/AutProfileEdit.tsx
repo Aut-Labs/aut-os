@@ -5,16 +5,31 @@ import { ReactComponent as GitHubIcon } from '@assets/SocialIcons/GitHubIcon.svg
 import { ReactComponent as LeafIcon } from '@assets/SocialIcons/LeafIcon.svg';
 import { ReactComponent as TelegramIcon } from '@assets/SocialIcons/TelegramIcon.svg';
 import { ReactComponent as TwitterIcon } from '@assets/SocialIcons/TwitterIcon.svg';
-import { AutTextField } from '@components/Fields/AutFields';
+import { AutTextField, FormHelperText } from '@components/Fields/AutFields';
 import AFileUpload from '@components/Fields/AutFileUpload';
 import { Box, styled, SvgIcon, Typography, useMediaQuery } from '@mui/material';
 import { pxToRem } from '@utils/text-size';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useForm, useFieldArray } from 'react-hook-form';
 import { toBase64 } from 'sw-web-shared';
 import { AutButton } from '@components/AutButton';
 import { useHistory, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { HolderData } from '@store/holder/holder.reducer';
+import { HolderData, UpdateErrorMessage, updateHolderState, UpdateStatus } from '@store/holder/holder.reducer';
+import { useAppDispatch } from '@store/store.model';
+import { updateProfile } from '@api/holder.api';
+import { AutID } from '@api/aut.model';
+import ErrorDialog from '@components/Dialog/ErrorPopup';
+import LoadingDialog from '@components/Dialog/LoadingPopup';
+import { ResultState } from '@store/result-status';
+
+const socialIcons = {
+  eth: EthIcon,
+  discord: DiscordIcon,
+  github: GitHubIcon,
+  telegram: TelegramIcon,
+  twitter: TwitterIcon,
+  leaf: LeafIcon,
+};
 
 const ImageUpload = styled('div')(({ theme }) => ({
   width: pxToRem(160),
@@ -141,22 +156,14 @@ const FieldWrapper = styled('div')({
 });
 
 const AutProfileEdit = (props) => {
+  const dispatch = useAppDispatch();
   const location = useLocation();
   const history = useHistory();
   const desktop = useMediaQuery('(min-width:1200px)');
   const xs = useMediaQuery('(max-width:360px)');
   const holderData = useSelector(HolderData);
-
-  const profile = {
-    name: 'Eulalie',
-    eth: 'eulalie.eth',
-    discord: '',
-    github: '',
-    twitter: '',
-    telegram: '',
-    leaf: '',
-    image: 'https://i.picsum.photos/id/417/150/150.jpg?hmac=yboAtr7dmL8WFVtIjh85ksGN27GFgp2VbyYBdFtiEKs',
-  };
+  const status = useSelector(UpdateStatus);
+  const errorMessage = useSelector(UpdateErrorMessage);
 
   const {
     control,
@@ -166,25 +173,47 @@ const AutProfileEdit = (props) => {
   } = useForm({
     mode: 'onChange',
     defaultValues: {
-      name: profile?.name,
-      eth: profile?.eth,
-      discord: profile.discord,
-      github: profile.github,
-      twitter: profile?.twitter,
-      telegram: profile?.telegram,
-      leaf: profile.leaf,
-      image: profile.image,
+      name: holderData?.name,
+      image: holderData.image,
+      socials: holderData.properties.socials,
     },
+  });
+
+  const { fields } = useFieldArray({
+    control,
+    name: 'socials',
   });
 
   const values = watch();
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: typeof values) => {
     // edit profile
+    console.log(data, 'data');
+    dispatch(
+      updateProfile({
+        name: data.name,
+        image: data.image,
+        ...holderData,
+        properties: {
+          ...holderData.properties,
+          socials: data.socials,
+        },
+      } as AutID)
+    );
+  };
+
+  const handleDialogClose = () => {
+    dispatch(
+      updateHolderState({
+        status: ResultState.Idle,
+      })
+    );
   };
 
   return (
     <FormWrapper autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
+      <ErrorDialog handleClose={handleDialogClose} open={status === ResultState.Failed} message={errorMessage} />
+      <LoadingDialog handleClose={handleDialogClose} open={status === ResultState.Loading} message="Editing community..." />
       <TopWrapper
         sx={{
           paddingLeft: desktop ? pxToRem(100) : !xs ? pxToRem(50) : pxToRem(30),
@@ -231,201 +260,48 @@ const AutProfileEdit = (props) => {
               }}
             />
           </FieldWrapper>
-          <FieldWrapper>
-            <SvgIcon
-              sx={{
-                height: pxToRem(35),
-                mr: pxToRem(20),
-                width: pxToRem(31),
-              }}
-              component={EthIcon}
-            />
-            <Controller
-              name="eth"
-              control={control}
-              rules={{
-                required: true,
-              }}
-              render={({ field: { name, value, onChange } }) => {
-                return (
-                  <AutTextField
-                    width="80%"
-                    required
-                    name={name}
-                    value={value || ''}
-                    onChange={onChange}
-                    placeholder="Eth Address"
-                    sx={{
-                      mb: pxToRem(45),
-                    }}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                  />
-                );
-              }}
-            />
-          </FieldWrapper>
-          <FieldWrapper>
-            <SvgIcon
-              sx={{
-                height: pxToRem(34),
-                width: pxToRem(31),
-                mr: pxToRem(20),
-              }}
-              component={DiscordIcon}
-            />
-            <Controller
-              name="discord"
-              control={control}
-              rules={{
-                required: true,
-              }}
-              render={({ field: { name, value, onChange } }) => {
-                return (
-                  <AutTextField
-                    width="80%"
-                    required
-                    name={name}
-                    value={value || ''}
-                    onChange={onChange}
-                    placeholder="Discord"
-                    sx={{
-                      mb: pxToRem(45),
-                    }}
-                  />
-                );
-              }}
-            />
-          </FieldWrapper>
-          <FieldWrapper>
-            <SvgIcon
-              sx={{
-                height: pxToRem(34),
-                width: pxToRem(31),
-                mr: pxToRem(20),
-              }}
-              component={GitHubIcon}
-            />
-            <Controller
-              name="github"
-              control={control}
-              rules={{
-                required: true,
-              }}
-              render={({ field: { name, value, onChange } }) => {
-                return (
-                  <AutTextField
-                    width="80%"
-                    required
-                    name={name}
-                    value={value || ''}
-                    onChange={onChange}
-                    placeholder="GitHub"
-                    sx={{
-                      mb: pxToRem(45),
-                    }}
-                  />
-                );
-              }}
-            />
-          </FieldWrapper>
-          <FieldWrapper>
-            <SvgIcon
-              sx={{
-                height: pxToRem(34),
-                width: pxToRem(31),
-                mr: pxToRem(20),
-              }}
-              component={TwitterIcon}
-            />
-            <Controller
-              name="twitter"
-              control={control}
-              rules={{
-                required: true,
-              }}
-              render={({ field: { name, value, onChange } }) => {
-                return (
-                  <AutTextField
-                    width="80%"
-                    required
-                    name={name}
-                    value={value || ''}
-                    onChange={onChange}
-                    placeholder="Twitter"
-                    sx={{
-                      mb: pxToRem(45),
-                    }}
-                  />
-                );
-              }}
-            />
-          </FieldWrapper>
-          <FieldWrapper>
-            <SvgIcon
-              sx={{
-                height: pxToRem(34),
-                width: pxToRem(31),
-                mr: pxToRem(20),
-              }}
-              component={TelegramIcon}
-            />
-            <Controller
-              name="telegram"
-              control={control}
-              rules={{
-                required: true,
-              }}
-              render={({ field: { name, value, onChange } }) => {
-                return (
-                  <AutTextField
-                    width="80%"
-                    required
-                    name={name}
-                    value={value || ''}
-                    onChange={onChange}
-                    placeholder="Telegram"
-                    sx={{
-                      mb: pxToRem(45),
-                    }}
-                  />
-                );
-              }}
-            />
-          </FieldWrapper>
-          <FieldWrapper>
-            <SvgIcon
-              sx={{
-                height: pxToRem(34),
-                width: pxToRem(31),
-                mr: pxToRem(20),
-              }}
-              component={LeafIcon}
-            />
-            <Controller
-              name="leaf"
-              control={control}
-              rules={{
-                required: true,
-              }}
-              render={({ field: { name, value, onChange } }) => {
-                return (
-                  <AutTextField
-                    width="80%"
-                    required
-                    name={name}
-                    value={value || ''}
-                    onChange={onChange}
-                    placeholder="Leaf"
-                    sx={{
-                      mb: pxToRem(45),
-                    }}
-                  />
-                );
-              }}
-            />
-          </FieldWrapper>
+          {fields.map((_, index) => {
+            const AutIcon = socialIcons[Object.keys(socialIcons)[index]];
+            return (
+              <FieldWrapper key={`socials.${index}`}>
+                <SvgIcon
+                  sx={{
+                    height: pxToRem(34),
+                    width: pxToRem(34),
+                    mt: pxToRem(10),
+                    mr: pxToRem(20),
+                  }}
+                  key={`socials.${index}.icon`}
+                  component={AutIcon}
+                />
+                <Controller
+                  key={`socials.${index}.link`}
+                  name={`socials.${index}.link`}
+                  control={control}
+                  render={({ field: { name, value, onChange } }) => {
+                    return (
+                      <>
+                        <AutTextField
+                          placeholder="Link"
+                          variant="standard"
+                          focused
+                          id={name}
+                          name={name}
+                          value={value}
+                          width="80%"
+                          autoFocus={index === 0}
+                          onChange={onChange}
+                          sx={{
+                            mb: pxToRem(45),
+                          }}
+                        />
+                      </>
+                    );
+                  }}
+                />
+              </FieldWrapper>
+            );
+          })}
         </LeftWrapper>
         <RightWrapper>
           <ImageUpload>

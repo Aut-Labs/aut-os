@@ -1,6 +1,38 @@
 import { BaseNFTModel, ipfsCIDToHttpUrl } from './api.model';
 import { Community } from './community.model';
 
+export interface AutSocial {
+  type: string;
+  link: string;
+}
+
+export const DefaultSocials: AutSocial[] = [
+  {
+    type: 'eth',
+    link: '',
+  },
+  {
+    type: 'discord',
+    link: '',
+  },
+  {
+    type: 'github',
+    link: '',
+  },
+  {
+    type: 'twitter',
+    link: '',
+  },
+  {
+    type: 'telegram',
+    link: '',
+  },
+  {
+    type: 'leaf',
+    link: '',
+  },
+];
+
 export class AutIDProperties {
   avatar: string;
 
@@ -12,15 +44,19 @@ export class AutIDProperties {
 
   tokenId: string;
 
+  socials: AutSocial[];
+
   constructor(data: AutIDProperties) {
     if (!data) {
       this.communities = [];
+      this.socials = [];
     } else {
       this.timestamp = data.timestamp;
       this.avatar = ipfsCIDToHttpUrl(data.avatar);
       this.address = data.address;
       this.tokenId = data.tokenId;
       this.communities = (data.communities || []).map((community) => new Community(community));
+      this.socials = data.socials || DefaultSocials;
     }
   }
 }

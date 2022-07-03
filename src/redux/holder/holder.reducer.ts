@@ -1,7 +1,7 @@
 import { ResultState } from '@store/result-status';
 import { createAsyncThunk, createSelector, createSlice } from '@reduxjs/toolkit';
 import { AutID } from '@api/aut.model';
-import { editCommitment, fetchHolderData, withdraw } from '@api/holder.api';
+import { editCommitment, fetchHolderData, updateProfile, withdraw } from '@api/holder.api';
 import { ErrorParser } from '@utils/error-parser';
 import { CommitmentMessages } from '@api/community.model';
 
@@ -80,6 +80,18 @@ export const holderSlice = createSlice({
         state.status = ResultState.Idle;
       })
       .addCase(withdraw.rejected, (state, action) => {
+        state.status = ResultState.Failed;
+        state.errorMessage = action.payload as string;
+      })
+      // update
+      .addCase(updateProfile.pending, (state) => {
+        state.status = ResultState.Loading;
+      })
+      .addCase(updateProfile.fulfilled, (state, action) => {
+        state.status = ResultState.Idle;
+        state.autID = action.payload;
+      })
+      .addCase(updateProfile.rejected, (state, action) => {
         state.status = ResultState.Failed;
         state.errorMessage = action.payload as string;
       });
