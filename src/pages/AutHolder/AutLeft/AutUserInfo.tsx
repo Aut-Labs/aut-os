@@ -15,6 +15,7 @@ import { useSelector } from 'react-redux';
 import { HolderData, HolderStatus } from '@store/holder/holder.reducer';
 import { IsAuthenticated } from '@auth/auth.reducer';
 import { ResultState } from '@store/result-status';
+import CopyAddress from '@components/CopyAddress';
 
 const AutTable = styled('table')(({ theme }) => ({
   width: '100%',
@@ -52,7 +53,7 @@ const AutTable = styled('table')(({ theme }) => ({
   },
 }));
 const IconContainer = styled('div')(({ theme }) => ({
-  paddingTop: pxToRem(40),
+  paddingTop: pxToRem(15),
   display: 'flex',
 
   '@media(max-width: 769px)': {
@@ -115,9 +116,8 @@ const AutUserInfo = ({ match }) => {
                     <Avatar
                       sx={{ bgcolor: 'background.default', width: pxToRem(150), height: pxToRem(150), borderRadius: 0 }}
                       aria-label="recipe"
-                    >
-                      <img alt="Avatar" src={holderData.image as string} style={{ width: 'auto', height: pxToRem(150) }} />
-                    </Avatar>
+                      src={holderData.image as string}
+                    />
                   }
                 />
                 <CardContent sx={{ ml: xs ? '0' : pxToRem(30), mr: xs ? 0 : pxToRem(30), alignSelf: 'flex-end' }}>
@@ -131,15 +131,17 @@ const AutUserInfo = ({ match }) => {
                       </div>
                     )}
                   </div>
-
-                  <Typography
-                    variant="h2"
-                    color="background.paper"
-                    textAlign="left"
-                    sx={{ textDecoration: 'underline', wordBreak: 'break-all' }}
-                  >
-                    {holderData.properties.address}
-                  </Typography>
+                  <CopyAddress address={holderData.properties.address} />
+                  {holderData.properties.ethDomain && (
+                    <Typography
+                      variant="h2"
+                      color="background.paper"
+                      textAlign="left"
+                      sx={{ textDecoration: 'underline', wordBreak: 'break-all' }}
+                    >
+                      {holderData.properties.ethDomain}
+                    </Typography>
+                  )}
                   <IconContainer>
                     <SvgIcon
                       sx={{
@@ -233,9 +235,7 @@ const AutUserInfo = ({ match }) => {
                         <Typography variant="h2" color="background.paper" sx={{ pb: '5px' }}>
                           {name}
                         </Typography>
-                        <Typography variant="h5" color="background.paper">
-                          {properties.address}
-                        </Typography>
+                        <CopyAddress address={properties.address} />
                       </td>
                       <td>
                         <Typography variant="h2" color="background.paper">

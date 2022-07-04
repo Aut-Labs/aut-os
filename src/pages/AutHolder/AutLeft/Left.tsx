@@ -31,7 +31,7 @@ const AutLeft = ({ match }) => {
   const desktop = useMediaQuery('(min-width:769px)');
 
   return (
-    <AutLeftContainer style={{ width: desktop ? '50%' : '100%', height: '100%' }}>
+    <AutLeftContainer style={{ width: desktop && status === ResultState.Success ? '50%' : '100%', height: '100%' }}>
       <>
         <AutToolBar hideWebComponent={!desktop} />
       </>

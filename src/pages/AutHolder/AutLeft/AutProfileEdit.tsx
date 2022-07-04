@@ -5,7 +5,7 @@ import { ReactComponent as GitHubIcon } from '@assets/SocialIcons/GitHubIcon.svg
 import { ReactComponent as LeafIcon } from '@assets/SocialIcons/LeafIcon.svg';
 import { ReactComponent as TelegramIcon } from '@assets/SocialIcons/TelegramIcon.svg';
 import { ReactComponent as TwitterIcon } from '@assets/SocialIcons/TwitterIcon.svg';
-import { AutTextField, FormHelperText } from '@components/Fields/AutFields';
+import { AutTextField } from '@components/Fields/AutFields';
 import AFileUpload from '@components/Fields/AutFileUpload';
 import { Box, styled, SvgIcon, Typography, useMediaQuery } from '@mui/material';
 import { pxToRem } from '@utils/text-size';
@@ -23,7 +23,7 @@ import LoadingDialog from '@components/Dialog/LoadingPopup';
 import { ResultState } from '@store/result-status';
 
 const socialIcons = {
-  eth: EthIcon,
+  // eth: EthIcon,
   discord: DiscordIcon,
   github: GitHubIcon,
   telegram: TelegramIcon,
@@ -283,7 +283,6 @@ const AutProfileEdit = (props) => {
                       <>
                         <AutTextField
                           placeholder="Link"
-                          variant="standard"
                           focused
                           id={name}
                           name={name}
@@ -340,7 +339,7 @@ const AutProfileEdit = (props) => {
             width: desktop ? pxToRem(250) : pxToRem(150),
             height: pxToRem(50),
           }}
-          type="submit"
+          type="button"
           color="primary"
           variant="outlined"
         >

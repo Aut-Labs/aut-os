@@ -1,6 +1,7 @@
 import { AutIDContractEventType, Web3AutIDProvider } from '@skill-wallet/sw-abi-types';
 import axios from 'axios';
 import { isBase64 } from 'sw-web-shared';
+import { ethers } from 'ethers';
 import { HolderData, ipfsCIDToHttpUrl } from './api.model';
 import { AutID } from './aut.model';
 import { Community } from './community.model';
@@ -8,17 +9,36 @@ import { environment } from './environment';
 import { storeAsBlob, storeImageAsBlob } from './storage.api';
 import { Web3ThunkProviderFactory } from './ProviderFactory/web3-thunk.provider';
 
-export const fetchHolderData = (holderName: string): Promise<AutID> => {
+const autIDProvider = Web3ThunkProviderFactory('AutID', {
+  provider: Web3AutIDProvider,
+});
+
+export const fetchHolderEthEns = async (address = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045') => {
+  if (typeof window.ethereum !== 'undefined') {
+    try {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      return await provider.lookupAddress(address);
+    } catch (error) {
+      return null;
+    }
+  } else {
+    return null;
+  }
+};
+
+export const fetchHolderData = async (holderName: string): Promise<AutID> => {
   return axios
     .get<HolderData>(`${environment.apiUrl}/autID/${holderName}`)
     .then((res) => res.data)
     .then(async (data) => {
       const userMetadataUri = ipfsCIDToHttpUrl(data.metadataUri);
       const userMetadata: AutID = (await axios.get(userMetadataUri)).data;
+      const ethDomain = await fetchHolderEthEns(userMetadata.properties.address);
       const autID = new AutID({
         ...userMetadata,
         properties: {
           ...userMetadata.properties,
+          ethDomain,
           address: data.address,
           tokenId: data.tokenId,
         },
@@ -46,10 +66,6 @@ export const fetchHolderData = (holderName: string): Promise<AutID> => {
       return autID;
     });
 };
-
-const autIDProvider = Web3ThunkProviderFactory('AutID', {
-  provider: Web3AutIDProvider,
-});
 
 export const editCommitment = autIDProvider(
   {

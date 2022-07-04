@@ -7,10 +7,10 @@ export interface AutSocial {
 }
 
 export const DefaultSocials: AutSocial[] = [
-  {
-    type: 'eth',
-    link: '',
-  },
+  // {
+  //   type: 'eth',
+  //   link: '',
+  // },
   {
     type: 'discord',
     link: '',
@@ -46,6 +46,8 @@ export class AutIDProperties {
 
   socials: AutSocial[];
 
+  ethDomain?: string;
+
   constructor(data: AutIDProperties) {
     if (!data) {
       this.communities = [];
@@ -56,7 +58,9 @@ export class AutIDProperties {
       this.address = data.address;
       this.tokenId = data.tokenId;
       this.communities = (data.communities || []).map((community) => new Community(community));
+      this.ethDomain = data.ethDomain;
       this.socials = data.socials || DefaultSocials;
+      this.socials = this.socials.filter((s) => s.type !== 'eth');
     }
   }
 }

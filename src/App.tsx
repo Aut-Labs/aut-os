@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
 import { withRouter, Switch, Route, Redirect as RedirectRoute, useLocation, useHistory, useParams } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 import { Box, CssBaseline, useMediaQuery } from '@mui/material';
 import { useAppDispatch } from '@store/store.model';
 import { ReactComponent as AutLogo } from '@assets/AutLogo.svg';
 import NotFound from '@components/NotFound';
 import { ResultState } from '@store/result-status';
 import { updateHolderState } from '@store/holder/holder.reducer';
-import { IsAuthenticated, resetAuthState, setAuthenticated } from '@auth/auth.reducer';
+import { resetAuthState, setAuthenticated } from '@auth/auth.reducer';
 import { Init } from 'd-aut-alpha';
+import { fetchHolderEthEns } from '@api/holder.api';
 import { pxToRem } from '@utils/text-size';
 import { AutID } from '@api/aut.model';
 import AutHolder from './pages/AutHolder/AutHolder';
@@ -41,6 +41,9 @@ function App() {
   useEffect(() => {
     const onSWLogin = async ({ detail }: any) => {
       const autID = new AutID(detail);
+      autID.properties.address = window.ethereum.selectedAddress;
+      const ethDomain = await fetchHolderEthEns(autID.properties.address);
+      autID.properties.ethDomain = ethDomain;
       await dispatch(
         setAuthenticated({
           isAuthenticated: true,

@@ -1,10 +1,6 @@
-import { AutTextField, FormHelperText } from '@components/Fields/AutFields';
-import AFileUpload from '@components/Fields/AutFileUpload';
-import { Avatar, Box, Button, Card, CardContent, CardHeader, styled, SvgIcon, Typography, useMediaQuery } from '@mui/material';
+import { Avatar, Box, Button, Card, CardContent, CardHeader, styled, Typography, useMediaQuery } from '@mui/material';
 import { pxToRem } from '@utils/text-size';
 import { Controller, useForm } from 'react-hook-form';
-import { SwUploadFile, toBase64 } from 'sw-web-shared';
-import { ReactComponent as UploadIcon } from '@assets/upload.svg';
 import { AutButton } from '@components/AutButton';
 import { useHistory, useLocation, useParams } from 'react-router-dom';
 import { AutSlider } from '@components/AutSlider';
@@ -16,6 +12,7 @@ import { useEffect } from 'react';
 import { editCommitment, withdraw } from '@api/holder.api';
 import ErrorDialog from '@components/Dialog/ErrorPopup';
 import LoadingDialog from '@components/Dialog/LoadingPopup';
+import CopyAddress from '@components/CopyAddress';
 
 const AutCard = styled(Card)(({ theme }) => ({
   '&.MuiCard-root': {
@@ -46,19 +43,16 @@ const BottomWrapper = styled('div')(({ theme }) => ({
   },
 }));
 
-const AutCommunityEdit = (props) => {
+const AutCommunityEdit = () => {
   const dispatch = useAppDispatch();
 
   const desktop = useMediaQuery('(min-width:769px)');
   const xs = useMediaQuery('(max-width:360px)');
-  const location = useLocation();
   const params = useParams<{ communityAddress: string }>();
   const selectedCommunity = useSelector(SelectedCommunity(params.communityAddress));
   const history = useHistory();
   const status = useSelector(UpdateStatus);
   const errorMessage = useSelector(UpdateErrorMessage);
-
-  console.log('selectedCommunity', selectedCommunity);
 
   const {
     control,
@@ -161,9 +155,8 @@ const AutCommunityEdit = (props) => {
                 <Avatar
                   sx={{ bgcolor: 'background.default', width: pxToRem(110), height: pxToRem(110), borderRadius: 0 }}
                   aria-label="community-avatar"
-                >
-                  <img alt="Avatar" src={selectedCommunity?.image as string} style={{ width: 'auto', height: pxToRem(110) }} />
-                </Avatar>
+                  src={selectedCommunity.image as string}
+                />
               }
             />
             <CardContent
@@ -182,7 +175,7 @@ const AutCommunityEdit = (props) => {
                   {selectedCommunity?.name}
                 </Typography>
               </div>
-
+              <CopyAddress address={selectedCommunity.properties.address} />
               <Typography variant="h2" color="background.paper" textAlign="left" sx={{ textWrap: 'wrap' }}>
                 {selectedCommunity?.properties?.market}
               </Typography>
@@ -236,7 +229,7 @@ const AutCommunityEdit = (props) => {
               width: desktop ? pxToRem(250) : pxToRem(150),
               height: pxToRem(50),
             }}
-            type="submit"
+            type="button"
             color="primary"
             variant="outlined"
           >
