@@ -86,9 +86,6 @@ const AutUserInfo = ({ match }) => {
   const [isActiveIndex, setIsActiveIndex] = useState(null);
   const history = useHistory();
 
-  console.log(holderData, 'HOLDENDATA');
-  const { socials } = holderData.properties;
-
   const socialIcons = {
     discord: DiscordIcon,
     github: GitHubIcon,
@@ -155,20 +152,24 @@ const AutUserInfo = ({ match }) => {
                     </Typography>
                   )}
                   <IconContainer>
-                    {socials.map((social, index) => {
+                    {holderData?.properties.socials.map((social, index) => {
                       const AutIcon = socialIcons[Object.keys(socialIcons)[index]];
                       return (
-                        <Link href={social.link} target="_blank" component="a">
-                          <SvgIcon
-                            sx={{
-                              height: pxToRem(34),
-                              width: pxToRem(31),
-                              mr: pxToRem(20),
-                            }}
-                            key={`socials.${index}.icon`}
-                            component={AutIcon}
-                          />
-                        </Link>
+                        <>
+                          {social.link && (
+                            <Link key={`social-icon-${index}`} href={social.link} target="_blank" component="a">
+                              <SvgIcon
+                                sx={{
+                                  height: pxToRem(34),
+                                  width: pxToRem(31),
+                                  mr: pxToRem(20),
+                                }}
+                                key={`socials.${index}.icon`}
+                                component={AutIcon}
+                              />
+                            </Link>
+                          )}
+                        </>
                       );
                     })}
                   </IconContainer>

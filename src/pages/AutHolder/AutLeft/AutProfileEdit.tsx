@@ -187,16 +187,14 @@ const AutProfileEdit = (props) => {
   const values = watch();
 
   const onSubmit = (data: typeof values) => {
-    // edit profile
-    console.log(data, 'data');
     dispatch(
       updateProfile({
-        name: data.name,
-        image: data.image,
         ...holderData,
+        name: data.name,
         properties: {
           ...holderData.properties,
           socials: data.socials,
+          avatar: data.image,
         },
       } as AutID)
     );

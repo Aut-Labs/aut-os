@@ -5,7 +5,7 @@ import { useAppDispatch } from '@store/store.model';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { Box, styled, useMediaQuery, useTheme } from '@mui/material';
+import { styled, useMediaQuery } from '@mui/material';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
