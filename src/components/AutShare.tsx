@@ -1,32 +1,44 @@
-import { Dialog, DialogContent, Typography } from '@mui/material';
+import { Dialog, DialogContent, styled, Typography, useMediaQuery } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { TwitterShareButton } from 'react-share';
 import { pxToRem } from '@utils/text-size';
-import { AutButton } from './AutButton';
+import { AutButton } from '@components/AutButton';
 
 export interface SimpleDialogProps {
   title: string;
   url: string;
-  description?: string;
+  description?: JSX.Element;
   open?: boolean;
   onClose?: () => void;
   twitterProps?: any;
-  rightSide: JSX.Element;
   hideCloseBtn?: boolean;
 }
 
+const AutStyledDialog = styled(Dialog)(({ theme }) => ({
+  '@media(max-width: 769px)': {
+    '.MuiPaper-root': {
+      margin: '0',
+      opacity: '0.8',
+      border: 'none',
+    },
+  },
+}));
+
 const AutShare = (props: SimpleDialogProps) => {
+  const desktop = useMediaQuery('(min-width:769px)');
+
   const { onClose, title, description, url, twitterProps, hideCloseBtn } = props;
   return (
     <div
       style={{
-        width: pxToRem(700),
-        minHeight: pxToRem(400),
+        width: desktop ? pxToRem(700) : '100%',
+        minHeight: desktop ? pxToRem(400) : '100%',
         display: 'flex',
         position: 'relative',
         flexDirection: 'column',
-        borderWidth: '5px',
+        borderWidth: desktop ? '5px' : '0px',
         backgroundColor: 'black',
+
         borderColor: '#439EDD',
         borderStyle: 'solid',
         padding: pxToRem(50),
@@ -48,6 +60,7 @@ const AutShare = (props: SimpleDialogProps) => {
       <div
         style={{
           display: 'flex',
+          height: '100%',
         }}
       >
         <div
@@ -56,21 +69,11 @@ const AutShare = (props: SimpleDialogProps) => {
             flexDirection: 'column',
             textAlign: 'left',
             flex: 1,
-            width: '50%',
+            width: '100%',
+            padding: pxToRem(30),
           }}
         >
-          <Typography color="white" component="span" fontSize={pxToRem(40)}>
-            Share
-          </Typography>
-
-          <Typography
-            sx={{
-              mt: '20px',
-            }}
-            color="white"
-            component="span"
-            fontSize={pxToRem(25)}
-          >
+          <Typography sx={{ textAlign: 'center', mb: pxToRem(30) }} color="white" component="span" fontSize={pxToRem(40)}>
             {title}
           </Typography>
 
@@ -79,7 +82,6 @@ const AutShare = (props: SimpleDialogProps) => {
               mt: '20px',
             }}
             color="white"
-            component="span"
             fontSize={pxToRem(18)}
           >
             {description}
@@ -89,9 +91,9 @@ const AutShare = (props: SimpleDialogProps) => {
             className="links"
             style={{
               display: 'flex',
-              justifyContent: 'space-between',
-              width: '330px',
-              margin: '10px auto 0 auto',
+              justifyContent: 'center',
+              width: desktop ? '330px' : '100%',
+              margin: '30px auto 0 auto',
             }}
           >
             <TwitterShareButton url={url} className="social-button" {...twitterProps}>
@@ -114,26 +116,20 @@ const AutShare = (props: SimpleDialogProps) => {
             </TwitterShareButton>
           </div>
         </div>
-
-        <div
-          style={{
-            flex: 1,
-            width: '50%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          {props.rightSide}
-        </div>
       </div>
     </div>
   );
 };
 
 export function AutShareDialog(props: SimpleDialogProps) {
+  const desktop = useMediaQuery('(min-width:769px)');
   return (
-    <Dialog onClose={props.onClose} open={props.open}>
+    <AutStyledDialog
+      fullScreen={!desktop}
+      onClose={props.onClose}
+      open={props.open}
+      BackdropProps={{ style: { backdropFilter: 'blur(5px)' } }}
+    >
       <DialogContent
         sx={{
           border: 0,
@@ -142,7 +138,7 @@ export function AutShareDialog(props: SimpleDialogProps) {
       >
         <AutShare {...props} />
       </DialogContent>
-    </Dialog>
+    </AutStyledDialog>
   );
 }
 

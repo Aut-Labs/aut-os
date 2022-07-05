@@ -4,6 +4,10 @@ import { ReactComponent as ShareIcon } from '@assets/ShareIcon.svg';
 import { pxToRem } from '@utils/text-size';
 import { useSelector } from 'react-redux';
 import { HolderData } from '@store/holder/holder.reducer';
+import { useEffect, useState } from 'react';
+import { setOpenShare, setTitle } from '@store/ui-reducer';
+import { useAppDispatch } from '@store/store.model';
+import { AutShareDialog } from '@components/AutShare';
 import AutToolBar from '../AutLeft/AutToolBar';
 
 const CardTilt = styled('div')(({ theme }) => ({
@@ -12,38 +16,46 @@ const CardTilt = styled('div')(({ theme }) => ({
   background: theme.palette.background.paper,
   boxShadow: theme.shadows[1],
   position: 'relative',
-  width: 'calc(100% - 20px)',
-  height: 'calc(100% - 20px)',
+  width: 'calc(100% - 40px)',
+  height: 'calc(100% - 40px)',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  marginLeft: '10px',
-  marginTop: '10px',
+  marginLeft: '20px',
+  marginTop: '20px',
   backgroundColor: 'black',
   '@keyframes sw-card-tilt': {
     '0%': {
       transform: ' perspective(1200px) rotate3d(0, -0.5, 0, 0deg)',
       transformstyle: 'preserve-3d',
     },
-    '25%': {
+    '5%': {
       transform: 'perspective(1200px) rotate3d(0, -1, 0, 15deg)',
       transformstyle: 'preserve-3d',
     },
-    '50%': {
+    '10%': {
       transform: 'perspective(1200px) rotate3d(0, -0.5, 0, 0deg)',
       transformstyle: 'preserve-3d',
     },
-    '75%': {
+    '15%': {
       transform: 'perspective(1200px) rotate3d(0, -1, 0, 15deg)',
       transformstyle: 'preserve-3d',
     },
-    '100%': {
+    '20%': {
       transform: 'perspective(1200px) rotate3d(0, -1, 0, 0deg)',
       transformstyle: 'preserve-3d',
     },
   },
-  animation: `sw-card-tilt 3s linear infinite`,
+  animation: `sw-card-tilt 12s linear infinite`,
   animationDirection: 'normal',
+  animationDelay: '6s',
+
+  '@media(max-width: 769px)': {
+    width: 'calc(100% - 20px)',
+    height: 'calc(100% - 20px)',
+    marginLeft: '10px',
+    marginTop: '10px',
+  },
 }));
 
 const AutRightContainer = styled('div')(({ theme }) => ({
@@ -52,11 +64,6 @@ const AutRightContainer = styled('div')(({ theme }) => ({
 const AutRightMobileContainer = styled('div')(({ theme }) => ({
   width: '100%',
 }));
-
-const personCard = {
-  name: 'Eulalie',
-  description: '#1 | 18:02:36 | 28/01/22 ',
-};
 
 const AutIdCard = ({ avatar }) => {
   return (
@@ -69,25 +76,26 @@ const AutIdCard = ({ avatar }) => {
         }}
         src={avatar}
       />
-      <div style={{ position: 'fixed', bottom: '15px', right: '15px' }}>
+      {/* <div style={{ position: 'fixed', bottom: '15px', right: '15px' }}>
         <Typography fontSize={pxToRem(50)} color="background.paper" textAlign="left">
           {personCard.name}
         </Typography>
         <Typography variant="subtitle2" color="primary.main" textAlign="left">
           {personCard.description}
         </Typography>
-      </div>
+      </div> */}
     </CardTilt>
   );
 };
 
 const AutTunnelRight = () => {
+  const dispatch = useAppDispatch();
   const holderData = useSelector(HolderData);
   const desktop = useMediaQuery('(min-width:769px)');
+  const [open, setOpen] = useState(false);
 
-  const onShare = (data: any) => {
-    // share dialog profile
-    console.log('Share!!!!');
+  const handleClickOpen = () => {
+    dispatch(setOpenShare(true));
   };
 
   return (
@@ -107,7 +115,7 @@ const AutTunnelRight = () => {
                 cursor: 'pointer',
               }}
               component={ShareIcon}
-              onClick={onShare}
+              onClick={handleClickOpen}
             />
           </>
           <svg
@@ -316,7 +324,7 @@ const AutTunnelRight = () => {
                 cursor: 'pointer',
               }}
               component={ShareIcon}
-              onClick={onShare}
+              onClick={handleClickOpen}
             />
           </>
           <Box

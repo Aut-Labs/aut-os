@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Tooltip, Typography, IconButton } from '@mui/material';
@@ -17,7 +18,7 @@ export const trimAddress = (address: string) => {
 export const CopyAddress = ({ address }) => {
   return (
     <CopyToClipboard text={address}>
-      <div style={{ width: '100%', color: 'white' }}>
+      <div onClick={(event) => event.stopPropagation()} style={{ width: '100%', color: 'white' }}>
         <Tooltip title="Copy Address">
           <Typography sx={{ color: 'white', fontSize: pxToRem(12) }} component="div">
             {trimAddress(address)}

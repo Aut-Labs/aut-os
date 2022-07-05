@@ -174,8 +174,8 @@ const AutProfileEdit = (props) => {
     mode: 'onChange',
     defaultValues: {
       name: holderData?.name,
-      image: holderData.image,
-      socials: holderData.properties.socials,
+      image: holderData?.properties?.avatar,
+      socials: holderData?.properties?.socials,
     },
   });
 

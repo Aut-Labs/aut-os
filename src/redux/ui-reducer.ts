@@ -7,8 +7,10 @@ const initialState = {
     severity: 'success',
     duration: 2000,
   },
+  openShare: false,
   previousRoute: '/',
   transactionState: null,
+  title: '',
 };
 
 export const uiSlice = createSlice({
@@ -27,16 +29,22 @@ export const uiSlice = createSlice({
         open: false,
       };
     },
+    setTitle(state, action) {
+      state.title = action.payload;
+    },
     updateTransactionState(state, action) {
       state.transactionState = action.payload;
     },
     setPreviusRoute(state, action) {
       state.previousRoute = action.payload;
     },
+    setOpenShare(state, action) {
+      state.openShare = action.payload;
+    },
     resetUIState: () => initialState,
   },
 });
 
-export const { openSnackbar, closeSnackbar, setPreviusRoute, updateTransactionState } = uiSlice.actions;
+export const { openSnackbar, closeSnackbar, setTitle, setPreviusRoute, setOpenShare, updateTransactionState } = uiSlice.actions;
 
 export default uiSlice.reducer;

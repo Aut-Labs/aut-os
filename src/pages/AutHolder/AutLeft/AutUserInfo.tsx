@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 
 import { ReactComponent as DiscordIcon } from '@assets/SocialIcons/DiscordIcon.svg';
@@ -6,7 +7,7 @@ import { ReactComponent as GitHubIcon } from '@assets/SocialIcons/GitHubIcon.svg
 import { ReactComponent as LeafIcon } from '@assets/SocialIcons/LeafIcon.svg';
 import { ReactComponent as TelegramIcon } from '@assets/SocialIcons/TelegramIcon.svg';
 import { ReactComponent as TwitterIcon } from '@assets/SocialIcons/TwitterIcon.svg';
-import { Avatar, Box, Card, CardContent, CardHeader, styled, SvgIcon, Typography, useMediaQuery } from '@mui/material';
+import { Avatar, Box, Card, CardContent, CardHeader, Link, styled, SvgIcon, Typography, useMediaQuery } from '@mui/material';
 import { pxToRem } from '@utils/text-size';
 import { useState } from 'react';
 import PencilEdit from '@assets/PencilEditicon';
@@ -85,6 +86,17 @@ const AutUserInfo = ({ match }) => {
   const [isActiveIndex, setIsActiveIndex] = useState(null);
   const history = useHistory();
 
+  console.log(holderData, 'HOLDENDATA');
+  const { socials } = holderData.properties;
+
+  const socialIcons = {
+    discord: DiscordIcon,
+    github: GitHubIcon,
+    telegram: TelegramIcon,
+    twitter: TwitterIcon,
+    leaf: LeafIcon,
+  };
+
   const onEdit = () => {
     history.push(`${match.url}/edit-profile`);
   };
@@ -116,7 +128,7 @@ const AutUserInfo = ({ match }) => {
                     <Avatar
                       sx={{ bgcolor: 'background.default', width: pxToRem(150), height: pxToRem(150), borderRadius: 0 }}
                       aria-label="recipe"
-                      src={holderData.image as string}
+                      src={holderData?.properties?.avatar as string}
                     />
                   }
                 />
@@ -143,46 +155,22 @@ const AutUserInfo = ({ match }) => {
                     </Typography>
                   )}
                   <IconContainer>
-                    <SvgIcon
-                      sx={{
-                        height: pxToRem(34),
-                        width: pxToRem(31),
-                        mr: pxToRem(20),
-                      }}
-                      component={DiscordIcon}
-                    />
-                    <SvgIcon
-                      sx={{
-                        height: pxToRem(34),
-                        width: pxToRem(31),
-                        mr: pxToRem(20),
-                      }}
-                      component={GitHubIcon}
-                    />
-                    <SvgIcon
-                      sx={{
-                        height: pxToRem(34),
-                        width: pxToRem(31),
-                        mr: pxToRem(20),
-                      }}
-                      component={TwitterIcon}
-                    />
-                    <SvgIcon
-                      sx={{
-                        height: pxToRem(34),
-                        width: pxToRem(31),
-                        mr: pxToRem(20),
-                      }}
-                      component={TelegramIcon}
-                    />
-                    <SvgIcon
-                      sx={{
-                        height: pxToRem(34),
-                        width: pxToRem(31),
-                        mr: pxToRem(20),
-                      }}
-                      component={LeafIcon}
-                    />
+                    {socials.map((social, index) => {
+                      const AutIcon = socialIcons[Object.keys(socialIcons)[index]];
+                      return (
+                        <Link href={social.link} target="_blank" component="a">
+                          <SvgIcon
+                            sx={{
+                              height: pxToRem(34),
+                              width: pxToRem(31),
+                              mr: pxToRem(20),
+                            }}
+                            key={`socials.${index}.icon`}
+                            component={AutIcon}
+                          />
+                        </Link>
+                      );
+                    })}
                   </IconContainer>
                 </CardContent>
               </AutCard>
