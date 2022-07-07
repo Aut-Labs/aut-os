@@ -76,8 +76,11 @@ export const holderSlice = createSlice({
       .addCase(withdraw.pending, (state) => {
         state.status = ResultState.Loading;
       })
-      .addCase(withdraw.fulfilled, (state) => {
+      .addCase(withdraw.fulfilled, (state, action) => {
         state.status = ResultState.Idle;
+        state.autID.properties.communities = state.autID.properties.communities.filter((c) => {
+          return c.properties.address !== action.payload;
+        });
       })
       .addCase(withdraw.rejected, (state, action) => {
         state.status = ResultState.Failed;

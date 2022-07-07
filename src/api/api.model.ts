@@ -11,7 +11,7 @@ export function ipfsCIDToHttpUrl(url: string, isJson = false) {
   return url;
 }
 
-interface HolderCommunity {
+export interface HolderCommunity {
   communityExtension: string;
   holderRole: string;
   holderCommitment: string;

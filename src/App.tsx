@@ -41,6 +41,9 @@ function App() {
   useEffect(() => {
     const onSWLogin = async ({ detail }: any) => {
       const autID = new AutID(detail);
+      autID.properties.communities = autID.properties.communities.filter((c) => {
+        return c.properties.userData?.isActive;
+      });
       autID.properties.address = window.ethereum.selectedAddress;
       const ethDomain = await fetchHolderEthEns(autID.properties.address);
       autID.properties.ethDomain = ethDomain;

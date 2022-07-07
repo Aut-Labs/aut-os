@@ -2,7 +2,7 @@ import { AutIDContractEventType, Web3AutIDProvider } from '@skill-wallet/sw-abi-
 import axios from 'axios';
 import { ethers } from 'ethers';
 import { base64toFile } from 'sw-web-shared';
-import { HolderData, ipfsCIDToHttpUrl } from './api.model';
+import { HolderCommunity, HolderData, ipfsCIDToHttpUrl } from './api.model';
 import { AutID } from './aut.model';
 import { Community } from './community.model';
 import { environment } from './environment';
@@ -44,23 +44,25 @@ export const fetchHolderData = async (holderName: string): Promise<AutID> => {
         },
       });
       const communities: Community[] = await Promise.all(
-        data.communities.map((curr) => {
-          const communityMetadataUri = ipfsCIDToHttpUrl(curr.metadata);
-          return axios.get<Community>(communityMetadataUri).then((metadata) => {
-            return new Community({
-              ...metadata.data,
-              properties: {
-                ...metadata.data.properties,
-                additionalProps: curr,
-                address: curr.communityExtension,
-                userData: {
-                  role: curr.holderRole,
-                  commitment: curr.holderCommitment,
+        data.communities
+          .filter((c) => c.holderIsActive)
+          .map((curr: HolderCommunity) => {
+            const communityMetadataUri = ipfsCIDToHttpUrl(curr.metadata);
+            return axios.get<Community>(communityMetadataUri).then((metadata) => {
+              return new Community({
+                ...metadata.data,
+                properties: {
+                  ...metadata.data.properties,
+                  additionalProps: curr,
+                  address: curr.communityExtension,
+                  userData: {
+                    role: curr.holderRole,
+                    commitment: curr.holderCommitment,
+                  },
                 },
-              },
+              });
             });
-          });
-        })
+          })
       );
       autID.properties.communities = communities;
       return autID;
@@ -89,7 +91,7 @@ export const withdraw = autIDProvider(
   () => Promise.resolve(environment.autIDAddress),
   async (contract, communityAddress) => {
     const response = await contract.withdraw(communityAddress);
-    return response;
+    return communityAddress;
   }
 );
 

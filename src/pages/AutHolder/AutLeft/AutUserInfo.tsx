@@ -155,21 +155,19 @@ const AutUserInfo = ({ match }) => {
                     {holderData?.properties.socials.map((social, index) => {
                       const AutIcon = socialIcons[Object.keys(socialIcons)[index]];
                       return (
-                        <>
-                          {social.link && (
-                            <Link key={`social-icon-${index}`} href={social.link} target="_blank" component="a">
-                              <SvgIcon
-                                sx={{
-                                  height: pxToRem(34),
-                                  width: pxToRem(31),
-                                  mr: pxToRem(20),
-                                }}
-                                key={`socials.${index}.icon`}
-                                component={AutIcon}
-                              />
-                            </Link>
-                          )}
-                        </>
+                        social.link && (
+                          <Link key={`social-icon-${index}`} href={social.link} target="_blank" component="a">
+                            <SvgIcon
+                              sx={{
+                                height: pxToRem(34),
+                                width: pxToRem(31),
+                                mr: pxToRem(20),
+                              }}
+                              key={`socials.${index}.icon`}
+                              component={AutIcon}
+                            />
+                          </Link>
+                        )
                       );
                     })}
                   </IconContainer>

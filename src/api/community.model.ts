@@ -73,6 +73,7 @@ export class CommunityProperties {
     roleName?: string;
     commitment: string;
     commitmentDescription?: string;
+    isActive?: boolean;
   };
 
   additionalProps?: any;

@@ -82,13 +82,9 @@ const AutCommunityEdit = () => {
   };
 
   const onWithdraw = async () => {
-    const result = await dispatch(
-      withdraw({
-        communityAddress: params.communityAddress,
-      })
-    );
+    const result = await dispatch(withdraw(params.communityAddress));
     if (result.meta.requestStatus === 'fulfilled') {
-      // do somethhing on success
+      history.goBack();
     }
   };
 
@@ -110,146 +106,150 @@ const AutCommunityEdit = () => {
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <ErrorDialog handleClose={handleDialogClose} open={status === ResultState.Failed} message={errorMessage} />
       <LoadingDialog handleClose={handleDialogClose} open={status === ResultState.Loading} message="Editing community..." />
-      <Box
-        sx={{
-          paddingLeft: desktop ? pxToRem(100) : !xs ? pxToRem(50) : pxToRem(30),
-          paddingRight: desktop ? pxToRem(100) : !xs ? pxToRem(50) : pxToRem(30),
-          paddingTop: desktop ? pxToRem(150) : !xs ? pxToRem(100) : pxToRem(30),
-        }}
-      >
-        <Typography fontSize={pxToRem(40)} textTransform="uppercase" color="background.paper" textAlign="left">
-          Edit your community
-        </Typography>
-      </Box>
+      {selectedCommunity && (
+        <>
+          <Box
+            sx={{
+              paddingLeft: desktop ? pxToRem(100) : !xs ? pxToRem(50) : pxToRem(30),
+              paddingRight: desktop ? pxToRem(100) : !xs ? pxToRem(50) : pxToRem(30),
+              paddingTop: desktop ? pxToRem(150) : !xs ? pxToRem(100) : pxToRem(30),
+            }}
+          >
+            <Typography fontSize={pxToRem(40)} textTransform="uppercase" color="background.paper" textAlign="left">
+              Edit your community
+            </Typography>
+          </Box>
 
-      <form
-        autoComplete="off"
-        onSubmit={handleSubmit(onSubmit)}
-        style={{
-          paddingLeft: desktop ? pxToRem(100) : !xs ? pxToRem(50) : pxToRem(30),
-          paddingRight: desktop ? pxToRem(100) : !xs ? pxToRem(50) : pxToRem(30),
-          paddingTop: desktop ? pxToRem(150) : !xs ? pxToRem(100) : pxToRem(30),
-          display: 'flex',
-          height: '100%',
-          justifyContent: 'flex-start',
-          flexDirection: 'column',
-          alignItems: desktop ? 'flex start' : 'center',
-          alignContent: desktop ? 'flex start' : 'center',
-        }}
-      >
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'flex-start',
-            flexDirection: 'column',
-            height: '100%',
-            alignItems: 'flex-start',
-            width: '100%',
-            flex: 1,
-          }}
-        >
-          <AutCard sx={{ bgcolor: 'background.default', border: 'none' }}>
-            <CardHeader
-              sx={{ alignSelf: 'flex-start' }}
-              avatar={
-                <Avatar
-                  sx={{ bgcolor: 'background.default', width: pxToRem(110), height: pxToRem(110), borderRadius: 0 }}
-                  aria-label="community-avatar"
-                  src={selectedCommunity.image as string}
-                />
-              }
-            />
-            <CardContent
-              sx={{
-                ml: pxToRem(30),
-                mr: pxToRem(30),
-                alignSelf: 'flex-end',
+          <form
+            autoComplete="off"
+            onSubmit={handleSubmit(onSubmit)}
+            style={{
+              paddingLeft: desktop ? pxToRem(100) : !xs ? pxToRem(50) : pxToRem(30),
+              paddingRight: desktop ? pxToRem(100) : !xs ? pxToRem(50) : pxToRem(30),
+              paddingTop: desktop ? pxToRem(150) : !xs ? pxToRem(100) : pxToRem(30),
+              display: 'flex',
+              height: '100%',
+              justifyContent: 'flex-start',
+              flexDirection: 'column',
+              alignItems: desktop ? 'flex start' : 'center',
+              alignContent: desktop ? 'flex start' : 'center',
+            }}
+          >
+            <div
+              style={{
                 display: 'flex',
+                justifyContent: 'flex-start',
                 flexDirection: 'column',
-                justifyContent: 'space-between',
+                height: '100%',
                 alignItems: 'flex-start',
+                width: '100%',
+                flex: 1,
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                <Typography fontSize={pxToRem(25)} color="background.paper" textAlign="left">
-                  {selectedCommunity?.name}
+              <AutCard sx={{ bgcolor: 'background.default', border: 'none' }}>
+                <CardHeader
+                  sx={{ alignSelf: 'flex-start' }}
+                  avatar={
+                    <Avatar
+                      sx={{ bgcolor: 'background.default', width: pxToRem(110), height: pxToRem(110), borderRadius: 0 }}
+                      aria-label="community-avatar"
+                      src={selectedCommunity.image as string}
+                    />
+                  }
+                />
+                <CardContent
+                  sx={{
+                    ml: pxToRem(30),
+                    mr: pxToRem(30),
+                    alignSelf: 'flex-end',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <Typography fontSize={pxToRem(25)} color="background.paper" textAlign="left">
+                      {selectedCommunity?.name}
+                    </Typography>
+                  </div>
+                  <CopyAddress address={selectedCommunity.properties.address} />
+                  <Typography variant="h2" color="background.paper" textAlign="left" sx={{ textWrap: 'wrap' }}>
+                    {selectedCommunity?.properties?.market}
+                  </Typography>
+                  <Typography variant="h3" color="background.paper" textAlign="left" sx={{ textWrap: 'wrap', pt: pxToRem(30) }}>
+                    {selectedCommunity?.description}
+                  </Typography>
+                  <Button
+                    onClick={onWithdraw}
+                    color="error"
+                    sx={{ textDecoration: 'underline', textTransform: 'none', padding: '0', mt: pxToRem(15), fontSize: pxToRem(16) }}
+                  >
+                    Withdraw from this community
+                  </Button>
+                </CardContent>
+              </AutCard>
+              <div style={{ marginTop: desktop ? pxToRem(100) : !xs ? pxToRem(50) : pxToRem(30), width: '100%' }}>
+                <Typography color="background.paper" textAlign="left" sx={{ textWrap: 'wrap', pb: pxToRem(20), fontSize: '20px' }}>
+                  My Commitment Level
                 </Typography>
+                <Controller
+                  name="commitment"
+                  key="commitment"
+                  control={control}
+                  rules={{ min: 1, required: true }}
+                  render={({ field: { name, value, onChange } }) => {
+                    return (
+                      <AutSlider
+                        value={value}
+                        name={name}
+                        errors={errors}
+                        sliderProps={{
+                          defaultValue: 1,
+                          step: 1,
+                          marks: true,
+                          name,
+                          value: value || 0,
+                          onChange,
+                          min: 0,
+                          max: 10,
+                        }}
+                      />
+                    );
+                  }}
+                />
               </div>
-              <CopyAddress address={selectedCommunity.properties.address} />
-              <Typography variant="h2" color="background.paper" textAlign="left" sx={{ textWrap: 'wrap' }}>
-                {selectedCommunity?.properties?.market}
-              </Typography>
-              <Typography variant="h3" color="background.paper" textAlign="left" sx={{ textWrap: 'wrap', pt: pxToRem(30) }}>
-                {selectedCommunity?.description}
-              </Typography>
-              <Button
-                onClick={onWithdraw}
-                color="error"
-                sx={{ textDecoration: 'underline', textTransform: 'none', padding: '0', mt: pxToRem(15), fontSize: pxToRem(16) }}
+            </div>
+            <BottomWrapper>
+              <AutButton
+                onClick={() => history.goBack()}
+                sx={{
+                  width: desktop ? pxToRem(250) : pxToRem(150),
+                  height: pxToRem(50),
+                }}
+                type="button"
+                color="primary"
+                variant="outlined"
               >
-                Withdraw from this community
-              </Button>
-            </CardContent>
-          </AutCard>
-          <div style={{ marginTop: desktop ? pxToRem(100) : !xs ? pxToRem(50) : pxToRem(30), width: '100%' }}>
-            <Typography color="background.paper" textAlign="left" sx={{ textWrap: 'wrap', pb: pxToRem(20), fontSize: '20px' }}>
-              My Commitment Level
-            </Typography>
-            <Controller
-              name="commitment"
-              key="commitment"
-              control={control}
-              rules={{ min: 1, required: true }}
-              render={({ field: { name, value, onChange } }) => {
-                return (
-                  <AutSlider
-                    value={value}
-                    name={name}
-                    errors={errors}
-                    sliderProps={{
-                      defaultValue: 1,
-                      step: 1,
-                      marks: true,
-                      name,
-                      value: value || 0,
-                      onChange,
-                      min: 0,
-                      max: 10,
-                    }}
-                  />
-                );
-              }}
-            />
-          </div>
-        </div>
-        <BottomWrapper>
-          <AutButton
-            onClick={() => history.goBack()}
-            sx={{
-              width: desktop ? pxToRem(250) : pxToRem(150),
-              height: pxToRem(50),
-            }}
-            type="button"
-            color="primary"
-            variant="outlined"
-          >
-            Cancel
-          </AutButton>
-          <AutButton
-            onClick={handleSubmit(onSubmit)}
-            sx={{
-              width: desktop ? pxToRem(250) : pxToRem(150),
-              height: pxToRem(50),
-              marginLeft: pxToRem(50),
-            }}
-            type="submit"
-            color="primary"
-            variant="outlined"
-          >
-            Save
-          </AutButton>
-        </BottomWrapper>
-      </form>
+                Cancel
+              </AutButton>
+              <AutButton
+                onClick={handleSubmit(onSubmit)}
+                sx={{
+                  width: desktop ? pxToRem(250) : pxToRem(150),
+                  height: pxToRem(50),
+                  marginLeft: pxToRem(50),
+                }}
+                type="submit"
+                color="primary"
+                variant="outlined"
+              >
+                Save
+              </AutButton>
+            </BottomWrapper>
+          </form>
+        </>
+      )}
     </Box>
   );
 };
