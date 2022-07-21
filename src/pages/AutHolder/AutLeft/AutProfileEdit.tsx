@@ -173,7 +173,6 @@ const AutProfileEdit = (props) => {
   } = useForm({
     mode: 'onChange',
     defaultValues: {
-      name: holderData?.name,
       image: holderData?.properties?.avatar,
       socials: holderData?.properties?.socials,
     },
@@ -190,7 +189,6 @@ const AutProfileEdit = (props) => {
     dispatch(
       updateProfile({
         ...holderData,
-        name: data.name,
         properties: {
           ...holderData.properties,
           socials: data.socials,
@@ -235,28 +233,33 @@ const AutProfileEdit = (props) => {
               }}
               component={PersonIcon}
             />
-            <Controller
-              name="name"
-              control={control}
-              rules={{
-                required: true,
+            <div
+              style={{
+                padding: '0',
+                height: pxToRem(50),
+                display: 'flex',
+                minWidth: '0',
+                margin: '0',
+                border: '0',
+                verticalAlign: 'top',
+                width: '80%',
               }}
-              render={({ field: { name, value, onChange } }) => {
-                return (
-                  <AutTextField
-                    width="80%"
-                    required
-                    name={name}
-                    value={value || ''}
-                    onChange={onChange}
-                    placeholder="Name"
-                    sx={{
-                      mb: pxToRem(45),
-                    }}
-                  />
-                );
-              }}
-            />
+            >
+              <Typography
+                fontSize={pxToRem(20)}
+                sx={{
+                  padding: '0 14px',
+                  width: '100%',
+                  height: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+                color="background.paper"
+                textAlign="left"
+              >
+                {holderData?.name}
+              </Typography>
+            </div>
           </FieldWrapper>
           {fields.map((_, index) => {
             const AutIcon = socialIcons[Object.keys(socialIcons)[index]];
