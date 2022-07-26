@@ -1,13 +1,14 @@
-import { Box, styled, SvgIcon, Typography, useMediaQuery } from '@mui/material';
-import { ReactComponent as IdCardBg } from '@assets/IdCardBackground.svg';
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+import { Box, styled, SvgIcon, useMediaQuery, useTheme } from '@mui/material';
 import { ReactComponent as ShareIcon } from '@assets/ShareIcon.svg';
 import { pxToRem } from '@utils/text-size';
 import { useSelector } from 'react-redux';
 import { HolderData } from '@store/holder/holder.reducer';
-import { useEffect, useState } from 'react';
-import { setOpenShare, setTitle } from '@store/ui-reducer';
+import { useState } from 'react';
+import { setOpenShare } from '@store/ui-reducer';
 import { useAppDispatch } from '@store/store.model';
-import { AutShareDialog } from '@components/AutShare';
+import FlipCard from '@components/FlipCard';
+import { QRCode } from 'react-qrcode-logo';
 import AutToolBar from '../AutLeft/AutToolBar';
 
 const CardTilt = styled('div')(({ theme }) => ({
@@ -21,8 +22,7 @@ const CardTilt = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  marginLeft: '20px',
-  marginTop: '20px',
+
   backgroundColor: 'black',
   '@keyframes sw-card-tilt': {
     '0%': {
@@ -53,8 +53,25 @@ const CardTilt = styled('div')(({ theme }) => ({
   '@media(max-width: 769px)': {
     width: 'calc(100% - 20px)',
     height: 'calc(100% - 20px)',
-    marginLeft: '10px',
-    marginTop: '10px',
+  },
+}));
+
+const CardBack = styled('div')(({ theme }) => ({
+  borderRadius: 0,
+  background: theme.palette.background.paper,
+  boxShadow: theme.shadows[1],
+  position: 'relative',
+  width: 'calc(100% - 40px)',
+  height: 'calc(100% - 40px)',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  alignContent: 'center',
+  backgroundColor: 'black',
+
+  '@media(max-width: 769px)': {
+    width: 'calc(100% - 20px)',
+    height: 'calc(100% - 20px)',
   },
 }));
 
@@ -76,23 +93,32 @@ const AutIdCard = ({ avatar }) => {
         }}
         src={avatar}
       />
-      {/* <div style={{ position: 'fixed', bottom: '15px', right: '15px' }}>
-        <Typography fontSize={pxToRem(50)} color="background.paper" textAlign="left">
-          {personCard.name}
-        </Typography>
-        <Typography variant="subtitle2" color="primary.main" textAlign="left">
-          {personCard.description}
-        </Typography>
-      </div> */}
     </CardTilt>
+  );
+};
+
+const AutQRCode = ({ link, size }) => {
+  return (
+    <CardBack>
+      <QRCode value={link} bgColor="transparent" fgColor="white" size={size} />
+    </CardBack>
   );
 };
 
 const AutTunnelRight = () => {
   const dispatch = useAppDispatch();
   const holderData = useSelector(HolderData);
+  console.log('holderData', holderData);
   const desktop = useMediaQuery('(min-width:769px)');
   const [open, setOpen] = useState(false);
+  const [isFlipped, setFlipped] = useState(false);
+
+  const theme = useTheme();
+
+  const handleClickFlip = (event) => {
+    event.stopPropagation();
+    setFlipped(!isFlipped);
+  };
 
   const handleClickOpen = () => {
     dispatch(setOpenShare(true));
@@ -298,7 +324,22 @@ const AutTunnelRight = () => {
                 <g filter="url(#Rectangle_2301)" transform="translate(-259.71 -290.37)">
                   <g style={{ position: 'relative', cursor: 'pointer' }} data-name="Rectangle 2301" transform="translate(260 290)">
                     <foreignObject height="695" width="440">
-                      <AutIdCard avatar={holderData?.image as string} />
+                      <FlipCard isFlipped={isFlipped} onClick={handleClickFlip} containerClassName={`${isFlipped ? 'flipped' : ''}`}>
+                        <div className={`aut-card-front ${isFlipped ? 'flipped' : ''}`} onClick={handleClickFlip}>
+                          <div className="aut-card-container front">
+                            <AutIdCard avatar={holderData?.image as string} />
+                          </div>
+                        </div>
+                        <div
+                          className="aut-card-back"
+                          style={{ height: '100%', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+                          onClick={handleClickFlip}
+                        >
+                          <div className="aut-card-container back">
+                            <AutQRCode link={`https://my.aut.id/${holderData?.name}`} size={370} />
+                          </div>
+                        </div>
+                      </FlipCard>
                     </foreignObject>
                   </g>
                 </g>
@@ -630,7 +671,22 @@ const AutTunnelRight = () => {
                   <path d="M0 0H206V325H0z" data-name="Rectangle 3376" transform="translate(-.06 -.325)" />
                   <g stroke="#fff" strokeWidth="1" data-name="Rectangle 3376" transform="translate(-.06 -.325)">
                     <foreignObject height="325" width="206">
-                      <AutIdCard avatar={holderData?.image as string} />
+                      <FlipCard isFlipped={isFlipped} onClick={handleClickFlip} containerClassName={`${isFlipped ? 'flipped' : ''}`}>
+                        <div className={`aut-card-front ${isFlipped ? 'flipped' : ''}`} onClick={handleClickFlip}>
+                          <div className="aut-card-container front">
+                            <AutIdCard avatar={holderData?.image as string} />
+                          </div>
+                        </div>
+                        <div
+                          className="aut-card-back"
+                          style={{ height: '100%', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+                          onClick={handleClickFlip}
+                        >
+                          <div className="aut-card-container back">
+                            <AutQRCode link={`https://my.aut.id/${holderData?.name}`} size={160} />
+                          </div>
+                        </div>
+                      </FlipCard>
                     </foreignObject>
                   </g>
                 </g>
