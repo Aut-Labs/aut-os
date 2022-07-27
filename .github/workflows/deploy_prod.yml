@@ -35,7 +35,6 @@ jobs:
 
             cd ~/$DIR_NAME || exit
             sudo chmod -R a+rwX .
-            cd ..
 
             ACTION='\033[1;90m'
             NOCOLOR='\033[0m'
