@@ -17,7 +17,6 @@ jobs:
           host: ${{ secrets.SSH_SERVER_IP }}
           username: ${{ secrets.SSH_SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          envs: REPO_URL,REPO_NAME
           script: |
             #!/usr/bin/env bash
 
