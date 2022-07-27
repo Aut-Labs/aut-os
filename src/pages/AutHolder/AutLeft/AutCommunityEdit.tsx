@@ -13,6 +13,7 @@ import { editCommitment, withdraw } from '@api/holder.api';
 import ErrorDialog from '@components/Dialog/ErrorPopup';
 import LoadingDialog from '@components/Dialog/LoadingPopup';
 import CopyAddress from '@components/CopyAddress';
+import { ipfsCIDToHttpUrl } from '@api/storage.api';
 
 const AutCard = styled(Card)(({ theme }) => ({
   '&.MuiCard-root': {
@@ -153,7 +154,7 @@ const AutCommunityEdit = () => {
                     <Avatar
                       sx={{ bgcolor: 'background.default', width: pxToRem(110), height: pxToRem(110), borderRadius: 0 }}
                       aria-label="community-avatar"
-                      src={selectedCommunity.image as string}
+                      src={ipfsCIDToHttpUrl(selectedCommunity.image as string)}
                     />
                   }
                 />

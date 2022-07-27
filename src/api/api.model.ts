@@ -1,16 +1,5 @@
 import { TokenInput } from 'nft.storage/dist/src/lib/interface';
 
-export function ipfsCIDToHttpUrl(url: string, isJson = false) {
-  if (!url) {
-    return url;
-  }
-  if (!url.includes('https://'))
-    return isJson
-      ? `https://infura-ipfs.io/ipfs/${url.replace('ipfs://', '')}/metadata.json`
-      : `https://infura-ipfs.io/ipfs/${url.replace('ipfs://', '')}`;
-  return url;
-}
-
 export interface HolderCommunity {
   communityExtension: string;
   holderRole: string;
@@ -42,7 +31,7 @@ export class BaseNFTModel<Properties> implements Omit<TokenInput, 'image'> {
   constructor(data: BaseNFTModel<Properties>) {
     this.name = data.name;
     this.description = data.description;
-    this.image = ipfsCIDToHttpUrl(data.image as string) as string;
+    this.image = data.image as string;
     this.properties = data.properties;
   }
 }

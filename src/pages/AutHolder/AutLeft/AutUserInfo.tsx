@@ -17,6 +17,7 @@ import { HolderData, HolderStatus } from '@store/holder/holder.reducer';
 import { IsAuthenticated } from '@auth/auth.reducer';
 import { ResultState } from '@store/result-status';
 import CopyAddress from '@components/CopyAddress';
+import { ipfsCIDToHttpUrl } from '@api/storage.api';
 
 const AutTable = styled('table')(({ theme }) => ({
   width: '100%',
@@ -125,7 +126,7 @@ const AutUserInfo = ({ match }) => {
                     <Avatar
                       sx={{ bgcolor: 'background.default', width: pxToRem(150), height: pxToRem(150), borderRadius: 0 }}
                       aria-label="recipe"
-                      src={holderData?.properties?.avatar as string}
+                      src={ipfsCIDToHttpUrl(holderData?.properties?.avatar as string)}
                     />
                   }
                 />

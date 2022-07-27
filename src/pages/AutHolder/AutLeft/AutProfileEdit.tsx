@@ -21,6 +21,7 @@ import { AutID } from '@api/aut.model';
 import ErrorDialog from '@components/Dialog/ErrorPopup';
 import LoadingDialog from '@components/Dialog/LoadingPopup';
 import { ResultState } from '@store/result-status';
+import { ipfsCIDToHttpUrl } from '@api/storage.api';
 
 const socialIcons = {
   // eth: EthIcon,
@@ -317,7 +318,7 @@ const AutProfileEdit = (props) => {
                     }}
                   >
                     <AFileUpload
-                      initialPreviewUrl={value}
+                      initialPreviewUrl={ipfsCIDToHttpUrl(holderData?.properties?.avatar as string)}
                       fileChange={async (file) => {
                         if (file) {
                           onChange(await toBase64(file));

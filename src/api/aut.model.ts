@@ -1,5 +1,6 @@
-import { BaseNFTModel, ipfsCIDToHttpUrl } from './api.model';
+import { BaseNFTModel } from './api.model';
 import { Community } from './community.model';
+import { httpUrlToIpfsCID } from './storage.api';
 
 export interface AutSocial {
   type: string;
@@ -54,7 +55,7 @@ export class AutIDProperties {
       this.socials = [];
     } else {
       this.timestamp = data.timestamp;
-      this.avatar = ipfsCIDToHttpUrl(data.avatar);
+      this.avatar = data.avatar;
       this.address = data.address;
       this.tokenId = data.tokenId;
       this.communities = (data.communities || []).map((community) => new Community(community));
@@ -66,6 +67,20 @@ export class AutIDProperties {
 }
 
 export class AutID extends BaseNFTModel<AutIDProperties> {
+  static updateAutID(updatedUser: AutID): Partial<AutID> {
+    const autID = new AutID(updatedUser);
+    return {
+      name: autID.name,
+      description: autID.description,
+      image: httpUrlToIpfsCID(autID.image as string),
+      properties: {
+        avatar: httpUrlToIpfsCID(autID.properties.avatar as string),
+        timestamp: autID.properties.timestamp,
+        socials: autID.properties.socials,
+      },
+    } as Partial<AutID>;
+  }
+
   constructor(data: AutID = {} as AutID) {
     super(data);
     this.properties = new AutIDProperties(data.properties);

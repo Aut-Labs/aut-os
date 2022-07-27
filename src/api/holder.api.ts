@@ -2,11 +2,11 @@ import { AutIDContractEventType, Web3AutIDProvider } from '@aut-protocol/abi-typ
 import axios from 'axios';
 import { ethers } from 'ethers';
 import { base64toFile } from 'sw-web-shared';
-import { HolderCommunity, HolderData, ipfsCIDToHttpUrl } from './api.model';
+import { HolderCommunity, HolderData } from './api.model';
 import { AutID } from './aut.model';
 import { Community } from './community.model';
 import { environment } from './environment';
-import { httpUrlToIpfsCID, storeAsBlob, storeImageAsBlob } from './storage.api';
+import { ipfsCIDToHttpUrl, isValidUrl, storeAsBlob, storeImageAsBlob } from './storage.api';
 import { Web3ThunkProviderFactory } from './ProviderFactory/web3-thunk.provider';
 
 const autIDProvider = Web3ThunkProviderFactory('AutID', {
@@ -95,35 +95,21 @@ export const withdraw = autIDProvider(
   }
 );
 
-const isBase64 = (url: string) => {
-  try {
-    return /[A-Za-z0-9+/=]/.test(url);
-  } catch (e) {
-    return false;
-  }
-};
-
 export const updateProfile = autIDProvider(
   {
     type: 'holder/update',
   },
   () => Promise.resolve(environment.autIDAddress),
   async (contract, user) => {
-    if (user.properties.avatar && isBase64(user.properties.avatar)) {
-      const file = base64toFile(user.properties.avatar as string, 'avatar');
+    if (user.properties.avatar && !isValidUrl(user.properties.avatar as string)) {
+      const file = base64toFile(user.properties.avatar as string, 'image');
       user.properties.avatar = await storeImageAsBlob(file as File);
+      console.log('New image: ->', ipfsCIDToHttpUrl(user.properties.avatar));
     }
 
-    const newUser = new AutID(user);
-    newUser.image = httpUrlToIpfsCID(newUser.image as string);
-    newUser.properties.avatar = httpUrlToIpfsCID(newUser.properties.avatar as string);
-    delete newUser.properties.communities;
-    delete newUser.properties.tokenId;
-    delete newUser.properties.address;
-
-    const uri = await storeAsBlob(newUser);
+    const uri = await storeAsBlob(AutID.updateAutID(user));
     console.log('New metadata: ->', ipfsCIDToHttpUrl(uri));
-    const response = await contract.setMetadataUri(uri);
+    await contract.setMetadataUri(uri);
     return user;
   }
 );

@@ -9,6 +9,7 @@ import { setOpenShare } from '@store/ui-reducer';
 import { useAppDispatch } from '@store/store.model';
 import FlipCard from '@components/FlipCard';
 import { QRCode } from 'react-qrcode-logo';
+import { ipfsCIDToHttpUrl } from '@api/storage.api';
 import AutToolBar from '../AutLeft/AutToolBar';
 
 const CardTilt = styled('div')(({ theme }) => ({
@@ -327,7 +328,7 @@ const AutTunnelRight = () => {
                       <FlipCard isFlipped={isFlipped} onClick={handleClickFlip} containerClassName={`${isFlipped ? 'flipped' : ''}`}>
                         <div className={`aut-card-front ${isFlipped ? 'flipped' : ''}`} onClick={handleClickFlip}>
                           <div className="aut-card-container front">
-                            <AutIdCard avatar={holderData?.image as string} />
+                            <AutIdCard avatar={ipfsCIDToHttpUrl(holderData?.image as string)} />
                           </div>
                         </div>
                         <div
@@ -674,7 +675,7 @@ const AutTunnelRight = () => {
                       <FlipCard isFlipped={isFlipped} onClick={handleClickFlip} containerClassName={`${isFlipped ? 'flipped' : ''}`}>
                         <div className={`aut-card-front ${isFlipped ? 'flipped' : ''}`} onClick={handleClickFlip}>
                           <div className="aut-card-container front">
-                            <AutIdCard avatar={holderData?.image as string} />
+                            <AutIdCard avatar={ipfsCIDToHttpUrl(holderData?.image as string)} />
                           </div>
                         </div>
                         <div

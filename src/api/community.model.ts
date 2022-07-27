@@ -1,4 +1,5 @@
 import { BaseNFTModel } from './api.model';
+import { httpUrlToIpfsCID } from './storage.api';
 
 export const MarketTemplates = [
   {
@@ -121,6 +122,21 @@ export class CommunityProperties {
 }
 
 export class Community extends BaseNFTModel<CommunityProperties> {
+  static updateCommunity(updatedCommunity: Community): Partial<Community> {
+    const community = new Community(updatedCommunity);
+    const market = MarketTemplates.find((v) => v.title === community.properties.market);
+    return {
+      name: community.name,
+      description: community.description,
+      image: httpUrlToIpfsCID(community.image as string),
+      properties: {
+        market: market?.title || 0,
+        commitment: community.properties.commitment,
+        rolesSets: community.properties.rolesSets,
+      },
+    } as Partial<Community>;
+  }
+
   constructor(data: Community = {} as Community) {
     super(data);
     this.properties = new CommunityProperties(data.properties);
