@@ -20,10 +20,10 @@ jobs:
           script: |
             #!/usr/bin/env bash
 
-            REPO_URL='$REPO_URL'
-            REPO_NAME='$REPO_NAME'
+            REPO_URL=$REPO_URL
+            REPO_NAME=$REPO_NAME
             # Get name of repo and use it for directory name ex: owner/repo-name becomes -> repo-name
-            DIR_NAME=$(echo "$REPO_NAME" | cut -d '/' -f 2-)
+            DIR_NAME=$(echo $REPO_NAME | cut -d '/' -f 2-)
             TARGET='main'
 
 
