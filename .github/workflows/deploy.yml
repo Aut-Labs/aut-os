@@ -6,7 +6,7 @@ jobs:
   deploy:
     name: Deployment
     runs-on: ubuntu-20.04
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/dev'
     steps:
       - name: SSH & Deploy
         uses: appleboy/ssh-action@master
@@ -25,7 +25,7 @@ jobs:
             REPO_NAME='$REPO_NAME'
             # Get name of repo and use it for directory name ex: owner/repo-name becomes -> repo-name
             DIR_NAME=$(echo "$REPO_NAME" | cut -d '/' -f 2-)
-            TARGET='main'
+            TARGET='dev'
 
 
             if [ ! -d $DIR_NAME ]
@@ -40,7 +40,7 @@ jobs:
             ACTION='\033[1;90m'
             NOCOLOR='\033[0m'
 
-            # Checking if we are on the main branch
+            # Checking if we are on the dev branch
 
             echo -e ${ACTION}Checking Git repo
             BRANCH=$(git rev-parse --abbrev-ref HEAD)
