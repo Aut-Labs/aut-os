@@ -63,7 +63,7 @@ const Flipcard: React.FC<FlipCardProps> = (props) => {
     infinite,
     onClick,
   } = props;
-  const desktop = useMediaQuery('(min-width:769px)');
+  const desktop = useMediaQuery('(min-width:1024px)');
 
   const [isFlipped, setFlipped] = useState(props.isFlipped);
   const [rotation, setRotation] = useState(0);

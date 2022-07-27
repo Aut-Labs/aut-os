@@ -45,7 +45,7 @@ export const CommitmentMessages = (value: number) => {
     case 8:
     case 9:
     case 10:
-      return `It's a Soulbound ⛓️`;
+      return `Soulbound ⛓️`;
     default:
       return 'Minimum Commitment Level for new Members.';
   }
@@ -78,7 +78,7 @@ const StyledSlider = styled(Slider)({
   borderStyle: 'solid',
   padding: '0',
 
-  '@media(max-width: 769px)': {
+  '@media(max-width: 1024px)': {
     alignContent: 'center',
     justifyContent: 'center',
     width: '100%',
@@ -127,7 +127,7 @@ const errorTypes = {
 };
 
 export const AutSlider = (props: AutSliderProps) => {
-  const desktop = useMediaQuery('(min-width:769px)');
+  const desktop = useMediaQuery('(min-width:1024px)');
 
   return (
     <div

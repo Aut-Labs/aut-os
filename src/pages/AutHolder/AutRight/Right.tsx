@@ -50,7 +50,7 @@ const CardTilt = styled('div')(({ theme }) => ({
   animationDirection: 'normal',
   animationDelay: '6s',
 
-  '@media(max-width: 769px)': {
+  '@media(max-width: 1024px)': {
     width: 'calc(100% - 20px)',
     height: 'calc(100% - 20px)',
   },
@@ -69,7 +69,7 @@ const CardBack = styled('div')(({ theme }) => ({
   alignContent: 'center',
   backgroundColor: 'black',
 
-  '@media(max-width: 769px)': {
+  '@media(max-width: 1024px)': {
     width: 'calc(100% - 20px)',
     height: 'calc(100% - 20px)',
   },
@@ -109,7 +109,7 @@ const AutTunnelRight = () => {
   const dispatch = useAppDispatch();
   const holderData = useSelector(HolderData);
   console.log('holderData', holderData);
-  const desktop = useMediaQuery('(min-width:769px)');
+  const desktop = useMediaQuery('(min-width:1024px)');
   const [open, setOpen] = useState(false);
   const [isFlipped, setFlipped] = useState(false);
 

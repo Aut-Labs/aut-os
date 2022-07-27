@@ -9,7 +9,7 @@ const AutBar = styled(Toolbar)(({ theme }) => ({
     paddingTop: pxToRem(30),
     justifyContent: 'space-between',
 
-    '@media(max-width: 769px)': {
+    '@media(max-width: 1024px)': {
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',

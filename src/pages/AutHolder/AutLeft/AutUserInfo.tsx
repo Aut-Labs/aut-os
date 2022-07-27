@@ -57,7 +57,7 @@ const IconContainer = styled('div')(({ theme }) => ({
   paddingTop: pxToRem(15),
   display: 'flex',
 
-  '@media(max-width: 769px)': {
+  '@media(max-width: 1024px)': {
     paddingTop: pxToRem(20),
   },
 }));
@@ -80,7 +80,7 @@ const AutUserInfo = ({ match }) => {
   const holderData = useSelector(HolderData);
   const holderStatus = useSelector(HolderStatus);
   const isAuthenticated = useSelector(IsAuthenticated);
-  const desktop = useMediaQuery('(min-width:769px)');
+  const desktop = useMediaQuery('(min-width:1024px)');
   const xs = useMediaQuery('(max-width:360px)');
 
   const [isActiveIndex, setIsActiveIndex] = useState(null);

@@ -15,7 +15,7 @@ export interface SimpleDialogProps {
 }
 
 const AutStyledDialog = styled(Dialog)(({ theme }) => ({
-  '@media(max-width: 769px)': {
+  '@media(max-width: 1024px)': {
     '.MuiPaper-root': {
       margin: '0',
       opacity: '0.8',
@@ -25,7 +25,7 @@ const AutStyledDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 const AutShare = (props: SimpleDialogProps) => {
-  const desktop = useMediaQuery('(min-width:769px)');
+  const desktop = useMediaQuery('(min-width:1024px)');
 
   const { onClose, title, description, url, twitterProps, hideCloseBtn } = props;
   return (
@@ -122,7 +122,7 @@ const AutShare = (props: SimpleDialogProps) => {
 };
 
 export function AutShareDialog(props: SimpleDialogProps) {
-  const desktop = useMediaQuery('(min-width:769px)');
+  const desktop = useMediaQuery('(min-width:1024px)');
   return (
     <AutStyledDialog
       fullScreen={!desktop}

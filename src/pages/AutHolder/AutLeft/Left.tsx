@@ -28,7 +28,7 @@ const AutLeft = ({ match }) => {
   const { url } = useRouteMatch();
   console.log(pathname, history, url, 'PATH', params);
   console.log(match.path, ' MATCH PATH');
-  const desktop = useMediaQuery('(min-width:769px)');
+  const desktop = useMediaQuery('(min-width:1024px)');
 
   return (
     <AutLeftContainer style={{ width: desktop && status === ResultState.Success ? '50%' : '100%', height: '100%' }}>

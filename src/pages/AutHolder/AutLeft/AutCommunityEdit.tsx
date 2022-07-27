@@ -36,7 +36,7 @@ const BottomWrapper = styled('div')(({ theme }) => ({
   alignItems: "'center',",
   justifyContent: 'center',
   display: 'flex',
-  '@media(max-width: 769px)': {
+  '@media(max-width: 1024px)': {
     alignContent: 'center',
     justifyContent: 'center',
     padding: pxToRem(30),
@@ -46,7 +46,7 @@ const BottomWrapper = styled('div')(({ theme }) => ({
 const AutCommunityEdit = () => {
   const dispatch = useAppDispatch();
 
-  const desktop = useMediaQuery('(min-width:769px)');
+  const desktop = useMediaQuery('(min-width:1024px)');
   const xs = useMediaQuery('(max-width:360px)');
   const params = useParams<{ communityAddress: string }>();
   const selectedCommunity = useSelector(SelectedCommunity(params.communityAddress));

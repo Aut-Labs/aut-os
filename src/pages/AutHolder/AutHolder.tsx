@@ -40,7 +40,7 @@ const AutHolder = (props) => {
   const { openShare } = useSelector((state: any) => state.ui);
   const status = useSelector(HolderStatus);
   const params = useParams<{ holderAddress: string }>();
-  const desktop = useMediaQuery('(min-width:769px)');
+  const desktop = useMediaQuery('(min-width:1024px)');
   const holderData = useSelector(HolderData);
 
   useEffect(() => {

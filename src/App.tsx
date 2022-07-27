@@ -25,7 +25,7 @@ function App() {
   const dispatch = useAppDispatch();
   const location = useLocation<any>();
   const history = useHistory();
-  const desktop = useMediaQuery('(min-width:769px)');
+  const desktop = useMediaQuery('(min-width:1024px)');
   const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
