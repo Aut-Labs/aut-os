@@ -87,7 +87,7 @@ const AutHolder = (props) => {
       {desktop ? (
         <AutContainer>
           <AutLeft {...props} />
-          {status === ResultState.Success && <AutTunnelRight />}
+          {/* {status === ResultState.Success && <AutTunnelRight />} */}
         </AutContainer>
       ) : (
         <>
