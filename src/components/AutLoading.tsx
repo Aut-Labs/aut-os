@@ -1,6 +1,6 @@
 import { pxToRem } from '@utils/text-size';
 // @ts-ignore
-import Lottie from 'react-lottie';
+import { Player } from '@lottiefiles/react-lottie-player';
 import * as animationData from '../assets/aut-load.json';
 
 const defaultOptions = {
@@ -25,7 +25,13 @@ const AutLoading = () => {
         transform: `translate(-50%, -50%)`,
       }}
     >
-      <Lottie options={defaultOptions} height={400} width={400} />
+      <Player
+        loop
+        autoplay
+        rendererSettings={{ preserveAspectRatio: 'xMidYMid slice' }}
+        src={animationData}
+        style={{ height: '400px', width: '400px' }}
+      />
     </div>
   );
 };
