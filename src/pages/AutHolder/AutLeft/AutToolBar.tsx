@@ -22,7 +22,7 @@ const AutToolBar = ({ hideWebComponent = false, hideLogo = false }) => {
     <>
       <AutBar>
         {!hideLogo && <MyAutIDLogo />}
-        {!hideWebComponent && <d-aut id="d-aut" community-address="0x89fdb37aB5bf8E81c6b049b635244B8A58d5363c" use-dev="true" />}
+        {!hideWebComponent && <d-aut id="d-aut" use-dev="true" />}
       </AutBar>
     </>
   );
