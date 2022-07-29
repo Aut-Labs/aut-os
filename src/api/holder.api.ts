@@ -28,7 +28,7 @@ export const fetchHolderEthEns = async (address = '0xd8dA6BF26964aF9D7eEd9e03E53
 
 export const fetchHolderData = async (holderName: string): Promise<AutID> => {
   return axios
-    .get<HolderData>(`${environment.apiUrl}/autID/${holderName}`)
+    .get<HolderData>(`${environment.apiUrl}/autID/${holderName}?network=mumbai`)
     .then((res) => res.data)
     .then(async (data) => {
       const userMetadataUri = ipfsCIDToHttpUrl(data.metadataUri);
