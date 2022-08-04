@@ -102,7 +102,7 @@ const AutUserInfo = ({ match }) => {
   const isAuthenticated = useSelector(IsAuthenticated);
   const desktop = useMediaQuery('(min-width:1024px)');
   const xs = useMediaQuery('(max-width:360px)');
-
+  const correctNetwork = params.network === 'mumbai' || params.network === 'goerli';
   const [isActiveIndex, setIsActiveIndex] = useState(null);
   const history = useHistory();
 
@@ -152,6 +152,7 @@ const AutUserInfo = ({ match }) => {
       history.push(`${match.url}/edit-community/${address}`);
     }
   }
+
   return (
     <>
       <Box>
@@ -314,12 +315,13 @@ const AutUserInfo = ({ match }) => {
               </AutTable>
             </Box>
           </Box>
-        ) : (
+        ) : !correctNetwork ? (
           <Typography
             sx={{
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
+              textAlign: 'center',
               mb: '10px',
               fontSize: pxToRem(50),
               color: 'white',
@@ -329,7 +331,25 @@ const AutUserInfo = ({ match }) => {
               top: '50%',
             }}
           >
-            This āutID hasn't been claimed yet
+            Oops, it looks like we don't support this network yet.
+          </Typography>
+        ) : (
+          <Typography
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              textAlign: 'center',
+              mb: '10px',
+              fontSize: pxToRem(50),
+              color: 'white',
+              position: 'absolute',
+              transform: 'translate(-50%, -50%)',
+              left: '50%',
+              top: '50%',
+            }}
+          >
+            This āutID hasn't been claimed yet.
           </Typography>
         )}
       </Box>

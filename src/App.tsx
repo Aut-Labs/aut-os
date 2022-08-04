@@ -34,10 +34,10 @@ function App() {
 
   useEffect(() => {
     const [, network, holderAddress] = location.pathname.split('/');
-    if (holderAddress && (network.toLowerCase() === 'mumbai' || network.toLowerCase() === 'goerli')) {
+    if (holderAddress && network) {
       history.push(`/${network}/${holderAddress}`);
     } else {
-      history.push(`/home`);
+      history.push(`/`);
     }
     dispatch(resetAuthState());
   }, []);
@@ -52,7 +52,6 @@ function App() {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const { name } = await provider.getNetwork();
       const network = name === 'maticmum' ? 'mumbai' : name === 'goerli' ? 'goerli' : '';
-
       const ethDomain = await fetchHolderEthEns(autID.properties.address);
       autID.properties.ethDomain = ethDomain;
       console.log(autID, 'autid');
@@ -70,20 +69,20 @@ function App() {
         })
       );
       // TODO: figure out how network comes in the autID
-      if (autID?.name && (network.toLowerCase() === 'mumbai' || network.toLowerCase() === 'goerli')) {
+      if (autID?.name && network) {
         history.push(`/${network}/${autID.name}`);
       } else {
-        history.push(`/home`);
+        history.push(`/`);
       }
       history.push(`/${network}/${autID.name}`);
     };
 
     const onDisconnected = () => {
       const [, network, holderAddress] = location.pathname.split('/');
-      if (holderAddress && (network.toLowerCase() === 'mumbai' || network.toLowerCase() === 'goerli')) {
+      if (holderAddress && network) {
         history.push(`/${network}/${holderAddress}`);
       } else {
-        history.push(`/home`);
+        history.push(`/`);
       }
       dispatch(resetAuthState());
     };
@@ -127,9 +126,9 @@ function App() {
           <LoadingMessage />
         ) : (
           <Switch>
+            <Route exact component={AutSearch} path="/" />
             <Route component={AutHolder} path="/:network/:holderAddress" />
-            <Route component={AutSearch} /> : <RedirectRoute to={{ pathname: '/home', state: { from: location.pathname } }} />
-            <Route component={NotFound} path="/not-found" />
+            <Route component={NotFound} /> : <RedirectRoute to={{ pathname: '/', state: { from: location.pathname } }} />
           </Switch>
         )}
       </Box>

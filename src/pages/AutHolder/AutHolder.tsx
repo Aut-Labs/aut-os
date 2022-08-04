@@ -47,7 +47,7 @@ const AutHolder = (props) => {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      dispatch(fetchHolder({ autName: params.holderAddress, network: 'mumbai' }));
+      dispatch(fetchHolder({ autName: params.holderAddress, network: params.network }));
     }
   }, [isAuthenticated]);
 

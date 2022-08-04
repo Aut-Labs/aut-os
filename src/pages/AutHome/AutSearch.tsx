@@ -263,7 +263,7 @@ const AutSearch = ({ match }) => {
               autoplay
               rendererSettings={{ preserveAspectRatio: 'xMidYMid slice' }}
               src={animationData}
-              style={{ height: '150px', width: '150px' }}
+              style={{ height: '130px', width: '130px' }}
             />
           </>
         ) : noResults ? (

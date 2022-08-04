@@ -26,7 +26,7 @@ const AutToolBar = ({ hideWebComponent = false, hideLogo = false }) => {
   const dispatch = useAppDispatch();
 
   function goHome() {
-    history.push(`/home`);
+    history.push(`/`);
     dispatch(resetSearchState());
   }
   return (
