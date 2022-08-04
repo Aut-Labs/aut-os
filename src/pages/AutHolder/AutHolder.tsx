@@ -39,13 +39,15 @@ const AutHolder = (props) => {
   const isAuthenticated = useSelector(IsAuthenticated);
   const { openShare } = useSelector((state: any) => state.ui);
   const status = useSelector(HolderStatus);
-  const params = useParams<{ holderAddress: string }>();
+  const params = useParams<{ network: string; holderAddress: string }>();
   const desktop = useMediaQuery('(min-width:1024px)');
   const holderData = useSelector(HolderData);
 
+  console.log(params, 'PARAMS');
+
   useEffect(() => {
     if (!isAuthenticated) {
-      dispatch(fetchHolder(params.holderAddress));
+      dispatch(fetchHolder({ autName: params.holderAddress, network: params.network }));
     }
   }, [isAuthenticated]);
 

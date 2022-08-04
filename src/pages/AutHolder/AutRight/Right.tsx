@@ -12,7 +12,7 @@ import { QRCode } from 'react-qrcode-logo';
 import { ipfsCIDToHttpUrl } from '@api/storage.api';
 import AutToolBar from '../AutLeft/AutToolBar';
 
-const CardTilt = styled('div')(({ theme }) => ({
+const CardZoom = styled('div')(({ theme }) => ({
   borderRadius: 0,
   border: '1px solid white',
   background: theme.palette.background.paper,
@@ -20,40 +20,36 @@ const CardTilt = styled('div')(({ theme }) => ({
   position: 'relative',
   width: 'calc(100% - 40px)',
   height: 'calc(100% - 40px)',
+  marginTop: '20px',
+  marginLeft: '20px',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
 
   backgroundColor: 'black',
-  '@keyframes sw-card-tilt': {
+  '@keyframes zoom-in-zoom-out': {
     '0%': {
-      transform: ' perspective(1200px) rotate3d(0, -0.5, 0, 0deg)',
-      transformstyle: 'preserve-3d',
-    },
-    '5%': {
-      transform: 'perspective(1200px) rotate3d(0, -1, 0, 15deg)',
-      transformstyle: 'preserve-3d',
+      transform: 'scale(1, 1)',
     },
     '10%': {
-      transform: 'perspective(1200px) rotate3d(0, -0.5, 0, 0deg)',
-      transformstyle: 'preserve-3d',
-    },
-    '15%': {
-      transform: 'perspective(1200px) rotate3d(0, -1, 0, 15deg)',
-      transformstyle: 'preserve-3d',
+      transform: 'scale(1.025, 1.025)',
     },
     '20%': {
-      transform: 'perspective(1200px) rotate3d(0, -1, 0, 0deg)',
-      transformstyle: 'preserve-3d',
+      transform: 'scale(1, 1)',
+    },
+    '100%': {
+      transform: 'scale(1, 1)',
     },
   },
-  animation: `sw-card-tilt 12s linear infinite`,
+  animation: `zoom-in-zoom-out 12s linear infinite`,
   animationDirection: 'normal',
   animationDelay: '6s',
 
   '@media(max-width: 1024px)': {
     width: 'calc(100% - 20px)',
     height: 'calc(100% - 20px)',
+    marginTop: '10px',
+    marginLeft: '10px',
   },
 }));
 
@@ -85,7 +81,7 @@ const AutRightMobileContainer = styled('div')(({ theme }) => ({
 
 const AutIdCard = ({ avatar }) => {
   return (
-    <CardTilt style={{ position: 'relative' }}>
+    <CardZoom style={{ position: 'relative' }}>
       <img
         alt="id"
         style={{
@@ -94,7 +90,7 @@ const AutIdCard = ({ avatar }) => {
         }}
         src={avatar}
       />
-    </CardTilt>
+    </CardZoom>
   );
 };
 
@@ -325,7 +321,7 @@ const AutTunnelRight = () => {
                 <g filter="url(#Rectangle_2301)" transform="translate(-259.71 -290.37)">
                   <g style={{ position: 'relative', cursor: 'pointer' }} data-name="Rectangle 2301" transform="translate(260 290)">
                     <foreignObject height="695" width="440">
-                      <FlipCard isFlipped={isFlipped} onClick={handleClickFlip} containerClassName={`${isFlipped ? 'flipped' : ''}`}>
+                      {/* <FlipCard isFlipped={isFlipped} onClick={handleClickFlip} containerClassName={`${isFlipped ? 'flipped' : ''}`}>
                         <div className={`aut-card-front ${isFlipped ? 'flipped' : ''}`} onClick={handleClickFlip}>
                           <div className="aut-card-container front">
                             <AutIdCard avatar={ipfsCIDToHttpUrl(holderData?.image as string)} />
@@ -340,7 +336,8 @@ const AutTunnelRight = () => {
                             <AutQRCode link={`https://my.aut.id/${holderData?.name}`} size={370} />
                           </div>
                         </div>
-                      </FlipCard>
+                      </FlipCard> */}
+                      <AutIdCard avatar={ipfsCIDToHttpUrl(holderData?.image as string)} />
                     </foreignObject>
                   </g>
                 </g>
@@ -672,7 +669,7 @@ const AutTunnelRight = () => {
                   <path d="M0 0H206V325H0z" data-name="Rectangle 3376" transform="translate(-.06 -.325)" />
                   <g stroke="#fff" strokeWidth="1" data-name="Rectangle 3376" transform="translate(-.06 -.325)">
                     <foreignObject height="325" width="206">
-                      <FlipCard isFlipped={isFlipped} onClick={handleClickFlip} containerClassName={`${isFlipped ? 'flipped' : ''}`}>
+                      {/* <FlipCard isFlipped={isFlipped} onClick={handleClickFlip} containerClassName={`${isFlipped ? 'flipped' : ''}`}>
                         <div className={`aut-card-front ${isFlipped ? 'flipped' : ''}`} onClick={handleClickFlip}>
                           <div className="aut-card-container front">
                             <AutIdCard avatar={ipfsCIDToHttpUrl(holderData?.image as string)} />
@@ -687,7 +684,9 @@ const AutTunnelRight = () => {
                             <AutQRCode link={`https://my.aut.id/${holderData?.name}`} size={160} />
                           </div>
                         </div>
-                      </FlipCard>
+                      
+                      </FlipCard> */}
+                      <AutIdCard avatar={ipfsCIDToHttpUrl(holderData?.image as string)} />
                     </foreignObject>
                   </g>
                 </g>

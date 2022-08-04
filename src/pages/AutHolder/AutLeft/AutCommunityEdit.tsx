@@ -14,6 +14,7 @@ import ErrorDialog from '@components/Dialog/ErrorPopup';
 import LoadingDialog from '@components/Dialog/LoadingPopup';
 import CopyAddress from '@components/CopyAddress';
 import { ipfsCIDToHttpUrl } from '@api/storage.api';
+import { trimAddress } from '@utils/trim-address';
 
 const AutCard = styled(Card)(({ theme }) => ({
   '&.MuiCard-root': {
@@ -27,6 +28,12 @@ const AutCard = styled(Card)(({ theme }) => ({
   '.MuiCardContent-root:last-child': {
     padding: '0',
   },
+}));
+
+const ExternalUrl = styled('a')(({ theme }) => ({
+  color: 'white',
+  fontSize: pxToRem(14),
+  marginBottom: pxToRem(10),
 }));
 
 const BottomWrapper = styled('div')(({ theme }) => ({
@@ -46,14 +53,20 @@ const BottomWrapper = styled('div')(({ theme }) => ({
 
 const AutCommunityEdit = () => {
   const dispatch = useAppDispatch();
-
   const desktop = useMediaQuery('(min-width:1024px)');
   const xs = useMediaQuery('(max-width:360px)');
-  const params = useParams<{ communityAddress: string }>();
+  const params = useParams<{ network: string; holderAddress: string; communityAddress: string }>();
   const selectedCommunity = useSelector(SelectedCommunity(params.communityAddress));
   const history = useHistory();
   const status = useSelector(UpdateStatus);
   const errorMessage = useSelector(UpdateErrorMessage);
+
+  const linkSource =
+    params.network === 'mumbai'
+      ? 'https://mumbai.polygonscan.com/address/'
+      : params.network === 'goerli'
+      ? 'https://goerli.etherscan.io/'
+      : null;
 
   const {
     control,
@@ -174,7 +187,9 @@ const AutCommunityEdit = () => {
                       {selectedCommunity?.name}
                     </Typography>
                   </div>
-                  <CopyAddress address={selectedCommunity.properties.address} />
+                  <ExternalUrl href={`${linkSource}/${selectedCommunity.properties.address}`} target="_blank">
+                    {trimAddress(selectedCommunity.properties.address)}
+                  </ExternalUrl>
                   <Typography variant="h2" color="background.paper" textAlign="left" sx={{ textWrap: 'wrap' }}>
                     {selectedCommunity?.properties?.market}
                   </Typography>

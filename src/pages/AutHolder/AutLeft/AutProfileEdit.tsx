@@ -2,12 +2,12 @@ import { ReactComponent as EthIcon } from '@assets/EthIcon.svg';
 import { ReactComponent as PersonIcon } from '@assets/PersonIcon.svg';
 import { ReactComponent as DiscordIcon } from '@assets/SocialIcons/DiscordIcon.svg';
 import { ReactComponent as GitHubIcon } from '@assets/SocialIcons/GitHubIcon.svg';
-import { ReactComponent as LeafIcon } from '@assets/SocialIcons/LeafIcon.svg';
+import { ReactComponent as LensfrensIcon } from '@assets/SocialIcons/LensfrensIcon.svg';
 import { ReactComponent as TelegramIcon } from '@assets/SocialIcons/TelegramIcon.svg';
 import { ReactComponent as TwitterIcon } from '@assets/SocialIcons/TwitterIcon.svg';
 import { AutTextField } from '@components/Fields/AutFields';
 import AFileUpload from '@components/Fields/AutFileUpload';
-import { Box, styled, SvgIcon, Typography, useMediaQuery } from '@mui/material';
+import { Box, styled, SvgIcon, Typography, useMediaQuery, InputAdornment } from '@mui/material';
 import { pxToRem } from '@utils/text-size';
 import { Controller, useForm, useFieldArray } from 'react-hook-form';
 import { toBase64 } from 'sw-web-shared';
@@ -17,7 +17,7 @@ import { useSelector } from 'react-redux';
 import { HolderData, UpdateErrorMessage, updateHolderState, UpdateStatus } from '@store/holder/holder.reducer';
 import { useAppDispatch } from '@store/store.model';
 import { updateProfile } from '@api/holder.api';
-import { AutID } from '@api/aut.model';
+import { AutID, socialUrls } from '@api/aut.model';
 import ErrorDialog from '@components/Dialog/ErrorPopup';
 import LoadingDialog from '@components/Dialog/LoadingPopup';
 import { ResultState } from '@store/result-status';
@@ -29,7 +29,7 @@ const socialIcons = {
   github: GitHubIcon,
   telegram: TelegramIcon,
   twitter: TwitterIcon,
-  leaf: LeafIcon,
+  lensfrens: LensfrensIcon,
 };
 
 const ImageUpload = styled('div')(({ theme }) => ({
@@ -175,7 +175,10 @@ const AutProfileEdit = (props) => {
     mode: 'onChange',
     defaultValues: {
       image: holderData?.properties?.avatar,
-      socials: holderData?.properties?.socials,
+      socials: (holderData?.properties?.socials || []).map((social) => {
+        social.link = (social.link as string).replace(socialUrls[social.type].prefix, '');
+        return social;
+      }),
     },
   });
 
@@ -185,6 +188,8 @@ const AutProfileEdit = (props) => {
   });
 
   const values = watch();
+
+  console.log(values, 'VALUES');
 
   const onSubmit = (data: typeof values) => {
     dispatch(
@@ -264,6 +269,8 @@ const AutProfileEdit = (props) => {
           </FieldWrapper>
           {fields.map((_, index) => {
             const AutIcon = socialIcons[Object.keys(socialIcons)[index]];
+            const { prefix, hidePrefix, placeholder } = socialUrls[Object.keys(socialUrls)[index]];
+
             return (
               <FieldWrapper key={`socials.${index}`}>
                 <SvgIcon
@@ -284,7 +291,7 @@ const AutProfileEdit = (props) => {
                     return (
                       <>
                         <AutTextField
-                          placeholder="Link"
+                          placeholder={placeholder}
                           focused
                           id={name}
                           name={name}
@@ -294,6 +301,13 @@ const AutProfileEdit = (props) => {
                           onChange={onChange}
                           sx={{
                             mb: pxToRem(45),
+                          }}
+                          InputProps={{
+                            startAdornment: !hidePrefix && (
+                              <InputAdornment position="start">
+                                <p style={{ color: 'white', marginRight: '-5px' }}>{prefix}</p>
+                              </InputAdornment>
+                            ),
                           }}
                         />
                       </>

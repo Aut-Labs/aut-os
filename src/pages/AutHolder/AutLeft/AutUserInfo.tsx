@@ -4,29 +4,32 @@
 import { ReactComponent as DiscordIcon } from '@assets/SocialIcons/DiscordIcon.svg';
 
 import { ReactComponent as GitHubIcon } from '@assets/SocialIcons/GitHubIcon.svg';
-import { ReactComponent as LeafIcon } from '@assets/SocialIcons/LeafIcon.svg';
+import { ReactComponent as LensfrensIcon } from '@assets/SocialIcons/LensfrensIcon.svg';
 import { ReactComponent as TelegramIcon } from '@assets/SocialIcons/TelegramIcon.svg';
 import { ReactComponent as TwitterIcon } from '@assets/SocialIcons/TwitterIcon.svg';
 import { Avatar, Box, Card, CardContent, CardHeader, Link, styled, SvgIcon, Typography, useMediaQuery } from '@mui/material';
 import { pxToRem } from '@utils/text-size';
 import { useState } from 'react';
 import PencilEdit from '@assets/PencilEditicon';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { HolderData, HolderStatus } from '@store/holder/holder.reducer';
 import { IsAuthenticated } from '@auth/auth.reducer';
 import { ResultState } from '@store/result-status';
 import CopyAddress from '@components/CopyAddress';
 import { ipfsCIDToHttpUrl } from '@api/storage.api';
+import { trimAddress } from '@utils/trim-address';
 
 const AutTable = styled('table')(({ theme }) => ({
   width: '100%',
 
   tr: {
     '&:not(:first-of-type)': {
-      cursor: 'pointer',
-      '&:hover': {
-        backgroundColor: 'rgba(67, 158, 221, 0.3)',
+      '&.isAuthenticated': {
+        cursor: 'pointer',
+        '&:hover': {
+          backgroundColor: 'rgba(67, 158, 221, 0.3)',
+        },
       },
 
       '&.isActive': {
@@ -36,20 +39,29 @@ const AutTable = styled('table')(({ theme }) => ({
   },
 
   td: {
-    padding: pxToRem(20),
+    padding: `${pxToRem(20)} ${pxToRem(10)}`,
     height: pxToRem(32),
 
+    '@media(max-width: 1024px)': {
+      padding: pxToRem(20),
+    },
+
     '&:not(:first-of-type)': {
-      paddingLeft: pxToRem(50),
+      paddingLeft: pxToRem(30),
     },
     borderBottom: '1px solid white',
   },
 
   th: {
     height: pxToRem(32),
-    padding: pxToRem(20),
+    padding: `${pxToRem(20)} ${pxToRem(10)}`,
+
+    '@media(max-width: 1024px)': {
+      padding: pxToRem(20),
+    },
+
     '&:not(:first-of-type)': {
-      paddingLeft: pxToRem(50),
+      paddingLeft: pxToRem(30),
     },
     borderBottom: '1px solid white',
   },
@@ -57,10 +69,16 @@ const AutTable = styled('table')(({ theme }) => ({
 const IconContainer = styled('div')(({ theme }) => ({
   paddingTop: pxToRem(15),
   display: 'flex',
+  minHeight: pxToRem(30),
 
   '@media(max-width: 1024px)': {
     paddingTop: pxToRem(20),
   },
+}));
+
+const ExternalUrl = styled('a')(({ theme }) => ({
+  color: 'white',
+  fontSize: pxToRem(14),
 }));
 
 const AutCard = styled(Card)(({ theme }) => ({
@@ -80,10 +98,11 @@ const AutCard = styled(Card)(({ theme }) => ({
 const AutUserInfo = ({ match }) => {
   const holderData = useSelector(HolderData);
   const holderStatus = useSelector(HolderStatus);
+  const params = useParams<{ network: string; holderAddress: string }>();
   const isAuthenticated = useSelector(IsAuthenticated);
   const desktop = useMediaQuery('(min-width:1024px)');
   const xs = useMediaQuery('(max-width:360px)');
-
+  const correctNetwork = params.network === 'mumbai' || params.network === 'goerli';
   const [isActiveIndex, setIsActiveIndex] = useState(null);
   const history = useHistory();
 
@@ -92,8 +111,33 @@ const AutUserInfo = ({ match }) => {
     github: GitHubIcon,
     telegram: TelegramIcon,
     twitter: TwitterIcon,
-    leaf: LeafIcon,
+    lensfrens: LensfrensIcon,
   };
+
+  const socialUrls = {
+    discord: '',
+    github: 'https://github.com/',
+    telegram: 'https://t.me/',
+    twitter: 'https://twitter.com/',
+    lensfrens: 'https://www.lensfrens.xyz/',
+  };
+  const testSocials = [
+    {
+      type: 'discord',
+      link: 'string',
+    },
+    {
+      type: 'twitter',
+      link: 'string',
+    },
+  ];
+
+  const linkSource =
+    params.network === 'mumbai'
+      ? 'https://mumbai.polygonscan.com/address/'
+      : params.network === 'goerli'
+      ? 'https://goerli.etherscan.io/'
+      : null;
 
   const onEdit = () => {
     history.push(`${match.url}/edit-profile`);
@@ -108,6 +152,7 @@ const AutUserInfo = ({ match }) => {
       history.push(`${match.url}/edit-community/${address}`);
     }
   }
+
   return (
     <>
       <Box>
@@ -120,7 +165,7 @@ const AutUserInfo = ({ match }) => {
                 paddingTop: desktop ? pxToRem(150) : !xs ? pxToRem(100) : pxToRem(30),
               }}
             >
-              <AutCard sx={{ bgcolor: 'background.default', border: 'none' }}>
+              <AutCard sx={{ bgcolor: 'background.default', border: 'none', display: 'flex' }}>
                 <CardHeader
                   avatar={
                     <Avatar
@@ -130,18 +175,21 @@ const AutUserInfo = ({ match }) => {
                     />
                   }
                 />
-                <CardContent sx={{ ml: xs ? '0' : pxToRem(30), mr: xs ? 0 : pxToRem(30), alignSelf: 'flex-end' }}>
-                  <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <Typography fontSize={pxToRem(50)} color="background.paper" textAlign="left">
+                <CardContent sx={{ ml: xs ? '0' : pxToRem(30), mr: xs ? 0 : pxToRem(30), alignSelf: 'center', height: pxToRem(150) }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start' }}>
+                    <Typography fontSize={pxToRem(50)} color="background.paper" textAlign="left" lineHeight={1}>
                       {holderData.name}
                     </Typography>
                     {isAuthenticated && (
-                      <div style={{ padding: pxToRem(20), cursor: 'pointer' }} onClick={onEdit}>
+                      <div style={{ padding: pxToRem(10), cursor: 'pointer', alignSelf: 'center' }} onClick={onEdit}>
                         <PencilEdit height={pxToRem(24)} width={pxToRem(24)} />
                       </div>
                     )}
                   </div>
-                  <CopyAddress address={holderData.properties.address} />
+                  <ExternalUrl href={`${linkSource}/${holderData?.properties?.address}`} target="_blank">
+                    {trimAddress(holderData.properties.address)}
+                  </ExternalUrl>
+
                   {holderData.properties.ethDomain && (
                     <Typography
                       variant="h2"
@@ -155,6 +203,7 @@ const AutUserInfo = ({ match }) => {
                   <IconContainer>
                     {holderData?.properties.socials.map((social, index) => {
                       const AutIcon = socialIcons[Object.keys(socialIcons)[index]];
+
                       return (
                         social.link && (
                           <Link key={`social-icon-${index}`} href={social.link} target="_blank" component="a">
@@ -208,22 +257,44 @@ const AutUserInfo = ({ match }) => {
                       </Typography>
                     </th>
                     <th>
-                      <Typography variant="subtitle2" color="background.paper" textAlign="left" fontWeight="bold">
+                      <Typography variant="subtitle2" color="background.paper" textAlign="center" fontWeight="bold">
                         Commitment
                       </Typography>
                     </th>
                   </tr>
-                  {holderData.properties.communities.map(({ name, properties }, index) => (
+                  {holderData.properties.communities.map(({ image, name, properties }, index) => (
                     <tr
                       key={`row-key-${index}`}
-                      className={isActiveIndex === index ? 'isActive' : ''}
+                      className={`${isActiveIndex === index ? 'isActive' : ' '} ${isAuthenticated ? 'isAuthenticated' : ''}`}
                       onClick={() => clickRow(index, properties.address)}
                     >
                       <td>
-                        <Typography variant="h2" color="background.paper" sx={{ pb: '5px' }}>
-                          {name}
-                        </Typography>
-                        <CopyAddress address={properties.address} />
+                        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                          <Avatar
+                            sx={{
+                              bgcolor: 'background.default',
+                              width: pxToRem(64),
+                              height: pxToRem(64),
+                              borderRadius: 0,
+                              mr: pxToRem(15),
+                              border: '1px solid white',
+                            }}
+                            aria-label="community-avatar"
+                            src={ipfsCIDToHttpUrl(image as string)}
+                          />
+                          <div style={{ display: 'flex', flexDirection: 'column' }}>
+                            <Typography variant="h2" color="background.paper" sx={{ pb: '5px' }}>
+                              {name}
+                            </Typography>
+                            <ExternalUrl
+                              onClick={(event) => event.stopPropagation()}
+                              href={`${linkSource}/${properties.address}`}
+                              target="_blank"
+                            >
+                              {trimAddress(properties.address)}
+                            </ExternalUrl>
+                          </div>
+                        </div>
                       </td>
                       <td>
                         <Typography variant="h2" color="background.paper">
@@ -231,10 +302,10 @@ const AutUserInfo = ({ match }) => {
                         </Typography>
                       </td>
                       <td>
-                        <Typography variant="h2" color="background.paper" sx={{ pb: '5px' }}>
+                        <Typography variant="h2" color="background.paper" textAlign="center" sx={{ pb: '5px' }}>
                           {`${properties.userData.commitment}/10`}
                         </Typography>
-                        <Typography variant="h5" color="background.paper">
+                        <Typography variant="h5" textAlign="center" color="background.paper">
                           {properties.userData.commitmentDescription}
                         </Typography>
                       </td>
@@ -244,12 +315,13 @@ const AutUserInfo = ({ match }) => {
               </AutTable>
             </Box>
           </Box>
-        ) : (
+        ) : !correctNetwork ? (
           <Typography
             sx={{
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
+              textAlign: 'center',
               mb: '10px',
               fontSize: pxToRem(50),
               color: 'white',
@@ -259,7 +331,25 @@ const AutUserInfo = ({ match }) => {
               top: '50%',
             }}
           >
-            This āutID hasn't been claimed yet
+            Oops, it looks like we don't support this network yet.
+          </Typography>
+        ) : (
+          <Typography
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              textAlign: 'center',
+              mb: '10px',
+              fontSize: pxToRem(50),
+              color: 'white',
+              position: 'absolute',
+              transform: 'translate(-50%, -50%)',
+              left: '50%',
+              top: '50%',
+            }}
+          >
+            This āutID hasn't been claimed yet.
           </Typography>
         )}
       </Box>

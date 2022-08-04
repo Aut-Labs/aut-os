@@ -14,6 +14,9 @@ import { AutID } from '@api/aut.model';
 import AutHolder from './pages/AutHolder/AutHolder';
 import SWSnackbar from './components/snackbar';
 import './App.scss';
+// eslint-disable-next-line import/order
+import { ethers, providers } from 'ethers';
+import AutSearch from './pages/AutHome/AutSearch';
 
 const LoadingMessage = () => (
   <div className="app-loading">
@@ -26,12 +29,13 @@ function App() {
   const location = useLocation<any>();
   const history = useHistory();
   const desktop = useMediaQuery('(min-width:1024px)');
+
   const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
-    const [, holderAddress] = location.pathname.split('/');
-    if (holderAddress) {
-      history.push(`/${holderAddress}`);
+    const [, network, holderAddress] = location.pathname.split('/');
+    if (holderAddress && network) {
+      history.push(`/${network}/${holderAddress}`);
     } else {
       history.push(`/`);
     }
@@ -39,14 +43,18 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const onSWLogin = async ({ detail }: any) => {
+    const onAutLogin = async ({ detail }: any) => {
       const autID = new AutID(detail);
       autID.properties.communities = autID.properties.communities.filter((c) => {
         return c.properties.userData?.isActive;
       });
       autID.properties.address = window.ethereum.selectedAddress;
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const { name } = await provider.getNetwork();
+      const network = name === 'maticmum' ? 'mumbai' : name === 'goerli' ? 'goerli' : '';
       const ethDomain = await fetchHolderEthEns(autID.properties.address);
       autID.properties.ethDomain = ethDomain;
+      console.log(autID, 'autid');
       await dispatch(
         setAuthenticated({
           isAuthenticated: true,
@@ -60,23 +68,29 @@ function App() {
           status: ResultState.Idle,
         })
       );
-      history.push(`/${autID.name}`);
+      // TODO: figure out how network comes in the autID
+      if (autID?.name && network) {
+        history.push(`/${network}/${autID.name}`);
+      } else {
+        history.push(`/`);
+      }
+      history.push(`/${network}/${autID.name}`);
     };
 
     const onDisconnected = () => {
-      const [, holderAddress] = location.pathname.split('/');
-      if (holderAddress) {
-        history.push(`/${holderAddress}`);
+      const [, network, holderAddress] = location.pathname.split('/');
+      if (holderAddress && network) {
+        history.push(`/${network}/${holderAddress}`);
       } else {
         history.push(`/`);
       }
       dispatch(resetAuthState());
     };
 
-    const onSWInit = async () => setLoading(false);
+    const onAutInit = async () => setLoading(false);
 
-    window.addEventListener('aut-Init', onSWInit);
-    window.addEventListener('aut-onConnected', onSWLogin);
+    window.addEventListener('aut-Init', onAutInit);
+    window.addEventListener('aut-onConnected', onAutLogin);
     window.addEventListener('aut-onDisconnected', onDisconnected);
 
     Init({
@@ -84,9 +98,9 @@ function App() {
     });
 
     return () => {
-      window.removeEventListener('aut-Init', onSWInit);
-      window.removeEventListener('aut-onConnected', onSWLogin);
-      window.removeEventListener('aut-onDisconnected', onSWLogin);
+      window.removeEventListener('aut-Init', onAutInit);
+      window.removeEventListener('aut-onConnected', onAutLogin);
+      window.removeEventListener('aut-onDisconnected', onAutLogin);
     };
   }, [dispatch, history, location.pathname, location.state?.from]);
 
@@ -112,7 +126,8 @@ function App() {
           <LoadingMessage />
         ) : (
           <Switch>
-            <Route component={AutHolder} path="/:holderAddress" />
+            <Route exact component={AutSearch} path="/" />
+            <Route component={AutHolder} path="/:network/:holderAddress" />
             <Route component={NotFound} /> : <RedirectRoute to={{ pathname: '/', state: { from: location.pathname } }} />
           </Switch>
         )}

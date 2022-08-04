@@ -4,10 +4,12 @@ import { AutID } from '@api/aut.model';
 import { editCommitment, fetchHolderData, updateProfile, withdraw } from '@api/holder.api';
 import { ErrorParser } from '@utils/error-parser';
 import { CommitmentMessages } from '@api/community.model';
+import { AutoFixNormalRounded } from '@mui/icons-material';
 
-export const fetchHolder = createAsyncThunk('fetch-holder', async (autName: string) => {
+export const fetchHolder = createAsyncThunk('fetch-holder', async (data: any) => {
+  const { autName, network } = data;
   try {
-    return await fetchHolderData(autName);
+    return await fetchHolderData(autName, network);
   } catch (error) {
     const message = ErrorParser(error);
     throw new Error(message);
@@ -105,6 +107,7 @@ export const { updateHolderState } = holderSlice.actions;
 
 export const HolderData = (state) => state.holder.autID as AutID;
 export const HolderStatus = (state) => state.holder.fetchStatus as ResultState;
+
 export const UpdateStatus = (state) => state.holder.status as ResultState;
 export const UpdateErrorMessage = (state) => state.holder.errorMessage as string;
 export const SelectedCommunity = (communityAddress) =>
