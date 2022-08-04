@@ -7,6 +7,31 @@ export interface AutSocial {
   link: string;
 }
 
+export const socialUrls = {
+  // eth: EthIcon,
+  discord: {
+    hidePrefix: true,
+    placeholder: 'name#1234',
+    prefix: 'https://discord.com/users/',
+  },
+  github: {
+    prefix: 'https://github.com/',
+    placeholder: '',
+  },
+  telegram: {
+    prefix: 'https://t.me/',
+    placeholder: '',
+  },
+  twitter: {
+    prefix: 'https://twitter.com/',
+    placeholder: '',
+  },
+  lensfrens: {
+    prefix: 'https://www.lensfrens.xyz/',
+    placeholder: '',
+  },
+};
+
 export const DefaultSocials: AutSocial[] = [
   // {
   //   type: 'eth',
@@ -29,7 +54,7 @@ export const DefaultSocials: AutSocial[] = [
     link: '',
   },
   {
-    type: 'leaf',
+    type: 'lensfrens',
     link: '',
   },
 ];
@@ -49,6 +74,8 @@ export class AutIDProperties {
 
   ethDomain?: string;
 
+  network?: string;
+
   constructor(data: AutIDProperties) {
     if (!data) {
       this.communities = [];
@@ -62,6 +89,7 @@ export class AutIDProperties {
       this.ethDomain = data.ethDomain;
       this.socials = data.socials || DefaultSocials;
       this.socials = this.socials.filter((s) => s.type !== 'eth');
+      this.network = data.network;
     }
   }
 }
@@ -76,7 +104,10 @@ export class AutID extends BaseNFTModel<AutIDProperties> {
       properties: {
         avatar: httpUrlToIpfsCID(autID.properties.avatar as string),
         timestamp: autID.properties.timestamp,
-        socials: autID.properties.socials,
+        socials: autID.properties.socials.map((social) => {
+          social.link = `${socialUrls[social.type].prefix}${social.link}`;
+          return social;
+        }),
       },
     } as Partial<AutID>;
   }

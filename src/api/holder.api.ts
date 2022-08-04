@@ -26,9 +26,9 @@ export const fetchHolderEthEns = async (address = '0xd8dA6BF26964aF9D7eEd9e03E53
   }
 };
 
-export const fetchHolderData = async (holderName: string): Promise<AutID> => {
+export const fetchHolderData = async (holderName: string, network: string): Promise<AutID> => {
   return axios
-    .get<HolderData>(`${environment.apiUrl}/autID/${holderName}?network=mumbai`)
+    .get<HolderData>(`${environment.apiUrl}/autID/${holderName}?network=${network}`)
     .then((res) => res.data)
     .then(async (data) => {
       const userMetadataUri = ipfsCIDToHttpUrl(data.metadataUri);
@@ -38,6 +38,7 @@ export const fetchHolderData = async (holderName: string): Promise<AutID> => {
         ...userMetadata,
         properties: {
           ...userMetadata.properties,
+          network,
           ethDomain,
           address: data.address,
           tokenId: data.tokenId,
@@ -67,6 +68,29 @@ export const fetchHolderData = async (holderName: string): Promise<AutID> => {
       autID.properties.communities = communities;
       return autID;
     });
+};
+
+export const fetchHolder = async (holderName: string, network: string): Promise<AutID[]> => {
+  return axios
+    .get<HolderData>(`${environment.apiUrl}/autID/${holderName}?network=${network}`)
+    .then((res) => res.data)
+    .then(async (data) => {
+      const userMetadataUri = ipfsCIDToHttpUrl(data.metadataUri);
+      const userMetadata: AutID = (await axios.get(userMetadataUri)).data;
+      const ethDomain = await fetchHolderEthEns(userMetadata.properties.address);
+      const autID = new AutID({
+        ...userMetadata,
+        properties: {
+          ...userMetadata.properties,
+          network,
+          ethDomain,
+          address: data.address,
+          tokenId: data.tokenId,
+        },
+      });
+      return autID;
+    })
+    .catch(() => null);
 };
 
 export const editCommitment = autIDProvider(
