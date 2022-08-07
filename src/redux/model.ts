@@ -7,6 +7,17 @@ export interface SnackbarPayload {
   duration?: number;
 }
 
+export interface NetworkConfig {
+  autIdAddress: string;
+  registryAddress: string;
+  network: {
+    name: string;
+    rpcUrls: string[];
+    chainId: number;
+    blockExplorerUrls: string[];
+  };
+}
+
 export interface CurrentStep {
   activeStep: number;
   title: string;

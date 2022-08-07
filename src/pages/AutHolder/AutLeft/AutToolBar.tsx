@@ -4,7 +4,7 @@ import { AppBar, styled, Toolbar } from '@mui/material';
 import { resetSearchState } from '@store/search/search.reducer';
 import { useAppDispatch } from '@store/store.model';
 import { pxToRem } from '@utils/text-size';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 
 const AutBar = styled(Toolbar)(({ theme }) => ({
   '&.MuiToolbar-root': {
@@ -23,6 +23,7 @@ const AutBar = styled(Toolbar)(({ theme }) => ({
 
 const AutToolBar = ({ hideWebComponent = false, hideLogo = false }) => {
   const history = useHistory();
+  const params = useParams<any>();
   const dispatch = useAppDispatch();
 
   function goHome() {
@@ -33,7 +34,9 @@ const AutToolBar = ({ hideWebComponent = false, hideLogo = false }) => {
     <>
       <AutBar>
         {!hideLogo && <MyAutIDLogo style={{ cursor: 'pointer' }} onClick={() => goHome()} />}
-        {!hideWebComponent && <d-aut id="d-aut" use-dev="true" community-address="0x971f88eAD376BbD4149E40080c4e78Fb039f681A" />}
+        {!hideWebComponent && (
+          <d-aut id="d-aut" network={params.network} use-dev="true" community-address="0x971f88eAD376BbD4149E40080c4e78Fb039f681A" />
+        )}
       </AutBar>
     </>
   );

@@ -2,6 +2,7 @@ import { AutIDContractEventType, Web3AutIDProvider } from '@aut-protocol/abi-typ
 import axios from 'axios';
 import { ethers } from 'ethers';
 import { base64toFile } from 'sw-web-shared';
+import { NetworkConfig } from '@store/model';
 import { HolderCommunity, HolderData } from './api.model';
 import { AutID } from './aut.model';
 import { Community } from './community.model';
@@ -13,7 +14,7 @@ const autIDProvider = Web3ThunkProviderFactory('AutID', {
   provider: Web3AutIDProvider,
 });
 
-export const fetchHolderEthEns = async (address = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045') => {
+export const fetchHolderEthEns = async (address: string) => {
   if (typeof window.ethereum !== 'undefined') {
     try {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -98,7 +99,11 @@ export const editCommitment = autIDProvider(
     type: 'holder/edit-commitment',
     event: AutIDContractEventType.CommitmentUpdated,
   },
-  () => Promise.resolve(environment.autIDAddress),
+  (thunkAPI) => {
+    const state = thunkAPI.getState() as any;
+    const config: NetworkConfig = state.walletProvider.networkConfig;
+    return Promise.resolve(config.registryAddress);
+  },
   async (contract, { communityAddress, commitment }) => {
     const response = await contract.editCommitment(communityAddress, commitment);
     return {
@@ -112,7 +117,11 @@ export const withdraw = autIDProvider(
   {
     type: 'holder/withdraw',
   },
-  () => Promise.resolve(environment.autIDAddress),
+  (thunkAPI) => {
+    const state = thunkAPI.getState() as any;
+    const config: NetworkConfig = state.walletProvider.networkConfig;
+    return Promise.resolve(config.registryAddress);
+  },
   async (contract, communityAddress) => {
     const response = await contract.withdraw(communityAddress);
     return communityAddress;
@@ -123,7 +132,11 @@ export const updateProfile = autIDProvider(
   {
     type: 'holder/update',
   },
-  () => Promise.resolve(environment.autIDAddress),
+  (thunkAPI) => {
+    const state = thunkAPI.getState() as any;
+    const config: NetworkConfig = state.walletProvider.networkConfig;
+    return Promise.resolve(config.registryAddress);
+  },
   async (contract, user) => {
     if (user.properties.avatar && !isValidUrl(user.properties.avatar as string)) {
       const file = base64toFile(user.properties.avatar as string, 'image');

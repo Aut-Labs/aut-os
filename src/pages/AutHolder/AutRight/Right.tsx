@@ -105,7 +105,6 @@ const AutQRCode = ({ link, size }) => {
 const AutTunnelRight = () => {
   const dispatch = useAppDispatch();
   const holderData = useSelector(HolderData);
-  console.log('holderData', holderData);
   const desktop = useMediaQuery('(min-width:1024px)');
   const [open, setOpen] = useState(false);
   const [isFlipped, setFlipped] = useState(false);

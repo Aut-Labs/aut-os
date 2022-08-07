@@ -26,8 +26,6 @@ const AutLeft = ({ match }) => {
   const params = useParams<any>();
   const history = useHistory();
   const { url } = useRouteMatch();
-  console.log(pathname, history, url, 'PATH', params);
-  console.log(match.path, ' MATCH PATH');
   const desktop = useMediaQuery('(min-width:1024px)');
 
   return (

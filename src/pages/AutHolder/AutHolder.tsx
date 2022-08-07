@@ -18,6 +18,7 @@ import { Mousewheel, Pagination } from 'swiper';
 
 import { AutShareDialog } from '@components/AutShare';
 import { setOpenShare } from '@store/ui-reducer';
+import { setNetwork } from '@store/WalletProvider/WalletProvider';
 import AutLeft from './AutLeft/Left';
 import AutTunnelRight from './AutRight/Right';
 import AutToolBar from './AutLeft/AutToolBar';
@@ -43,7 +44,9 @@ const AutHolder = (props) => {
   const desktop = useMediaQuery('(min-width:1024px)');
   const holderData = useSelector(HolderData);
 
-  console.log(params, 'PARAMS');
+  useEffect(() => {
+    dispatch(setNetwork(params.network));
+  }, []);
 
   useEffect(() => {
     if (!isAuthenticated) {

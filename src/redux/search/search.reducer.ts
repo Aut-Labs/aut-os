@@ -10,7 +10,6 @@ export const fetchSearchResults = createAsyncThunk('fetch-search-results', async
     const result = [];
     const mumbaiResult = await fetchHolder(username, 'mumbai');
     const goerliResult = await fetchHolder(username, 'goerli');
-    console.log(mumbaiResult, goerliResult, 'Mumbai Result, Goerli Result');
     if (mumbaiResult) {
       result.push(mumbaiResult);
     }

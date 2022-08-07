@@ -1,4 +1,5 @@
-import { environment, EnvMode } from '@api/environment';
+import { toHex } from '@utils/helpers';
+import { NetworkConfig } from '@store/model';
 
 const nativeCurrency = {
   name: 'Matic',
@@ -6,35 +7,22 @@ const nativeCurrency = {
   decimals: 18,
 };
 
-const prodConfigParams = [
-  {
-    chainId: '0x89',
-    chainName: 'Polygon',
-    nativeCurrency,
-    rpcUrls: environment.rpcUrls?.split(','),
-    blockExplorerUrls: ['https://polygonscan.com/'],
-  },
-];
+export const EnableAndChangeNetwork = async (provider: any, config: NetworkConfig) => {
+  console.info('Changing Network', config);
+  const params = [
+    {
+      chainId: toHex(config.network.chainId),
+      chainName: config.network.name,
+      rpcUrls: config.network.rpcUrls,
+      blockExplorerUrls: config.network.blockExplorerUrls,
+    },
+  ];
 
-const devConfigParams = [
-  {
-    chainId: '0x13881',
-    chainName: 'Mumbai',
-    nativeCurrency,
-    rpcUrls: environment.rpcUrls?.split(','),
-    blockExplorerUrls: ['https://explorer-mumbai.maticvigil.com/'],
-  },
-];
-
-export const EnableAndChangeNetwork = async () => {
-  console.info('Changing Network');
-  const production = environment.env === EnvMode.Production;
-  const params = production ? prodConfigParams : devConfigParams;
   const [{ chainId }] = params;
 
   try {
-    await window.ethereum.request({ method: 'eth_requestAccounts' });
-    await window.ethereum.request({
+    await provider.request({ method: 'eth_requestAccounts' });
+    await provider.request({
       method: 'wallet_switchEthereumChain',
       params: [{ chainId }],
     });
@@ -42,7 +30,7 @@ export const EnableAndChangeNetwork = async () => {
     // This error code indicates that the chain has not been added to MetaMask.
     if (switchError.code === 4902) {
       try {
-        await window.ethereum.request({
+        await provider.request({
           method: 'wallet_addEthereumChain',
           params,
         });

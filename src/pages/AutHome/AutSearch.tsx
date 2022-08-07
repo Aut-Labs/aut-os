@@ -173,7 +173,6 @@ const AutSearch = ({ match }) => {
 
   const onSubmit = async (data) => {
     dispatch(fetchSearchResults(data));
-    console.log(searchResult, 'Search Result', noResults, 'noResultbbool');
   };
 
   return (

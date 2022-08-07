@@ -189,8 +189,6 @@ const AutProfileEdit = (props) => {
 
   const values = watch();
 
-  console.log(values, 'VALUES');
-
   const onSubmit = (data: typeof values) => {
     dispatch(
       updateProfile({

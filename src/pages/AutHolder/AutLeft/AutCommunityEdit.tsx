@@ -2,7 +2,7 @@ import { Avatar, Box, Button, Card, CardContent, CardHeader, styled, Typography,
 import { pxToRem } from '@utils/text-size';
 import { Controller, useForm } from 'react-hook-form';
 import { AutButton } from '@components/AutButton';
-import { useHistory, useLocation, useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { AutSlider } from '@components/AutSlider';
 import { useSelector } from 'react-redux';
 import { SelectedCommunity, UpdateErrorMessage, updateHolderState, UpdateStatus } from '@store/holder/holder.reducer';
@@ -12,7 +12,6 @@ import { useEffect } from 'react';
 import { editCommitment, withdraw } from '@api/holder.api';
 import ErrorDialog from '@components/Dialog/ErrorPopup';
 import LoadingDialog from '@components/Dialog/LoadingPopup';
-import CopyAddress from '@components/CopyAddress';
 import { ipfsCIDToHttpUrl } from '@api/storage.api';
 import { trimAddress } from '@utils/trim-address';
 
@@ -83,7 +82,6 @@ const AutCommunityEdit = () => {
   const values = watch();
 
   const onSubmit = async (data) => {
-    console.log(values, 'values');
     const result = await dispatch(
       editCommitment({
         communityAddress: params.communityAddress,

@@ -24,15 +24,25 @@ export const Web3ThunkProviderFactory = <SWContractFunctions = any, SWContractEv
       ...stateActions,
     };
     const typeName = `[${type}] ${args.type}`;
+    // @ts-ignore
     return createAsyncThunk<Returned, ThunkArg, AsyncThunkConfig>(typeName, async (arg, thunkAPI) => {
       try {
         const addressOrName = (await contractAddress(thunkAPI)) || (args as any)?.addressOrName;
         if (!addressOrName) {
           throw new Error(`Could not find addressOrName for ${type}`);
         }
+        let state = thunkAPI.getState() as any;
+        const { networkConfig } = state.walletProvider;
+        let { signer } = state.walletProvider;
+
+        await EnableAndChangeNetwork(signer.provider.provider, networkConfig);
+        // get state again in case network was changed silently
+        state = thunkAPI.getState() as any;
+        signer = state.walletProvider.signer;
+
         const contractProvider = await stateActions.provider(addressOrName, {
           event: (args as ProviderEvent<SWContractEventTypes>).event,
-          beforeRequest: () => EnableAndChangeNetwork(),
+          signer: async () => signer,
           transactionState: (state) => {
             if (stateActions.updateTransactionStateAction) {
               stateActions.updateTransactionStateAction(state, thunkAPI.dispatch);
@@ -41,7 +51,6 @@ export const Web3ThunkProviderFactory = <SWContractFunctions = any, SWContractEv
         });
         return await thunk(contractProvider, arg, thunkAPI);
       } catch (error) {
-        console.log(error);
         const message = ParseSWErrorMessage(error);
         if (stateActions.updateErrorStateAction) {
           stateActions.updateErrorStateAction(message, thunkAPI.dispatch);

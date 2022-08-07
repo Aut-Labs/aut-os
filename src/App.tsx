@@ -3,20 +3,29 @@ import { withRouter, Switch, Route, Redirect as RedirectRoute, useLocation, useH
 import { Box, CssBaseline, useMediaQuery } from '@mui/material';
 import { useAppDispatch } from '@store/store.model';
 import { ReactComponent as AutLogo } from '@assets/AutLogo.svg';
+import { useSelector } from 'react-redux';
+import { ConnectorTypes } from '@api/ProviderFactory/components/ConnectorBtn';
+import { metaMaskConnector, walletConnectConnector } from '@api/ProviderFactory/web3.connectors';
+import { SelectedNetworkConfig } from '@store/WalletProvider/WalletProvider';
 import NotFound from '@components/NotFound';
+import Web3NetworkProvider from '@api/ProviderFactory/components/Web3NetworkProvider';
 import { ResultState } from '@store/result-status';
 import { updateHolderState } from '@store/holder/holder.reducer';
 import { resetAuthState, setAuthenticated } from '@auth/auth.reducer';
-import { Init } from 'd-aut-alpha';
+import { Init } from '@aut-protocol/d-aut';
 import { fetchHolderEthEns } from '@api/holder.api';
+import { useWeb3React } from '@web3-react/core';
 import { pxToRem } from '@utils/text-size';
 import { AutID } from '@api/aut.model';
+import AutSearch from './pages/AutHome/AutSearch';
 import AutHolder from './pages/AutHolder/AutHolder';
 import SWSnackbar from './components/snackbar';
 import './App.scss';
-// eslint-disable-next-line import/order
-import { ethers, providers } from 'ethers';
-import AutSearch from './pages/AutHome/AutSearch';
+
+const wallets = {
+  [ConnectorTypes.Metamask]: metaMaskConnector,
+  [ConnectorTypes.WalletConnect]: walletConnectConnector,
+};
 
 const LoadingMessage = () => (
   <div className="app-loading">
@@ -29,6 +38,9 @@ function App() {
   const location = useLocation<any>();
   const history = useHistory();
   const desktop = useMediaQuery('(min-width:1024px)');
+  const networkConfig = useSelector(SelectedNetworkConfig);
+  const [lastChainId, setLastChainId] = useState<number>(null);
+  const { account } = useWeb3React();
 
   const [isLoading, setLoading] = useState(false);
 
@@ -48,13 +60,9 @@ function App() {
       autID.properties.communities = autID.properties.communities.filter((c) => {
         return c.properties.userData?.isActive;
       });
-      autID.properties.address = window.ethereum.selectedAddress;
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const { name } = await provider.getNetwork();
-      const network = name === 'maticmum' ? 'mumbai' : name === 'goerli' ? 'goerli' : '';
+      autID.properties.address = account;
       const ethDomain = await fetchHolderEthEns(autID.properties.address);
       autID.properties.ethDomain = ethDomain;
-      console.log(autID, 'autid');
       await dispatch(
         setAuthenticated({
           isAuthenticated: true,
@@ -68,6 +76,11 @@ function App() {
           status: ResultState.Idle,
         })
       );
+
+      const [connector] = wallets[localStorage.getItem('provider') || ConnectorTypes.Metamask];
+      await connector.activate(+networkConfig.network.chainId);
+      setLastChainId(+networkConfig.network.chainId);
+      const network = networkConfig?.network?.name.toLowerCase();
       // TODO: figure out how network comes in the autID
       if (autID?.name && network) {
         history.push(`/${network}/${autID.name}`);
@@ -102,10 +115,11 @@ function App() {
       window.removeEventListener('aut-onConnected', onAutLogin);
       window.removeEventListener('aut-onDisconnected', onAutLogin);
     };
-  }, [dispatch, history, location.pathname, location.state?.from]);
+  }, [dispatch, history, location.pathname, location.state?.from, networkConfig]);
 
   return (
     <>
+      <Web3NetworkProvider lastChainId={lastChainId} />
       <div id="app" />
       <CssBaseline />
       <SWSnackbar />

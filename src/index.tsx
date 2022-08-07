@@ -5,16 +5,23 @@ import { Provider } from 'react-redux';
 import store from '@store/store';
 import { swEnvVariables, environment } from '@api/environment';
 import { ensureVariablesExist } from 'sw-web-shared';
+import Web3AutProvider from '@api/ProviderFactory/components/Web3Provider';
+import { Buffer } from 'buffer';
 import { SwTheme } from './theme';
 import reportWebVitals from './reportWebVitals';
 import App from './App';
+
+// @ts-ignore
+window.Buffer = Buffer;
 
 ReactDOM.render(
   <StyledEngineProvider injectFirst>
     <ThemeProvider theme={SwTheme}>
       <Provider store={store}>
         <BrowserRouter>
-          <App />
+          <Web3AutProvider>
+            <App />
+          </Web3AutProvider>
         </BrowserRouter>
       </Provider>
     </ThemeProvider>

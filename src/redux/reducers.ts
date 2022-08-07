@@ -3,12 +3,14 @@ import authSliceReducer from '../auth/auth.reducer';
 import uiSliceReducer from './ui-reducer';
 import holderReducer from './holder/holder.reducer';
 import searchReducer from './search/search.reducer';
+import walletProvideReducer from './WalletProvider/WalletProvider';
 
 export const reducers = combineReducers({
   auth: authSliceReducer,
   ui: uiSliceReducer,
   holder: holderReducer,
   search: searchReducer,
+  walletProvider: walletProvideReducer,
 });
 
 const rootReducer = (state, action) => {
