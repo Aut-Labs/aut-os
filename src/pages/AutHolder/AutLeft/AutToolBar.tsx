@@ -35,7 +35,13 @@ const AutToolBar = ({ hideWebComponent = false, hideLogo = false }) => {
       <AutBar>
         {!hideLogo && <MyAutIDLogo style={{ cursor: 'pointer' }} onClick={() => goHome()} />}
         {!hideWebComponent && (
-          <d-aut id="d-aut" network={params.network} use-dev="true" community-address="0x971f88eAD376BbD4149E40080c4e78Fb039f681A" />
+          <d-aut
+            id="d-aut"
+            button-type="simple"
+            network={params.network}
+            use-dev="true"
+            community-address="0x971f88eAD376BbD4149E40080c4e78Fb039f681A"
+          />
         )}
       </AutBar>
     </>
