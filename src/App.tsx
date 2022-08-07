@@ -77,7 +77,7 @@ function App() {
         })
       );
 
-      const [connector] = wallets[localStorage.getItem('provider') || ConnectorTypes.Metamask];
+      const [connector] = wallets[sessionStorage.getItem('provider') || ConnectorTypes.Metamask];
       await connector.activate(+networkConfig.network.chainId);
       setLastChainId(+networkConfig.network.chainId);
       const network = networkConfig?.network?.name.toLowerCase();
