@@ -102,7 +102,7 @@ export const editCommitment = autIDProvider(
   (thunkAPI) => {
     const state = thunkAPI.getState() as any;
     const config: NetworkConfig = state.walletProvider.networkConfig;
-    return Promise.resolve(config.registryAddress);
+    return Promise.resolve(config.autIdAddress);
   },
   async (contract, { communityAddress, commitment }) => {
     const response = await contract.editCommitment(communityAddress, commitment);
@@ -120,7 +120,7 @@ export const withdraw = autIDProvider(
   (thunkAPI) => {
     const state = thunkAPI.getState() as any;
     const config: NetworkConfig = state.walletProvider.networkConfig;
-    return Promise.resolve(config.registryAddress);
+    return Promise.resolve(config.autIdAddress);
   },
   async (contract, communityAddress) => {
     const response = await contract.withdraw(communityAddress);
@@ -135,7 +135,7 @@ export const updateProfile = autIDProvider(
   (thunkAPI) => {
     const state = thunkAPI.getState() as any;
     const config: NetworkConfig = state.walletProvider.networkConfig;
-    return Promise.resolve(config.registryAddress);
+    return Promise.resolve(config.autIdAddress);
   },
   async (contract, user) => {
     if (user.properties.avatar && !isValidUrl(user.properties.avatar as string)) {
