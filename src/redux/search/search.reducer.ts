@@ -3,18 +3,19 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { AutID } from '@api/aut.model';
 import { fetchHolder, fetchHolderData } from '@api/holder.api';
 import { ErrorParser } from '@utils/error-parser';
+import { environment } from '@api/environment';
 
 export const fetchSearchResults = createAsyncThunk('fetch-search-results', async (data: any) => {
   const { username } = data;
   try {
     const result = [];
-    const mumbaiResult = await fetchHolder(username, 'mumbai');
-    const goerliResult = await fetchHolder(username, 'goerli');
-    if (mumbaiResult) {
-      result.push(mumbaiResult);
-    }
-    if (goerliResult) {
-      result.push(goerliResult);
+    const networks = environment.networks.split(',');
+
+    for (const network of networks) {
+      const member = await fetchHolder(username, network.toLowerCase());
+      if (member) {
+        result.push(member);
+      }
     }
     return result;
   } catch (error) {

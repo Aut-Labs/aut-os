@@ -1,5 +1,5 @@
 import { getNetworkVariables } from '@api/environment';
-import { createSlice } from '@reduxjs/toolkit';
+import { createSelector, createSlice } from '@reduxjs/toolkit';
 import { NetworkConfig } from '@store/model';
 import { ethers } from 'ethers';
 
@@ -46,5 +46,9 @@ export const NetworkSelectorIsOpen = (state: any) => state.walletProvider.isOpen
 export const SelectedWalletType = (state: any) => state.walletProvider.selectedWalletType as string;
 export const NetworkSigner = (state: any) => state.walletProvider.signer as ethers.providers.JsonRpcSigner;
 export const SelectedNetworkConfig = (state: any) => state.walletProvider.networkConfig as NetworkConfig;
-
+export const BlockExplorerUrl = createSelector(SelectedNetworkConfig, (config) => {
+  if (config) {
+    return config.network.blockExplorerUrls[0];
+  }
+});
 export default walletProviderSlice.reducer;

@@ -11,14 +11,14 @@ import { Avatar, Box, Card, CardContent, CardHeader, Link, styled, SvgIcon, Typo
 import { pxToRem } from '@utils/text-size';
 import { useState } from 'react';
 import PencilEdit from '@assets/PencilEditicon';
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { HolderData, HolderStatus } from '@store/holder/holder.reducer';
 import { IsAuthenticated } from '@auth/auth.reducer';
 import { ResultState } from '@store/result-status';
-import CopyAddress from '@components/CopyAddress';
 import { ipfsCIDToHttpUrl } from '@api/storage.api';
 import { trimAddress } from '@utils/trim-address';
+import { BlockExplorerUrl, SelectedNetworkConfig } from '@store/WalletProvider/WalletProvider';
 
 const AutTable = styled('table')(({ theme }) => ({
   width: '100%',
@@ -98,11 +98,11 @@ const AutCard = styled(Card)(({ theme }) => ({
 const AutUserInfo = ({ match }) => {
   const holderData = useSelector(HolderData);
   const holderStatus = useSelector(HolderStatus);
-  const params = useParams<{ network: string; holderAddress: string }>();
+  const blockExplorer = useSelector(BlockExplorerUrl);
+  const selectedNetwork = useSelector(SelectedNetworkConfig);
   const isAuthenticated = useSelector(IsAuthenticated);
   const desktop = useMediaQuery('(min-width:1024px)');
   const xs = useMediaQuery('(max-width:360px)');
-  const correctNetwork = params.network === 'mumbai' || params.network === 'goerli';
   const [isActiveIndex, setIsActiveIndex] = useState(null);
   const history = useHistory();
 
@@ -131,13 +131,6 @@ const AutUserInfo = ({ match }) => {
       link: 'string',
     },
   ];
-
-  const linkSource =
-    params.network === 'mumbai'
-      ? 'https://mumbai.polygonscan.com/address/'
-      : params.network === 'goerli'
-      ? 'https://goerli.etherscan.io/'
-      : null;
 
   const onEdit = () => {
     history.push(`${match.url}/edit-profile`);
@@ -186,7 +179,7 @@ const AutUserInfo = ({ match }) => {
                       </div>
                     )}
                   </div>
-                  <ExternalUrl href={`${linkSource}/${holderData?.properties?.address}`} target="_blank">
+                  <ExternalUrl href={`${blockExplorer}/address/${holderData?.properties?.address}`} target="_blank">
                     {trimAddress(holderData.properties.address)}
                   </ExternalUrl>
 
@@ -288,7 +281,7 @@ const AutUserInfo = ({ match }) => {
                             </Typography>
                             <ExternalUrl
                               onClick={(event) => event.stopPropagation()}
-                              href={`${linkSource}/${properties.address}`}
+                              href={`${blockExplorer}/address/${properties.address}`}
                               target="_blank"
                             >
                               {trimAddress(properties.address)}
@@ -315,7 +308,7 @@ const AutUserInfo = ({ match }) => {
               </AutTable>
             </Box>
           </Box>
-        ) : !correctNetwork ? (
+        ) : !selectedNetwork ? (
           <Typography
             sx={{
               display: 'flex',

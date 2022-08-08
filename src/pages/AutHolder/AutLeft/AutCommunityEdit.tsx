@@ -14,6 +14,7 @@ import ErrorDialog from '@components/Dialog/ErrorPopup';
 import LoadingDialog from '@components/Dialog/LoadingPopup';
 import { ipfsCIDToHttpUrl } from '@api/storage.api';
 import { trimAddress } from '@utils/trim-address';
+import { BlockExplorerUrl, SelectedNetworkConfig } from '@store/WalletProvider/WalletProvider';
 
 const AutCard = styled(Card)(({ theme }) => ({
   '&.MuiCard-root': {
@@ -59,13 +60,8 @@ const AutCommunityEdit = () => {
   const history = useHistory();
   const status = useSelector(UpdateStatus);
   const errorMessage = useSelector(UpdateErrorMessage);
-
-  const linkSource =
-    params.network === 'mumbai'
-      ? 'https://mumbai.polygonscan.com/address/'
-      : params.network === 'goerli'
-      ? 'https://goerli.etherscan.io/'
-      : null;
+  const blockExplorer = useSelector(BlockExplorerUrl);
+  const selectedNetwork = useSelector(SelectedNetworkConfig);
 
   const {
     control,
@@ -185,7 +181,7 @@ const AutCommunityEdit = () => {
                       {selectedCommunity?.name}
                     </Typography>
                   </div>
-                  <ExternalUrl href={`${linkSource}/${selectedCommunity.properties.address}`} target="_blank">
+                  <ExternalUrl href={`${blockExplorer}/address/${selectedCommunity.properties.address}`} target="_blank">
                     {trimAddress(selectedCommunity.properties.address)}
                   </ExternalUrl>
                   <Typography variant="h2" color="background.paper" textAlign="left" sx={{ textWrap: 'wrap' }}>

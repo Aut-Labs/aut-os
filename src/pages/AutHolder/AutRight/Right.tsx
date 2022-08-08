@@ -10,7 +10,7 @@ import { useAppDispatch } from '@store/store.model';
 import FlipCard from '@components/FlipCard';
 import { QRCode } from 'react-qrcode-logo';
 import { ipfsCIDToHttpUrl } from '@api/storage.api';
-import { browserName } from 'react-device-detect';
+import { browserName, isIOS } from 'react-device-detect';
 import AutToolBar from '../AutLeft/AutToolBar';
 
 const CardZoom = styled<any>('img')(({ theme }) => ({
@@ -326,16 +326,17 @@ const AutTunnelRight = () => {
                 <g filter="url(#Rectangle_2301)" transform="translate(-259.71 -290.37)">
                   <g data-name="Rectangle 2301" transform="translate(260 290)">
                     <foreignObject
-                      {...(isSafari && {
+                      {...((isSafari || isIOS) && {
                         x: (window.innerWidth / 2 - 440) / 2,
                         y: (window.innerHeight - 695) / 2 + 100,
                         height: window.innerHeight / 1.25,
                         width: window.innerWidth / 4,
                       })}
-                      {...(!isSafari && {
-                        height: '695',
-                        width: '440',
-                      })}
+                      {...(!isSafari &&
+                        !isIOS && {
+                          height: '695',
+                          width: '440',
+                        })}
                     >
                       <AutIdCard avatar={ipfsCIDToHttpUrl(holderData?.image as string)} />
                     </foreignObject>
@@ -480,16 +481,17 @@ const AutTunnelRight = () => {
                   <path d="M0 0H206V325H0z" data-name="Rectangle 3376" transform="translate(-.06 -.325)" />
                   <g stroke="#fff" strokeWidth="1" data-name="Rectangle 3376" transform="translate(-.06 -.325)">
                     <foreignObject
-                      {...(isSafari && {
+                      {...((isSafari || isIOS) && {
                         x: (375.722 - 206) / 2,
                         y: (439.391 - 325) / 2 + 50,
                         height: '325',
                         width: '206',
                       })}
-                      {...(!isSafari && {
-                        height: '325',
-                        width: '206',
-                      })}
+                      {...(!isSafari &&
+                        !isIOS && {
+                          height: '325',
+                          width: '206',
+                        })}
                     >
                       <AutIdCard avatar={ipfsCIDToHttpUrl(holderData?.image as string)} />
                     </foreignObject>
