@@ -12,7 +12,7 @@ import { QRCode } from 'react-qrcode-logo';
 import { ipfsCIDToHttpUrl } from '@api/storage.api';
 import AutToolBar from '../AutLeft/AutToolBar';
 
-const CardZoom = styled<any>('div')(({ theme }) => ({
+const CardZoom = styled<any>('img')(({ theme }) => ({
   borderRadius: 0,
   border: '1px solid white',
   background: theme.palette.background.paper,
@@ -20,8 +20,7 @@ const CardZoom = styled<any>('div')(({ theme }) => ({
   position: 'relative',
   width: 'calc(100% - 40px)',
   height: 'calc(100% - 40px)',
-  marginTop: '20px',
-  marginLeft: '20px',
+  margin: '20px',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -48,8 +47,7 @@ const CardZoom = styled<any>('div')(({ theme }) => ({
   '@media(max-width: 1024px)': {
     width: 'calc(100% - 20px)',
     height: 'calc(100% - 20px)',
-    marginTop: '10px',
-    marginLeft: '10px',
+    margin: '10px',
   },
 }));
 
@@ -81,15 +79,15 @@ const AutRightMobileContainer = styled('div')(({ theme }) => ({
 
 const AutIdCard = ({ avatar }) => {
   return (
-    <CardZoom xmlns="http://www.w3.org/1999/xhtml" style={{ position: 'relative' }}>
-      <img
+    <CardZoom src={avatar}>
+      {/* <img
         alt="id"
         style={{
           width: '100%',
           height: '100%',
         }}
         src={avatar}
-      />
+      /> */}
     </CardZoom>
   );
 };
@@ -318,7 +316,7 @@ const AutTunnelRight = () => {
               </g>
               <g clipPath="url(#clip-path)" data-name="Mask Group 2" transform="translate(259.708 290.372)">
                 <g filter="url(#Rectangle_2301)" transform="translate(-259.71 -290.37)">
-                  <g style={{ position: 'relative', cursor: 'pointer' }} data-name="Rectangle 2301" transform="translate(260 290)">
+                  <g data-name="Rectangle 2301" transform="translate(260 290)">
                     <foreignObject
                       x="0"
                       y="0"
@@ -327,9 +325,18 @@ const AutTunnelRight = () => {
                       style={{
                         width: '440px',
                         height: '695px',
+                        transform: 'translate(0, 0)',
                       }}
                     >
-                      <AutIdCard avatar={ipfsCIDToHttpUrl(holderData?.image as string)} />
+                      <body
+                        style={{
+                          background: 'transparent',
+                        }}
+                        // @ts-ignore
+                        xmlns="http://www.w3.org/1999/xhtml"
+                      >
+                        <AutIdCard avatar={ipfsCIDToHttpUrl(holderData?.image as string)} />
+                      </body>
                     </foreignObject>
                   </g>
                 </g>
@@ -366,195 +373,6 @@ const AutTunnelRight = () => {
               marginTop: pxToRem(50),
             }}
           >
-            {/* <svg
-              xmlns="http://www.w3.org/2000/svg"
-              xmlnsXlink="http://www.w3.org/1999/xlink"
-              width="445.5"
-              height="474.074"
-              viewBox="0 0 445.5 474.074"
-            >
-              <defs>
-                <linearGradient id="linear-gradient" x2="1" y1="0.5" y2="0.5" gradientUnits="objectBoundingBox">
-                  <stop offset="0" stopColor="#009fe3" />
-                  <stop offset="0.08" stopColor="#0399de" />
-                  <stop offset="0.19" stopColor="#0e8bd3" />
-                  <stop offset="0.3" stopColor="#2072bf" />
-                  <stop offset="0.41" stopColor="#3a50a4" />
-                  <stop offset="0.53" stopColor="#5a2583" />
-                  <stop offset="0.71" stopColor="#453f94" />
-                  <stop offset="0.88" stopColor="#38519f" />
-                  <stop offset="1" stopColor="#3458a4" />
-                </linearGradient>
-                <clipPath id="clip-path">
-                  <path
-                    fill="#fff"
-                    stroke="#707070"
-                    strokeWidth="1"
-                    d="M0 0H206V325H0z"
-                    data-name="Rectangle 3377"
-                    transform="translate(-.06 -.325)"
-                  />
-                </clipPath>
-                <filter id="Rectangle_3376" width="224" height="343" x="112.644" y="88.222" filterUnits="userSpaceOnUse">
-                  <feOffset dx="6" dy="6" />
-                  <feGaussianBlur result="blur" stdDeviation="3" />
-                  <feFlood floodOpacity="0.545" />
-                  <feComposite in2="blur" operator="in" />
-                  <feComposite in="SourceGraphic" />
-                </filter>
-                <linearGradient id="linear-gradient-3" x1="0.061" x2="1.127" y1="0.343" y2="0.658" xlinkHref="#linear-gradient" />
-                <linearGradient id="linear-gradient-4" x1="0.063" x2="1.133" y1="0.343" y2="0.658" xlinkHref="#linear-gradient" />
-                <linearGradient id="linear-gradient-5" x1="-0.128" x2="1.167" y1="0.299" y2="0.619" xlinkHref="#linear-gradient" />
-                <linearGradient id="linear-gradient-6" x1="-0.137" x2="1.178" y1="0.298" y2="0.617" xlinkHref="#linear-gradient" />
-                <linearGradient id="linear-gradient-7" x1="-0.142" x2="0.952" y1="0.416" y2="0.559" xlinkHref="#linear-gradient" />
-                <linearGradient id="linear-gradient-8" x1="-0.156" x2="0.951" y1="0.418" y2="0.556" xlinkHref="#linear-gradient" />
-                <linearGradient id="linear-gradient-9" x1="0" y1="0.5" y2="0.5" xlinkHref="#linear-gradient" />
-                <linearGradient id="linear-gradient-10" x1="0" y1="0.5" y2="0.5" xlinkHref="#linear-gradient" />
-                <linearGradient id="linear-gradient-11" x2="1" y1="0.5" y2="0.5" gradientUnits="objectBoundingBox">
-                  <stop offset="0" stopColor="#0059a6" />
-                  <stop offset="0.1" stopColor="#0556a1" />
-                  <stop offset="0.22" stopColor="#134f93" />
-                  <stop offset="0.35" stopColor="#2c427d" />
-                  <stop offset="0.49" stopColor="#4e315e" />
-                  <stop offset="0.53" stopColor="#5a2c54" />
-                  <stop offset="0.67" stopColor="#353e75" />
-                  <stop offset="0.8" stopColor="#184c90" />
-                  <stop offset="0.92" stopColor="#0655a0" />
-                  <stop offset="1" stopColor="#0059a6" />
-                </linearGradient>
-                <linearGradient id="linear-gradient-13" x1="0" x2="1" y1="0.5" y2="0.5" xlinkHref="#linear-gradient-11" />
-                <linearGradient id="linear-gradient-14" x1="0" y1="0.5" y2="0.5" xlinkHref="#linear-gradient" />
-                <linearGradient id="linear-gradient-15" x1="0" x2="1" y1="0.5" y2="0.5" xlinkHref="#linear-gradient-11" />
-                <linearGradient id="linear-gradient-16" x1="0" x2="1" y1="0.5" y2="0.5" xlinkHref="#linear-gradient-11" />
-                <linearGradient id="linear-gradient-17" x1="0" y1="0.5" y2="0.5" xlinkHref="#linear-gradient" />
-                <linearGradient id="linear-gradient-18" x1="0" y1="0.5" y2="0.5" xlinkHref="#linear-gradient" />
-                <linearGradient id="linear-gradient-19" x1="0" x2="1" y1="0.5" y2="0.5" xlinkHref="#linear-gradient-11" />
-                <linearGradient id="linear-gradient-20" x1="0" x2="1.001" y1="0.5" y2="0.5" xlinkHref="#linear-gradient" />
-                <linearGradient id="linear-gradient-22" x1="0" x2="1.001" y1="0.5" y2="0.5" xlinkHref="#linear-gradient" />
-                <linearGradient id="linear-gradient-23" x1="-2.59" x2="-2.575" y1="-1.483" y2="-1.483" xlinkHref="#linear-gradient" />
-                <linearGradient id="linear-gradient-29" x1="0" y1="0.5" y2="0.5" xlinkHref="#linear-gradient" />
-                <linearGradient id="linear-gradient-33" x1="0" y1="0.501" y2="0.501" xlinkHref="#linear-gradient" />
-                <linearGradient id="linear-gradient-34" x1="0" x2="0.999" y1="0.5" y2="0.5" xlinkHref="#linear-gradient-11" />
-                <linearGradient id="linear-gradient-37" x1="0" y1="0.501" y2="0.501" xlinkHref="#linear-gradient" />
-              </defs>
-              <path fill="none" stroke="#fff" strokeWidth="1" d="M0 404.557L0 0" data-name="Line 30" transform="translate(380.602 1.817)" />
-              <path fill="none" stroke="#fff" strokeWidth="1" d="M0 318.033L0 0" data-name="Line 32" transform="translate(340.38 50.458)" />
-              <path
-                fill="none"
-                stroke="#fff"
-                strokeWidth="1"
-                d="M0 207.657L193.626 0"
-                data-name="Line 33"
-                transform="translate(.366 266.065)"
-              />
-              <path
-                fill="none"
-                stroke="#fff"
-                strokeWidth="1"
-                d="M49.576 0L0 0"
-                data-name="Line 34"
-                transform="translate(193.992 266.065)"
-              />
-              <path
-                fill="none"
-                stroke="#fff"
-                strokeWidth="1"
-                d="M203.448 206.254L0 0"
-                data-name="Line 35"
-                transform="translate(241.697 267.469)"
-              />
-              <g data-name="Layer 1" transform="rotate(-180 191.677 203.304)">
-                <g data-name="Group 4">
-                  <path fill="#bfbfbf" d="M0 0l3.854 119.517L5.5 263.855 3.854 404.791z" data-name="Path 10" />
-                  <path
-                    fill="url(#linear-gradient)"
-                    d="M0 0l2.371 85.9v55.935l1.478 72.667v190.289L0 265.7V0z"
-                    data-name="Path 11"
-                    transform="translate(.828)"
-                  />
-                </g>
-              </g>
-              <g data-name="Layer 1" transform="rotate(-180 171.566 184.245)">
-                <g data-name="Group 4">
-                  <path fill="#bfbfbf" d="M0 0l3.854 93.9L5.5 207.3 3.854 318.033z" data-name="Path 10" />
-                  <path
-                    fill="url(#linear-gradient)"
-                    d="M0 0l2.371 67.492v43.947l1.478 57.093v149.5L0 208.753V0z"
-                    data-name="Path 11"
-                    transform="translate(.828)"
-                  />
-                </g>
-              </g>
-              <g clipPath="url(#clip-path)" data-name="Mask Group 5" transform="translate(115.705 91.548)">
-                <g filter="url(#Rectangle_3376)" transform="translate(-115.7 -91.55)">
-                  <g stroke="#fff" strokeWidth="1" data-name="Rectangle 3376" transform="translate(115.64 91.22)">
-                    <foreignObject height="325" width="206">
-                      <AutIdCard avatar={holderData?.image as string} />
-                    </foreignObject>
-                  </g>
-                </g>
-              </g>
-              <path fill="none" stroke="#fff" strokeWidth="1" d="M0 404.557L0 0" data-name="Line 29" transform="translate(60.698 1.817)" />
-              <path fill="none" stroke="#fff" strokeWidth="1" d="M0 318.033L0 0" data-name="Line 31" transform="translate(99.985 50.458)" />
-              <path fill="none" stroke="#fff" strokeWidth="1" d="M0 0L240.396 0" data-name="Line 36" transform="translate(99.985 50.458)" />
-              <path fill="none" stroke="#fff" strokeWidth="1" d="M0 0L319.904 0" data-name="Line 37" transform="translate(60.698 1.817)" />
-              <g data-name="Layer 1" transform="rotate(-180 31.726 204.075)">
-                <g data-name="Group 4">
-                  <path fill="#bfbfbf" d="M0 0l3.854 119.972L5.5 264.859 3.854 406.332z" data-name="Path 10" />
-                  <path
-                    fill="url(#linear-gradient)"
-                    d="M0 0l2.371 86.23v56.148l1.478 72.944v191.01L0 266.711V0z"
-                    data-name="Path 11"
-                    transform="translate(.828)"
-                  />
-                </g>
-              </g>
-              <g data-name="Layer 1" transform="rotate(-180 31.726 203.304)">
-                <g data-name="Group 4">
-                  <path fill="#bfbfbf" d="M0 0l3.854 119.517L5.5 263.855 3.854 404.791z" data-name="Path 10" />
-                  <path
-                    fill="url(#linear-gradient)"
-                    d="M0 0l2.371 85.9v55.935l1.478 72.667v190.289L0 265.7V0z"
-                    data-name="Path 11"
-                    transform="translate(.828)"
-                  />
-                </g>
-              </g>
-              <g data-name="Layer 1" transform="rotate(-180 49.965 184.245)">
-                <g data-name="Group 4">
-                  <path fill="#bfbfbf" d="M0 0l3.854 93.9L5.5 207.3 3.854 318.033z" data-name="Path 10" />
-                  <path
-                    fill="url(#linear-gradient)"
-                    d="M0 0l2.371 67.492v43.947l1.478 57.093v149.5L0 208.753V0z"
-                    data-name="Path 11"
-                    transform="translate(.828)"
-                  />
-                </g>
-              </g>
-              <g data-name="Layer 1" transform="rotate(-90 27.616 -22.111)">
-                <g data-name="Group 4">
-                  <path fill="#bfbfbf" d="M0 0l3.854 100.646L5.5 222.193 3.854 340.876z" data-name="Path 10" />
-                  <path
-                    fill="url(#linear-gradient)"
-                    d="M0 0l2.371 72.34v47.1l1.478 61.194v160.24L0 223.747V0z"
-                    data-name="Path 11"
-                    transform="translate(.828)"
-                  />
-                </g>
-              </g>
-              <g data-name="Layer 1" transform="rotate(-90 69.486 -15.808)">
-                <g data-name="Group 4">
-                  <path fill="#bfbfbf" d="M0 0l3.854 76.129L5.5 168.067l-1.646 89.771z" data-name="Path 10" />
-                  <path
-                    fill="url(#linear-gradient)"
-                    d="M0 0l2.371 54.718v35.629l1.478 46.287v121.204L0 169.242V0z"
-                    data-name="Path 11"
-                    transform="translate(.828)"
-                  />
-                </g>
-              </g>
-            </svg> */}
-
             <svg
               xmlns="http://www.w3.org/2000/svg"
               xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -661,16 +479,25 @@ const AutTunnelRight = () => {
                   <path d="M0 0H206V325H0z" data-name="Rectangle 3376" transform="translate(-.06 -.325)" />
                   <g stroke="#fff" strokeWidth="1" data-name="Rectangle 3376" transform="translate(-.06 -.325)">
                     <foreignObject
-                      height="325"
-                      width="206"
                       x="0"
                       y="0"
+                      height="325"
+                      width="206"
                       style={{
                         width: '206px',
                         height: '325px',
+                        transform: 'translate(0, 0)',
                       }}
                     >
-                      <AutIdCard avatar={ipfsCIDToHttpUrl(holderData?.image as string)} />
+                      <body
+                        style={{
+                          background: 'transparent',
+                        }}
+                        // @ts-ignore
+                        xmlns="http://www.w3.org/1999/xhtml"
+                      >
+                        <AutIdCard avatar={ipfsCIDToHttpUrl(holderData?.image as string)} />
+                      </body>
                     </foreignObject>
                   </g>
                 </g>
