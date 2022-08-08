@@ -318,6 +318,7 @@ const AutTunnelRight = () => {
                 <g filter="url(#Rectangle_2301)" transform="translate(-259.71 -290.37)">
                   <g data-name="Rectangle 2301" transform="translate(260 290)">
                     <foreignObject
+                      requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"
                       x="0"
                       y="0"
                       height="695"
@@ -471,6 +472,7 @@ const AutTunnelRight = () => {
                   <path d="M0 0H206V325H0z" data-name="Rectangle 3376" transform="translate(-.06 -.325)" />
                   <g stroke="#fff" strokeWidth="1" data-name="Rectangle 3376" transform="translate(-.06 -.325)">
                     <foreignObject
+                      requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"
                       x="0"
                       y="0"
                       height="325"
