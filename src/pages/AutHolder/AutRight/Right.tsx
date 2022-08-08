@@ -12,7 +12,7 @@ import { QRCode } from 'react-qrcode-logo';
 import { ipfsCIDToHttpUrl } from '@api/storage.api';
 import AutToolBar from '../AutLeft/AutToolBar';
 
-const CardZoom = styled('div')(({ theme }) => ({
+const CardZoom = styled<any>('div')(({ theme }) => ({
   borderRadius: 0,
   border: '1px solid white',
   background: theme.palette.background.paper,
@@ -81,7 +81,7 @@ const AutRightMobileContainer = styled('div')(({ theme }) => ({
 
 const AutIdCard = ({ avatar }) => {
   return (
-    <CardZoom style={{ position: 'relative' }}>
+    <CardZoom xmlns="http://www.w3.org/1999/xhtml" style={{ position: 'relative' }}>
       <img
         alt="id"
         style={{
@@ -319,23 +319,16 @@ const AutTunnelRight = () => {
               <g clipPath="url(#clip-path)" data-name="Mask Group 2" transform="translate(259.708 290.372)">
                 <g filter="url(#Rectangle_2301)" transform="translate(-259.71 -290.37)">
                   <g style={{ position: 'relative', cursor: 'pointer' }} data-name="Rectangle 2301" transform="translate(260 290)">
-                    <foreignObject height="695" width="440">
-                      {/* <FlipCard isFlipped={isFlipped} onClick={handleClickFlip} containerClassName={`${isFlipped ? 'flipped' : ''}`}>
-                        <div className={`aut-card-front ${isFlipped ? 'flipped' : ''}`} onClick={handleClickFlip}>
-                          <div className="aut-card-container front">
-                            <AutIdCard avatar={ipfsCIDToHttpUrl(holderData?.image as string)} />
-                          </div>
-                        </div>
-                        <div
-                          className="aut-card-back"
-                          style={{ height: '100%', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
-                          onClick={handleClickFlip}
-                        >
-                          <div className="aut-card-container back">
-                            <AutQRCode link={`https://my.aut.id/${holderData?.name}`} size={370} />
-                          </div>
-                        </div>
-                      </FlipCard> */}
+                    <foreignObject
+                      x="0"
+                      y="0"
+                      height="695"
+                      width="440"
+                      style={{
+                        width: '440px',
+                        height: '695px',
+                      }}
+                    >
                       <AutIdCard avatar={ipfsCIDToHttpUrl(holderData?.image as string)} />
                     </foreignObject>
                   </g>
@@ -667,24 +660,16 @@ const AutTunnelRight = () => {
                 <g clipPath="url(#clip-path)" fill="transparent" data-name="Mask Group 5" transform="translate(83.463 203.998)">
                   <path d="M0 0H206V325H0z" data-name="Rectangle 3376" transform="translate(-.06 -.325)" />
                   <g stroke="#fff" strokeWidth="1" data-name="Rectangle 3376" transform="translate(-.06 -.325)">
-                    <foreignObject height="325" width="206">
-                      {/* <FlipCard isFlipped={isFlipped} onClick={handleClickFlip} containerClassName={`${isFlipped ? 'flipped' : ''}`}>
-                        <div className={`aut-card-front ${isFlipped ? 'flipped' : ''}`} onClick={handleClickFlip}>
-                          <div className="aut-card-container front">
-                            <AutIdCard avatar={ipfsCIDToHttpUrl(holderData?.image as string)} />
-                          </div>
-                        </div>
-                        <div
-                          className="aut-card-back"
-                          style={{ height: '100%', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
-                          onClick={handleClickFlip}
-                        >
-                          <div className="aut-card-container back">
-                            <AutQRCode link={`https://my.aut.id/${holderData?.name}`} size={160} />
-                          </div>
-                        </div>
-                      
-                      </FlipCard> */}
+                    <foreignObject
+                      height="325"
+                      width="206"
+                      x="0"
+                      y="0"
+                      style={{
+                        width: '206px',
+                        height: '325px',
+                      }}
+                    >
                       <AutIdCard avatar={ipfsCIDToHttpUrl(holderData?.image as string)} />
                     </foreignObject>
                   </g>
