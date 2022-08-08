@@ -181,15 +181,29 @@ const AutSearch = ({ match }) => {
         <MyAutIDLogo style={{ height: xs ? pxToRem(60) : pxToRem(120), width: xs ? pxToRem(200) : pxToRem(400) }} />
         <Typography
           sx={{
+            mt: pxToRem(50),
             mb: pxToRem(20),
-            mt: pxToRem(20),
             fontSize: pxToRem(16),
             color: 'white',
-            textAlign: 'center',
+            textAlign: 'left',
+            fontWeight: 'bold',
+            width: '100%',
           }}
         >
           Own your own Identity. <br />
-          Your ĀutID is self-sovereign, unique, and portable: it lets you join new DAOs, and log in across DAO-powered Web3 DApps.
+        </Typography>
+        <Typography
+          sx={{
+            mb: pxToRem(50),
+            fontSize: pxToRem(16),
+            color: 'white',
+            textAlign: 'left',
+            width: '100%',
+          }}
+        >
+          ĀutID is self-sovereign, unique, and portable: it lets you join new DAOs, and log in across DAO-powered Web3 DApps.
+          <br />
+          This is a shareable Social profile, with on-chain DAOs & contacts!
         </Typography>
       </TopWrapper>
 
