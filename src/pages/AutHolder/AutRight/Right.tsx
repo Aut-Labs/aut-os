@@ -12,7 +12,7 @@ import { QRCode } from 'react-qrcode-logo';
 import { ipfsCIDToHttpUrl } from '@api/storage.api';
 import AutToolBar from '../AutLeft/AutToolBar';
 
-const CardZoom = styled('div')(({ theme }) => ({
+const CardZoom = styled('body')(({ theme }) => ({
   borderRadius: 0,
   border: '1px solid white',
   background: theme.palette.background.paper,
