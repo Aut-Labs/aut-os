@@ -79,7 +79,7 @@ const AutRightMobileContainer = styled('div')(({ theme }) => ({
 
 const AutIdCard = ({ avatar }) => {
   return (
-    <CardZoom src={avatar}>
+    <CardZoom xmlns="http://www.w3.org/1999/xhtml" src={avatar}>
       {/* <img
         alt="id"
         style={{
@@ -328,15 +328,7 @@ const AutTunnelRight = () => {
                         transform: 'translate(0, 0)',
                       }}
                     >
-                      <body
-                        style={{
-                          background: 'transparent',
-                        }}
-                        // @ts-ignore
-                        xmlns="http://www.w3.org/1999/xhtml"
-                      >
-                        <AutIdCard avatar={ipfsCIDToHttpUrl(holderData?.image as string)} />
-                      </body>
+                      <AutIdCard avatar={ipfsCIDToHttpUrl(holderData?.image as string)} />
                     </foreignObject>
                   </g>
                 </g>
@@ -489,15 +481,7 @@ const AutTunnelRight = () => {
                         transform: 'translate(0, 0)',
                       }}
                     >
-                      <body
-                        style={{
-                          background: 'transparent',
-                        }}
-                        // @ts-ignore
-                        xmlns="http://www.w3.org/1999/xhtml"
-                      >
-                        <AutIdCard avatar={ipfsCIDToHttpUrl(holderData?.image as string)} />
-                      </body>
+                      <AutIdCard avatar={ipfsCIDToHttpUrl(holderData?.image as string)} />
                     </foreignObject>
                   </g>
                 </g>
