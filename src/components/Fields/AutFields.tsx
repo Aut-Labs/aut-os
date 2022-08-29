@@ -24,7 +24,7 @@ export function FormHelperText({ errors, name, errorTypes, children = null, valu
       ...(errorTypes || {}),
     };
 
-    const message = types[type];
+    const message = types[type as any];
 
     return (
       <Typography

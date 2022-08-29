@@ -185,7 +185,7 @@ const AutUserInfo = ({ match }) => {
 
                   {holderData.properties.ethDomain && (
                     <Typography
-                      variant="h2"
+                      variant="subtitle2"
                       color="background.paper"
                       textAlign="left"
                       sx={{ textDecoration: 'underline', wordBreak: 'break-all' }}
@@ -276,7 +276,7 @@ const AutUserInfo = ({ match }) => {
                             src={ipfsCIDToHttpUrl(image as string)}
                           />
                           <div style={{ display: 'flex', flexDirection: 'column' }}>
-                            <Typography variant="h2" color="background.paper" sx={{ pb: '5px' }}>
+                            <Typography variant="subtitle2" color="background.paper" sx={{ pb: '5px' }}>
                               {name}
                             </Typography>
                             <ExternalUrl
@@ -290,15 +290,15 @@ const AutUserInfo = ({ match }) => {
                         </div>
                       </td>
                       <td>
-                        <Typography variant="h2" color="background.paper">
+                        <Typography variant="subtitle2" color="background.paper">
                           {properties?.userData?.roleName}
                         </Typography>
                       </td>
                       <td>
-                        <Typography variant="h2" color="background.paper" textAlign="center" sx={{ pb: '5px' }}>
+                        <Typography variant="subtitle2" color="background.paper" textAlign="center" sx={{ pb: '5px' }}>
                           {`${properties.userData.commitment}/10`}
                         </Typography>
-                        <Typography variant="h5" textAlign="center" color="background.paper">
+                        <Typography variant="body1" textAlign="center" color="background.paper">
                           {properties.userData.commitmentDescription}
                         </Typography>
                       </td>

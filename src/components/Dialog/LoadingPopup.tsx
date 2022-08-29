@@ -23,7 +23,7 @@ const LoadingDialog = ({ open, subtitle, message, fullScreen = false }: any) => 
             mt: 2,
           }}
           component="div"
-          variant="h2"
+          variant="subtitle2"
         >
           {message}
         </Typography> */}

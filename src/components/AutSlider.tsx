@@ -59,7 +59,7 @@ export function CommitmentMessage({ value, children = null }) {
       whiteSpace="nowrap"
       align="left"
       component="span"
-      variant="h4"
+      variant="body1"
       sx={{ display: 'flex', mb: '4px', height: '15px' }}
     >
       {message}

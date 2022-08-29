@@ -50,7 +50,7 @@ const AutBox = styled(Box)(({ theme }) => ({
 const TopWrapper = styled('div')({
   display: 'flex',
   flexDirection: 'column',
-  width: pxToRem(600),
+  width: pxToRem(720),
   justifyContent: 'center',
   alignItems: 'center',
 
@@ -66,7 +66,7 @@ const ResultWrapper = styled('div')({
   marginTop: pxToRem(20),
   display: 'flex',
   flexDirection: 'column',
-  width: pxToRem(600),
+  width: pxToRem(720),
   minHeight: pxToRem(200),
   justifyContent: 'flex-start',
   alignItems: 'center',
@@ -85,7 +85,7 @@ const FieldWrapper = styled('div')({
   marginBottom: pxToRem(20),
   minHeight: pxToRem(70),
   display: 'flex',
-  width: pxToRem(600),
+  width: pxToRem(720),
   justifyContent: 'flex-start',
   alignItems: 'flex-start',
 
@@ -178,35 +178,43 @@ const AutSearch = ({ match }) => {
   return (
     <AutBox>
       <TopWrapper>
-        <MyAutIDLogo style={{ height: xs ? pxToRem(60) : pxToRem(120), width: xs ? pxToRem(200) : pxToRem(400) }} />
+        <MyAutIDLogo style={{ height: desktop ? pxToRem(120) : pxToRem(60), width: desktop ? pxToRem(400) : pxToRem(200) }} />
         <Typography
           sx={{
-            mt: pxToRem(50),
+            mt: desktop ? pxToRem(100) : xs ? pxToRem(30) : pxToRem(50),
             mb: pxToRem(20),
-            fontSize: pxToRem(16),
             color: 'white',
-            textAlign: 'left',
+            textAlign: 'center',
             fontWeight: 'bold',
             width: '100%',
           }}
+          variant="h1"
         >
           Own your own Identity. <br />
         </Typography>
         <Typography
           sx={{
             mb: pxToRem(50),
-            fontSize: pxToRem(16),
             color: 'white',
-            textAlign: 'left',
+            textAlign: 'center',
             width: '100%',
           }}
+          variant="subtitle1"
         >
           ĀutID is self-sovereign, unique, and portable: it lets you join new DAOs, and log in across DAO-powered Web3 DApps.
-          <br />
+        </Typography>
+        <Typography
+          sx={{
+            mb: pxToRem(50),
+            color: 'white',
+            textAlign: 'center',
+            width: '100%',
+          }}
+          variant="h6"
+        >
           This is a shareable Social profile, with on-chain DAOs & contacts!
         </Typography>
       </TopWrapper>
-
       <FormWrapper autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
         <FieldWrapper>
           <Controller
@@ -266,8 +274,9 @@ const AutSearch = ({ match }) => {
                 justifyContent: 'center',
                 alignItems: 'center',
                 color: 'white',
+                fontWeight: 'bold',
               }}
-              variant="h3"
+              variant="h6"
             >
               One second, let me look...
             </Typography>
@@ -286,8 +295,9 @@ const AutSearch = ({ match }) => {
               justifyContent: 'center',
               alignItems: 'center',
               color: 'white',
+              fontWeight: 'bold',
             }}
-            variant="h3"
+            variant="h6"
           >
             No user found with that username. Try again!
           </Typography>
@@ -318,7 +328,7 @@ const AutSearch = ({ match }) => {
                         color: 'white',
                         ml: pxToRem(20),
                       }}
-                      variant="h2"
+                      variant="h6"
                     >
                       {user?.name}
                     </Typography>
@@ -334,7 +344,7 @@ const AutSearch = ({ match }) => {
                         borderRadius: '3px',
                         backgroundColor: 'rgba(67, 158, 221, 0.3)',
                       }}
-                      variant="h2"
+                      variant="h6"
                     >
                       {user?.properties?.network}
                     </Typography>

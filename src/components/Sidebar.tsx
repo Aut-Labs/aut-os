@@ -225,7 +225,7 @@ export default function SidebarDrawer({ children }) {
                         inheritViewBox
                       />
                     </ListItemIcon>
-                    <Typography color="primary" component="div" variant="h3">
+                    <Typography color="primary" component="div" variant="body1">
                       {menu.title}
                     </Typography>
                   </ListItem>
@@ -286,7 +286,7 @@ export default function SidebarDrawer({ children }) {
                                   inheritViewBox
                                 />
                               </ListItemIcon>
-                              <Typography sx={{ color: 'primary.main' }} component="div" variant="h3">
+                              <Typography sx={{ color: 'primary.main' }} component="div" variant="body1">
                                 {childMenu.title}
                               </Typography>
                             </ListItem>

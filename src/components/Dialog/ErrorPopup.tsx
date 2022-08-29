@@ -34,7 +34,7 @@ const ErrorDialog = ({ mode = 'light', open, hasRetry = false, handleClose, subt
           flex: 1,
         }}
       >
-        <Typography sx={{ color: 'red', textAlign: 'center', mt: 2 }} component="div" variant="h2">
+        <Typography sx={{ color: 'red', textAlign: 'center', mt: 2 }} component="div" variant="subtitle2">
           {message}
         </Typography>
         <Typography

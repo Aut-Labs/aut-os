@@ -184,10 +184,10 @@ const AutCommunityEdit = () => {
                   <ExternalUrl href={`${blockExplorer}/address/${selectedCommunity.properties.address}`} target="_blank">
                     {trimAddress(selectedCommunity.properties.address)}
                   </ExternalUrl>
-                  <Typography variant="h2" color="background.paper" textAlign="left" sx={{ textWrap: 'wrap' }}>
+                  <Typography variant="subtitle2" color="background.paper" textAlign="left" sx={{ textWrap: 'wrap' }}>
                     {selectedCommunity?.properties?.market}
                   </Typography>
-                  <Typography variant="h3" color="background.paper" textAlign="left" sx={{ textWrap: 'wrap', pt: pxToRem(30) }}>
+                  <Typography variant="body1" color="background.paper" textAlign="left" sx={{ textWrap: 'wrap', pt: pxToRem(30) }}>
                     {selectedCommunity?.description}
                   </Typography>
                   <Button

@@ -40,7 +40,7 @@ const AutToolBar = ({ hideWebComponent = false, hideLogo = false }) => {
             button-type="simple"
             network={params.network}
             use-dev="true"
-            community-address="0x971f88eAD376BbD4149E40080c4e78Fb039f681A"
+            daoExpander="0x6bBE078Be00Ca7D59dab4eA1a297514497f86ab8"
           />
         )}
       </AutBar>

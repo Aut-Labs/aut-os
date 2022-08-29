@@ -34,7 +34,7 @@ function NotFound() {
           mb: '70px',
           color: 'white',
         }}
-        variant="h2"
+        variant="subtitle2"
       >
         This page could not be found
       </Typography>
