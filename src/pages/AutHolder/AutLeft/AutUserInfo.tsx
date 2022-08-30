@@ -169,7 +169,7 @@ const AutUserInfo = ({ match }) => {
                   }
                 />
                 <CardContent sx={{ ml: xs ? '0' : pxToRem(30), mr: xs ? 0 : pxToRem(30), alignSelf: 'center', height: pxToRem(150) }}>
-                  <div style={{ display: 'flex', alignItems: 'flex-start' }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '5px' }}>
                     <Typography fontSize={pxToRem(50)} color="background.paper" textAlign="left" lineHeight={1}>
                       {holderData.name}
                     </Typography>

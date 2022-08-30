@@ -26,7 +26,7 @@ import AutToolBar from './AutLeft/AutToolBar';
 const AutContainer = styled('div')(() => ({
   display: 'flex',
   height: '100%',
-  backgroundColor: '#141414',
+  // backgroundColor: '#141414',
 }));
 const AutSwiper = styled(Swiper)(({ theme }) => ({
   height: '100%',

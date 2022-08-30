@@ -125,7 +125,7 @@ function App() {
       <SWSnackbar />
       <Box
         sx={{
-          backgroundColor: '#141414',
+          // backgroundColor: '#141414',
           // height: '100vh',
           // ...(desktop && {
           //   height: `calc(100vh - ${pxToRem(30)} - 50px)`,

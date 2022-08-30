@@ -1,34 +1,18 @@
 /* eslint-disable no-unused-expressions */
-import {
-  Avatar,
-  Box,
-  Card,
-  CardContent,
-  CardHeader,
-  Chip,
-  InputAdornment,
-  Link,
-  styled,
-  SvgIcon,
-  Typography,
-  useMediaQuery,
-} from '@mui/material';
+import { Avatar, Box, InputAdornment, styled, SvgIcon, Typography, useMediaQuery } from '@mui/material';
 import { ReactComponent as MyAutIDLogo } from '@assets/MyAutIdLogo.svg';
 import { ReactComponent as SearchIcon } from '@assets/SearchIcon.svg';
 import { ReactComponent as RedirectIcon } from '@assets/RedirectIcon.svg';
 
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { IsAuthenticated } from '@auth/auth.reducer';
 import { pxToRem } from '@utils/text-size';
 import { Controller, useForm } from 'react-hook-form';
 import { AutTextField } from '@components/Fields/AutFields';
 import { fetchSearchResults, NoSearchResults, SearchResult, SearchStatus } from '@store/search/search.reducer';
 import { ResultState } from '@store/result-status';
-import AutLoading from '@components/AutLoading';
 import { AutID } from '@api/aut.model';
 import { useAppDispatch } from '@store/store.model';
-import { useState } from 'react';
 import { Player } from '@lottiefiles/react-lottie-player';
 import { ipfsCIDToHttpUrl } from '@api/storage.api';
 import * as animationData from '../../assets/aut-load.json';
@@ -178,7 +162,7 @@ const AutSearch = ({ match }) => {
   return (
     <AutBox>
       <TopWrapper>
-        <MyAutIDLogo style={{ height: desktop ? pxToRem(120) : pxToRem(60), width: desktop ? pxToRem(400) : pxToRem(200) }} />
+        <MyAutIDLogo style={{ height: desktop ? pxToRem(120) : pxToRem(90), width: desktop ? pxToRem(400) : pxToRem(300) }} />
         <Typography
           sx={{
             mt: desktop ? pxToRem(100) : xs ? pxToRem(30) : pxToRem(50),

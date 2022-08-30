@@ -37,7 +37,7 @@ const AutShare = (props: SimpleDialogProps) => {
         position: 'relative',
         flexDirection: 'column',
         borderWidth: desktop ? '5px' : '0px',
-        backgroundColor: 'black',
+        backgroundColor: '#141414',
 
         borderColor: '#439EDD',
         borderStyle: 'solid',

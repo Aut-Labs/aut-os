@@ -82,7 +82,7 @@ export const SwTheme = responsiveFontSizes(
       },
       body1: {
         // letterSpacing: '2.1px',
-        font: `normal normal 900 ${pxToRem(16)}/${pxToRem(32)} Avenir`,
+        fontSize: pxToRem(16),
       },
       body2: {
         fontSize: pxToRem(14),

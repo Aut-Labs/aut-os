@@ -21,7 +21,7 @@ const PartnerButton = (
         padding: `0 ${pxToRem(95)}`,
         '&:hover': {
           '& > .sw-btn-label > .MuiTypography-root': {
-            color: btnProps.mode !== 'dark' ? '#fff' : '#000',
+            color: btnProps.mode !== 'dark' ? '#fff' : '#141414',
           },
         },
         '.sw-btn-label': {

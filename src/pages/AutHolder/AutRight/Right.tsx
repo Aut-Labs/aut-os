@@ -16,7 +16,7 @@ import AutToolBar from '../AutLeft/AutToolBar';
 const CardZoom = styled<any>('img')(({ theme }) => ({
   borderRadius: 0,
   border: '1px solid white',
-  background: theme.palette.background.paper,
+  // background: theme.palette.background.paper,
   boxShadow: theme.shadows[1],
   position: 'relative',
   width: 'calc(100% - 40px)',
@@ -26,7 +26,7 @@ const CardZoom = styled<any>('img')(({ theme }) => ({
   alignItems: 'center',
   justifyContent: 'center',
 
-  backgroundColor: 'black',
+  // backgroundColor: '#141414',
   '@keyframes zoom-in-zoom-out': {
     '0%': {
       transform: 'scale(1, 1)',
@@ -63,7 +63,7 @@ const CardBack = styled('div')(({ theme }) => ({
   alignItems: 'center',
   justifyContent: 'center',
   alignContent: 'center',
-  backgroundColor: 'black',
+  // backgroundColor: '#141414',
 
   '@media(max-width: 1024px)': {
     width: 'calc(100% - 20px)',
@@ -146,7 +146,7 @@ const AutTunnelRight = () => {
               onClick={handleClickOpen}
             />
           </>
-          <svg
+          {/* <svg
             xmlns="http://www.w3.org/2000/svg"
             xmlnsXlink="http://www.w3.org/1999/xlink"
             height={window.innerHeight}
@@ -342,6 +342,201 @@ const AutTunnelRight = () => {
                     </foreignObject>
                   </g>
                 </g>
+              </g>
+            </g>
+          </svg> */}
+
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            xmlnsXlink="http://www.w3.org/1999/xlink"
+            height={window.innerHeight}
+            viewBox="0 0 960 1075"
+          >
+            <defs>
+              <linearGradient id="linear-gradient" y1="0.5" x2="1" y2="0.5" gradientUnits="objectBoundingBox">
+                <stop offset="0" stopColor="#009fe3" />
+                <stop offset="0.08" stopColor="#0399de" />
+                <stop offset="0.19" stopColor="#0e8bd3" />
+                <stop offset="0.3" stopColor="#2072bf" />
+                <stop offset="0.41" stopColor="#3a50a4" />
+                <stop offset="0.53" stopColor="#5a2583" />
+                <stop offset="0.71" stopColor="#453f94" />
+                <stop offset="0.88" stopColor="#38519f" />
+                <stop offset="1" stopColor="#3458a4" />
+              </linearGradient>
+              <clipPath id="clip-path">
+                <rect
+                  id="Rectangle_2934"
+                  data-name="Rectangle 2934"
+                  width="440"
+                  height="694"
+                  transform="translate(0.292 -0.372)"
+                  fill="#fff"
+                  stroke="#707070"
+                  strokeWidth="1"
+                />
+              </clipPath>
+              <linearGradient id="linear-gradient-9" x1="0.061" y1="0.343" x2="1.127" y2="0.658" xlinkHref="#linear-gradient" />
+              <linearGradient id="linear-gradient-10" x1="0.063" y1="0.343" x2="1.133" y2="0.658" xlinkHref="#linear-gradient" />
+              <linearGradient id="linear-gradient-11" x1="-0.128" y1="0.299" x2="1.167" y2="0.619" xlinkHref="#linear-gradient" />
+              <linearGradient id="linear-gradient-12" x1="-0.137" y1="0.298" x2="1.178" y2="0.617" xlinkHref="#linear-gradient" />
+              <linearGradient id="linear-gradient-13" x1="-0.142" y1="0.416" x2="0.952" y2="0.559" xlinkHref="#linear-gradient" />
+              <linearGradient id="linear-gradient-14" x1="-0.156" y1="0.418" x2="0.951" y2="0.556" xlinkHref="#linear-gradient" />
+              <linearGradient id="linear-gradient-15" x1="0" y1="0.5" y2="0.5" xlinkHref="#linear-gradient" />
+              <linearGradient id="linear-gradient-16" x1="0" y1="0.5" y2="0.5" xlinkHref="#linear-gradient" />
+              <linearGradient id="linear-gradient-17" y1="0.5" x2="1" y2="0.5" gradientUnits="objectBoundingBox">
+                <stop offset="0" stopColor="#0059a6" />
+                <stop offset="0.1" stopColor="#0556a1" />
+                <stop offset="0.22" stopColor="#134f93" />
+                <stop offset="0.35" stopColor="#2c427d" />
+                <stop offset="0.49" stopColor="#4e315e" />
+                <stop offset="0.53" stopColor="#5a2c54" />
+                <stop offset="0.67" stopColor="#353e75" />
+                <stop offset="0.8" stopColor="#184c90" />
+                <stop offset="0.92" stopColor="#0655a0" />
+                <stop offset="1" stopColor="#0059a6" />
+              </linearGradient>
+              <linearGradient id="linear-gradient-19" x1="0" y1="0.5" x2="1" y2="0.5" xlinkHref="#linear-gradient-17" />
+              <linearGradient id="linear-gradient-20" x1="0" y1="0.5" y2="0.5" xlinkHref="#linear-gradient" />
+              <linearGradient id="linear-gradient-21" x1="0" y1="0.5" x2="1" y2="0.5" xlinkHref="#linear-gradient-17" />
+              <linearGradient id="linear-gradient-22" x1="0" y1="0.5" x2="1" y2="0.5" xlinkHref="#linear-gradient-17" />
+              <linearGradient id="linear-gradient-23" x1="0" y1="0.5" y2="0.5" xlinkHref="#linear-gradient" />
+              <linearGradient id="linear-gradient-24" x1="0" y1="0.5" y2="0.5" xlinkHref="#linear-gradient" />
+              <linearGradient id="linear-gradient-25" x1="0" y1="0.5" x2="1" y2="0.5" xlinkHref="#linear-gradient-17" />
+              <linearGradient id="linear-gradient-26" x1="0" y1="0.5" x2="1.001" y2="0.5" xlinkHref="#linear-gradient" />
+              <linearGradient id="linear-gradient-28" x1="0" y1="0.5" x2="1.001" y2="0.5" xlinkHref="#linear-gradient" />
+              <linearGradient id="linear-gradient-29" x1="-2.59" y1="-1.483" x2="-2.575" y2="-1.483" xlinkHref="#linear-gradient" />
+              <linearGradient id="linear-gradient-35" x1="0" y1="0.5" y2="0.5" xlinkHref="#linear-gradient" />
+              <linearGradient id="linear-gradient-39" x1="0" y1="0.501" y2="0.501" xlinkHref="#linear-gradient" />
+              <linearGradient id="linear-gradient-40" x1="0" y1="0.5" x2="0.999" y2="0.5" xlinkHref="#linear-gradient-17" />
+              <linearGradient id="linear-gradient-43" x1="0" y1="0.501" y2="0.501" xlinkHref="#linear-gradient" />
+            </defs>
+            <g id="Group_12569" data-name="Group 12569" transform="translate(-956.615 0)">
+              <path id="Line_4" data-name="Line 4" d="M.5,865h-1V0h1Z" transform="translate(1098.5 71.5)" fill="#fff" />
+              <path id="Line_5" data-name="Line 5" d="M.5,865h-1V0h1Z" transform="translate(1782.5 71.5)" fill="#fff" />
+              <path id="Line_6" data-name="Line 6" d="M.5,680h-1V0h1Z" transform="translate(1182.5 175.5)" fill="#fff" />
+              <path id="Line_7" data-name="Line 7" d="M.5,680h-1V0h1Z" transform="translate(1696.5 175.5)" fill="#fff" />
+              <path
+                id="Line_8"
+                data-name="Line 8"
+                d="M.366,444.341l-.731-.682,414-444,.731.682Z"
+                transform="translate(969.5 636.5)"
+                fill="#fff"
+              />
+              <path id="Line_9" data-name="Line 9" d="M106,.5H0v-1H106Z" transform="translate(1383.5 636.5)" fill="#fff" />
+              <path
+                id="Line_10"
+                data-name="Line 10"
+                d="M434.644,441.351l-435-441,.712-.7,435,441Z"
+                transform="translate(1485.5 639.5)"
+                fill="#fff"
+              />
+              <path id="Line_11" data-name="Line 11" d="M514,.5H0v-1H514Z" transform="translate(1182.5 175.5)" fill="#fff" />
+              <path id="Line_12" data-name="Line 12" d="M684,.5H0v-1H684Z" transform="translate(1098.5 71.5)" fill="#fff" />
+              <g id="Layer_1" data-name="Layer 1" transform="translate(1104.385 940.294) rotate(-180)">
+                <g id="Group_4" data-name="Group 4">
+                  <path id="Path_10" data-name="Path 10" d="M0,0,8.24,256.518l3.53,309.789L8.24,868.794Z" fill="#bfbfbf" />
+                  <path
+                    id="Path_11"
+                    data-name="Path 11"
+                    d="M1.77,0,6.84,184.373V304.425L10,460.39v408.4L1.77,570.266V0Z"
+                    fill="url(#linear-gradient)"
+                  />
+                </g>
+              </g>
+              <g id="Layer_1-2" data-name="Layer 1" transform="translate(968.385 1071.478) rotate(-180)">
+                <g id="Group_4-2" data-name="Group 4">
+                  <path id="Path_10-2" data-name="Path 10" d="M0,0,8.24,316.361l3.53,382.06L8.24,1071.478Z" fill="#bfbfbf" />
+                  <path
+                    id="Path_11-2"
+                    data-name="Path 11"
+                    d="M1.77,0,6.84,227.385v148.06L10,567.8v503.682L1.77,703.3V0Z"
+                    fill="url(#linear-gradient)"
+                  />
+                </g>
+              </g>
+              <g id="Layer_1-3" data-name="Layer 1" transform="translate(1104.385 937) rotate(-180)">
+                <g id="Group_4-3" data-name="Group 4">
+                  <path id="Path_10-3" data-name="Path 10" d="M0,0,8.24,255.545l3.53,308.614L8.24,865.5Z" fill="#bfbfbf" />
+                  <path
+                    id="Path_11-3"
+                    data-name="Path 11"
+                    d="M1.77,0,6.84,183.673v119.6L10,458.644V865.5L1.77,568.1V0Z"
+                    fill="url(#linear-gradient)"
+                  />
+                </g>
+              </g>
+              <g id="Layer_1-4" data-name="Layer 1" transform="translate(1182.385 855.5) rotate(-180)">
+                <g id="Group_4-4" data-name="Group 4">
+                  <path id="Path_10-4" data-name="Path 10" d="M0,0,8.24,200.775l3.53,242.47L8.24,680Z" fill="#bfbfbf" />
+                  <path
+                    id="Path_11-4"
+                    data-name="Path 11"
+                    d="M1.77,0,6.84,144.307v93.965L10,360.344V680L1.77,446.343V0Z"
+                    fill="url(#linear-gradient)"
+                  />
+                </g>
+              </g>
+              <g id="Layer_1-5" data-name="Layer 1" transform="translate(1788.385 937) rotate(-180)">
+                <g id="Group_4-5" data-name="Group 4">
+                  <path id="Path_10-5" data-name="Path 10" d="M0,0,8.24,255.545l3.53,308.614L8.24,865.5Z" fill="#bfbfbf" />
+                  <path
+                    id="Path_11-5"
+                    data-name="Path 11"
+                    d="M1.77,0,6.84,183.673v119.6L10,458.644V865.5L1.77,568.1V0Z"
+                    fill="url(#linear-gradient)"
+                  />
+                </g>
+              </g>
+              <g id="Layer_1-6" data-name="Layer 1" transform="translate(1702.385 855.5) rotate(-180)">
+                <g id="Group_4-6" data-name="Group 4">
+                  <path id="Path_10-6" data-name="Path 10" d="M0,0,8.24,200.775l3.53,242.47L8.24,680Z" fill="#bfbfbf" />
+                  <path
+                    id="Path_11-6"
+                    data-name="Path 11"
+                    d="M1.77,0,6.84,144.307v93.965L10,360.344V680L1.77,446.343V0Z"
+                    fill="url(#linear-gradient)"
+                  />
+                </g>
+              </g>
+              <g id="Layer_1-7" data-name="Layer 1" transform="translate(1075.042 79.385) rotate(-90)">
+                <g id="Group_4-7" data-name="Group 4">
+                  <path id="Path_10-7" data-name="Path 10" d="M0,0,8.24,215.2l3.53,259.885L8.24,728.842Z" fill="#bfbfbf" />
+                  <path
+                    id="Path_11-7"
+                    data-name="Path 11"
+                    d="M1.77,0,6.84,154.672V255.386L10,386.227V728.842L1.77,478.4V0Z"
+                    fill="url(#linear-gradient)"
+                  />
+                </g>
+              </g>
+              <g id="Layer_1-8" data-name="Layer 1" transform="translate(1151.09 182.385) rotate(-90)">
+                <g id="Group_4-8" data-name="Group 4">
+                  <path id="Path_10-8" data-name="Path 10" d="M0,0,8.24,162.774l3.53,196.577L8.24,551.3Z" fill="#bfbfbf" />
+                  <path
+                    id="Path_11-8"
+                    data-name="Path 11"
+                    d="M1.77,0,6.84,116.994v76.18L10,292.141V551.3L1.77,361.863V0Z"
+                    fill="url(#linear-gradient)"
+                  />
+                </g>
+              </g>
+              <g id="Mask_Group_2" data-name="Mask Group 2" transform="translate(1215.708 263.372)" clipPath="url(#clip-path)">
+                <foreignObject
+                  {...((isSafari || isIOS) && {
+                    x: (window.innerWidth / 2 - 440) / 2,
+                    y: (window.innerHeight - 695) / 2 + 100,
+                    height: window.innerHeight / 1.25,
+                    width: window.innerWidth / 4,
+                  })}
+                  {...(!isSafari &&
+                    !isIOS && {
+                      height: '695',
+                      width: '440',
+                    })}
+                >
+                  <AutIdCard avatar={ipfsCIDToHttpUrl(holderData?.image as string)} />
+                </foreignObject>
               </g>
             </g>
           </svg>

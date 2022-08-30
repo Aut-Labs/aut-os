@@ -8,18 +8,19 @@ html {
 
   #root {
     height: 100%;
-    background-color: #141414;  }
+    background-color: #141414;
+  }
 }
 
 html {
-  font-size: 100%;
+  font-size: 80%;
 
-  @media only screen and (max-width: 1920px) {
-    font-size: 80%;
+  @media only screen and (min-width: 1920px) {
+    font-size: 100%;
   }
 
   @media only screen and (max-width: 1280px) {
-    // font-size: 62.8%;
+    font-size: 62.8%;
   }
 }
 
@@ -85,7 +86,7 @@ code {
 }
 
 .sw-scrollbar .simplebar-scrollbar:before {
-  background-color: #000;
+  // background-color: #141414;
 }
 
 .sw-background.loading {

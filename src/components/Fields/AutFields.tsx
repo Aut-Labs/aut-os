@@ -241,7 +241,7 @@ const StyledSelectField = styled((props: SelectProps & { width: string }) => {
         sx: {
           '.MuiPaper-root': {
             borderWidth: '1px !important',
-            background: 'black',
+            background: '#141414',
           },
           borderTop: 0,
           '& ul': {

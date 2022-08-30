@@ -134,7 +134,7 @@ export default function SidebarDrawer({ children }) {
         sx={{
           width: pxToRem(drawerWidth),
           flexShrink: 0,
-          [`& .MuiDrawer-paper`]: { backgroundColor: '#000', border: '0', width: pxToRem(drawerWidth) },
+          [`& .MuiDrawer-paper`]: { backgroundColor: '#141414', border: '0', width: pxToRem(drawerWidth) },
         }}
       >
         {/* <div className="sw-user-info">
