@@ -11,6 +11,7 @@ module.exports = {
       assert: false,
       buffer: require.resolve('buffer'),
     };
+    configuration.ignoreWarnings = [/Failed to parse source map/];
 
     const modifiedConfig = alias({
       '@assets': path.resolve(__dirname, './src/assets'),
