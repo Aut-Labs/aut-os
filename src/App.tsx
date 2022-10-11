@@ -42,14 +42,22 @@ function App() {
   const [lastChainId, setLastChainId] = useState<number>(null);
   const { account } = useWeb3React();
 
+  console.log(history, location);
+
   const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
     const [, network, holderAddress] = location.pathname.split('/');
     if (holderAddress && network) {
-      history.push(`/${network}/${holderAddress}`);
+      history.push({
+        pathname: `/${network}/${holderAddress}`,
+        search: location.search,
+      });
     } else {
-      history.push(`/`);
+      history.push({
+        pathname: `/`,
+        search: location.search,
+      });
     }
     dispatch(resetAuthState());
   }, []);
@@ -83,9 +91,15 @@ function App() {
       const network = networkConfig?.network?.name.toLowerCase();
       // TODO: figure out how network comes in the autID
       if (autID?.name && network) {
-        history.push(`/${network}/${autID.name}`);
+        history.push({
+          pathname: `/${network}/${autID.name}`,
+          search: location.search,
+        });
       } else {
-        history.push(`/`);
+        history.push({
+          pathname: `/`,
+          search: location.search,
+        });
       }
       history.push(`/${network}/${autID.name}`);
     };
@@ -93,9 +107,15 @@ function App() {
     const onDisconnected = () => {
       const [, network, holderAddress] = location.pathname.split('/');
       if (holderAddress && network) {
-        history.push(`/${network}/${holderAddress}`);
+        history.push({
+          pathname: `/${network}/${holderAddress}`,
+          search: location.search,
+        });
       } else {
-        history.push(`/`);
+        history.push({
+          pathname: `/`,
+          search: location.search,
+        });
       }
       dispatch(resetAuthState());
     };
