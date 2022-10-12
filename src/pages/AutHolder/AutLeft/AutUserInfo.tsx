@@ -11,7 +11,7 @@ import { Avatar, Box, Card, CardContent, CardHeader, Link, styled, SvgIcon, Typo
 import { pxToRem } from '@utils/text-size';
 import { useState } from 'react';
 import PencilEdit from '@assets/PencilEditicon';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { HolderData, HolderStatus } from '@store/holder/holder.reducer';
 import { IsAuthenticated } from '@auth/auth.reducer';
@@ -105,6 +105,7 @@ const AutUserInfo = ({ match }) => {
   const xs = useMediaQuery('(max-width:360px)');
   const [isActiveIndex, setIsActiveIndex] = useState(null);
   const history = useHistory();
+  const location = useLocation();
 
   const socialIcons = {
     discord: DiscordIcon,
@@ -133,7 +134,10 @@ const AutUserInfo = ({ match }) => {
   ];
 
   const onEdit = () => {
-    history.push(`${match.url}/edit-profile`);
+    history.push({
+      pathname: `${match.url}/edit-profile`,
+      search: location.search,
+    });
   };
   function clickRow(index, address: string) {
     if (isAuthenticated) {
@@ -142,7 +146,10 @@ const AutUserInfo = ({ match }) => {
       } else {
         setIsActiveIndex(index);
       }
-      history.push(`${match.url}/edit-community/${address}`);
+      history.push({
+        pathname: `${match.url}/edit-community/${address}`,
+        search: location.search,
+      });
     }
   }
 

@@ -4,7 +4,7 @@ import { AppBar, styled, Toolbar } from '@mui/material';
 import { resetSearchState } from '@store/search/search.reducer';
 import { useAppDispatch } from '@store/store.model';
 import { pxToRem } from '@utils/text-size';
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory, useLocation, useParams } from 'react-router-dom';
 
 const AutBar = styled(Toolbar)(({ theme }) => ({
   '&.MuiToolbar-root': {
@@ -23,11 +23,15 @@ const AutBar = styled(Toolbar)(({ theme }) => ({
 
 const AutToolBar = ({ hideWebComponent = false, hideLogo = false }) => {
   const history = useHistory();
+  const location = useLocation();
   const params = useParams<any>();
   const dispatch = useAppDispatch();
 
   function goHome() {
-    history.push(`/`);
+    history.push({
+      pathname: `/`,
+      search: location.search,
+    });
     dispatch(resetSearchState());
   }
   return (

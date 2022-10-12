@@ -4,7 +4,7 @@ import { ReactComponent as MyAutIDLogo } from '@assets/MyAutIdLogo.svg';
 import { ReactComponent as SearchIcon } from '@assets/SearchIcon.svg';
 import { ReactComponent as RedirectIcon } from '@assets/RedirectIcon.svg';
 
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { pxToRem } from '@utils/text-size';
 import { Controller, useForm } from 'react-hook-form';
@@ -139,9 +139,13 @@ const AutSearch = ({ match }) => {
   const desktop = useMediaQuery('(min-width:1024px)');
   const xs = useMediaQuery('(max-width:360px)');
   const history = useHistory();
+  const location = useLocation();
 
   function clickRow(username, network) {
-    history.push(`/${network}/${username}`);
+    history.push({
+      pathname: `/${network}/${username}`,
+      search: location.search,
+    });
   }
   const {
     control,
