@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "@aut-protocol/abi-types": "^0.0.64",
-    "@aut-protocol/d-aut": "^1.5.2",
+    "@aut-protocol/d-aut": "^1.5.4",
     "@emotion/react": "~11.7.0",
     "@emotion/styled": "~11.6.0",
     "@hookform/error-message": "^2.0.0",
