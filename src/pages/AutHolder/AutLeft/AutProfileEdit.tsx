@@ -176,8 +176,10 @@ const AutProfileEdit = (props) => {
     defaultValues: {
       image: holderData?.properties?.avatar,
       socials: (holderData?.properties?.socials || []).map((social) => {
-        social.link = (social.link as string).replace(socialUrls[social.type].prefix, '');
-        return social;
+        return {
+          ...social,
+          link: (social.link as string).replace(socialUrls[social.type].prefix, ''),
+        };
       }),
     },
   });

@@ -43,10 +43,6 @@ export const METAMASK_POSSIBLE_ERRORS = {
     standard: 'JSON RPC 2.0',
     message: 'Invalid method parameter(s).',
   },
-  // '-32603': {
-  //   standard: 'JSON RPC 2.0',
-  //   message: 'Internal JSON-RPC error.',
-  // },
   '-32000': {
     standard: 'EIP-1474',
     message: 'Invalid input.',
@@ -108,29 +104,17 @@ export const ParseSWErrorMessage = (error: any) => {
     return metamaskError.message;
   }
 
-  if (error?.code === 'CALL_EXCEPTION') {
+  if (error?.reason) {
     return error?.reason?.toString();
   }
 
-  if (error?.code === 'UNEXPECTED_ARGUMENT') {
-    return error?.reason?.toString();
-  }
-
-  if (error instanceof TypeError || error instanceof Error) {
-    error = error.message?.toString();
+  if (error?.message) {
+    return error.message?.toString();
   }
 
   if (error?.data?.message) {
-    error = error?.data?.message?.toString();
+    return error?.data?.message?.toString();
   }
 
-  if (typeof error !== 'string') {
-    console.error(error);
-    throw new Error('SW smart contract error message is not a string!');
-  }
-
-  const [mainMsg, fullSwMsg] = error.split('execution reverted:');
-  const [swMainMsg, parsedMsg] = (fullSwMsg || '').split('SkillWallet:');
-
-  return (parsedMsg || swMainMsg || fullSwMsg || mainMsg || 'Internal JSON-RPC error.').toString();
+  return 'Internal JSON-RPC error.';
 };
