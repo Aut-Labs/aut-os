@@ -3,8 +3,7 @@ import { createAsyncThunk, createSelector, createSlice } from '@reduxjs/toolkit'
 import { AutID } from '@api/aut.model';
 import { editCommitment, fetchHolderData, updateProfile, withdraw } from '@api/holder.api';
 import { ErrorParser } from '@utils/error-parser';
-import { CommitmentMessages } from '@api/community.model';
-import { AutoFixNormalRounded } from '@mui/icons-material';
+import { CommitmentMessages } from '@components/AutSlider';
 
 export const fetchHolder = createAsyncThunk('fetch-holder', async (data: any) => {
   const { autName, network } = data;

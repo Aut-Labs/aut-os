@@ -66,16 +66,13 @@ const AutCommunityEdit = () => {
   const {
     control,
     handleSubmit,
-    watch,
-    formState: { errors },
+    formState: { errors, isValid, isDirty },
   } = useForm({
     mode: 'onChange',
     defaultValues: {
       commitment: selectedCommunity?.properties?.commitment,
     },
   });
-
-  const values = watch();
 
   const onSubmit = async (data) => {
     const result = await dispatch(
@@ -207,13 +204,15 @@ const AutCommunityEdit = () => {
                   name="commitment"
                   key="commitment"
                   control={control}
-                  rules={{ min: 1, required: true }}
+                  rules={{ min: selectedCommunity?.properties?.commitment, required: true }}
                   render={({ field: { name, value, onChange } }) => {
                     return (
                       <AutSlider
                         value={value}
                         name={name}
                         errors={errors}
+                        communityName={selectedCommunity?.name}
+                        minCommitment={selectedCommunity?.properties?.commitment}
                         sliderProps={{
                           defaultValue: 1,
                           step: 1,
@@ -245,6 +244,7 @@ const AutCommunityEdit = () => {
               </AutButton>
               <AutButton
                 onClick={handleSubmit(onSubmit)}
+                disabled={!isValid || !isDirty}
                 sx={{
                   width: desktop ? pxToRem(250) : pxToRem(150),
                   height: pxToRem(50),

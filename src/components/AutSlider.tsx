@@ -30,53 +30,20 @@ import { FormHelperText } from './Fields/AutFields';
 //   }
 // };
 
-export const CommitmentMessages = (value: number) => {
-  switch (+value) {
-    case 1:
-      return 'Just lurking 👀';
-    case 2:
-    case 3:
-    case 4:
-      return 'gm gm 😪';
-    case 5:
-    case 6:
-    case 7:
-      return 'Trusted seed 🌱';
-    case 8:
-    case 9:
-    case 10:
-      return `Soulbound ⛓️`;
-    default:
-      return 'Minimum Commitment Level for new Members.';
-  }
-};
-/* eslint-disable max-len */
-export function CommitmentMessage({ value, children = null }) {
-  const message = CommitmentMessages(value);
-  return (
-    <Typography
-      color="white"
-      whiteSpace="nowrap"
-      align="left"
-      component="span"
-      variant="body1"
-      sx={{ display: 'flex', mb: '4px', height: '15px' }}
-    >
-      {message}
-    </Typography>
-  );
-}
-
-const StyledSlider = styled(Slider)({
-  '&.MuiSlider-root': {
-    padding: 0,
-  },
+const StyledSlider = styled(Slider)<CustomSliderProps>(({ mincommitment, theme }) => ({
   width: pxToRem(600),
   height: pxToRem(65),
   borderRadius: '0',
   borderWidth: '2px',
   borderStyle: 'solid',
   padding: '0',
+  backgroundImage: `-webkit-linear-gradient(left, #6A6A6A, #6A6A6A ${mincommitment * 10}%, transparent ${
+    mincommitment * 10
+  }%, transparent 100%)`,
+
+  '&.MuiSlider-root': {
+    padding: 0,
+  },
 
   '@media(max-width: 1024px)': {
     alignContent: 'center',
@@ -107,23 +74,71 @@ const StyledSlider = styled(Slider)({
   '.MuiSlider-track': {
     borderRight: '0',
     background:
+      // eslint-disable-next-line max-len
       'transparent linear-gradient(45.57deg, #009fe3 0%, #0399de 8%, #0e8bd3 19%, #2072bf 30%, #3a50a4 41%, #5a2583 53%, #453f94 71%, #38519f 88%, #3458a4 100%) 0% 0%',
   },
 
   '.MuiSlider-rail': {
     opacity: '0',
   },
-});
+}));
+
+export const CommitmentMessages = (value: number) => {
+  switch (+value) {
+    case 1:
+    case 2:
+      return `Just lurking 👀`;
+    case 3:
+    case 4:
+      return 'gm gm 😪';
+    case 5:
+    case 6:
+      return 'builder ⚙️';
+    case 7:
+    case 8:
+      return 'Trusted seed 🌱';
+    case 9:
+    case 10:
+      return `Soulbound ⛓️`;
+    default:
+      return `Minimum Commitment Level for new Members.`;
+  }
+};
+
+/* eslint-disable max-len */
+export function CommitmentMessage({ value, children = null }) {
+  const message = CommitmentMessages(value);
+  return (
+    <Typography
+      color="white"
+      whiteSpace="nowrap"
+      align="left"
+      component="span"
+      variant="body1"
+      sx={{ display: 'flex', mb: '4px', height: '15px' }}
+    >
+      {message}
+    </Typography>
+  );
+}
 
 interface AutSliderProps {
   sliderProps: SliderProps;
   value: any;
   name: string;
   errors: FieldErrors<any>;
+  minCommitment?: number;
+  communityName: string;
 }
 
-const errorTypes = {
-  min: 'Min 1 commitment level!',
+interface CustomSliderProps {
+  mincommitment: number;
+}
+
+const errorTypes = (minCommitment, communityName) => {
+  return {
+    min: `Whoops - The min level to join ${communityName} is ${minCommitment}`,
+  };
 };
 
 export const AutSlider = (props: AutSliderProps) => {
@@ -138,10 +153,15 @@ export const AutSlider = (props: AutSliderProps) => {
     >
       <CommitmentMessage value={props.value} />
       <div style={{ position: 'relative' }}>
-        <StyledSlider className="swiper-no-swiping" {...props.sliderProps} />
+        <StyledSlider className="swiper-no-swiping" {...props.sliderProps} mincommitment={props.minCommitment} />
       </div>
       <div style={{ marginTop: '-3px', display: 'flex', justifyContent: 'flex-end' }}>
-        <FormHelperText errorTypes={errorTypes} value={props.value} name={props.name} errors={props.errors} />
+        <FormHelperText
+          errorTypes={errorTypes(props.minCommitment, props.communityName)}
+          value={props.value}
+          name={props.name}
+          errors={props.errors}
+        />
       </div>
     </div>
   );

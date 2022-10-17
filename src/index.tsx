@@ -36,6 +36,7 @@ Sentry.init({
   dsn: `https://8f91c8136aa64eb294261b7dc8e09929@o1432500.ingest.sentry.io/${process.env.REACT_APP_SENTRY}`,
   integrations: [new BrowserTracing(), new SentryRRWeb({})],
   tracesSampleRate: 1.0,
+  enabled: false,
 });
 
 ReactDOM.render(

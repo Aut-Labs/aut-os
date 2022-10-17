@@ -1,3 +1,4 @@
+import { CommitmentMessages } from '@components/AutSlider';
 import { BaseNFTModel } from './api.model';
 import { httpUrlToIpfsCID } from './storage.api';
 
@@ -42,26 +43,6 @@ export const MarketTemplates = [
 //   }
 // };
 
-export const CommitmentMessages = (value: number) => {
-  switch (+value) {
-    case 1:
-      return 'Just lurking 👀';
-    case 2:
-    case 3:
-    case 4:
-      return 'gm gm 😪';
-    case 5:
-    case 6:
-    case 7:
-      return 'Trusted seed 🌱';
-    case 8:
-    case 9:
-    case 10:
-      return `Soulbound ⛓️`;
-    default:
-      return 'Minimum Commitment Level for new Members.';
-  }
-};
 export interface Role {
   roleName: string;
   id: number;

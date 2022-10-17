@@ -170,7 +170,7 @@ const AutProfileEdit = (props) => {
     control,
     handleSubmit,
     watch,
-    formState: { errors },
+    formState: { errors, isDirty },
   } = useForm({
     mode: 'onChange',
     defaultValues: {
@@ -371,6 +371,7 @@ const AutProfileEdit = (props) => {
           type="submit"
           color="primary"
           variant="outlined"
+          disabled={!isDirty}
         >
           Save
         </AutButton>

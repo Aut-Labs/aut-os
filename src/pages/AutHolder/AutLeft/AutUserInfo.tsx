@@ -110,8 +110,8 @@ const AutUserInfo = ({ match }) => {
   const socialIcons = {
     discord: DiscordIcon,
     github: GitHubIcon,
-    telegram: TelegramIcon,
     twitter: TwitterIcon,
+    telegram: TelegramIcon,
     lensfrens: LensfrensIcon,
   };
 
