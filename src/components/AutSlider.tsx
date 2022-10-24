@@ -1,4 +1,4 @@
-import { Typography, Slider, SliderProps, styled, useMediaQuery } from '@mui/material';
+import { Typography, Slider, SliderProps, styled, useMediaQuery, useTheme } from '@mui/material';
 import { pxToRem } from '@utils/text-size';
 import { FieldErrors } from 'react-hook-form';
 import { FormHelperText } from './Fields/AutFields';
@@ -142,7 +142,8 @@ const errorTypes = (minCommitment, communityName) => {
 };
 
 export const AutSlider = (props: AutSliderProps) => {
-  const desktop = useMediaQuery('(min-width:1024px)');
+  const theme = useTheme();
+  const desktop = useMediaQuery(theme.breakpoints.up('md'));
 
   return (
     <div

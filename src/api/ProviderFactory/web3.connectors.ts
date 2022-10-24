@@ -1,24 +1,39 @@
-import { environment } from '@api/environment';
 import { initializeConnector } from '@web3-react/core';
 import { MetaMask } from '@web3-react/metamask';
 import { WalletConnect } from '@web3-react/walletconnect';
+import { NetworkConfig } from './network.config';
 
-const supportedChainIds = environment.chainIds.split(',').map(Number);
+export const initializeConnectors = (networks: NetworkConfig[]) => {
+  const { supportedChainIds, rpcUrls } = networks.reduce(
+    (prev, curr) => {
+      prev.supportedChainIds = [...prev.supportedChainIds, Number(curr.chainId)];
+      prev.rpcUrls = {
+        ...prev.rpcUrls,
+        [curr.chainId]: curr.rpcUrls.join('|'),
+      };
+      return prev;
+    },
+    {
+      supportedChainIds: [],
+      rpcUrls: {},
+    }
+  );
 
-const URLS = supportedChainIds.reduce((prev, curr, index) => {
-  const rpcUrl = environment.rpcUrls.split(',')[index].split('|');
-  prev[curr] = rpcUrl;
-  return prev;
-}, {});
+  const metaMaskConnector = initializeConnector<MetaMask>((actions) => new MetaMask({ actions }));
+  const walletConnectConnector = initializeConnector<WalletConnect>(
+    (actions) =>
+      new WalletConnect({
+        actions,
+        options: {
+          qrcode: true,
+          bridge: 'https://bridge.walletconnect.org',
+          rpc: rpcUrls,
+        },
+      })
+  );
 
-export const metaMaskConnector = initializeConnector<MetaMask>((actions) => new MetaMask(actions), supportedChainIds);
-
-export const walletConnectConnector = initializeConnector<WalletConnect>(
-  (actions) =>
-    new WalletConnect(actions, {
-      qrcode: true,
-      bridge: 'https://bridge.walletconnect.org',
-      rpc: URLS,
-    }),
-  supportedChainIds
-);
+  return {
+    metaMaskConnector,
+    walletConnectConnector,
+  };
+};

@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable react/default-props-match-prop-types */
-import { useMediaQuery } from '@mui/material';
+import { useMediaQuery, useTheme } from '@mui/material';
 import * as React from 'react';
 import { useEffect, useState, useMemo } from 'react';
 
@@ -13,7 +12,6 @@ export interface FlipCardProps {
   /** Extra css styling that can be applied to the container.
    * @default {}
    */
-  // eslint-disable-next-line @typescript-eslint/ban-types
   containerStyle?: {};
   /**
    * Custom container class name.
@@ -63,7 +61,8 @@ const Flipcard: React.FC<FlipCardProps> = (props) => {
     infinite,
     onClick,
   } = props;
-  const desktop = useMediaQuery('(min-width:1024px)');
+  const theme = useTheme();
+  const desktop = useMediaQuery(theme.breakpoints.up('md'));
 
   const [isFlipped, setFlipped] = useState(props.isFlipped);
   const [rotation, setRotation] = useState(0);
@@ -143,7 +142,6 @@ const Flipcard: React.FC<FlipCardProps> = (props) => {
   };
 
   return (
-    // eslint-disable-next-line jsx-a11y/no-static-element-interactions
     <div className={getContainerClassName} style={{ ...styles.container, ...containerStyle }} onClick={onClick} onKeyPress={null}>
       <div className="aut-card-flipper" style={styles.flipper}>
         <div style={styles.front}>{getComponent(0)}</div>

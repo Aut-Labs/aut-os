@@ -1,18 +1,19 @@
 /* eslint-disable react/button-has-type */
 import { IsAuthenticated } from '@auth/auth.reducer';
 import AutLoading from '@components/AutLoading';
-import NotFound from '@components/NotFound';
-import { styled, useMediaQuery } from '@mui/material';
-import { BrowserRouter, Route, Switch, useHistory, useLocation, useParams, useRouteMatch } from 'react-router-dom';
+import { styled, useMediaQuery, useTheme } from '@mui/material';
+import { Route, Switch, useHistory, useLocation } from 'react-router-dom';
 import Scrollbar from '@components/Scrollbar';
-import { HolderStatus } from '@store/holder/holder.reducer';
+import { AutIDProfiles, HolderData, HolderStatus, updateHolderState } from '@store/holder/holder.reducer';
 import { ResultState } from '@store/result-status';
 import { useSelector } from 'react-redux';
-import { SwScrollbar } from 'sw-web-shared';
 import AutCommunityEdit from './AutCommunityEdit';
 import AutProfileEdit from './AutProfileEdit';
 import AutToolBar from './AutToolBar';
 import AutUserInfo from './AutUserInfo';
+import SelectAutIDProfileDialog from '@components/AutIDProfileList';
+import { AutID } from '@api/aut.model';
+import { useAppDispatch } from '@store/store.model';
 
 const AutLeftContainer = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -20,31 +21,46 @@ const AutLeftContainer = styled('div')(({ theme }) => ({
 }));
 
 const AutLeft = ({ match }) => {
+  const dispatch = useAppDispatch();
   const status = useSelector(HolderStatus);
-  const isAuthenticated = useSelector(IsAuthenticated);
-  const { pathname } = useLocation();
-  const params = useParams<any>();
+  const profiles = useSelector(AutIDProfiles);
+  const holderData = useSelector(HolderData);
   const history = useHistory();
-  const { url } = useRouteMatch();
-  const desktop = useMediaQuery('(min-width:1024px)');
+  const location = useLocation();
+  const isAuthenticated = useSelector(IsAuthenticated);
+  const theme = useTheme();
+  const desktop = useMediaQuery(theme.breakpoints.up('md'));
+
+  const onSelect = async (profile: AutID) => {
+    const params = new URLSearchParams(location.search);
+    params.set('network', profile.properties.network);
+    history.push({
+      pathname: `/${profile.name}`,
+      search: `?${params.toString()}`,
+    });
+    await dispatch(
+      updateHolderState({
+        selectedProfileAddress: profile.properties.address,
+      })
+    );
+  };
 
   return (
     <AutLeftContainer style={{ width: desktop && status === ResultState.Success ? '50%' : '100%', height: '100%' }}>
-      <>
-        <AutToolBar hideWebComponent={!desktop} />
-      </>
+      <SelectAutIDProfileDialog profiles={profiles} onSelect={onSelect} open={profiles?.length > 1 && !holderData} />
 
       {status === ResultState.Loading || status === ResultState.Idle ? (
         <AutLoading />
       ) : (
         <>
+          <AutToolBar isDesktop={desktop} />
           <Scrollbar>
             <Switch>
-              <Route exact path={`${match.path}`} component={AutUserInfo} />
+              {holderData && <Route exact path={`${match.path}`} component={AutUserInfo} />}
               {isAuthenticated && (
                 <>
                   <Route exact path={`${match.path}/edit-community/:communityAddress`} component={AutCommunityEdit} />
-                  <Route exact path={`${match.path}/edit-profile`} render={(props) => <AutProfileEdit {...props} />} />
+                  <Route exact path={`${match.path}/edit-profile`} render={(props) => <AutProfileEdit />} />
                 </>
               )}
             </Switch>

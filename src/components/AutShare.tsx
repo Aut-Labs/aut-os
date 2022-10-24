@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, styled, Typography, useMediaQuery } from '@mui/material';
+import { Dialog, DialogContent, styled, Typography, useMediaQuery, useTheme } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { TwitterShareButton } from 'react-share';
 import { pxToRem } from '@utils/text-size';
@@ -25,7 +25,8 @@ const AutStyledDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 const AutShare = (props: SimpleDialogProps) => {
-  const desktop = useMediaQuery('(min-width:1024px)');
+  const theme = useTheme();
+  const desktop = useMediaQuery(theme.breakpoints.up('md'));
 
   const { onClose, title, description, url, twitterProps, hideCloseBtn } = props;
   return (
@@ -122,7 +123,8 @@ const AutShare = (props: SimpleDialogProps) => {
 };
 
 export function AutShareDialog(props: SimpleDialogProps) {
-  const desktop = useMediaQuery('(min-width:1024px)');
+  const theme = useTheme();
+  const desktop = useMediaQuery(theme.breakpoints.up('md'));
   return (
     <AutStyledDialog
       fullScreen={!desktop}

@@ -1,32 +1,24 @@
-import { IsAuthenticated } from '@auth/auth.reducer';
-import { HolderStatus, fetchHolder, HolderData } from '@store/holder/holder.reducer';
+import { HolderStatus, HolderData } from '@store/holder/holder.reducer';
 import { ResultState } from '@store/result-status';
 import { useAppDispatch } from '@store/store.model';
-import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
-import { styled, useMediaQuery } from '@mui/material';
-
+import { styled, useMediaQuery, useTheme } from '@mui/material';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import { Pagination } from 'swiper';
+import { AutShareDialog } from '@components/AutShare';
+import { setOpenShare } from '@store/ui-reducer';
+import { DautPlaceholder } from '@components/DautPlaceholder';
+import AutLeft from './AutLeft/Left';
+import AutTunnelRight from './AutRight/Right';
+
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/scrollbar';
 
-// import required modules
-import { Mousewheel, Pagination } from 'swiper';
-
-import { AutShareDialog } from '@components/AutShare';
-import { setOpenShare } from '@store/ui-reducer';
-import { setNetwork } from '@store/WalletProvider/WalletProvider';
-import AutLeft from './AutLeft/Left';
-import AutTunnelRight from './AutRight/Right';
-import AutToolBar from './AutLeft/AutToolBar';
-
 const AutContainer = styled('div')(() => ({
   display: 'flex',
   height: '100%',
-  // backgroundColor: '#141414',
 }));
 const AutSwiper = styled(Swiper)(({ theme }) => ({
   height: '100%',
@@ -37,22 +29,11 @@ const AutSwiper = styled(Swiper)(({ theme }) => ({
 
 const AutHolder = (props) => {
   const dispatch = useAppDispatch();
-  const isAuthenticated = useSelector(IsAuthenticated);
   const { openShare } = useSelector((state: any) => state.ui);
   const status = useSelector(HolderStatus);
-  const params = useParams<{ network: string; holderAddress: string }>();
-  const desktop = useMediaQuery('(min-width:1024px)');
+  const theme = useTheme();
+  const desktop = useMediaQuery(theme.breakpoints.up('md'));
   const holderData = useSelector(HolderData);
-
-  useEffect(() => {
-    dispatch(setNetwork(params.network));
-  }, []);
-
-  useEffect(() => {
-    if (!isAuthenticated) {
-      dispatch(fetchHolder({ autName: params.holderAddress, network: params.network }));
-    }
-  }, [isAuthenticated]);
 
   const handleClose = () => {
     dispatch(setOpenShare(false));
@@ -116,7 +97,7 @@ const AutHolder = (props) => {
               <AutLeft {...props} />
             </SwiperSlide>
           </AutSwiper>
-          {!desktop && <AutToolBar hideLogo />}
+          <DautPlaceholder hide={status === ResultState.Loading} horizontal="center" vertical="bottom" />
         </>
       )}
     </>

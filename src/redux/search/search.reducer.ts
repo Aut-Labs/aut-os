@@ -1,21 +1,33 @@
 import { ResultState } from '@store/result-status';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { AutID } from '@api/aut.model';
-import { fetchHolder, fetchHolderData } from '@api/holder.api';
+import { fetchAutID, fetchHolderData } from '@api/holder.api';
 import { ErrorParser } from '@utils/error-parser';
-import { environment } from '@api/environment';
+import { NetworkConfig } from '@api/ProviderFactory/network.config';
+import axios from 'axios';
 
-export const fetchSearchResults = createAsyncThunk('fetch-search-results', async (data: any) => {
-  const { username } = data;
+export const fetchSearchResults = createAsyncThunk('fetch-search-results', async (data: any, thunkAPI) => {
+  const { username, signal } = data;
   try {
+    const source = axios.CancelToken.source();
+    signal.addEventListener('abort', () => {
+      source.cancel();
+    });
     const result = [];
-    const networks = environment.networks.split(',');
+    const state = thunkAPI.getState() as any;
+    const networks: NetworkConfig[] = state.walletProvider.networksConfig;
 
     for (const network of networks) {
-      const member = await fetchHolder(username, network.toLowerCase());
-      if (member) {
-        result.push(member);
+      const holderData = await fetchHolderData(username, network.network.toLowerCase(), source);
+      if (holderData) {
+        const member = await fetchAutID(holderData, network.network.toLowerCase());
+        if (member) {
+          result.push(member);
+        }
       }
+    }
+    if ((signal as AbortSignal).aborted) {
+      throw new Error('Aborted');
     }
     return result;
   } catch (error) {
@@ -56,6 +68,8 @@ export const searchSlice = createSlice({
       })
       .addCase(fetchSearchResults.rejected, (state) => {
         state.status = ResultState.Success;
+        state.noResults = true;
+        state.searchResult = [];
       });
   },
 });

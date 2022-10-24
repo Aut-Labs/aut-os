@@ -1,8 +1,7 @@
 /* eslint-disable no-unused-expressions */
-import { Avatar, Box, InputAdornment, styled, SvgIcon, Typography, useMediaQuery } from '@mui/material';
+import { Box, InputAdornment, styled, SvgIcon, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { ReactComponent as MyAutIDLogo } from '@assets/MyAutIdLogo.svg';
 import { ReactComponent as SearchIcon } from '@assets/SearchIcon.svg';
-import { ReactComponent as RedirectIcon } from '@assets/RedirectIcon.svg';
 
 import { useHistory, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -14,8 +13,11 @@ import { ResultState } from '@store/result-status';
 import { AutID } from '@api/aut.model';
 import { useAppDispatch } from '@store/store.model';
 import { Player } from '@lottiefiles/react-lottie-player';
-import { ipfsCIDToHttpUrl } from '@api/storage.api';
+import { DautPlaceholder } from '@components/DautPlaceholder';
 import * as animationData from '../../assets/aut-load.json';
+import { AutIDProfileList } from '@components/AutIDProfileList';
+import { fetchHolder } from '@store/holder/holder.reducer';
+import { useEffect, useRef } from 'react';
 
 const AutBox = styled(Box)(({ theme }) => ({
   '&.MuiBox-root': {
@@ -102,57 +104,28 @@ const FormWrapper = styled('form')({
   },
 });
 
-const UserRow = styled('div')({
-  display: 'flex',
-  flexDirection: 'row',
-  height: pxToRem(80),
-  width: '100%',
-  cursor: 'pointer',
-  borderBottom: '1px solid white',
-  borderTop: '1px solid white',
-
-  '&:not(:first-of-type)': {
-    borderBottom: '1px solid white',
-    borderTop: 'none',
-  },
-
-  '&:hover': {
-    backgroundColor: 'rgba(67, 158, 221, 0.15)',
-  },
-
-  '@media(max-width:1024px)': {
-    display: 'flex',
-    flexDirection: 'row',
-    height: pxToRem(80),
-    width: '100%',
-    cursor: 'pointer',
-    borderBottom: '1px solid white',
-    borderTop: '1px solid white',
-  },
-});
-
 const AutSearch = ({ match }) => {
   const dispatch = useAppDispatch();
   const status = useSelector(SearchStatus);
   const noResults = useSelector(NoSearchResults);
   const searchResult: AutID[] = useSelector(SearchResult);
-  const desktop = useMediaQuery('(min-width:1024px)');
-  const xs = useMediaQuery('(max-width:360px)');
+  const theme = useTheme();
+  const desktop = useMediaQuery(theme.breakpoints.up('md'));
+  const xs = useMediaQuery(theme.breakpoints.down('sm'));
   const history = useHistory();
   const location = useLocation();
+  const abort = useRef<AbortController>();
 
-  function clickRow(username, network) {
+  function selectProfile(profile: AutID) {
+    const params = new URLSearchParams(location.search);
+    params.set('network', profile.properties.network);
     history.push({
-      pathname: `/${network}/${username}`,
-      search: location.search,
+      pathname: `/${profile.name}`,
+      search: `?${params.toString()}`,
     });
+    dispatch(fetchHolder({ autName: profile.name, network: profile.properties.network }));
   }
-  const {
-    control,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm({
+  const { control, handleSubmit } = useForm({
     mode: 'onChange',
     defaultValues: {
       username: '',
@@ -160,11 +133,22 @@ const AutSearch = ({ match }) => {
   });
 
   const onSubmit = async (data) => {
-    dispatch(fetchSearchResults(data));
+    abort.current = new AbortController();
+    dispatch(
+      fetchSearchResults({
+        ...data,
+        signal: abort.current?.signal,
+      })
+    );
   };
+
+  useEffect(() => {
+    return () => abort.current && abort.current.abort();
+  }, []);
 
   return (
     <AutBox>
+      <DautPlaceholder hide={false} />
       <TopWrapper>
         <MyAutIDLogo style={{ height: desktop ? pxToRem(120) : pxToRem(90), width: desktop ? pxToRem(400) : pxToRem(300) }} />
         <Typography
@@ -290,71 +274,7 @@ const AutSearch = ({ match }) => {
             No user found with that username. Try again!
           </Typography>
         ) : (
-          searchResult.map((user: AutID, index) => {
-            return (
-              <UserRow key={`result-${index}`} onClick={() => clickRow(user?.name, user.properties?.network)}>
-                <Avatar
-                  sx={{
-                    bgcolor: 'background.default',
-                    height: pxToRem(78),
-                    width: pxToRem(78),
-                    borderRadius: 0,
-                  }}
-                  aria-label="avatar"
-                  src={ipfsCIDToHttpUrl(user?.properties?.avatar as string)}
-                />
-                <div style={{ display: 'flex', flex: '1' }}>
-                  <div style={{ width: '33%', justifyContent: 'center', alignItems: 'center', height: '100%', display: 'flex' }}>
-                    <Typography
-                      sx={{
-                        display: 'flex',
-                        alignSelf: 'center',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        padding: '3px',
-                        height: '100%',
-                        color: 'white',
-                        ml: pxToRem(20),
-                      }}
-                      variant="h6"
-                    >
-                      {user?.name}
-                    </Typography>
-                  </div>
-                  <div style={{ width: '33%', justifyContent: 'center', alignItems: 'center', height: '100%', display: 'flex' }}>
-                    <Typography
-                      sx={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        color: 'white',
-                        ml: pxToRem(20),
-                        padding: '5px',
-                        borderRadius: '3px',
-                        backgroundColor: 'rgba(67, 158, 221, 0.3)',
-                      }}
-                      variant="h6"
-                    >
-                      {user?.properties?.network}
-                    </Typography>
-                  </div>
-                  <div style={{ width: '33%', display: 'flex', alignContent: 'center', alignSelf: 'center' }}>
-                    <SvgIcon
-                      sx={{
-                        height: pxToRem(34),
-                        width: '100%',
-                        mt: pxToRem(10),
-                        ml: pxToRem(20),
-                        justifyContent: 'center',
-                        cursor: 'pointer',
-                      }}
-                      key="redirect-icon"
-                      component={RedirectIcon}
-                    />
-                  </div>
-                </div>
-              </UserRow>
-            );
-          })
+          <AutIDProfileList profiles={searchResult} onSelect={selectProfile} />
         )}
       </ResultWrapper>
     </AutBox>

@@ -1,32 +1,58 @@
 import { ResultState } from '@store/result-status';
 import { createAsyncThunk, createSelector, createSlice } from '@reduxjs/toolkit';
 import { AutID } from '@api/aut.model';
-import { editCommitment, fetchHolderData, updateProfile, withdraw } from '@api/holder.api';
+import { editCommitment, fetchAutID, fetchHolderCommunities, fetchHolderData, updateProfile, withdraw } from '@api/holder.api';
 import { ErrorParser } from '@utils/error-parser';
 import { CommitmentMessages } from '@components/AutSlider';
+import axios from 'axios';
 
-export const fetchHolder = createAsyncThunk('fetch-holder', async (data: any) => {
-  const { autName, network } = data;
+export const fetchHolder = createAsyncThunk('fetch-holder', async (data: any, { getState, rejectWithValue }) => {
+  const { autName, network, signal } = data;
+  const { search, walletProvider } = getState() as any;
+  const networks: string[] = network ? [network] : walletProvider.networksConfig.map((n) => n.network.toLowerCase());
+  const profiles = [];
   try {
-    return await fetchHolderData(autName, network);
+    const source = axios.CancelToken.source();
+    if (signal) {
+      signal.addEventListener('abort', () => {
+        source.cancel();
+      });
+    }
+    for (const networkName of networks) {
+      const result: AutID = search.searchResult.find((a: AutID) => a.name === autName && a.properties.network === networkName);
+      const holderData = result?.properties?.holderData || (await fetchHolderData(autName, networkName, source));
+      if (holderData) {
+        const autID = await fetchAutID(holderData, networkName);
+        autID.properties.communities = await fetchHolderCommunities(holderData.communities);
+        if (autID) {
+          profiles.push(autID);
+        }
+      }
+    }
+    if ((signal as AbortSignal)?.aborted) {
+      throw new Error('Aborted');
+    }
+    return profiles;
   } catch (error) {
-    const message = ErrorParser(error);
-    throw new Error(message);
+    const message = error?.message === 'Aborted' ? error?.message : ErrorParser(error);
+    return rejectWithValue(message);
   }
 });
 
 export interface HolderState {
-  autID: AutID;
+  profiles: AutID[];
   fetchStatus: ResultState;
   status: ResultState;
   errorMessage: string;
+  selectedProfileAddress: string;
 }
 
 const initialState: HolderState = {
-  autID: null,
+  profiles: [],
   fetchStatus: ResultState.Idle,
   status: ResultState.Idle,
   errorMessage: '',
+  selectedProfileAddress: null,
 };
 
 export const holderSlice = createSlice({
@@ -46,11 +72,16 @@ export const holderSlice = createSlice({
         state.fetchStatus = ResultState.Loading;
       })
       .addCase(fetchHolder.fulfilled, (state, action) => {
-        state.autID = action.payload;
+        state.profiles = action.payload;
+        if (state.profiles.length === 1) {
+          state.selectedProfileAddress = state.profiles[0].properties.address;
+        }
         state.fetchStatus = ResultState.Success;
       })
-      .addCase(fetchHolder.rejected, (state) => {
-        state.fetchStatus = ResultState.Failed;
+      .addCase(fetchHolder.rejected, (state, action) => {
+        if (action?.payload !== 'Aborted') {
+          state.fetchStatus = ResultState.Failed;
+        }
       })
 
       // editCommitment
@@ -60,12 +91,15 @@ export const holderSlice = createSlice({
       .addCase(editCommitment.fulfilled, (state, action) => {
         const { communityAddress, commitment } = action.payload;
         state.status = ResultState.Idle;
-        state.autID.properties.communities = state.autID.properties.communities.map((c) => {
-          if (c.properties.address === communityAddress) {
-            c.properties.userData.commitment = commitment;
-            c.properties.userData.commitmentDescription = CommitmentMessages(+commitment);
-          }
-          return c;
+        state.profiles = state.profiles.map((autID) => {
+          autID.properties.communities = autID.properties.communities.map((c) => {
+            if (c.properties.address === communityAddress) {
+              c.properties.userData.commitment = commitment;
+              c.properties.userData.commitmentDescription = CommitmentMessages(+commitment);
+            }
+            return c;
+          });
+          return autID;
         });
       })
       .addCase(editCommitment.rejected, (state, action) => {
@@ -79,8 +113,11 @@ export const holderSlice = createSlice({
       })
       .addCase(withdraw.fulfilled, (state, action) => {
         state.status = ResultState.Idle;
-        state.autID.properties.communities = state.autID.properties.communities.filter((c) => {
-          return c.properties.address !== action.payload;
+        state.profiles = state.profiles.map((autID) => {
+          autID.properties.communities = autID.properties.communities.filter((c) => {
+            return c.properties.address !== action.payload;
+          });
+          return autID;
         });
       })
       .addCase(withdraw.rejected, (state, action) => {
@@ -93,7 +130,12 @@ export const holderSlice = createSlice({
       })
       .addCase(updateProfile.fulfilled, (state, action) => {
         state.status = ResultState.Idle;
-        state.autID = action.payload;
+        state.profiles = state.profiles.map((autID) => {
+          if (autID.properties.address === action.payload.properties.address) {
+            action.payload;
+          }
+          return autID;
+        });
       })
       .addCase(updateProfile.rejected, (state, action) => {
         state.status = ResultState.Failed;
@@ -104,7 +146,12 @@ export const holderSlice = createSlice({
 
 export const { updateHolderState } = holderSlice.actions;
 
-export const HolderData = (state) => state.holder.autID as AutID;
+export const SelectedProfileAddress = (state) => state.holder.selectedProfileAddress as string;
+export const AutIDProfiles = (state) => state.holder.profiles as AutID[];
+
+export const HolderData = createSelector(AutIDProfiles, SelectedProfileAddress, (profiles, address) => {
+  return profiles.find((item) => item.properties.address === address);
+});
 export const HolderStatus = (state) => state.holder.fetchStatus as ResultState;
 
 export const UpdateStatus = (state) => state.holder.status as ResultState;

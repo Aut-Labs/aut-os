@@ -1,13 +1,10 @@
-/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-
 import { ReactComponent as DiscordIcon } from '@assets/SocialIcons/DiscordIcon.svg';
 
 import { ReactComponent as GitHubIcon } from '@assets/SocialIcons/GitHubIcon.svg';
 import { ReactComponent as LensfrensIcon } from '@assets/SocialIcons/LensfrensIcon.svg';
 import { ReactComponent as TelegramIcon } from '@assets/SocialIcons/TelegramIcon.svg';
 import { ReactComponent as TwitterIcon } from '@assets/SocialIcons/TwitterIcon.svg';
-import { Avatar, Box, Card, CardContent, CardHeader, Link, styled, SvgIcon, Typography, useMediaQuery } from '@mui/material';
+import { Avatar, Box, Card, CardContent, CardHeader, Link, styled, SvgIcon, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { pxToRem } from '@utils/text-size';
 import { useState } from 'react';
 import PencilEdit from '@assets/PencilEditicon';
@@ -19,6 +16,7 @@ import { ResultState } from '@store/result-status';
 import { ipfsCIDToHttpUrl } from '@api/storage.api';
 import { trimAddress } from '@utils/trim-address';
 import { BlockExplorerUrl, SelectedNetworkConfig } from '@store/WalletProvider/WalletProvider';
+import { EditContentElements } from '@components/EditContentElements';
 
 const AutTable = styled('table')(({ theme }) => ({
   width: '100%',
@@ -66,6 +64,7 @@ const AutTable = styled('table')(({ theme }) => ({
     borderBottom: '1px solid white',
   },
 }));
+
 const IconContainer = styled('div')(({ theme }) => ({
   paddingTop: pxToRem(15),
   display: 'flex',
@@ -95,14 +94,17 @@ const AutCard = styled(Card)(({ theme }) => ({
   },
 }));
 
+const { FieldWrapper, FormWrapper, BottomWrapper, TopWrapper, ContentWrapper } = EditContentElements;
+
 const AutUserInfo = ({ match }) => {
   const holderData = useSelector(HolderData);
   const holderStatus = useSelector(HolderStatus);
   const blockExplorer = useSelector(BlockExplorerUrl);
   const selectedNetwork = useSelector(SelectedNetworkConfig);
   const isAuthenticated = useSelector(IsAuthenticated);
-  const desktop = useMediaQuery('(min-width:1024px)');
-  const xs = useMediaQuery('(max-width:360px)');
+  const theme = useTheme();
+  const desktop = useMediaQuery(theme.breakpoints.up('md'));
+  const xs = useMediaQuery(theme.breakpoints.down('sm'));
   const [isActiveIndex, setIsActiveIndex] = useState(null);
   const history = useHistory();
   const location = useLocation();
@@ -114,24 +116,6 @@ const AutUserInfo = ({ match }) => {
     telegram: TelegramIcon,
     lensfrens: LensfrensIcon,
   };
-
-  const socialUrls = {
-    discord: '',
-    github: 'https://github.com/',
-    telegram: 'https://t.me/',
-    twitter: 'https://twitter.com/',
-    lensfrens: 'https://www.lensfrens.xyz/',
-  };
-  const testSocials = [
-    {
-      type: 'discord',
-      link: 'string',
-    },
-    {
-      type: 'twitter',
-      link: 'string',
-    },
-  ];
 
   const onEdit = () => {
     history.push({
@@ -154,206 +138,194 @@ const AutUserInfo = ({ match }) => {
   }
 
   return (
-    <>
-      <Box>
-        {holderStatus === ResultState.Success ? (
-          <Box style={{ display: 'flex', flexDirection: 'column', flex: '1' }}>
-            <Box
-              sx={{
-                paddingLeft: desktop ? pxToRem(100) : !xs ? pxToRem(50) : pxToRem(30),
-                paddingRight: desktop ? pxToRem(100) : !xs ? pxToRem(50) : pxToRem(30),
-                paddingTop: desktop ? pxToRem(150) : !xs ? pxToRem(100) : pxToRem(30),
-              }}
-            >
-              <AutCard sx={{ bgcolor: 'background.default', border: 'none', display: 'flex' }}>
-                <CardHeader
-                  avatar={
-                    <Avatar
-                      sx={{ bgcolor: 'background.default', width: pxToRem(150), height: pxToRem(150), borderRadius: 0 }}
-                      aria-label="recipe"
-                      src={ipfsCIDToHttpUrl(holderData?.properties?.avatar as string)}
-                    />
-                  }
-                />
-                <CardContent sx={{ ml: xs ? '0' : pxToRem(30), mr: xs ? 0 : pxToRem(30), alignSelf: 'center', height: pxToRem(150) }}>
-                  <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '5px' }}>
-                    <Typography fontSize={pxToRem(50)} color="background.paper" textAlign="left" lineHeight={1}>
-                      {holderData.name}
-                    </Typography>
-                    {isAuthenticated && (
-                      <div style={{ padding: pxToRem(10), cursor: 'pointer', alignSelf: 'center' }} onClick={onEdit}>
-                        <PencilEdit height={pxToRem(24)} width={pxToRem(24)} />
-                      </div>
-                    )}
-                  </div>
-                  <ExternalUrl href={`${blockExplorer}/address/${holderData?.properties?.address}`} target="_blank">
-                    {trimAddress(holderData.properties.address)}
-                  </ExternalUrl>
-
-                  {holderData.properties.ethDomain && (
-                    <Typography
-                      variant="subtitle2"
-                      color="background.paper"
-                      textAlign="left"
-                      sx={{ textDecoration: 'underline', wordBreak: 'break-all' }}
-                    >
-                      {holderData.properties.ethDomain}
-                    </Typography>
+    <ContentWrapper>
+      {holderStatus === ResultState.Success ? (
+        <Box style={{ width: '100%', display: 'flex', flexDirection: 'column', flex: '1' }}>
+          <Box
+            sx={{
+              paddingBottom: pxToRem(100),
+            }}
+          >
+            <AutCard sx={{ bgcolor: 'background.default', border: 'none', display: 'flex' }}>
+              <CardHeader
+                avatar={
+                  <Avatar
+                    sx={{ bgcolor: 'background.default', width: pxToRem(150), height: pxToRem(150), borderRadius: 0 }}
+                    aria-label="recipe"
+                    src={ipfsCIDToHttpUrl(holderData?.properties?.avatar as string)}
+                  />
+                }
+              />
+              <CardContent sx={{ ml: xs ? '0' : pxToRem(30), mr: xs ? 0 : pxToRem(30), alignSelf: 'center', height: pxToRem(150) }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '5px' }}>
+                  <Typography fontSize={pxToRem(50)} color="background.paper" textAlign="left" lineHeight={1}>
+                    {holderData.name}
+                  </Typography>
+                  {isAuthenticated && (
+                    <div style={{ padding: pxToRem(10), cursor: 'pointer', alignSelf: 'center' }} onClick={onEdit}>
+                      <PencilEdit height={pxToRem(24)} width={pxToRem(24)} />
+                    </div>
                   )}
-                  <IconContainer>
-                    {holderData?.properties.socials.map((social, index) => {
-                      const AutIcon = socialIcons[Object.keys(socialIcons)[index]];
+                </div>
+                <ExternalUrl href={`${blockExplorer}/address/${holderData?.properties?.address}`} target="_blank">
+                  {trimAddress(holderData.properties.address)}
+                </ExternalUrl>
 
-                      return (
-                        social.link && (
-                          <Link key={`social-icon-${index}`} href={social.link} target="_blank" component="a">
-                            <SvgIcon
-                              sx={{
-                                height: pxToRem(34),
-                                width: pxToRem(31),
-                                mr: pxToRem(20),
-                              }}
-                              key={`socials.${index}.icon`}
-                              component={AutIcon}
-                            />
-                          </Link>
-                        )
-                      );
-                    })}
-                  </IconContainer>
-                </CardContent>
-              </AutCard>
-            </Box>
-            <Box
-              sx={{
-                paddingLeft: desktop ? pxToRem(100) : !xs ? pxToRem(50) : pxToRem(30),
-                paddingRight: desktop ? pxToRem(100) : !xs ? pxToRem(50) : pxToRem(30),
-                paddingTop: desktop ? pxToRem(150) : !xs ? pxToRem(100) : pxToRem(30),
-              }}
-            >
-              <Typography fontSize={pxToRem(47)} textTransform="uppercase" color="background.paper" textAlign="left">
-                Communities
-              </Typography>
-            </Box>
-            <Box
-              sx={{
-                paddingLeft: desktop ? pxToRem(100) : '0',
-                paddingRight: desktop ? pxToRem(100) : '0',
-                paddingTop: pxToRem(50),
-                paddingBottom: pxToRem(100),
-              }}
-            >
-              <AutTable aria-label="table" cellSpacing="0">
-                <tbody>
-                  <tr>
-                    <th>
-                      <Typography variant="subtitle2" color="background.paper" textAlign="left" fontWeight="bold">
-                        Community Name
-                      </Typography>
-                    </th>
-                    <th>
-                      <Typography variant="subtitle2" color="background.paper" textAlign="left" fontWeight="bold">
-                        Role
-                      </Typography>
-                    </th>
-                    <th>
-                      <Typography variant="subtitle2" color="background.paper" textAlign="center" fontWeight="bold">
-                        Commitment
-                      </Typography>
-                    </th>
-                  </tr>
-                  {holderData.properties.communities.map(({ image, name, properties }, index) => (
-                    <tr
-                      key={`row-key-${index}`}
-                      className={`${isActiveIndex === index ? 'isActive' : ' '} ${isAuthenticated ? 'isAuthenticated' : ''}`}
-                      onClick={() => clickRow(index, properties.address)}
-                    >
-                      <td>
-                        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                          <Avatar
+                {holderData.properties.ethDomain && (
+                  <Typography
+                    variant="subtitle2"
+                    color="background.paper"
+                    textAlign="left"
+                    sx={{ textDecoration: 'underline', wordBreak: 'break-all' }}
+                  >
+                    {holderData.properties.ethDomain}
+                  </Typography>
+                )}
+                <IconContainer>
+                  {holderData?.properties.socials.map((social, index) => {
+                    const AutIcon = socialIcons[Object.keys(socialIcons)[index]];
+
+                    return (
+                      social.link && (
+                        <Link key={`social-icon-${index}`} href={social.link} target="_blank" component="a">
+                          <SvgIcon
                             sx={{
-                              bgcolor: 'background.default',
-                              width: pxToRem(64),
-                              height: pxToRem(64),
-                              borderRadius: 0,
-                              mr: pxToRem(15),
-                              border: '1px solid white',
+                              height: pxToRem(34),
+                              width: pxToRem(31),
+                              mr: pxToRem(20),
                             }}
-                            aria-label="community-avatar"
-                            src={ipfsCIDToHttpUrl(image as string)}
+                            key={`socials.${index}.icon`}
+                            component={AutIcon}
                           />
-                          <div style={{ display: 'flex', flexDirection: 'column' }}>
-                            <Typography variant="subtitle2" color="background.paper" sx={{ pb: '5px' }}>
-                              {name}
-                            </Typography>
-                            <ExternalUrl
-                              onClick={(event) => event.stopPropagation()}
-                              href={`${blockExplorer}/address/${properties.address}`}
-                              target="_blank"
-                            >
-                              {trimAddress(properties.address)}
-                            </ExternalUrl>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <Typography variant="subtitle2" color="background.paper">
-                          {properties?.userData?.roleName}
-                        </Typography>
-                      </td>
-                      <td>
-                        <Typography variant="subtitle2" color="background.paper" textAlign="center" sx={{ pb: '5px' }}>
-                          {`${properties.userData.commitment}/10`}
-                        </Typography>
-                        <Typography variant="body1" textAlign="center" color="background.paper">
-                          {properties.userData.commitmentDescription}
-                        </Typography>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </AutTable>
-            </Box>
+                        </Link>
+                      )
+                    );
+                  })}
+                </IconContainer>
+              </CardContent>
+            </AutCard>
           </Box>
-        ) : !selectedNetwork ? (
-          <Typography
+          <Box>
+            <Typography fontSize={pxToRem(47)} textTransform="uppercase" color="background.paper" textAlign="left">
+              Communities
+            </Typography>
+          </Box>
+          <Box
             sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              textAlign: 'center',
-              mb: '10px',
-              fontSize: pxToRem(50),
-              color: 'white',
-              position: 'absolute',
-              transform: 'translate(-50%, -50%)',
-              left: '50%',
-              top: '50%',
+              paddingTop: pxToRem(50),
+              paddingBottom: pxToRem(100),
             }}
           >
-            Oops, it looks like we don't support this network yet.
-          </Typography>
-        ) : (
-          <Typography
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              textAlign: 'center',
-              mb: '10px',
-              fontSize: pxToRem(50),
-              color: 'white',
-              position: 'absolute',
-              transform: 'translate(-50%, -50%)',
-              left: '50%',
-              top: '50%',
-            }}
-          >
-            This āutID hasn't been claimed yet.
-          </Typography>
-        )}
-      </Box>
-    </>
+            <AutTable aria-label="table" cellSpacing="0">
+              <tbody>
+                <tr>
+                  <th>
+                    <Typography variant="subtitle2" color="background.paper" textAlign="left" fontWeight="bold">
+                      Community Name
+                    </Typography>
+                  </th>
+                  <th>
+                    <Typography variant="subtitle2" color="background.paper" textAlign="left" fontWeight="bold">
+                      Role
+                    </Typography>
+                  </th>
+                  <th>
+                    <Typography variant="subtitle2" color="background.paper" textAlign="center" fontWeight="bold">
+                      Commitment
+                    </Typography>
+                  </th>
+                </tr>
+                {holderData.properties.communities.map(({ image, name, properties }, index) => (
+                  <tr
+                    key={`row-key-${index}`}
+                    className={`${isActiveIndex === index ? 'isActive' : ' '} ${isAuthenticated ? 'isAuthenticated' : ''}`}
+                    onClick={() => clickRow(index, properties.address)}
+                  >
+                    <td>
+                      <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                        <Avatar
+                          sx={{
+                            bgcolor: 'background.default',
+                            width: pxToRem(64),
+                            height: pxToRem(64),
+                            borderRadius: 0,
+                            mr: pxToRem(15),
+                            border: '1px solid white',
+                          }}
+                          aria-label="community-avatar"
+                          src={ipfsCIDToHttpUrl(image as string)}
+                        />
+                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                          <Typography variant="subtitle2" color="background.paper" sx={{ pb: '5px' }}>
+                            {name}
+                          </Typography>
+                          <ExternalUrl
+                            onClick={(event) => event.stopPropagation()}
+                            href={`${blockExplorer}/address/${properties.address}`}
+                            target="_blank"
+                          >
+                            {trimAddress(properties.address)}
+                          </ExternalUrl>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <Typography variant="subtitle2" color="background.paper">
+                        {properties?.userData?.roleName}
+                      </Typography>
+                    </td>
+                    <td>
+                      <Typography variant="subtitle2" color="background.paper" textAlign="center" sx={{ pb: '5px' }}>
+                        {`${properties.userData.commitment}/10`}
+                      </Typography>
+                      <Typography variant="body1" textAlign="center" color="background.paper">
+                        {properties.userData.commitmentDescription}
+                      </Typography>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </AutTable>
+          </Box>
+        </Box>
+      ) : !selectedNetwork ? (
+        <Typography
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            textAlign: 'center',
+            mb: '10px',
+            fontSize: pxToRem(50),
+            color: 'white',
+            position: 'absolute',
+            transform: 'translate(-50%, -50%)',
+            left: '50%',
+            top: '50%',
+          }}
+        >
+          Oops, it looks like we don't support this network yet.
+        </Typography>
+      ) : (
+        <Typography
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            textAlign: 'center',
+            mb: '10px',
+            fontSize: pxToRem(50),
+            color: 'white',
+            position: 'absolute',
+            transform: 'translate(-50%, -50%)',
+            left: '50%',
+            top: '50%',
+          }}
+        >
+          This āutID hasn't been claimed yet.
+        </Typography>
+      )}
+    </ContentWrapper>
   );
 };
 

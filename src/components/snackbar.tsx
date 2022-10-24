@@ -1,7 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
-import { RootState } from '@store/store.model';
 import { closeSnackbar } from '@store/ui-reducer';
 import React from 'react';
 
@@ -12,7 +11,7 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props,
 export default function SWSnackbar() {
   const dispatch = useDispatch();
 
-  const { message, duration, severity, open } = useSelector((state: RootState) => state.ui.snackbar);
+  const { message, duration, severity, open } = useSelector((state: any) => state.ui.snackbar);
 
   const handleClose = () => {
     dispatch(closeSnackbar());

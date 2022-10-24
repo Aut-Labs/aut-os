@@ -1,16 +1,18 @@
 import { ReactComponent as MyAutIDLogo } from '@assets/MyAutIdLogo.svg';
-import { DAOExpanderABI } from '@aut-protocol/abi-types';
-import { AppBar, styled, Toolbar } from '@mui/material';
+import { DautPlaceholder } from '@components/DautPlaceholder';
+import { styled, Toolbar, useMediaQuery } from '@mui/material';
+import { HolderStatus } from '@store/holder/holder.reducer';
+import { ResultState } from '@store/result-status';
 import { resetSearchState } from '@store/search/search.reducer';
 import { useAppDispatch } from '@store/store.model';
 import { pxToRem } from '@utils/text-size';
-import { useHistory, useLocation, useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { useHistory, useLocation } from 'react-router-dom';
 
 const AutBar = styled(Toolbar)(({ theme }) => ({
   '&.MuiToolbar-root': {
-    paddingLeft: pxToRem(100),
-    paddingRight: pxToRem(100),
-    paddingTop: pxToRem(30),
+    paddingLeft: pxToRem(80),
+    paddingRight: pxToRem(80),
     justifyContent: 'space-between',
 
     '@media(max-width: 1024px)': {
@@ -21,26 +23,26 @@ const AutBar = styled(Toolbar)(({ theme }) => ({
   },
 }));
 
-const AutToolBar = ({ hideWebComponent = false, hideLogo = false }) => {
+const AutToolBar = ({ isDesktop = false }) => {
   const history = useHistory();
   const location = useLocation();
-  const params = useParams<any>();
   const dispatch = useAppDispatch();
+  const status = useSelector(HolderStatus);
 
   function goHome() {
+    const params = new URLSearchParams(location.search);
+    params.delete('network');
     history.push({
       pathname: `/`,
-      search: location.search,
+      search: `?${params.toString()}`,
     });
     dispatch(resetSearchState());
   }
   return (
-    <>
-      <AutBar>
-        {!hideLogo && <MyAutIDLogo style={{ cursor: 'pointer' }} onClick={() => goHome()} />}
-        {!hideWebComponent && <d-aut id="d-aut" button-type="simple" network={params.network} />}
-      </AutBar>
-    </>
+    <AutBar>
+      <MyAutIDLogo height="90" style={{ cursor: 'pointer' }} onClick={() => goHome()} />
+      {isDesktop && <DautPlaceholder hide={status === ResultState.Loading} />}
+    </AutBar>
   );
 };
 

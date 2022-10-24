@@ -1,6 +1,7 @@
 import { AsyncThunk, createAsyncThunk } from '@reduxjs/toolkit';
 import { ParseSWErrorMessage } from '@utils/error-parser';
 import { updateTransactionState } from '@store/ui-reducer';
+import * as Sentry from '@sentry/browser';
 import { EnableAndChangeNetwork } from './web3.network';
 import { BaseThunkArgs, ThunkArgs, GetThunkAPI, AsyncThunkConfig, ProviderEvent, AsyncThunkPayloadCreator } from './web3.thunk.type';
 
@@ -16,7 +17,7 @@ export const Web3ThunkProviderFactory = <SWContractFunctions = any, SWContractEv
 ) => {
   return <Returned, ThunkArg = any>(
     args: ThunkArgs<SWContractEventTypes>,
-    contractAddress: (thunkAPI: GetThunkAPI<AsyncThunkConfig>) => Promise<string>,
+    contractAddress: (thunkAPI: GetThunkAPI<AsyncThunkConfig>, args?: any) => Promise<string>,
     thunk: AsyncThunkPayloadCreator<SWContractFunctions, Returned, ThunkArg, AsyncThunkConfig>
   ): AsyncThunk<Returned, ThunkArg, AsyncThunkConfig> => {
     stateActions = {
@@ -27,15 +28,16 @@ export const Web3ThunkProviderFactory = <SWContractFunctions = any, SWContractEv
     // @ts-ignore
     return createAsyncThunk<Returned, ThunkArg, AsyncThunkConfig>(typeName, async (arg, thunkAPI) => {
       try {
-        const addressOrName = (await contractAddress(thunkAPI)) || (args as any)?.addressOrName;
+        const addressOrName = (await contractAddress(thunkAPI, arg)) || (args as any)?.addressOrName;
         if (!addressOrName) {
           throw new Error(`Could not find addressOrName for ${type}`);
         }
         let state = thunkAPI.getState() as any;
-        const { networkConfig } = state.walletProvider;
+        const { networksConfig, selectedNetwork } = state.walletProvider;
         let { signer } = state.walletProvider;
+        const network = networksConfig.find((n) => n.network === selectedNetwork);
 
-        await EnableAndChangeNetwork(signer.provider.provider, networkConfig);
+        await EnableAndChangeNetwork(signer.provider.provider, network);
         // get state again in case network was changed silently
         state = thunkAPI.getState() as any;
         signer = state.walletProvider.signer;
@@ -51,6 +53,7 @@ export const Web3ThunkProviderFactory = <SWContractFunctions = any, SWContractEv
         });
         return await thunk(contractProvider, arg, thunkAPI);
       } catch (error) {
+        Sentry.captureException(error);
         const message = ParseSWErrorMessage(error);
         if (stateActions.updateErrorStateAction) {
           stateActions.updateErrorStateAction(message, thunkAPI.dispatch);

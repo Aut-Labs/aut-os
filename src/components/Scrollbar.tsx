@@ -1,6 +1,5 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable react/button-has-type */
-import { useMediaQuery } from '@mui/material';
+import { useMediaQuery, useTheme } from '@mui/material';
 import { pxToRem } from '@utils/text-size';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 
@@ -9,7 +8,8 @@ const Scrollbar = ({ children, className, ...props }: React.ComponentPropsWithou
   const scrollTrackRef = useRef<HTMLDivElement>(null);
   const scrollThumbRef = useRef<HTMLDivElement>(null);
   const observer = useRef<ResizeObserver | null>(null);
-  const desktop = useMediaQuery('(min-width:1024px)');
+  const theme = useTheme();
+  const desktop = useMediaQuery(theme.breakpoints.up('md'));
   const [thumbHeight, setThumbHeight] = useState(20);
   const [scrollStartPosition, setScrollStartPosition] = useState<number | null>(null);
   const [initialScrollTop, setInitialScrollTop] = useState<number>(0);

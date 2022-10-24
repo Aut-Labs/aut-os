@@ -1,5 +1,5 @@
 import { toHex } from '@utils/helpers';
-import { NetworkConfig } from '@store/model';
+import { NetworkConfig } from './network.config';
 
 const nativeCurrency = {
   name: 'Matic',
@@ -8,13 +8,13 @@ const nativeCurrency = {
 };
 
 export const EnableAndChangeNetwork = async (provider: any, config: NetworkConfig) => {
-  console.info('Changing Network', config);
+  // console.info('Changing Network', config);
   const params = [
     {
-      chainId: toHex(config.network.chainId),
-      chainName: config.network.name,
-      rpcUrls: config.network.rpcUrls,
-      blockExplorerUrls: config.network.blockExplorerUrls,
+      chainId: toHex(config.chainId),
+      chainName: config.network,
+      rpcUrls: config.rpcUrls,
+      blockExplorerUrls: config.explorerUrls,
     },
   ];
 

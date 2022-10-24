@@ -1,17 +1,14 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions */
 import { Box, styled, SvgIcon, useMediaQuery, useTheme } from '@mui/material';
 import { ReactComponent as ShareIcon } from '@assets/ShareIcon.svg';
 import { pxToRem } from '@utils/text-size';
 import { useSelector } from 'react-redux';
 import { HolderData } from '@store/holder/holder.reducer';
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { setOpenShare } from '@store/ui-reducer';
 import { useAppDispatch } from '@store/store.model';
-import FlipCard from '@components/FlipCard';
 import { QRCode } from 'react-qrcode-logo';
 import { ipfsCIDToHttpUrl } from '@api/storage.api';
 import { browserName, isIOS } from 'react-device-detect';
-import AutToolBar from '../AutLeft/AutToolBar';
 
 const CardZoom = styled<any>('img')(({ theme }) => ({
   borderRadius: 0,
@@ -111,11 +108,11 @@ const AutQRCode = ({ link, size }) => {
 const AutTunnelRight = () => {
   const dispatch = useAppDispatch();
   const holderData = useSelector(HolderData);
-  const desktop = useMediaQuery('(min-width:1024px)');
+  const theme = useTheme();
+  const desktop = useMediaQuery(theme.breakpoints.up('md'));
   const [open, setOpen] = useState(false);
   const [isFlipped, setFlipped] = useState(false);
   const isSafari = browserName === 'Safari';
-  const theme = useTheme();
 
   const handleClickFlip = (event) => {
     event.stopPropagation();
@@ -545,7 +542,13 @@ const AutTunnelRight = () => {
         <AutRightMobileContainer>
           <>
             <>
-              <AutToolBar hideWebComponent={!desktop} />
+              {/* <AutToolBar
+                hideWebComponent={!desktop}
+                webComponentPosition={{
+                  horizontal: 'center',
+                  vertical: 'bottom',
+                }}
+              /> */}
             </>
             <SvgIcon
               sx={{

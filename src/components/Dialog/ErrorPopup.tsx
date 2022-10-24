@@ -1,7 +1,6 @@
 import { AutButton } from '@components/AutButton';
 import { Typography } from '@mui/material';
 import { pxToRem } from '@utils/text-size';
-import { SwButton } from 'sw-web-shared';
 import DialogWrapper from './DialogWrapper';
 
 const ErrorDialog = ({ mode = 'light', open, hasRetry = false, handleClose, subtitle, message, fullScreen = false }: any) => {
@@ -48,7 +47,11 @@ const ErrorDialog = ({ mode = 'light', open, hasRetry = false, handleClose, subt
         >
           {subtitle}
         </Typography>
-        {hasRetry && <SwButton type="button" btnType="medium" mode={mode} onClick={() => handleClose('retry')} label="Retry" />}
+        {hasRetry && (
+          <AutButton onClick={() => handleClose('retry')} type="button" color="primary" variant="outlined">
+            Retry
+          </AutButton>
+        )}
       </div>
     </DialogWrapper>
   );

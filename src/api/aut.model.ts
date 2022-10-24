@@ -1,4 +1,4 @@
-import { BaseNFTModel } from './api.model';
+import { BaseNFTModel, HolderData } from './api.model';
 import { Community } from './community.model';
 import { httpUrlToIpfsCID } from './storage.api';
 
@@ -8,7 +8,6 @@ export interface AutSocial {
 }
 
 export const socialUrls = {
-  // eth: EthIcon,
   discord: {
     hidePrefix: true,
     placeholder: 'name#1234',
@@ -33,10 +32,6 @@ export const socialUrls = {
 };
 
 export const DefaultSocials: AutSocial[] = [
-  // {
-  //   type: 'eth',
-  //   link: '',
-  // },
   {
     type: 'discord',
     link: '',
@@ -76,6 +71,8 @@ export class AutIDProperties {
 
   network?: string;
 
+  holderData?: HolderData;
+
   constructor(data: AutIDProperties) {
     if (!data) {
       this.communities = [];
@@ -90,6 +87,7 @@ export class AutIDProperties {
       this.socials = data.socials || DefaultSocials;
       this.socials = this.socials.filter((s) => s.type !== 'eth');
       this.network = data.network;
+      this.holderData = data.holderData;
     }
   }
 }

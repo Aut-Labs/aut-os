@@ -1,18 +1,16 @@
-import { environment } from '@api/environment';
 import { AutButton } from '@components/AutButton';
 import { pxToRem } from '@utils/text-size';
+import { NetworkConfig } from '../network.config';
 
-export const NetworkSelectors = ({ onSelect }) => {
+export const NetworkSelectors = ({ onSelect, networks }) => {
   return (
     <>
-      {environment.networks.split(',').map((networkName, index) => {
-        const label = environment.networkNames.split(',')[index];
-        const foundChainId = Number(environment.chainIds.split(',')[index]);
+      {networks.map((network: NetworkConfig, index: number) => {
         return (
           <AutButton
             key={`key-${index}`}
             onClick={() => {
-              onSelect(foundChainId, networkName.trim());
+              onSelect(network.chainId, network.network.trim());
             }}
             sx={{
               width: pxToRem(310),
@@ -29,7 +27,7 @@ export const NetworkSelectors = ({ onSelect }) => {
             color="primary"
             variant="outlined"
           >
-            Switch to {label}
+            Switch to {network.name}
           </AutButton>
         );
       })}
