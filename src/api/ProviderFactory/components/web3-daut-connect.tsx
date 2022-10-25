@@ -63,9 +63,8 @@ function Web3DautConnect({ setLoading }) {
     const ethDomain = await fetchHolderEthEns(autID.properties.address);
     autID.properties.ethDomain = ethDomain;
 
-    const params = new URLSearchParams(location.search);
+    const params = new URLSearchParams(window.location.search);
     params.set('network', autID.properties.network);
-    const [, username] = location.pathname.split('/');
     history.push({
       pathname: `/${autID.name}`,
       search: `?${params.toString()}`,
@@ -99,9 +98,8 @@ function Web3DautConnect({ setLoading }) {
   };
 
   const onDisconnected = () => {
-    const [, username] = location.pathname.split('/');
-    debugger;
-    const params = new URLSearchParams(location.search);
+    const [, username] = window.location.pathname.split('/');
+    const params = new URLSearchParams(window.location.search);
     if (username) {
       history.push({
         pathname: `/${username}`,
