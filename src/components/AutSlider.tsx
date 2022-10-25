@@ -93,7 +93,7 @@ export const CommitmentMessages = (value: number) => {
       return 'gm gm 😪';
     case 5:
     case 6:
-      return 'builder ⚙️';
+      return 'buidler ⚙️';
     case 7:
     case 8:
       return 'Trusted seed 🌱';

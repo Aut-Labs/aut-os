@@ -1,6 +1,6 @@
 import { AutID } from '@api/aut.model';
 import { ipfsCIDToHttpUrl } from '@api/storage.api';
-import { Avatar, Typography, SvgIcon, styled } from '@mui/material';
+import { Avatar, Typography, SvgIcon, styled, Dialog } from '@mui/material';
 import { pxToRem } from '@utils/text-size';
 import { ReactComponent as RedirectIcon } from '@assets/RedirectIcon.svg';
 import DialogWrapper from './Dialog/DialogWrapper';
@@ -106,21 +106,74 @@ export const AutIDProfileList = ({ profiles, onSelect }: { profiles: AutID[]; on
   );
 };
 
+const StyledDialogWrapper = styled(DialogWrapper)(({ theme }) => ({
+  '&.MuiDialogContent-root': {
+    display: 'flex',
+    height: '100%',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+}));
+const TextWrapper = styled('div')(({ theme }) => ({
+  display: 'flex',
+  justifyContent: 'center',
+  flexDirection: 'column',
+  alignItems: 'center',
+}));
+
+const ListWrapper = styled('div')(({ theme }) => ({
+  display: 'flex',
+  justifyContent: 'center',
+  flexDirection: 'column',
+  alignItems: 'center',
+  width: '100%',
+  marginBottom: pxToRem(20),
+}));
+
+const Title = styled(Typography)({
+  marginTop: pxToRem(25),
+  letterSpacing: '3px',
+  fontSize: pxToRem(20),
+  textAlign: 'center',
+
+  fontWeight: '500',
+  color: 'white',
+  textTransform: 'uppercase',
+});
+
+const Subtitle = styled(Typography)({
+  marginTop: pxToRem(25),
+  marginBottom: pxToRem(25),
+  letterSpacing: '1.25px',
+  fontSize: pxToRem(16),
+  textAlign: 'center',
+  color: 'white',
+  textTransform: 'uppercase',
+});
+
 const SelectAutIDProfileDialog = ({ open, profiles, onSelect, fullScreen = false }: any) => {
   return (
-    <DialogWrapper open={open} fullScreen={fullScreen}>
+    <StyledDialogWrapper open={open} fullScreen={fullScreen}>
       <div
         className="sw-join-dialog-content"
         style={{
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          justifyContent: 'center',
+          justifyContent: 'space-evenly',
+          flex: '1',
         }}
       >
-        <AutIDProfileList profiles={profiles} onSelect={onSelect} />
+        <TextWrapper>
+          <Title>It looks like this ĀutID has been found on multiple networks.</Title>
+          <Subtitle>Please select the profile you're looking for from the list below.</Subtitle>
+        </TextWrapper>
+        <ListWrapper>
+          <AutIDProfileList profiles={profiles} onSelect={onSelect} />
+        </ListWrapper>
       </div>
-    </DialogWrapper>
+    </StyledDialogWrapper>
   );
 };
 

@@ -41,6 +41,7 @@ const AutLeft = ({ match }) => {
     await dispatch(
       updateHolderState({
         selectedProfileAddress: profile.properties.address,
+        selectedProfileNetwork: profile.properties.network,
       })
     );
   };

@@ -9,8 +9,9 @@ import axios from 'axios';
 export const fetchHolder = createAsyncThunk('fetch-holder', async (data: any, { getState, rejectWithValue }) => {
   const { autName, network, signal } = data;
   const { search, walletProvider } = getState() as any;
-  // const networks: string[] = network ? [network] : walletProvider.networksConfig.map((n) => n.network.toLowerCase());
-  const networks: string[] = network ? [network] : ['goerli', 'goerli'];
+  const networks: string[] = network ? [network] : walletProvider.networksConfig.map((n) => n.network.toLowerCase());
+  console.log(networks, 'networks');
+  // const networks: string[] = network ? [network] : ['goerli', 'goerli'];
   const profiles = [];
   try {
     const source = axios.CancelToken.source();
@@ -46,6 +47,7 @@ export interface HolderState {
   status: ResultState;
   errorMessage: string;
   selectedProfileAddress: string;
+  selectedProfileNetwork: string;
 }
 
 const initialState: HolderState = {
@@ -54,6 +56,7 @@ const initialState: HolderState = {
   status: ResultState.Idle,
   errorMessage: '',
   selectedProfileAddress: null,
+  selectedProfileNetwork: null,
 };
 
 export const holderSlice = createSlice({
@@ -76,6 +79,7 @@ export const holderSlice = createSlice({
         state.profiles = action.payload;
         if (state.profiles.length === 1) {
           state.selectedProfileAddress = state.profiles[0].properties.address;
+          state.selectedProfileNetwork = state.profiles[0].properties.network;
         }
         state.fetchStatus = ResultState.Success;
       })
@@ -148,10 +152,12 @@ export const holderSlice = createSlice({
 export const { updateHolderState } = holderSlice.actions;
 
 export const SelectedProfileAddress = (state) => state.holder.selectedProfileAddress as string;
+export const SelectedProfileNetwork = (state) => state.holder.selectedProfileNetwork as string;
+
 export const AutIDProfiles = (state) => state.holder.profiles as AutID[];
 
-export const HolderData = createSelector(AutIDProfiles, SelectedProfileAddress, (profiles, address) => {
-  return profiles.find((item) => item.properties.address === address);
+export const HolderData = createSelector(AutIDProfiles, SelectedProfileAddress, SelectedProfileNetwork, (profiles, address, network) => {
+  return profiles.find((item) => item.properties.address === address && item.properties.network === network);
 });
 export const HolderStatus = (state) => state.holder.fetchStatus as ResultState;
 
