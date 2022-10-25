@@ -42,7 +42,7 @@ const CardZoom = styled<any>('img')(({ theme }) => ({
   animationDirection: 'normal',
   animationDelay: '6s',
 
-  '@media(max-width: 1024px)': {
+  [theme.breakpoints.down('md')]: {
     width: 'calc(100% - 20px)',
     height: 'calc(100% - 20px)',
     margin: '10px',
@@ -62,7 +62,7 @@ const CardBack = styled('div')(({ theme }) => ({
   alignContent: 'center',
   // backgroundColor: '#141414',
 
-  '@media(max-width: 1024px)': {
+  [theme.breakpoints.down('md')]: {
     width: 'calc(100% - 20px)',
     height: 'calc(100% - 20px)',
   },

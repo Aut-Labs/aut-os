@@ -1,6 +1,6 @@
 import { useLayoutEffect, useState } from 'react';
 
-export const DautPlaceholder = ({ horizontal = 'right', vertical = 'top', hide = true }) => {
+export const DautPlaceholder = ({ horizontal = 'right', vertical = 'top', hide = true, styles = {} }) => {
   const [[width, height], setElSize] = useState([220, 50]);
 
   useLayoutEffect(() => {
@@ -50,6 +50,7 @@ export const DautPlaceholder = ({ horizontal = 'right', vertical = 'top', hide =
           bottom: '10px',
         }),
         zIndex: -1,
+        ...styles,
       }}
       className="web-component-placeholder"
     />

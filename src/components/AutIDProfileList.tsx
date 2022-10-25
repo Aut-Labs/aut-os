@@ -1,12 +1,11 @@
 import { AutID } from '@api/aut.model';
 import { ipfsCIDToHttpUrl } from '@api/storage.api';
-import styled from '@emotion/styled';
-import { Avatar, Typography, SvgIcon } from '@mui/material';
+import { Avatar, Typography, SvgIcon, styled } from '@mui/material';
 import { pxToRem } from '@utils/text-size';
 import { ReactComponent as RedirectIcon } from '@assets/RedirectIcon.svg';
 import DialogWrapper from './Dialog/DialogWrapper';
 
-const UserRow = styled('div')({
+const UserRow = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'row',
   height: pxToRem(80),
@@ -24,7 +23,7 @@ const UserRow = styled('div')({
     backgroundColor: 'rgba(67, 158, 221, 0.15)',
   },
 
-  '@media(max-width:1024px)': {
+  [theme.breakpoints.down('md')]: {
     display: 'flex',
     flexDirection: 'row',
     height: pxToRem(80),
@@ -33,7 +32,7 @@ const UserRow = styled('div')({
     borderBottom: '1px solid white',
     borderTop: '1px solid white',
   },
-});
+}));
 
 export const AutIDProfileList = ({ profiles, onSelect }: { profiles: AutID[]; onSelect: (profile: AutID) => void }) => {
   return (

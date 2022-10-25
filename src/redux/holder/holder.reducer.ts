@@ -9,7 +9,8 @@ import axios from 'axios';
 export const fetchHolder = createAsyncThunk('fetch-holder', async (data: any, { getState, rejectWithValue }) => {
   const { autName, network, signal } = data;
   const { search, walletProvider } = getState() as any;
-  const networks: string[] = network ? [network] : walletProvider.networksConfig.map((n) => n.network.toLowerCase());
+  // const networks: string[] = network ? [network] : walletProvider.networksConfig.map((n) => n.network.toLowerCase());
+  const networks: string[] = network ? [network] : ['goerli', 'goerli'];
   const profiles = [];
   try {
     const source = axios.CancelToken.source();

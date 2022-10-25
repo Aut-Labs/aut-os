@@ -14,8 +14,7 @@ const AutBar = styled(Toolbar)(({ theme }) => ({
     paddingLeft: pxToRem(80),
     paddingRight: pxToRem(80),
     justifyContent: 'space-between',
-
-    '@media(max-width: 1024px)': {
+    [theme.breakpoints.down('md')]: {
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
@@ -41,7 +40,14 @@ const AutToolBar = ({ isDesktop = false }) => {
   return (
     <AutBar>
       <MyAutIDLogo height="90" style={{ cursor: 'pointer' }} onClick={() => goHome()} />
-      {isDesktop && <DautPlaceholder hide={status === ResultState.Loading} />}
+      {isDesktop && (
+        <DautPlaceholder
+          styles={{
+            right: pxToRem(80),
+          }}
+          hide={status === ResultState.Loading}
+        />
+      )}
     </AutBar>
   );
 };

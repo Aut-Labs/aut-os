@@ -33,22 +33,22 @@ const AutBox = styled(Box)(({ theme }) => ({
   left: '50%',
   top: '50%',
 }));
-const TopWrapper = styled('div')({
+const TopWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   width: pxToRem(720),
   justifyContent: 'center',
   alignItems: 'center',
 
-  '@media(max-width: 1024px)': {
+  [theme.breakpoints.down('md')]: {
     width: '80%',
   },
-
-  '@media(max-width: 360px)': {
+  [theme.breakpoints.down('sm')]: {
     width: '90%',
   },
-});
-const ResultWrapper = styled('div')({
+}));
+
+const ResultWrapper = styled('div')(({ theme }) => ({
   marginTop: pxToRem(20),
   display: 'flex',
   flexDirection: 'column',
@@ -57,16 +57,15 @@ const ResultWrapper = styled('div')({
   justifyContent: 'flex-start',
   alignItems: 'center',
 
-  '@media(max-width: 1024px)': {
+  [theme.breakpoints.down('md')]: {
     width: '80%',
   },
-
-  '@media(max-width: 360px)': {
+  [theme.breakpoints.down('sm')]: {
     width: '100%',
   },
-});
+}));
 
-const FieldWrapper = styled('div')({
+const FieldWrapper = styled('div')(({ theme }) => ({
   flexDirection: 'row',
   marginBottom: pxToRem(20),
   minHeight: pxToRem(70),
@@ -75,26 +74,25 @@ const FieldWrapper = styled('div')({
   justifyContent: 'flex-start',
   alignItems: 'flex-start',
 
-  '@media(max-width: 1024px)': {
+  [theme.breakpoints.down('md')]: {
     justifyContent: 'center',
     alignItems: 'center',
     width: '80%',
   },
-
-  '@media(max-width: 360px)': {
+  [theme.breakpoints.down('sm')]: {
     justifyContent: 'center',
     alignItems: 'center',
     width: '90%',
   },
-});
+}));
 
-const FormWrapper = styled('form')({
+const FormWrapper = styled('form')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
   width: '100%',
 
-  '@media(max-width:1024px)': {
+  [theme.breakpoints.down('md')]: {
     width: '100%',
     paddingLeft: '0',
     paddingRight: '0',
@@ -102,7 +100,7 @@ const FormWrapper = styled('form')({
     justifyContent: 'center',
     alignContent: 'center',
   },
-});
+}));
 
 const AutSearch = ({ match }) => {
   const dispatch = useAppDispatch();
@@ -148,7 +146,12 @@ const AutSearch = ({ match }) => {
 
   return (
     <AutBox>
-      <DautPlaceholder hide={false} />
+      <DautPlaceholder
+        styles={{
+          right: pxToRem(80),
+        }}
+        hide={false}
+      />
       <TopWrapper>
         <MyAutIDLogo style={{ height: desktop ? pxToRem(120) : pxToRem(90), width: desktop ? pxToRem(400) : pxToRem(300) }} />
         <Typography

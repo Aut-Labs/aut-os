@@ -45,7 +45,7 @@ const StyledSlider = styled(Slider)<CustomSliderProps>(({ mincommitment, theme }
     padding: 0,
   },
 
-  '@media(max-width: 1024px)': {
+  [theme.breakpoints.down('md')]: {
     alignContent: 'center',
     justifyContent: 'center',
     width: '100%',

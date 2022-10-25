@@ -34,7 +34,6 @@ const FormWrapper = styled('form')(({ theme }) => ({
   paddingTop: pxToRem(80),
   paddingLeft: pxToRem(80),
   paddingRight: pxToRem(80),
-  // width: `calc(100% - ${pxToRem(160)})`,
   width: '100%',
   [theme.breakpoints.down('lg')]: {
     paddingTop: pxToRem(50),
@@ -43,13 +42,15 @@ const FormWrapper = styled('form')(({ theme }) => ({
     alignItems: 'center',
     justifyContent: 'center',
     alignContent: 'center',
-    // width: `calc(100% - ${pxToRem(100)})`,
+  },
+  [theme.breakpoints.down('md')]: {
+    width: `calc(100% - ${pxToRem(100)})`,
   },
   [theme.breakpoints.down('sm')]: {
     paddingTop: pxToRem(30),
     paddingLeft: pxToRem(30),
     paddingRight: pxToRem(30),
-    // width: `calc(100% - ${pxToRem(60)})`,
+    width: `calc(100% - ${pxToRem(60)})`,
   },
 }));
 
@@ -60,7 +61,6 @@ const ContentWrapper = styled('div')(({ theme }) => ({
   paddingTop: pxToRem(80),
   paddingLeft: pxToRem(80),
   paddingRight: pxToRem(80),
-  // width: `calc(100% - ${pxToRem(160)})`,
   width: '100%',
   [theme.breakpoints.down('lg')]: {
     paddingTop: pxToRem(50),
@@ -69,13 +69,15 @@ const ContentWrapper = styled('div')(({ theme }) => ({
     alignItems: 'center',
     justifyContent: 'center',
     alignContent: 'center',
-    // width: `calc(100% - ${pxToRem(100)})`,
+  },
+  [theme.breakpoints.down('md')]: {
+    width: `calc(100% - ${pxToRem(100)})`,
   },
   [theme.breakpoints.down('sm')]: {
     paddingTop: pxToRem(30),
     paddingLeft: pxToRem(30),
     paddingRight: pxToRem(30),
-    // width: `calc(100% - ${pxToRem(60)})`,
+    width: `calc(100% - ${pxToRem(60)})`,
   },
 }));
 

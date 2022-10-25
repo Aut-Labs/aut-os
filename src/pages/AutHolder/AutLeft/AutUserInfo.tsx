@@ -40,7 +40,7 @@ const AutTable = styled('table')(({ theme }) => ({
     padding: `${pxToRem(20)} ${pxToRem(10)}`,
     height: pxToRem(32),
 
-    '@media(max-width: 1024px)': {
+    [theme.breakpoints.down('md')]: {
       padding: pxToRem(20),
     },
 
@@ -54,7 +54,7 @@ const AutTable = styled('table')(({ theme }) => ({
     height: pxToRem(32),
     padding: `${pxToRem(20)} ${pxToRem(10)}`,
 
-    '@media(max-width: 1024px)': {
+    [theme.breakpoints.down('md')]: {
       padding: pxToRem(20),
     },
 
@@ -69,8 +69,7 @@ const IconContainer = styled('div')(({ theme }) => ({
   paddingTop: pxToRem(15),
   display: 'flex',
   minHeight: pxToRem(30),
-
-  '@media(max-width: 1024px)': {
+  [theme.breakpoints.down('md')]: {
     paddingTop: pxToRem(20),
   },
 }));

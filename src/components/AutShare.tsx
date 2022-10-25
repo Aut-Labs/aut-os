@@ -15,7 +15,7 @@ export interface SimpleDialogProps {
 }
 
 const AutStyledDialog = styled(Dialog)(({ theme }) => ({
-  '@media(max-width: 1024px)': {
+  [theme.breakpoints.down('md')]: {
     '.MuiPaper-root': {
       margin: '0',
       opacity: '0.8',

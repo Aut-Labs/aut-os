@@ -100,13 +100,14 @@ function Web3DautConnect({ setLoading }) {
 
   const onDisconnected = () => {
     const [, username] = location.pathname.split('/');
+    debugger;
+    const params = new URLSearchParams(location.search);
     if (username) {
       history.push({
         pathname: `/${username}`,
-        search: location.search,
+        search: `?${params.toString()}`,
       });
     } else {
-      const params = new URLSearchParams(location.search);
       params.delete('network');
       history.push({
         pathname: `/`,
