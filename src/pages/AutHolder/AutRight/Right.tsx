@@ -9,6 +9,7 @@ import { useAppDispatch } from '@store/store.model';
 import { QRCode } from 'react-qrcode-logo';
 import { ipfsCIDToHttpUrl } from '@api/storage.api';
 import { browserName, isIOS } from 'react-device-detect';
+import AutToolBar from '../AutLeft/AutToolBar';
 
 const CardZoom = styled<any>('img')(({ theme }) => ({
   borderRadius: 0,
@@ -541,15 +542,7 @@ const AutTunnelRight = () => {
       ) : (
         <AutRightMobileContainer>
           <>
-            <>
-              {/* <AutToolBar
-                hideWebComponent={!desktop}
-                webComponentPosition={{
-                  horizontal: 'center',
-                  vertical: 'bottom',
-                }}
-              /> */}
-            </>
+            <AutToolBar />
             <SvgIcon
               sx={{
                 height: pxToRem(40),
