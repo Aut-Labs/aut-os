@@ -79,6 +79,7 @@ function Web3DautConnect({ setLoading }) {
       updateHolderState({
         profiles: [autID],
         selectedProfileAddress: autID.properties.address,
+        selectedProfileNetwork: autID.properties.network,
         fetchStatus: ResultState.Success,
         status: ResultState.Idle,
       })
