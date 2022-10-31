@@ -50,9 +50,6 @@ function Web3DautConnect({ setLoading }) {
       abort.current.abort();
     }
     const profile = JSON.parse(JSON.stringify(detail));
-    profile.address = '0x55954C2C092f6e973B55C5D2Af28950b3b6D1338';
-    profile.provider = 'metamask';
-    profile.network = 'goerli';
 
     const autID = new AutID(profile);
     autID.properties.communities = autID.properties.communities.filter((c) => {
@@ -143,7 +140,6 @@ function Web3DautConnect({ setLoading }) {
       }}
       id="d-aut"
       button-type="simple"
-      network="goerli"
     />
   );
 }
