@@ -68,6 +68,15 @@ const AutHolder = (props) => {
           title: `Hello, friend 🖖 This is my ĀutID - and it’s the first identity I can truly own. I will shape it, and it will grow with me & the Communities I commit to. Follow my journey - and see you on the āuter space 🪐`,
           hashtags: ['Aut', 'DAO', 'Blockchain'],
         }}
+        linkedinProps={{
+          // eslint-disable-next-line max-len
+          summary: `Hello, friend 🖖 This is my ĀutID - and it’s the first identity I can truly own. I will shape it, and it will grow with me & the Communities I commit to. Follow my journey - and see you on the āuter space 🪐`,
+          title: 'My ĀutID',
+        }}
+        telegramProps={{
+          // eslint-disable-next-line max-len
+          title: `Hello, friend 🖖 This is my ĀutID - and it’s the first identity I can truly own. I will shape it, and it will grow with me & the Communities I commit to. Follow my journey - and see you on the āuter space 🪐`,
+        }}
         onClose={handleClose}
       />
       {desktop ? (

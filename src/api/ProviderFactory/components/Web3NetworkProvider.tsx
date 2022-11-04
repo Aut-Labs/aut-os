@@ -70,7 +70,7 @@ const Web3NetworkProvider = ({ fullScreen = false }: any) => {
     const config = networks.find((n) => n.chainId?.toString() === chainId?.toString());
     try {
       await EnableAndChangeNetwork(c.provider, config);
-      await dispatch(setNetwork(config.network));
+      await dispatch(setNetwork(config.network?.toLowerCase()));
     } catch (error) {
       // console.log(error);
     }
@@ -84,7 +84,7 @@ const Web3NetworkProvider = ({ fullScreen = false }: any) => {
     const chainAllowed = index !== -1;
     if (chainAllowed) {
       const config = networks.find((n) => n.chainId?.toString() === foundChainId?.toString());
-      dispatch(setNetwork(config.network));
+      dispatch(setNetwork(config.network?.toLowerCase()));
       setConnectEagerly(true);
     }
     setConnector(c);

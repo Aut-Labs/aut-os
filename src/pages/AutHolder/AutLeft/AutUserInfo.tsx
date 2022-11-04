@@ -10,20 +10,21 @@ import { useState } from 'react';
 import PencilEdit from '@assets/PencilEditicon';
 import { useHistory, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { HolderData, HolderStatus } from '@store/holder/holder.reducer';
-import { IsAuthenticated } from '@auth/auth.reducer';
+import { HolderData, HolderStatus, updateHolderState } from '@store/holder/holder.reducer';
+import { CanUpdateProfile } from '@auth/auth.reducer';
 import { ResultState } from '@store/result-status';
 import { ipfsCIDToHttpUrl } from '@api/storage.api';
 import { trimAddress } from '@utils/trim-address';
 import { BlockExplorerUrl, SelectedNetworkConfig } from '@store/WalletProvider/WalletProvider';
 import { EditContentElements } from '@components/EditContentElements';
+import { useAppDispatch } from '@store/store.model';
 
 const AutTable = styled('table')(({ theme }) => ({
   width: '100%',
 
   tr: {
     '&:not(:first-of-type)': {
-      '&.isAuthenticated': {
+      '&.CanUpdateProfile': {
         cursor: 'pointer',
         '&:hover': {
           backgroundColor: 'rgba(67, 158, 221, 0.3)',
@@ -100,7 +101,7 @@ const AutUserInfo = ({ match }) => {
   const holderStatus = useSelector(HolderStatus);
   const blockExplorer = useSelector(BlockExplorerUrl);
   const selectedNetwork = useSelector(SelectedNetworkConfig);
-  const isAuthenticated = useSelector(IsAuthenticated);
+  const canUpdateProfile = useSelector(CanUpdateProfile);
   const theme = useTheme();
   const desktop = useMediaQuery(theme.breakpoints.up('md'));
   const xs = useMediaQuery(theme.breakpoints.down('sm'));
@@ -123,7 +124,7 @@ const AutUserInfo = ({ match }) => {
     });
   };
   function clickRow(index, address: string) {
-    if (isAuthenticated) {
+    if (CanUpdateProfile) {
       if (isActiveIndex === index) {
         setIsActiveIndex(null);
       } else {
@@ -160,7 +161,7 @@ const AutUserInfo = ({ match }) => {
                   <Typography fontSize={pxToRem(50)} color="background.paper" textAlign="left" lineHeight={1}>
                     {holderData.name}
                   </Typography>
-                  {isAuthenticated && (
+                  {canUpdateProfile && (
                     <div style={{ padding: pxToRem(10), cursor: 'pointer', alignSelf: 'center' }} onClick={onEdit}>
                       <PencilEdit height={pxToRem(24)} width={pxToRem(24)} />
                     </div>
@@ -237,7 +238,7 @@ const AutUserInfo = ({ match }) => {
                 {holderData.properties.communities.map(({ image, name, properties }, index) => (
                   <tr
                     key={`row-key-${index}`}
-                    className={`${isActiveIndex === index ? 'isActive' : ' '} ${isAuthenticated ? 'isAuthenticated' : ''}`}
+                    className={`${isActiveIndex === index ? 'isActive' : ' '} ${canUpdateProfile ? 'CanUpdateProfile' : ''}`}
                     onClick={() => clickRow(index, properties.address)}
                   >
                     <td>

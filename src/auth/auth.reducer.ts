@@ -1,33 +1,45 @@
 import { AutID } from '@api/aut.model';
-import { createSlice } from '@reduxjs/toolkit';
+import { createSelector, createSlice } from '@reduxjs/toolkit';
+import { SelectedProfileAddress, SelectedProfileNetwork } from '@store/holder/holder.reducer';
 
 export interface AuthState {
-  isAutheticated: boolean;
-  userAddress: string;
+  connectedAddress: string;
+  connectedNetwork: string;
 }
 
 const initialState: AuthState = {
-  isAutheticated: false,
-  userAddress: null,
+  connectedAddress: null,
+  connectedNetwork: null,
 };
 
 export const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    setAuthenticated(state, action) {
-      const { isAuthenticated } = action.payload;
-      state.isAutheticated = isAuthenticated;
-    },
-    setUserAddress(state, action) {
-      state.userAddress = action.payload;
+    setConnectedUserInfo(state, action) {
+      const { connectedAddress, connectedNetwork } = action.payload;
+      state.connectedAddress = connectedAddress;
+      state.connectedNetwork = connectedNetwork;
     },
     resetAuthState: () => initialState,
   },
 });
 
-export const { setAuthenticated, setUserAddress, resetAuthState } = authSlice.actions;
+export const { setConnectedUserInfo, resetAuthState } = authSlice.actions;
 
-export const IsAuthenticated = (state) => state.auth.isAutheticated as boolean;
+export const ConnectedAddress = (state) => state.auth.connectedAddress as string;
+export const ConnectedNetwork = (state) => state.auth.connectedNetwork as string;
+export const IsConnected = createSelector(ConnectedAddress, ConnectedNetwork, (addr, network) => !!addr && !!network);
+
+export const CanUpdateProfile = createSelector(
+  IsConnected,
+  ConnectedAddress,
+  ConnectedNetwork,
+  SelectedProfileAddress,
+  SelectedProfileNetwork,
+  (isConnected, connectedAddress, connectedNetwork, selectedAddress, selectedNetwork) => {
+    return isConnected && connectedAddress === selectedAddress && connectedNetwork === selectedNetwork;
+  }
+);
 
 export default authSlice.reducer;

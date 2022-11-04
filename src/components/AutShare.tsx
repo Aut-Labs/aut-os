@@ -1,8 +1,12 @@
 import { Dialog, DialogContent, styled, Typography, useMediaQuery, useTheme } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { TwitterShareButton } from 'react-share';
+import { LinkedinShareButton, TelegramShareButton, TwitterShareButton } from 'react-share';
 import { pxToRem } from '@utils/text-size';
 import { AutButton } from '@components/AutButton';
+import TwitterIcon from '@mui/icons-material/Twitter';
+import TelegramIcon from '@mui/icons-material/Telegram';
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
+import ClipboardCopy from '@utils/clipboard-copy';
 
 export interface SimpleDialogProps {
   title: string;
@@ -11,6 +15,8 @@ export interface SimpleDialogProps {
   open?: boolean;
   onClose?: () => void;
   twitterProps?: any;
+  linkedinProps?: any;
+  telegramProps?: any;
   hideCloseBtn?: boolean;
 }
 
@@ -18,7 +24,7 @@ const AutStyledDialog = styled(Dialog)(({ theme }) => ({
   [theme.breakpoints.down('md')]: {
     '.MuiPaper-root': {
       margin: '0',
-      opacity: '0.8',
+      // opacity: '0.8',
       border: 'none',
     },
   },
@@ -28,12 +34,14 @@ const AutShare = (props: SimpleDialogProps) => {
   const theme = useTheme();
   const desktop = useMediaQuery(theme.breakpoints.up('md'));
 
-  const { onClose, title, description, url, twitterProps, hideCloseBtn } = props;
+  const { onClose, title, description, url, twitterProps, linkedinProps, telegramProps, hideCloseBtn } = props;
   return (
     <div
       style={{
         width: desktop ? pxToRem(700) : '100%',
         minHeight: desktop ? pxToRem(400) : '100%',
+        alignItems: 'center',
+        justifyContent: 'center',
         display: 'flex',
         position: 'relative',
         flexDirection: 'column',
@@ -54,6 +62,8 @@ const AutShare = (props: SimpleDialogProps) => {
             top: 8,
             right: 8,
             color: 'white',
+            width: '25px',
+            height: '25px',
           }}
         />
       )}
@@ -74,47 +84,64 @@ const AutShare = (props: SimpleDialogProps) => {
             padding: pxToRem(30),
           }}
         >
-          <Typography sx={{ textAlign: 'center', mb: pxToRem(30) }} color="white" component="span" fontSize={pxToRem(40)}>
+          <Typography sx={{ textAlign: 'center', mt: pxToRem(20), mb: pxToRem(50) }} color="white" component="span" fontSize={pxToRem(40)}>
             {title}
           </Typography>
-
-          <Typography
-            sx={{
-              mt: '20px',
-            }}
-            color="white"
-            fontSize={pxToRem(18)}
-          >
-            {description}
-          </Typography>
-
           <div
             className="links"
             style={{
               display: 'flex',
-              justifyContent: 'center',
-              width: desktop ? '330px' : '100%',
-              margin: '30px auto 0 auto',
+              justifyContent: 'space-between',
+              width: '330px',
+              margin: '10px auto 0 auto',
             }}
           >
-            <TwitterShareButton url={url} className="social-button" {...twitterProps}>
-              <AutButton
+            <LinkedinShareButton url={url} className="social-button" {...linkedinProps}>
+              <LinkedInIcon
                 sx={{
-                  width: pxToRem(250),
-                  height: pxToRem(50),
-                  mt: pxToRem(20),
-                  '&.MuiButton-root': {
-                    borderRadius: 0,
-                    borderWidth: '2px',
-                  },
+                  width: '85px',
+                  height: '85px',
+                  color: 'white',
                 }}
-                type="submit"
-                color="primary"
-                variant="outlined"
-              >
-                Share now
-              </AutButton>
+              />
+            </LinkedinShareButton>
+            <TelegramShareButton url={url} className="social-button" {...telegramProps}>
+              <TelegramIcon
+                sx={{
+                  width: '85px',
+                  height: '85px',
+                  color: 'white',
+                }}
+              />
+            </TelegramShareButton>
+            <TwitterShareButton url={url} className="social-button" {...twitterProps}>
+              <TwitterIcon
+                sx={{
+                  width: '85px',
+                  height: '85px',
+                  color: 'white',
+                }}
+              />
             </TwitterShareButton>
+          </div>
+          <div
+            className="copy-link"
+            style={{
+              width: '330px',
+              margin: '20px auto 0 auto',
+            }}
+          >
+            <Typography
+              sx={{
+                marginTop: '20px',
+                marginBottom: '8px',
+              }}
+              color="white"
+              fontSize={pxToRem(18)}
+            >
+              Copy link
+            </Typography>
+            <ClipboardCopy url={url} />
           </div>
         </div>
       </div>

@@ -5,12 +5,12 @@ import { editCommitment, fetchAutID, fetchHolderCommunities, fetchHolderData, up
 import { ErrorParser } from '@utils/error-parser';
 import { CommitmentMessages } from '@components/AutSlider';
 import axios from 'axios';
+import { ConnectedAddress, ConnectedNetwork } from '@auth/auth.reducer';
 
 export const fetchHolder = createAsyncThunk('fetch-holder', async (data: any, { getState, rejectWithValue }) => {
   const { autName, network, signal } = data;
   const { search, walletProvider } = getState() as any;
-  const networks: string[] = network ? [network] : walletProvider.networksConfig.map((n) => n.network.toLowerCase());
-  console.log(networks, 'networks');
+  const networks: string[] = network ? [network] : walletProvider.networksConfig.map((n) => n.network?.toLowerCase());
   // const networks: string[] = network ? [network] : ['goerli', 'goerli'];
   const profiles = [];
   try {
@@ -21,7 +21,9 @@ export const fetchHolder = createAsyncThunk('fetch-holder', async (data: any, { 
       });
     }
     for (const networkName of networks) {
-      const result: AutID = search.searchResult.find((a: AutID) => a.name === autName && a.properties.network === networkName);
+      const result: AutID = search.searchResult.find(
+        (a: AutID) => a.name === autName && a.properties.network?.toLowerCase() === networkName?.toLowerCase()
+      );
       const holderData = result?.properties?.holderData || (await fetchHolderData(autName, networkName, source));
       if (holderData) {
         const autID = await fetchAutID(holderData, networkName);
@@ -79,7 +81,7 @@ export const holderSlice = createSlice({
         state.profiles = action.payload;
         if (state.profiles.length === 1) {
           state.selectedProfileAddress = state.profiles[0].properties.address;
-          state.selectedProfileNetwork = state.profiles[0].properties.network;
+          state.selectedProfileNetwork = state.profiles[0].properties.network?.toLowerCase();
         }
         state.fetchStatus = ResultState.Success;
       })
@@ -157,8 +159,9 @@ export const SelectedProfileNetwork = (state) => state.holder.selectedProfileNet
 export const AutIDProfiles = (state) => state.holder.profiles as AutID[];
 
 export const HolderData = createSelector(AutIDProfiles, SelectedProfileAddress, SelectedProfileNetwork, (profiles, address, network) => {
-  return profiles.find((item) => item.properties.address === address && item.properties.network === network);
+  return profiles.find((item) => item.properties.address === address && item.properties.network?.toLowerCase() === network?.toLowerCase());
 });
+
 export const HolderStatus = (state) => state.holder.fetchStatus as ResultState;
 
 export const UpdateStatus = (state) => state.holder.status as ResultState;

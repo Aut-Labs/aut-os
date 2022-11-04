@@ -2,7 +2,7 @@ import { Box, styled, SvgIcon, useMediaQuery, useTheme } from '@mui/material';
 import { ReactComponent as ShareIcon } from '@assets/ShareIcon.svg';
 import { pxToRem } from '@utils/text-size';
 import { useSelector } from 'react-redux';
-import { HolderData } from '@store/holder/holder.reducer';
+import { HolderData, HolderStatus } from '@store/holder/holder.reducer';
 import { useState } from 'react';
 import { setOpenShare } from '@store/ui-reducer';
 import { useAppDispatch } from '@store/store.model';
@@ -10,6 +10,7 @@ import { QRCode } from 'react-qrcode-logo';
 import { ipfsCIDToHttpUrl } from '@api/storage.api';
 import { browserName, isIOS } from 'react-device-detect';
 import AutToolBar from '../AutLeft/AutToolBar';
+import { CanUpdateProfile } from '@auth/auth.reducer';
 
 const CardZoom = styled<any>('img')(({ theme }) => ({
   borderRadius: 0,
@@ -109,6 +110,8 @@ const AutQRCode = ({ link, size }) => {
 const AutTunnelRight = () => {
   const dispatch = useAppDispatch();
   const holderData = useSelector(HolderData);
+  const status = useSelector(HolderStatus);
+  const canUpdateProfile = useSelector(CanUpdateProfile);
   const theme = useTheme();
   const desktop = useMediaQuery(theme.breakpoints.up('md'));
   const [open, setOpen] = useState(false);
@@ -129,20 +132,22 @@ const AutTunnelRight = () => {
       {desktop ? (
         <AutRightContainer>
           <>
-            <SvgIcon
-              sx={{
-                height: pxToRem(80),
-                width: pxToRem(80),
-                position: 'absolute',
-                top: '10px',
-                right: '10px',
-                padding: pxToRem(20),
-                fill: 'white',
-                cursor: 'pointer',
-              }}
-              component={ShareIcon}
-              onClick={handleClickOpen}
-            />
+            {canUpdateProfile ? (
+              <SvgIcon
+                sx={{
+                  height: pxToRem(80),
+                  width: pxToRem(80),
+                  position: 'absolute',
+                  top: '10px',
+                  right: '10px',
+                  padding: pxToRem(20),
+                  fill: 'white',
+                  cursor: 'pointer',
+                }}
+                component={ShareIcon}
+                onClick={handleClickOpen}
+              />
+            ) : null}
           </>
           {/* <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -543,20 +548,22 @@ const AutTunnelRight = () => {
         <AutRightMobileContainer>
           <>
             <AutToolBar />
-            <SvgIcon
-              sx={{
-                height: pxToRem(40),
-                width: pxToRem(40),
-                position: 'absolute',
-                top: '10px',
-                right: '10px',
-                padding: pxToRem(20),
-                fill: 'white',
-                cursor: 'pointer',
-              }}
-              component={ShareIcon}
-              onClick={handleClickOpen}
-            />
+            {canUpdateProfile ? (
+              <SvgIcon
+                sx={{
+                  height: pxToRem(40),
+                  width: pxToRem(40),
+                  position: 'absolute',
+                  top: '10px',
+                  right: '10px',
+                  padding: pxToRem(20),
+                  fill: 'white',
+                  cursor: 'pointer',
+                }}
+                component={ShareIcon}
+                onClick={handleClickOpen}
+              />
+            ) : null}
           </>
           <Box
             sx={{

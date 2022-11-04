@@ -18,9 +18,9 @@ export const fetchSearchResults = createAsyncThunk('fetch-search-results', async
     const networks: NetworkConfig[] = state.walletProvider.networksConfig;
 
     for (const network of networks) {
-      const holderData = await fetchHolderData(username, network.network.toLowerCase(), source);
+      const holderData = await fetchHolderData(username, network.network?.toLowerCase(), source);
       if (holderData) {
-        const member = await fetchAutID(holderData, network.network.toLowerCase());
+        const member = await fetchAutID(holderData, network.network?.toLowerCase());
         if (member) {
           result.push(member);
         }

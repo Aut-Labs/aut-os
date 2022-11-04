@@ -1,5 +1,5 @@
 /* eslint-disable react/button-has-type */
-import { IsAuthenticated } from '@auth/auth.reducer';
+import { CanUpdateProfile } from '@auth/auth.reducer';
 import AutLoading from '@components/AutLoading';
 import { styled, useMediaQuery, useTheme } from '@mui/material';
 import { Route, Switch, useHistory, useLocation } from 'react-router-dom';
@@ -27,13 +27,13 @@ const AutLeft = ({ match }) => {
   const holderData = useSelector(HolderData);
   const history = useHistory();
   const location = useLocation();
-  const isAuthenticated = useSelector(IsAuthenticated);
+  const canUpdateProfile = useSelector(CanUpdateProfile);
   const theme = useTheme();
   const desktop = useMediaQuery(theme.breakpoints.up('md'));
 
   const onSelect = async (profile: AutID) => {
     const params = new URLSearchParams(location.search);
-    params.set('network', profile.properties.network);
+    params.set('network', profile.properties.network?.toLowerCase());
     history.push({
       pathname: `/${profile.name}`,
       search: `?${params.toString()}`,
@@ -41,7 +41,7 @@ const AutLeft = ({ match }) => {
     await dispatch(
       updateHolderState({
         selectedProfileAddress: profile.properties.address,
-        selectedProfileNetwork: profile.properties.network,
+        selectedProfileNetwork: profile.properties.network?.toLowerCase(),
       })
     );
   };
@@ -58,7 +58,7 @@ const AutLeft = ({ match }) => {
           <Scrollbar>
             <Switch>
               {holderData && <Route exact path={`${match.path}`} component={AutUserInfo} />}
-              {isAuthenticated && (
+              {canUpdateProfile && (
                 <>
                   <Route exact path={`${match.path}/edit-community/:communityAddress`} component={AutCommunityEdit} />
                   <Route exact path={`${match.path}/edit-profile`} render={(props) => <AutProfileEdit />} />

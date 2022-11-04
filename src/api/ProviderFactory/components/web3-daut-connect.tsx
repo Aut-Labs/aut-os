@@ -3,7 +3,7 @@ import { useLocation, useHistory } from 'react-router-dom';
 import { useAppDispatch } from '@store/store.model';
 import { ResultState } from '@store/result-status';
 import { fetchHolder, updateHolderState } from '@store/holder/holder.reducer';
-import { resetAuthState, setAuthenticated } from '@auth/auth.reducer';
+import { resetAuthState, setConnectedUserInfo } from '@auth/auth.reducer';
 import { Init } from '@aut-protocol/d-aut';
 import { fetchHolderEthEns } from '@api/holder.api';
 import { AutID } from '@api/aut.model';
@@ -56,27 +56,28 @@ function Web3DautConnect({ setLoading }) {
       return c.properties.userData?.isActive;
     });
     autID.properties.address = profile.address;
-    autID.properties.network = profile.network;
+    autID.properties.network = profile.network?.toLowerCase();
     const ethDomain = await fetchHolderEthEns(autID.properties.address);
     autID.properties.ethDomain = ethDomain;
 
     const params = new URLSearchParams(window.location.search);
-    params.set('network', autID.properties.network);
+    params.set('network', autID.properties.network?.toLowerCase());
     history.push({
       pathname: `/${autID.name}`,
       search: `?${params.toString()}`,
     });
 
     await dispatch(
-      setAuthenticated({
-        isAuthenticated: true,
+      setConnectedUserInfo({
+        connectedAddress: autID.properties.address,
+        connectedNetwork: autID.properties.network?.toLowerCase(),
       })
     );
     await dispatch(
       updateHolderState({
         profiles: [autID],
         selectedProfileAddress: autID.properties.address,
-        selectedProfileNetwork: autID.properties.network,
+        selectedProfileNetwork: autID.properties.network?.toLowerCase(),
         fetchStatus: ResultState.Success,
         status: ResultState.Idle,
       })
