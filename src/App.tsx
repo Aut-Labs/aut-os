@@ -20,6 +20,8 @@ import AutSearch from "./pages/AutHome/AutSearch";
 import AutHolder from "./pages/AutHolder/AutHolder";
 import SWSnackbar from "./components/snackbar";
 import "./App.scss";
+import { environment } from "@api/environment";
+import AutSDK from "@aut-protocol/sdk";
 
 function App() {
   const theme = useTheme();
@@ -31,7 +33,12 @@ function App() {
 
   useEffect(() => {
     getAppConfig()
-      .then(async (res) => dispatch(setNetworks(res)))
+      .then(async (res) => {
+        dispatch(setNetworks(res));
+        const sdk = new AutSDK({
+          nftStorageApiKey: environment.nftStorageKey
+        });
+      })
       .finally(() => setAppLoading(false));
   }, []);
 

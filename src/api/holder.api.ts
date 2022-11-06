@@ -1,26 +1,15 @@
-import {
-  AutIDContractEventType,
-  Web3AutIDProvider
-} from "@aut-protocol/abi-types";
 import axios, { CancelTokenSource } from "axios";
 import { ethers } from "ethers";
-import { HolderCommunity, HolderData } from "./api.model";
-import { AutID } from "./aut.model";
+import { AutID, HolderData } from "./aut.model";
 import { Community } from "./community.model";
-import { environment } from "./environment";
-import {
-  ipfsCIDToHttpUrl,
-  isValidUrl,
-  storeAsBlob,
-  storeImageAsBlob
-} from "./storage.api";
-import { Web3ThunkProviderFactory } from "./ProviderFactory/web3-thunk.provider";
-import { NetworkConfig } from "./ProviderFactory/network.config";
+import { ipfsCIDToHttpUrl, isValidUrl, sdkStorage } from "./storage.api";
 import { base64toFile } from "@utils/to-base-64";
-
-const autIDProvider = Web3ThunkProviderFactory("AutID", {
-  provider: Web3AutIDProvider
-});
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import AutSDK from "@aut-protocol/sdk";
+import { ErrorParser } from "@utils/error-parser";
+import { NetworkConfig } from "./ProviderFactory/network.config";
+import { CommunityMembershipDetails } from "@aut-protocol/sdk/dist/models/holder";
+import { environment } from "./environment";
 
 export const fetchHolderEthEns = async (address: string) => {
   if (typeof window.ethereum !== "undefined") {
@@ -35,32 +24,6 @@ export const fetchHolderEthEns = async (address: string) => {
   }
 };
 
-export const fetchHolderCommunities = async (
-  communities: HolderCommunity[]
-): Promise<Community[]> => {
-  return Promise.all(
-    communities
-      .filter((c) => c.holderIsActive)
-      .map((curr: HolderCommunity) => {
-        const communityMetadataUri = ipfsCIDToHttpUrl(curr.metadata);
-        return axios.get<Community>(communityMetadataUri).then((metadata) => {
-          return new Community({
-            ...metadata.data,
-            properties: {
-              ...metadata.data.properties,
-              additionalProps: curr,
-              address: curr.communityExtension,
-              userData: {
-                role: curr.holderRole,
-                commitment: curr.holderCommitment
-              }
-            }
-          });
-        });
-      })
-  );
-};
-
 export const fetchHolderData = async (
   holderName: string,
   network: string,
@@ -73,6 +36,32 @@ export const fetchHolderData = async (
     )
     .then((res) => res.data)
     .catch(() => null);
+};
+
+export const fetchHolderCommunities = async (
+  communities: CommunityMembershipDetails[]
+): Promise<Community[]> => {
+  return Promise.all(
+    communities
+      .filter((c) => c.holderIsActive)
+      .map((curr: CommunityMembershipDetails) => {
+        const communityMetadataUri = ipfsCIDToHttpUrl(curr.metadata);
+        return axios.get<Community>(communityMetadataUri).then((metadata) => {
+          return new Community({
+            ...metadata.data,
+            properties: {
+              ...metadata.data.properties,
+              additionalProps: curr,
+              address: curr.daoAddress,
+              userData: {
+                role: curr.holderRole,
+                commitment: curr.holderCommitment
+              }
+            }
+          });
+        });
+      })
+  );
 };
 
 export const fetchAutID = async (
@@ -96,74 +85,144 @@ export const fetchAutID = async (
   return autID;
 };
 
-export const editCommitment = autIDProvider(
-  {
-    type: "holder/edit-commitment",
-    event: AutIDContractEventType.CommitmentUpdated
-  },
-  (thunkAPI) => {
-    const state = thunkAPI.getState() as any;
-    const { selectedNetwork, networksConfig } = state.walletProvider;
-    const config: NetworkConfig = networksConfig.find(
-      (n) => n.network === selectedNetwork
-    );
-    return Promise.resolve(config.contracts.autIDAddress);
-  },
-  async (contract, { communityAddress, commitment }) => {
-    const response = await contract.editCommitment(
-      communityAddress,
-      commitment
-    );
-    return {
-      communityAddress,
-      commitment
-    };
+export const fetchSearchResults = createAsyncThunk(
+  "fetch-search-results",
+  async (data: any, thunkAPI) => {
+    const { username, signal } = data;
+    try {
+      const source = axios.CancelToken.source();
+      signal.addEventListener("abort", () => {
+        source.cancel();
+      });
+      const result = [];
+      const state = thunkAPI.getState() as any;
+      const networks: NetworkConfig[] = state.walletProvider.networksConfig;
+
+      for (const network of networks) {
+        const holderData = await fetchHolderData(
+          username,
+          network.network?.toLowerCase(),
+          source
+        );
+        if (holderData) {
+          const member = await fetchAutID(
+            holderData,
+            network.network?.toLowerCase()
+          );
+          if (member) {
+            result.push(member);
+          }
+        }
+      }
+      if ((signal as AbortSignal).aborted) {
+        throw new Error("Aborted");
+      }
+      return result;
+    } catch (error) {
+      const message = ErrorParser(error);
+      throw new Error(message);
+    }
   }
 );
 
-export const withdraw = autIDProvider(
-  {
-    type: "holder/withdraw"
-  },
-  (thunkAPI) => {
-    const state = thunkAPI.getState() as any;
-    const { selectedNetwork, networksConfig } = state.walletProvider;
-    const config: NetworkConfig = networksConfig.find(
-      (n) => n.network === selectedNetwork
-    );
-    return Promise.resolve(config.contracts.autIDAddress);
-  },
-  async (contract, communityAddress) => {
-    const response = await contract.withdraw(communityAddress);
-    return communityAddress;
+export const fetchHolder = createAsyncThunk(
+  "fetch-holder",
+  async (data: any, { getState, rejectWithValue }) => {
+    const { autName, network, signal } = data;
+    const { search, walletProvider } = getState() as any;
+    const networks: string[] = network
+      ? [network]
+      : walletProvider.networksConfig.map((n) => n.network?.toLowerCase());
+    // const networks: string[] = network ? [network] : ['goerli', 'goerli'];
+    const profiles = [];
+    try {
+      const source = axios.CancelToken.source();
+      if (signal) {
+        signal.addEventListener("abort", () => {
+          source.cancel();
+        });
+      }
+      for (const networkName of networks) {
+        const result: AutID = search.searchResult.find(
+          (a: AutID) =>
+            a.name === autName &&
+            a.properties.network?.toLowerCase() === networkName?.toLowerCase()
+        );
+        const holderData =
+          result?.properties?.holderData ||
+          (await fetchHolderData(autName, networkName, source));
+        if (holderData) {
+          const autID = await fetchAutID(holderData, networkName);
+          autID.properties.communities = await fetchHolderCommunities(
+            holderData.communities
+          );
+          if (autID) {
+            profiles.push(autID);
+          }
+        }
+      }
+      if ((signal as AbortSignal)?.aborted) {
+        throw new Error("Aborted");
+      }
+      return profiles;
+    } catch (error) {
+      const message =
+        error?.message === "Aborted" ? error?.message : ErrorParser(error);
+      return rejectWithValue(message);
+    }
   }
 );
 
-export const updateProfile = autIDProvider(
-  {
-    type: "holder/update"
-  },
-  (thunkAPI) => {
-    const state = thunkAPI.getState() as any;
-    const { selectedNetwork, networksConfig } = state.walletProvider;
-    const config: NetworkConfig = networksConfig.find(
-      (n) => n.network === selectedNetwork
+export const editCommitment = createAsyncThunk(
+  "holder/edit-commitment",
+  async (
+    requestBody: { communityAddress: string; commitment: number },
+    { rejectWithValue }
+  ) => {
+    const sdk = AutSDK.getInstance();
+    const response = await sdk.autID.autIDContract.editCommitment(
+      requestBody.communityAddress,
+      requestBody.commitment
     );
-    return Promise.resolve(config.contracts.autIDAddress);
-  },
-  async (contract, user) => {
+    if (response?.isSuccess) {
+      return requestBody;
+    }
+    return rejectWithValue(response?.errorMessage);
+  }
+);
+
+export const withdraw = createAsyncThunk(
+  "holder/withdraw",
+  async (communityAddress: string, { rejectWithValue }) => {
+    const sdk = AutSDK.getInstance();
+    const response = await sdk.autID.autIDContract.withdraw(communityAddress);
+    if (response?.isSuccess) {
+      return communityAddress;
+    }
+    return rejectWithValue(response?.errorMessage);
+  }
+);
+
+export const updateProfile = createAsyncThunk(
+  "holder/update",
+  async (user: AutID, { rejectWithValue }) => {
+    const sdk = AutSDK.getInstance();
     if (
       user.properties.avatar &&
       !isValidUrl(user.properties.avatar as string)
     ) {
       const file = base64toFile(user.properties.avatar as string, "image");
-      user.properties.avatar = await storeImageAsBlob(file as File);
+      user.properties.avatar = await sdkStorage.storeImageAsBlob(file as File);
       console.log("New image: ->", ipfsCIDToHttpUrl(user.properties.avatar));
     }
 
-    const uri = await storeAsBlob(AutID.updateAutID(user));
+    const uri = await sdkStorage.storeAsBlob(AutID.updateAutID(user));
     console.log("New metadata: ->", ipfsCIDToHttpUrl(uri));
-    await contract.setMetadataUri(uri);
-    return user;
+    const response = await sdk.autID.autIDContract.setMetadataUri(uri);
+
+    if (response.isSuccess) {
+      return user;
+    }
+    return rejectWithValue(response?.errorMessage);
   }
 );

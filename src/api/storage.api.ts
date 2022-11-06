@@ -1,8 +1,10 @@
 import axios from "axios";
-import { NFTStorage } from "nft.storage";
 import { environment } from "./environment";
+import AutSDKStorage from "@aut-protocol/sdk-storage";
 
-const client = new NFTStorage({ token: environment.nftStorageKey });
+export const sdkStorage = new AutSDKStorage({
+  nftStorageKey: environment.nftStorageKey
+});
 
 export const isValidUrl = (uri: string) => {
   let url = null as any;
@@ -56,26 +58,6 @@ export function httpUrlToIpfsCID(url: string) {
   return url;
 }
 
-export const storeImageAsBlob = async (file: File): Promise<string> => {
-  const cid = await client.storeBlob(file);
-  return `ipfs://${cid}`;
-};
-
-export const storeAsBlob = async (json: any): Promise<string> => {
-  const encodedJson = new TextEncoder().encode(JSON.stringify(json));
-  const blob = new Blob([encodedJson], {
-    type: "application/json;charset=utf-8"
-  });
-  const file = new File([blob], "metadata.json");
-  const cid = await client.storeBlob(file);
-  return `ipfs://${cid}`;
-};
-
-const storeAsJson = async (json: any): Promise<string> => {
-  const metadata = await client.store(json as any);
-  return metadata.ipnft;
-};
-
 export async function storeMetadata(
   json: any,
   convertImageBlobToFile: (blob: Blob) => File = null as any
@@ -88,7 +70,7 @@ export async function storeMetadata(
   }
 
   if (isValidUrl(json.image)) {
-    return storeAsBlob(json);
+    return sdkStorage.storeAsBlob(json);
   }
-  return storeAsJson(json);
+  return sdkStorage.storeAsJson(json);
 }

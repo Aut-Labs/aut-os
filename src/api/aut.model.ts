@@ -1,6 +1,14 @@
-import { BaseNFTModel, HolderData } from "./api.model";
+import { BaseNFTModel } from "@aut-protocol/sdk/dist/models/baseNFTModel";
+import { CommunityMembershipDetails } from "@aut-protocol/sdk/dist/models/holder";
 import { Community } from "./community.model";
 import { httpUrlToIpfsCID } from "./storage.api";
+
+export interface HolderData {
+  communities: CommunityMembershipDetails[];
+  address: string;
+  tokenId: string;
+  metadataUri: string;
+}
 
 export interface AutSocial {
   type: string;

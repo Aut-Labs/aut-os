@@ -2,10 +2,10 @@ import { useEffect, useRef } from "react";
 import { useLocation, useHistory } from "react-router-dom";
 import { useAppDispatch } from "@store/store.model";
 import { ResultState } from "@store/result-status";
-import { fetchHolder, updateHolderState } from "@store/holder/holder.reducer";
+import { updateHolderState } from "@store/holder/holder.reducer";
 import { resetAuthState, setConnectedUserInfo } from "@auth/auth.reducer";
 import { Init } from "@aut-protocol/d-aut";
-import { fetchHolderEthEns } from "@api/holder.api";
+import { fetchHolder, fetchHolderEthEns } from "@api/holder.api";
 import { AutID } from "@api/aut.model";
 import { useSelector } from "react-redux";
 import {
@@ -152,6 +152,7 @@ function Web3DautConnect({ setLoading }) {
         position: "absolute"
       }}
       id="d-aut"
+      dao-expander="0xE9713595A40DDd73874906a92255029dF52C32FE"
       button-type="simple"
     />
   );

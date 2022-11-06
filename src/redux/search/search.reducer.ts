@@ -1,50 +1,10 @@
 import { ResultState } from "@store/result-status";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { AutID } from "@api/aut.model";
-import { fetchAutID, fetchHolderData } from "@api/holder.api";
+import { fetchAutID, fetchSearchResults } from "@api/holder.api";
 import { ErrorParser } from "@utils/error-parser";
 import { NetworkConfig } from "@api/ProviderFactory/network.config";
 import axios from "axios";
-
-export const fetchSearchResults = createAsyncThunk(
-  "fetch-search-results",
-  async (data: any, thunkAPI) => {
-    const { username, signal } = data;
-    try {
-      const source = axios.CancelToken.source();
-      signal.addEventListener("abort", () => {
-        source.cancel();
-      });
-      const result = [];
-      const state = thunkAPI.getState() as any;
-      const networks: NetworkConfig[] = state.walletProvider.networksConfig;
-
-      for (const network of networks) {
-        const holderData = await fetchHolderData(
-          username,
-          network.network?.toLowerCase(),
-          source
-        );
-        if (holderData) {
-          const member = await fetchAutID(
-            holderData,
-            network.network?.toLowerCase()
-          );
-          if (member) {
-            result.push(member);
-          }
-        }
-      }
-      if ((signal as AbortSignal).aborted) {
-        throw new Error("Aborted");
-      }
-      return result;
-    } catch (error) {
-      const message = ErrorParser(error);
-      throw new Error(message);
-    }
-  }
-);
 
 export interface HolderState {
   searchResult: AutID[];

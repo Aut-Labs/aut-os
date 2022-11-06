@@ -1,5 +1,10 @@
+import { BaseNFTModel } from "@aut-protocol/sdk/dist/models/baseNFTModel";
+import {
+  DAOProperties,
+  Role,
+  RoleSet
+} from "@aut-protocol/sdk/dist/models/dao";
 import { CommitmentMessages } from "@components/AutSlider";
-import { BaseNFTModel } from "./api.model";
 import { httpUrlToIpfsCID } from "./storage.api";
 
 export const MarketTemplates = [
@@ -16,42 +21,6 @@ export const MarketTemplates = [
     market: 3
   }
 ];
-// export const CommitmentMessages = (value: number) => {
-//   switch (+value) {
-//     case 1:
-//       return `I got 99 problems, and a community ain't one`;
-//     case 2:
-//       return 'Billie Jean is not my lover.';
-//     case 3:
-//       return `They think I'm hiding in the shadows. But I am the shadows.`;
-//     case 4:
-//       return 'Eight or higher, bro.';
-//     case 5:
-//       return `Yes, no, maybe, I don't know. Can you repeat the question?`;
-//     case 6:
-//       return 'Pivot!';
-//     case 7:
-//       return 'You Jump, I Jump, Jack.';
-//     case 8:
-//       return 'You have my sword. And you have my bow. And my ax';
-//     case 9:
-//       return 'I’m a Mandalorian.';
-//     case 10:
-//       return '“After all this time?" "Always...”';
-//     default:
-//       return ``;
-//   }
-// };
-
-export interface Role {
-  roleName: string;
-  id: number;
-}
-
-export interface RoleSet {
-  roleSetName: string;
-  roles: Role[];
-}
 
 export const findRoleName = (roleId: string, rolesSets: RoleSet[]) => {
   const roleSet = rolesSets.find((s) =>
@@ -63,13 +32,7 @@ export const findRoleName = (roleId: string, rolesSets: RoleSet[]) => {
   }
 };
 
-export class CommunityProperties {
-  market: number | string;
-
-  rolesSets: RoleSet[];
-
-  commitment: number;
-
+export class CommunityProperties extends DAOProperties {
   address?: string;
 
   userData?: {
@@ -83,6 +46,7 @@ export class CommunityProperties {
   additionalProps?: any;
 
   constructor(data: CommunityProperties) {
+    super(data);
     if (!data) {
       this.rolesSets = [];
     } else {

@@ -17,7 +17,6 @@ import { pxToRem } from "@utils/text-size";
 import { Controller, useForm } from "react-hook-form";
 import { AutTextField } from "@components/Fields/AutFields";
 import {
-  fetchSearchResults,
   NoSearchResults,
   SearchResult,
   SearchStatus
@@ -29,8 +28,8 @@ import { Player } from "@lottiefiles/react-lottie-player";
 import { DautPlaceholder } from "@components/DautPlaceholder";
 import * as animationData from "../../assets/aut-load.json";
 import { AutIDProfileList } from "@components/AutIDProfileList";
-import { fetchHolder, updateHolderState } from "@store/holder/holder.reducer";
 import { useEffect, useRef } from "react";
+import { fetchHolder, fetchSearchResults } from "@api/holder.api";
 
 const AutBox = styled(Box)(({ theme }) => ({
   "&.MuiBox-root": {

@@ -21,6 +21,8 @@ import type { Connector } from "@web3-react/types";
 import ConnectorBtn from "./ConnectorBtn";
 import { NetworkSelectors } from "./NetworkSelectors";
 import { EnableAndChangeNetwork } from "../web3.network";
+import { ethers } from "ethers";
+import AutSDK from "@aut-protocol/sdk";
 
 const Title = styled(Typography)({
   mt: pxToRem(25),
@@ -96,6 +98,16 @@ const Web3NetworkProvider = ({ fullScreen = false }: any) => {
     setConnector(c);
   };
 
+  const initialiseSDK = async (signer: ethers.providers.JsonRpcSigner) => {
+    const sdk = AutSDK.getInstance();
+    await sdk.init(signer, {
+      daoTypesAddress: networkConfig.contracts.daoTypesAddress,
+      autIDAddress: networkConfig.contracts.autIDAddress,
+      daoExpanderRegistryAddress:
+        networkConfig.contracts.daoExpanderRegistryAddress
+    });
+  };
+
   useEffect(() => {
     const previousChainId = connectedEagerly
       ? chainId
@@ -151,8 +163,10 @@ const Web3NetworkProvider = ({ fullScreen = false }: any) => {
 
     if (shouldUpdateSigner) {
       console.warn("Updating signer...");
+      const signer = provider.getSigner();
       dispatch(setProviderIsOpen(false));
-      dispatch(setSigner(provider.getSigner()));
+      dispatch(setSigner(signer));
+      initialiseSDK(signer);
     }
 
     if (shouldSwitchNetwork) {

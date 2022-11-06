@@ -1,69 +1,13 @@
 import { ResultState } from "@store/result-status";
-import {
-  createAsyncThunk,
-  createSelector,
-  createSlice
-} from "@reduxjs/toolkit";
+import { createSelector, createSlice } from "@reduxjs/toolkit";
 import { AutID } from "@api/aut.model";
 import {
   editCommitment,
-  fetchAutID,
-  fetchHolderCommunities,
-  fetchHolderData,
+  fetchHolder,
   updateProfile,
   withdraw
 } from "@api/holder.api";
-import { ErrorParser } from "@utils/error-parser";
 import { CommitmentMessages } from "@components/AutSlider";
-import axios from "axios";
-
-export const fetchHolder = createAsyncThunk(
-  "fetch-holder",
-  async (data: any, { getState, rejectWithValue }) => {
-    const { autName, network, signal } = data;
-    const { search, walletProvider } = getState() as any;
-    const networks: string[] = network
-      ? [network]
-      : walletProvider.networksConfig.map((n) => n.network?.toLowerCase());
-    // const networks: string[] = network ? [network] : ['goerli', 'goerli'];
-    const profiles = [];
-    try {
-      const source = axios.CancelToken.source();
-      if (signal) {
-        signal.addEventListener("abort", () => {
-          source.cancel();
-        });
-      }
-      for (const networkName of networks) {
-        const result: AutID = search.searchResult.find(
-          (a: AutID) =>
-            a.name === autName &&
-            a.properties.network?.toLowerCase() === networkName?.toLowerCase()
-        );
-        const holderData =
-          result?.properties?.holderData ||
-          (await fetchHolderData(autName, networkName, source));
-        if (holderData) {
-          const autID = await fetchAutID(holderData, networkName);
-          autID.properties.communities = await fetchHolderCommunities(
-            holderData.communities
-          );
-          if (autID) {
-            profiles.push(autID);
-          }
-        }
-      }
-      if ((signal as AbortSignal)?.aborted) {
-        throw new Error("Aborted");
-      }
-      return profiles;
-    } catch (error) {
-      const message =
-        error?.message === "Aborted" ? error?.message : ErrorParser(error);
-      return rejectWithValue(message);
-    }
-  }
-);
 
 export interface HolderState {
   profiles: AutID[];
@@ -125,7 +69,7 @@ export const holderSlice = createSlice({
           autID.properties.communities = autID.properties.communities.map(
             (c) => {
               if (c.properties.address === communityAddress) {
-                c.properties.userData.commitment = commitment;
+                c.properties.userData.commitment = `${commitment}`;
                 c.properties.userData.commitmentDescription =
                   CommitmentMessages(+commitment);
               }
