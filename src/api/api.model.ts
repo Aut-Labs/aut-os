@@ -1,4 +1,4 @@
-import { TokenInput } from 'nft.storage/dist/src/lib/interface';
+import { TokenInput } from "nft.storage/dist/src/lib/interface";
 
 export interface HolderCommunity {
   communityExtension: string;
@@ -19,7 +19,7 @@ export interface HolderData {
   metadataUri: string;
 }
 
-export class BaseNFTModel<Properties> implements Omit<TokenInput, 'image'> {
+export class BaseNFTModel<Properties> implements Omit<TokenInput, "image"> {
   name: string;
 
   description: string;

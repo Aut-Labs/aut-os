@@ -8,7 +8,7 @@ export const toBase64 = (file: File) => {
 };
 
 export const isBase64 = (str: string) => {
-  if (str === '' || str.trim() === '') {
+  if (str === "" || str.trim() === "") {
     return false;
   }
   try {
@@ -19,15 +19,15 @@ export const isBase64 = (str: string) => {
 };
 
 // eslint-disable-next-line default-param-last
-export const base64toFile = (dataurl = '', filename: string) => {
+export const base64toFile = (dataurl = "", filename: string) => {
   if (!dataurl) {
-    throw new Error('No content was provided');
+    throw new Error("No content was provided");
   }
-  const [metadata, base64] = dataurl.split(',');
+  const [metadata, base64] = dataurl.split(",");
   const mime = metadata.match(/:(.*?);/)[1];
 
   if (!isBase64(base64)) {
-    throw new Error('Content provided is not of base64');
+    throw new Error("Content provided is not of base64");
   }
   const bstr = atob(base64);
   let n = bstr.length;

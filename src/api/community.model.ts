@@ -1,20 +1,20 @@
-import { CommitmentMessages } from '@components/AutSlider';
-import { BaseNFTModel } from './api.model';
-import { httpUrlToIpfsCID } from './storage.api';
+import { CommitmentMessages } from "@components/AutSlider";
+import { BaseNFTModel } from "./api.model";
+import { httpUrlToIpfsCID } from "./storage.api";
 
 export const MarketTemplates = [
   {
-    title: 'Open-Source & DeFi',
-    market: 1,
+    title: "Open-Source & DeFi",
+    market: 1
   },
   {
-    title: 'Art, Events & NFTs',
-    market: 2,
+    title: "Art, Events & NFTs",
+    market: 2
   },
   {
-    title: 'Local Projects & DAOs',
-    market: 3,
-  },
+    title: "Local Projects & DAOs",
+    market: 3
+  }
 ];
 // export const CommitmentMessages = (value: number) => {
 //   switch (+value) {
@@ -54,7 +54,9 @@ export interface RoleSet {
 }
 
 export const findRoleName = (roleId: string, rolesSets: RoleSet[]) => {
-  const roleSet = rolesSets.find((s) => s.roles.some((r) => r.id.toString() === roleId));
+  const roleSet = rolesSets.find((s) =>
+    s.roles.some((r) => r.id.toString() === roleId)
+  );
   if (roleSet) {
     const role = roleSet?.roles.find((r) => r.id.toString() === roleId);
     return role?.roleName;
@@ -92,11 +94,16 @@ export class CommunityProperties {
       this.userData = data.userData || ({} as typeof this.userData);
 
       if (this.userData?.role) {
-        this.userData.roleName = findRoleName(this.userData.role, this.rolesSets);
+        this.userData.roleName = findRoleName(
+          this.userData.role,
+          this.rolesSets
+        );
       }
 
       if (this.userData?.commitment) {
-        this.userData.commitmentDescription = CommitmentMessages(+this.userData.commitment);
+        this.userData.commitmentDescription = CommitmentMessages(
+          +this.userData.commitment
+        );
       }
     }
   }
@@ -105,7 +112,9 @@ export class CommunityProperties {
 export class Community extends BaseNFTModel<CommunityProperties> {
   static updateCommunity(updatedCommunity: Community): Partial<Community> {
     const community = new Community(updatedCommunity);
-    const market = MarketTemplates.find((v) => v.title === community.properties.market);
+    const market = MarketTemplates.find(
+      (v) => v.title === community.properties.market
+    );
     return {
       name: community.name,
       description: community.description,
@@ -113,8 +122,8 @@ export class Community extends BaseNFTModel<CommunityProperties> {
       properties: {
         market: market?.title || 0,
         commitment: community.properties.commitment,
-        rolesSets: community.properties.rolesSets,
-      },
+        rolesSets: community.properties.rolesSets
+      }
     } as Partial<Community>;
   }
 
@@ -127,14 +136,14 @@ export class Community extends BaseNFTModel<CommunityProperties> {
 export const DefaultRoles: Role[] = [
   {
     id: 4,
-    roleName: 'Core Team',
+    roleName: "Core Team"
   },
   {
     id: 5,
-    roleName: 'Advisor',
+    roleName: "Advisor"
   },
   {
     id: 6,
-    roleName: 'Investor',
-  },
+    roleName: "Investor"
+  }
 ];

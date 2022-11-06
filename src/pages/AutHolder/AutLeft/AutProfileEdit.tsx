@@ -1,30 +1,46 @@
-import { ReactComponent as PersonIcon } from '@assets/PersonIcon.svg';
-import { ReactComponent as DiscordIcon } from '@assets/SocialIcons/DiscordIcon.svg';
-import { ReactComponent as GitHubIcon } from '@assets/SocialIcons/GitHubIcon.svg';
-import { ReactComponent as LensfrensIcon } from '@assets/SocialIcons/LensfrensIcon.svg';
-import { ReactComponent as TelegramIcon } from '@assets/SocialIcons/TelegramIcon.svg';
-import { ReactComponent as TwitterIcon } from '@assets/SocialIcons/TwitterIcon.svg';
-import { AutTextField } from '@components/Fields/AutFields';
-import AFileUpload from '@components/Fields/AutFileUpload';
-import { Box, styled, SvgIcon, Typography, useMediaQuery, InputAdornment, useTheme } from '@mui/material';
-import { pxToRem } from '@utils/text-size';
-import { Controller, useForm, useFieldArray } from 'react-hook-form';
-import { AutButton } from '@components/AutButton';
-import { useHistory } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { HolderData, UpdateErrorMessage, updateHolderState, UpdateStatus } from '@store/holder/holder.reducer';
-import { useAppDispatch } from '@store/store.model';
-import { updateProfile } from '@api/holder.api';
-import { AutID, socialUrls } from '@api/aut.model';
-import ErrorDialog from '@components/Dialog/ErrorPopup';
-import LoadingDialog from '@components/Dialog/LoadingPopup';
-import { ResultState } from '@store/result-status';
-import { ipfsCIDToHttpUrl } from '@api/storage.api';
-import { toBase64 } from '@utils/to-base-64';
-import { IsConnected, setProviderIsOpen } from '@store/WalletProvider/WalletProvider';
-import { useWeb3React } from '@web3-react/core';
-import { useEffect, useState } from 'react';
-import { EditContentElements } from '@components/EditContentElements';
+import { ReactComponent as PersonIcon } from "@assets/PersonIcon.svg";
+import { ReactComponent as DiscordIcon } from "@assets/SocialIcons/DiscordIcon.svg";
+import { ReactComponent as GitHubIcon } from "@assets/SocialIcons/GitHubIcon.svg";
+import { ReactComponent as LensfrensIcon } from "@assets/SocialIcons/LensfrensIcon.svg";
+import { ReactComponent as TelegramIcon } from "@assets/SocialIcons/TelegramIcon.svg";
+import { ReactComponent as TwitterIcon } from "@assets/SocialIcons/TwitterIcon.svg";
+import { AutTextField } from "@components/Fields/AutFields";
+import AFileUpload from "@components/Fields/AutFileUpload";
+import {
+  Box,
+  styled,
+  SvgIcon,
+  Typography,
+  useMediaQuery,
+  InputAdornment,
+  useTheme
+} from "@mui/material";
+import { pxToRem } from "@utils/text-size";
+import { Controller, useForm, useFieldArray } from "react-hook-form";
+import { AutButton } from "@components/AutButton";
+import { useHistory } from "react-router-dom";
+import { useSelector } from "react-redux";
+import {
+  HolderData,
+  UpdateErrorMessage,
+  updateHolderState,
+  UpdateStatus
+} from "@store/holder/holder.reducer";
+import { useAppDispatch } from "@store/store.model";
+import { updateProfile } from "@api/holder.api";
+import { AutID, socialUrls } from "@api/aut.model";
+import ErrorDialog from "@components/Dialog/ErrorPopup";
+import LoadingDialog from "@components/Dialog/LoadingPopup";
+import { ResultState } from "@store/result-status";
+import { ipfsCIDToHttpUrl } from "@api/storage.api";
+import { toBase64 } from "@utils/to-base-64";
+import {
+  IsConnected,
+  setProviderIsOpen
+} from "@store/WalletProvider/WalletProvider";
+import { useWeb3React } from "@web3-react/core";
+import { useEffect, useState } from "react";
+import { EditContentElements } from "@components/EditContentElements";
 
 const socialIcons = {
   // eth: EthIcon,
@@ -32,65 +48,66 @@ const socialIcons = {
   github: GitHubIcon,
   telegram: TelegramIcon,
   twitter: TwitterIcon,
-  lensfrens: LensfrensIcon,
+  lensfrens: LensfrensIcon
 };
 
 const MiddleWrapper = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  flex: '1',
-  justifyContent: 'flex-start',
-  flexDirection: 'row',
-  width: '100%',
-  alignItems: 'flex-start',
-  [theme.breakpoints.down('lg')]: {
-    flexDirection: 'column-reverse',
-    justifyContent: 'flex-end',
-  },
+  display: "flex",
+  flex: "1",
+  justifyContent: "flex-start",
+  flexDirection: "row",
+  width: "100%",
+  alignItems: "flex-start",
+  [theme.breakpoints.down("lg")]: {
+    flexDirection: "column-reverse",
+    justifyContent: "flex-end"
+  }
 }));
 
-const LeftWrapper = styled('div')(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  width: '70%',
-  justifyContent: 'flex-start',
-  alignItems: 'flex-start',
-  [theme.breakpoints.down('lg')]: {
-    width: '100%',
-  },
+const LeftWrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  width: "70%",
+  justifyContent: "flex-start",
+  alignItems: "flex-start",
+  [theme.breakpoints.down("lg")]: {
+    width: "100%"
+  }
 }));
 
-const RightWrapper = styled('div')(({ theme }) => ({
-  width: '30%',
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'flex-start',
-  alignSelf: 'flex-start',
-  [theme.breakpoints.down('lg')]: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    justifyItems: 'center',
-    alignContent: 'center',
-    width: '100%',
-    marginBottom: pxToRem(30),
-  },
+const RightWrapper = styled("div")(({ theme }) => ({
+  width: "30%",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "flex-start",
+  alignSelf: "flex-start",
+  [theme.breakpoints.down("lg")]: {
+    justifyContent: "center",
+    alignItems: "center",
+    justifyItems: "center",
+    alignContent: "center",
+    width: "100%",
+    marginBottom: pxToRem(30)
+  }
 }));
 
-const ImageUpload = styled('div')(({ theme }) => ({
+const ImageUpload = styled("div")(() => ({
   width: pxToRem(160),
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'flex-start',
-  justifyContent: 'center',
-  textAlign: 'center',
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "flex-start",
+  justifyContent: "center",
+  textAlign: "center"
 }));
 
-const { FieldWrapper, FormWrapper, BottomWrapper, TopWrapper } = EditContentElements;
+const { FieldWrapper, FormWrapper, BottomWrapper, TopWrapper } =
+  EditContentElements;
 
 const AutProfileEdit = () => {
   const theme = useTheme();
   const dispatch = useAppDispatch();
   const history = useHistory();
-  const desktop = useMediaQuery(theme.breakpoints.up('md'));
+  const desktop = useMediaQuery(theme.breakpoints.up("md"));
   const holderData = useSelector(HolderData);
   const status = useSelector(UpdateStatus);
   const errorMessage = useSelector(UpdateErrorMessage);
@@ -102,23 +119,26 @@ const AutProfileEdit = () => {
     control,
     handleSubmit,
     watch,
-    formState: { errors, isDirty },
+    formState: { isDirty }
   } = useForm({
-    mode: 'onChange',
+    mode: "onChange",
     defaultValues: {
       image: holderData?.properties?.avatar,
       socials: (holderData?.properties?.socials || []).map((social) => {
         return {
           ...social,
-          link: (social.link as string).replace(socialUrls[social.type].prefix, ''),
+          link: (social.link as string).replace(
+            socialUrls[social.type].prefix,
+            ""
+          )
         };
-      }),
-    },
+      })
+    }
   });
 
   const { fields } = useFieldArray({
     control,
-    name: 'socials',
+    name: "socials"
   });
 
   const values = watch();
@@ -137,8 +157,8 @@ const AutProfileEdit = () => {
         properties: {
           ...holderData.properties,
           socials: data.socials,
-          avatar: data.image,
-        },
+          avatar: data.image
+        }
       } as AutID)
     );
   };
@@ -146,7 +166,7 @@ const AutProfileEdit = () => {
   const handleDialogClose = () => {
     dispatch(
       updateHolderState({
-        status: ResultState.Idle,
+        status: ResultState.Idle
       })
     );
   };
@@ -160,10 +180,23 @@ const AutProfileEdit = () => {
 
   return (
     <FormWrapper autoComplete="off" onSubmit={handleSubmit(beforeEdit)}>
-      <ErrorDialog handleClose={handleDialogClose} open={status === ResultState.Failed} message={errorMessage} />
-      <LoadingDialog handleClose={handleDialogClose} open={status === ResultState.Loading} message="Editing community..." />
+      <ErrorDialog
+        handleClose={handleDialogClose}
+        open={status === ResultState.Failed}
+        message={errorMessage}
+      />
+      <LoadingDialog
+        handleClose={handleDialogClose}
+        open={status === ResultState.Loading}
+        message="Editing community..."
+      />
       <TopWrapper>
-        <Typography fontSize={pxToRem(40)} textTransform="uppercase" color="background.paper" textAlign="left">
+        <Typography
+          fontSize={pxToRem(40)}
+          textTransform="uppercase"
+          color="background.paper"
+          textAlign="left"
+        >
           Edit your profile
         </Typography>
       </TopWrapper>
@@ -174,30 +207,30 @@ const AutProfileEdit = () => {
               sx={{
                 height: pxToRem(34),
                 width: pxToRem(31),
-                mr: pxToRem(20),
+                mr: pxToRem(20)
               }}
               component={PersonIcon}
             />
             <div
               style={{
-                padding: '0',
+                padding: "0",
                 height: pxToRem(50),
-                display: 'flex',
-                minWidth: '0',
-                margin: '0',
-                border: '0',
-                verticalAlign: 'top',
-                width: '80%',
+                display: "flex",
+                minWidth: "0",
+                margin: "0",
+                border: "0",
+                verticalAlign: "top",
+                width: "80%"
               }}
             >
               <Typography
                 fontSize={pxToRem(20)}
                 sx={{
-                  padding: '0 14px',
-                  width: '100%',
-                  height: '100%',
-                  display: 'flex',
-                  alignItems: 'center',
+                  padding: "0 14px",
+                  width: "100%",
+                  height: "100%",
+                  display: "flex",
+                  alignItems: "center"
                 }}
                 color="background.paper"
                 textAlign="left"
@@ -208,7 +241,8 @@ const AutProfileEdit = () => {
           </FieldWrapper>
           {fields.map((_, index) => {
             const AutIcon = socialIcons[Object.keys(socialIcons)[index]];
-            const { prefix, hidePrefix, placeholder } = socialUrls[Object.keys(socialUrls)[index]];
+            const { prefix, hidePrefix, placeholder } =
+              socialUrls[Object.keys(socialUrls)[index]];
 
             return (
               <FieldWrapper key={`socials.${index}`}>
@@ -217,7 +251,7 @@ const AutProfileEdit = () => {
                     height: pxToRem(34),
                     width: pxToRem(34),
                     mt: pxToRem(10),
-                    mr: pxToRem(20),
+                    mr: pxToRem(20)
                   }}
                   key={`socials.${index}.icon`}
                   component={AutIcon}
@@ -239,14 +273,21 @@ const AutProfileEdit = () => {
                           autoFocus={index === 0}
                           onChange={onChange}
                           sx={{
-                            mb: pxToRem(45),
+                            mb: pxToRem(45)
                           }}
                           InputProps={{
                             startAdornment: !hidePrefix && (
                               <InputAdornment position="start">
-                                <p style={{ color: 'white', marginRight: '-5px' }}>{prefix}</p>
+                                <p
+                                  style={{
+                                    color: "white",
+                                    marginRight: "-5px"
+                                  }}
+                                >
+                                  {prefix}
+                                </p>
                               </InputAdornment>
-                            ),
+                            )
                           }}
                         />
                       </>
@@ -262,16 +303,18 @@ const AutProfileEdit = () => {
             <Controller
               name="image"
               control={control}
-              render={({ field: { onChange, value } }) => {
+              render={({ field: { onChange } }) => {
                 return (
                   <div
                     style={{
-                      display: 'flex',
-                      flexDirection: 'column',
+                      display: "flex",
+                      flexDirection: "column"
                     }}
                   >
                     <AFileUpload
-                      initialPreviewUrl={ipfsCIDToHttpUrl(holderData?.properties?.avatar as string)}
+                      initialPreviewUrl={ipfsCIDToHttpUrl(
+                        holderData?.properties?.avatar as string
+                      )}
                       fileChange={async (file) => {
                         if (file) {
                           onChange(await toBase64(file));
@@ -292,7 +335,7 @@ const AutProfileEdit = () => {
           onClick={() => history.goBack()}
           sx={{
             width: desktop ? pxToRem(250) : pxToRem(150),
-            height: pxToRem(50),
+            height: pxToRem(50)
           }}
           type="button"
           color="primary"
@@ -304,7 +347,7 @@ const AutProfileEdit = () => {
           sx={{
             width: desktop ? pxToRem(250) : pxToRem(150),
             height: pxToRem(50),
-            marginLeft: pxToRem(50),
+            marginLeft: pxToRem(50)
           }}
           type="submit"
           color="primary"

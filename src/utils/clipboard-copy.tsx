@@ -1,9 +1,9 @@
-import React from 'react';
-import { useState } from 'react';
-import { styled, Typography } from '@mui/material';
-import { pxToRem } from './text-size';
+import React from "react";
+import { useState } from "react";
+import { styled, Typography } from "@mui/material";
+import { pxToRem } from "./text-size";
 
-const CopyWrapper = styled('div')(
+const CopyWrapper = styled("div")(
   ({ theme }) => `
   display: flex;
   align-content: center;
@@ -28,10 +28,10 @@ function AutClipboardCopy({ url, sx = {}, trim = (v) => v }) {
 
   // This is the function we wrote earlier
   async function copyTextToClipboard(text) {
-    if ('clipboard' in navigator) {
+    if ("clipboard" in navigator) {
       return navigator.clipboard.writeText(text);
     }
-    return document.execCommand('copy', true, text);
+    return document.execCommand("copy", true, text);
   }
 
   // onClick handler function for the copy button
@@ -52,19 +52,23 @@ function AutClipboardCopy({ url, sx = {}, trim = (v) => v }) {
   };
 
   return (
-    <CopyWrapper style={sx} className={`copy-wrapper`} onClick={handleCopyClick}>
+    <CopyWrapper
+      style={sx}
+      className={`copy-wrapper`}
+      onClick={handleCopyClick}
+    >
       <div
         style={{
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          width: '80%',
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          width: "80%"
         }}
       >
         <Typography
           noWrap
           sx={{
-            textAlign: 'center',
-            flex: 1,
+            textAlign: "center",
+            flex: 1
           }}
           color="info.dark"
           component="span"
@@ -77,15 +81,15 @@ function AutClipboardCopy({ url, sx = {}, trim = (v) => v }) {
       <div
         className="copy-text"
         style={{
-          transition: 'all 0.3s ease-in',
-          opacity: isCopied ? '0.7' : '1',
-          minWidth: '50px',
-          display: 'flex',
-          justifyContent: 'flex-end',
+          transition: "all 0.3s ease-in",
+          opacity: isCopied ? "0.7" : "1",
+          minWidth: "50px",
+          display: "flex",
+          justifyContent: "flex-end"
         }}
       >
         <Typography fontSize={pxToRem(18)} color="info.dark" component="span">
-          {isCopied ? 'Copied!' : 'COPY'}
+          {isCopied ? "Copied!" : "COPY"}
         </Typography>
       </div>
     </CopyWrapper>

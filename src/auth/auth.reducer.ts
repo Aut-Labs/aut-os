@@ -1,6 +1,9 @@
-import { AutID } from '@api/aut.model';
-import { createSelector, createSlice } from '@reduxjs/toolkit';
-import { SelectedProfileAddress, SelectedProfileNetwork } from '@store/holder/holder.reducer';
+import { AutID } from "@api/aut.model";
+import { createSelector, createSlice } from "@reduxjs/toolkit";
+import {
+  SelectedProfileAddress,
+  SelectedProfileNetwork
+} from "@store/holder/holder.reducer";
 
 export interface AuthState {
   connectedAddress: string;
@@ -9,11 +12,11 @@ export interface AuthState {
 
 const initialState: AuthState = {
   connectedAddress: null,
-  connectedNetwork: null,
+  connectedNetwork: null
 };
 
 export const authSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState,
   reducers: {
     setConnectedUserInfo(state, action) {
@@ -21,15 +24,21 @@ export const authSlice = createSlice({
       state.connectedAddress = connectedAddress;
       state.connectedNetwork = connectedNetwork;
     },
-    resetAuthState: () => initialState,
-  },
+    resetAuthState: () => initialState
+  }
 });
 
 export const { setConnectedUserInfo, resetAuthState } = authSlice.actions;
 
-export const ConnectedAddress = (state) => state.auth.connectedAddress as string;
-export const ConnectedNetwork = (state) => state.auth.connectedNetwork as string;
-export const IsConnected = createSelector(ConnectedAddress, ConnectedNetwork, (addr, network) => !!addr && !!network);
+export const ConnectedAddress = (state) =>
+  state.auth.connectedAddress as string;
+export const ConnectedNetwork = (state) =>
+  state.auth.connectedNetwork as string;
+export const IsConnected = createSelector(
+  ConnectedAddress,
+  ConnectedNetwork,
+  (addr, network) => !!addr && !!network
+);
 
 export const CanUpdateProfile = createSelector(
   IsConnected,
@@ -37,8 +46,18 @@ export const CanUpdateProfile = createSelector(
   ConnectedNetwork,
   SelectedProfileAddress,
   SelectedProfileNetwork,
-  (isConnected, connectedAddress, connectedNetwork, selectedAddress, selectedNetwork) => {
-    return isConnected && connectedAddress === selectedAddress && connectedNetwork === selectedNetwork;
+  (
+    isConnected,
+    connectedAddress,
+    connectedNetwork,
+    selectedAddress,
+    selectedNetwork
+  ) => {
+    return (
+      isConnected &&
+      connectedAddress === selectedAddress &&
+      connectedNetwork === selectedNetwork
+    );
   }
 );
 

@@ -1,26 +1,33 @@
-import { useLayoutEffect, useState } from 'react';
+import { useLayoutEffect, useState } from "react";
 
-export const DautPlaceholder = ({ horizontal = 'right', vertical = 'top', hide = true, styles = {} }) => {
+export const DautPlaceholder = ({
+  horizontal = "right",
+  vertical = "top",
+  hide = true,
+  styles = {}
+}) => {
   const [[width, height], setElSize] = useState([220, 50]);
 
   useLayoutEffect(() => {
     function updateDautPosition() {
-      const dautEl: HTMLElement = document.querySelector('#d-aut');
+      const dautEl: HTMLElement = document.querySelector("#d-aut");
       if (!dautEl) return;
-      const placeholderEl: HTMLElement = document.querySelector('.web-component-placeholder');
+      const placeholderEl: HTMLElement = document.querySelector(
+        ".web-component-placeholder"
+      );
       if (!placeholderEl) return;
       const placeholderRect = placeholderEl.getBoundingClientRect();
       dautEl.style.left = `${placeholderRect.left}px`;
       dautEl.style.top = `${placeholderRect.top}px`;
       if (hide) {
-        dautEl.style.display = 'none';
+        dautEl.style.display = "none";
       } else {
-        dautEl.style.display = 'inherit';
+        dautEl.style.display = "inherit";
       }
     }
-    window.addEventListener('resize', updateDautPosition);
+    window.addEventListener("resize", updateDautPosition);
     setTimeout(() => updateDautPosition());
-    return () => window.removeEventListener('resize', updateDautPosition);
+    return () => window.removeEventListener("resize", updateDautPosition);
   }, [hide]);
 
   return (
@@ -28,29 +35,29 @@ export const DautPlaceholder = ({ horizontal = 'right', vertical = 'top', hide =
       style={{
         width,
         height,
-        position: 'absolute',
-        visibility: 'visible',
+        position: "absolute",
+        visibility: "visible",
         ...(hide && {
-          visibility: 'hidden',
+          visibility: "hidden"
         }),
-        ...(horizontal === 'right' && {
-          right: '20px',
+        ...(horizontal === "right" && {
+          right: "20px"
         }),
-        ...(horizontal === 'center' && {
-          left: '50%',
-          transform: 'translateX(-50%)',
+        ...(horizontal === "center" && {
+          left: "50%",
+          transform: "translateX(-50%)"
         }),
-        ...(horizontal === 'left' && {
-          left: '20px',
+        ...(horizontal === "left" && {
+          left: "20px"
         }),
-        ...(vertical === 'top' && {
-          top: '20px',
+        ...(vertical === "top" && {
+          top: "20px"
         }),
-        ...(vertical === 'bottom' && {
-          bottom: '10px',
+        ...(vertical === "bottom" && {
+          bottom: "10px"
         }),
         zIndex: -1,
-        ...styles,
+        ...styles
       }}
       className="web-component-placeholder"
     />

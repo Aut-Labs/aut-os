@@ -1,9 +1,8 @@
 {
   "env": {
     "browser": true,
-    "es2021": true
+    "node": true
   },
-  "extends": ["eslint:recommended", "plugin:react/recommended", "plugin:prettier/recommended"],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaFeatures": {
@@ -11,8 +10,14 @@
     },
     "ecmaVersion": 2016
   },
-  "plugins": ["react", "prettier"],
-  "ignorePatterns": ["node_modules", "build", "dist", "public"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "prettier"
+  ],
+  "plugins": ["react", "@typescript-eslint", "prettier"],
+  "ignorePatterns": ["node_modules", "build", "dist", "public", "*.js"],
   "settings": {
     "import/parsers": {
       "@typescript-eslint/parser": [".ts", ".tsx"]
@@ -25,12 +30,12 @@
     }
   },
   "rules": {
-    "prettier/prettier": [
-      "error",
-      {
-        "endOfLine": "auto"
-      }
-    ],
+    "@typescript-eslint/no-unused-vars": "off",
+    "comma-dangle": 0,
+    "no-useless-constructor": "off",
+    "prettier/prettier": ["error", { "singleQuote": false }],
+    "eslint/no-useless-constructor": "off",
+    "@typescript-eslint/no-useless-constructor": "off",
     "no-underscore-dangle": "off",
     "consistent-return": "off",
     "no-await-in-loop": "off",
@@ -39,24 +44,13 @@
     "import/no-extraneous-dependencies": "off",
     "jsx-a11y/click-events-have-key-events": "off",
     "no-use-before-define": "off",
-    "react/function-component-definition": "off",
-    "react/jsx-no-useless-fragment": "off",
     "quotes": "off",
-    "react/jsx-filename-extension": [
-      "warn",
-      {
-        "extensions": [".tsx"]
-      }
-    ],
-    "react/destructuring-assignment": "off",
-    "react/jsx-props-no-spreading": "off",
     "import/no-named-as-default": "off",
     "@typescript-eslint/ban-ts-comment": "off",
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-shadow": "off",
     "@typescript-eslint/explicit-function-return-type": "off",
     "max-classes-per-file": "off",
-    "react/require-default-props": "off",
     "no-extra-boolean-cast": "off",
     "max-len": [
       "warn",
@@ -66,18 +60,12 @@
     ],
     "no-shadow": "off",
     "no-undef": "off",
-    "react/display-name": "off",
-    "react/no-array-index-key": "off",
-    "react-hooks/exhaustive-deps": "off",
     "no-console": "off",
     "import/prefer-default-export": "off",
     "no-nested-ternary": "off",
-    "react/react-in-jsx-scope": "off",
     "no-unused-vars": "off",
-    "react/prop-types": "off",
     "import/no-unresolved": "off",
     "no-debugger": "off",
-    "no-param-reassign": "off",
-    "react/no-unescaped-entities": "off"
+    "no-param-reassign": "off"
   }
 }

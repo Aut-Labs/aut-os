@@ -1,32 +1,32 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   snackbar: {
     open: false,
-    message: '',
-    severity: 'success',
-    duration: 2000,
+    message: "",
+    severity: "success",
+    duration: 2000
   },
   openShare: false,
-  previousRoute: '/',
+  previousRoute: "/",
   transactionState: null,
-  title: '',
+  title: ""
 };
 
 export const uiSlice = createSlice({
-  name: 'ui',
+  name: "ui",
   initialState,
   reducers: {
     openSnackbar(state, action) {
       state.snackbar.open = true;
       state.snackbar.message = action.payload.message;
-      state.snackbar.severity = action.payload.severity || 'success';
+      state.snackbar.severity = action.payload.severity || "success";
       state.snackbar.duration = action.payload.duration || 4000;
     },
     closeSnackbar(state) {
       state.snackbar = {
         ...state.snackbar,
-        open: false,
+        open: false
       };
     },
     setTitle(state, action) {
@@ -41,10 +41,17 @@ export const uiSlice = createSlice({
     setOpenShare(state, action) {
       state.openShare = action.payload;
     },
-    resetUIState: () => initialState,
-  },
+    resetUIState: () => initialState
+  }
 });
 
-export const { openSnackbar, closeSnackbar, setTitle, setPreviusRoute, setOpenShare, updateTransactionState } = uiSlice.actions;
+export const {
+  openSnackbar,
+  closeSnackbar,
+  setTitle,
+  setPreviusRoute,
+  setOpenShare,
+  updateTransactionState
+} = uiSlice.actions;
 
 export default uiSlice.reducer;

@@ -1,17 +1,23 @@
 /* eslint-disable react/button-has-type */
-import { useMediaQuery, useTheme } from '@mui/material';
-import { pxToRem } from '@utils/text-size';
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useMediaQuery, useTheme } from "@mui/material";
+import { pxToRem } from "@utils/text-size";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 
-const Scrollbar = ({ children, className, ...props }: React.ComponentPropsWithoutRef<'div'>) => {
+const Scrollbar = ({
+  children,
+  className,
+  ...props
+}: React.ComponentPropsWithoutRef<"div">) => {
   const contentRef = useRef<HTMLDivElement>(null);
   const scrollTrackRef = useRef<HTMLDivElement>(null);
   const scrollThumbRef = useRef<HTMLDivElement>(null);
   const observer = useRef<ResizeObserver | null>(null);
   const theme = useTheme();
-  const desktop = useMediaQuery(theme.breakpoints.up('md'));
+  const desktop = useMediaQuery(theme.breakpoints.up("md"));
   const [thumbHeight, setThumbHeight] = useState(20);
-  const [scrollStartPosition, setScrollStartPosition] = useState<number | null>(null);
+  const [scrollStartPosition, setScrollStartPosition] = useState<number | null>(
+    null
+  );
   const [initialScrollTop, setInitialScrollTop] = useState<number>(0);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -20,11 +26,11 @@ const Scrollbar = ({ children, className, ...props }: React.ComponentPropsWithou
     setThumbHeight(Math.max((clientHeight / scrollHeight) * trackSize, 20));
   }
 
-  function handleScrollButton(direction: 'up' | 'down') {
+  function handleScrollButton(direction: "up" | "down") {
     const { current } = contentRef;
     if (current) {
-      const scrollAmount = direction === 'down' ? 200 : -200;
-      current.scrollBy({ top: scrollAmount, behavior: 'smooth' });
+      const scrollAmount = direction === "down" ? 200 : -200;
+      current.scrollBy({ top: scrollAmount, behavior: "smooth" });
     }
   }
 
@@ -40,11 +46,14 @@ const Scrollbar = ({ children, className, ...props }: React.ComponentPropsWithou
         const rect = target.getBoundingClientRect();
         const trackTop = rect.top;
         const thumbOffset = -(thumbHeight / 2);
-        const clickRatio = (clientY - trackTop + thumbOffset) / trackCurrent.clientHeight;
-        const scrollAmount = Math.floor(clickRatio * contentCurrent.scrollHeight);
+        const clickRatio =
+          (clientY - trackTop + thumbOffset) / trackCurrent.clientHeight;
+        const scrollAmount = Math.floor(
+          clickRatio * contentCurrent.scrollHeight
+        );
         contentCurrent.scrollTo({
           top: scrollAmount,
-          behavior: 'smooth',
+          behavior: "smooth"
         });
       }
     },
@@ -52,10 +61,15 @@ const Scrollbar = ({ children, className, ...props }: React.ComponentPropsWithou
   );
 
   const handleThumbPosition = useCallback(() => {
-    if (!contentRef.current || !scrollTrackRef.current || !scrollThumbRef.current) {
+    if (
+      !contentRef.current ||
+      !scrollTrackRef.current ||
+      !scrollThumbRef.current
+    ) {
       return;
     }
-    const { scrollTop: contentTop, scrollHeight: contentHeight } = contentRef.current;
+    const { scrollTop: contentTop, scrollHeight: contentHeight } =
+      contentRef.current;
     const { clientHeight: trackHeight } = scrollTrackRef.current;
     let newTop = (+contentTop / +contentHeight) * trackHeight;
     newTop = Math.min(newTop, trackHeight - thumbHeight);
@@ -87,10 +101,18 @@ const Scrollbar = ({ children, className, ...props }: React.ComponentPropsWithou
       e.preventDefault();
       e.stopPropagation();
       if (isDragging) {
-        const { scrollHeight: contentScrollHeight, offsetHeight: contentOffsetHeight } = contentRef.current;
+        const {
+          scrollHeight: contentScrollHeight,
+          offsetHeight: contentOffsetHeight
+        } = contentRef.current;
 
-        const deltaY = (e.clientY - scrollStartPosition) * (contentOffsetHeight / thumbHeight);
-        const newScrollTop = Math.min(initialScrollTop + deltaY, contentScrollHeight - contentOffsetHeight);
+        const deltaY =
+          (e.clientY - scrollStartPosition) *
+          (contentOffsetHeight / thumbHeight);
+        const newScrollTop = Math.min(
+          initialScrollTop + deltaY,
+          contentScrollHeight - contentOffsetHeight
+        );
 
         contentRef.current.scrollTop = newScrollTop;
       }
@@ -106,23 +128,23 @@ const Scrollbar = ({ children, className, ...props }: React.ComponentPropsWithou
         handleResize(ref, trackSize);
       });
       observer.current.observe(ref);
-      ref.addEventListener('scroll', handleThumbPosition);
+      ref.addEventListener("scroll", handleThumbPosition);
       return () => {
         observer.current?.unobserve(ref);
-        ref.removeEventListener('scroll', handleThumbPosition);
+        ref.removeEventListener("scroll", handleThumbPosition);
       };
     }
   }, []);
 
   // Listen for mouse events to handle scrolling by dragging the thumb
   useEffect(() => {
-    document.addEventListener('mousemove', handleThumbMousemove);
-    document.addEventListener('mouseup', handleThumbMouseup);
-    document.addEventListener('mouseleave', handleThumbMouseup);
+    document.addEventListener("mousemove", handleThumbMousemove);
+    document.addEventListener("mouseup", handleThumbMouseup);
+    document.addEventListener("mouseleave", handleThumbMouseup);
     return () => {
-      document.removeEventListener('mousemove', handleThumbMousemove);
-      document.removeEventListener('mouseup', handleThumbMouseup);
-      document.removeEventListener('mouseleave', handleThumbMouseup);
+      document.removeEventListener("mousemove", handleThumbMousemove);
+      document.removeEventListener("mouseup", handleThumbMouseup);
+      document.removeEventListener("mouseleave", handleThumbMouseup);
     };
   }, [handleThumbMousemove, handleThumbMouseup]);
 
@@ -131,11 +153,11 @@ const Scrollbar = ({ children, className, ...props }: React.ComponentPropsWithou
       <div
         style={{
           ...(desktop && {
-            height: `calc(100vh - ${pxToRem(30)} - 50px)`,
+            height: `calc(100vh - ${pxToRem(30)} - 50px)`
           }),
           ...(!desktop && {
-            height: `calc(100vh - ${pxToRem(60)} - 120px)`,
-          }),
+            height: `calc(100vh - ${pxToRem(60)} - 120px)`
+          })
         }}
         className="custom-scrollbars__content"
         ref={contentRef}

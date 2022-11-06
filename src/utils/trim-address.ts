@@ -1,6 +1,6 @@
 export const trimAddress = (address: string) => {
   if (!address) {
-    return '';
+    return "";
   }
   const middle = Math.ceil(address.length / 2);
   const left = address.slice(0, middle).substring(0, 6);

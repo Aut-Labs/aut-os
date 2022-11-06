@@ -1,47 +1,69 @@
-import { ResultState } from '@store/result-status';
-import { createAsyncThunk, createSelector, createSlice } from '@reduxjs/toolkit';
-import { AutID } from '@api/aut.model';
-import { editCommitment, fetchAutID, fetchHolderCommunities, fetchHolderData, updateProfile, withdraw } from '@api/holder.api';
-import { ErrorParser } from '@utils/error-parser';
-import { CommitmentMessages } from '@components/AutSlider';
-import axios from 'axios';
-import { ConnectedAddress, ConnectedNetwork } from '@auth/auth.reducer';
+import { ResultState } from "@store/result-status";
+import {
+  createAsyncThunk,
+  createSelector,
+  createSlice
+} from "@reduxjs/toolkit";
+import { AutID } from "@api/aut.model";
+import {
+  editCommitment,
+  fetchAutID,
+  fetchHolderCommunities,
+  fetchHolderData,
+  updateProfile,
+  withdraw
+} from "@api/holder.api";
+import { ErrorParser } from "@utils/error-parser";
+import { CommitmentMessages } from "@components/AutSlider";
+import axios from "axios";
 
-export const fetchHolder = createAsyncThunk('fetch-holder', async (data: any, { getState, rejectWithValue }) => {
-  const { autName, network, signal } = data;
-  const { search, walletProvider } = getState() as any;
-  const networks: string[] = network ? [network] : walletProvider.networksConfig.map((n) => n.network?.toLowerCase());
-  // const networks: string[] = network ? [network] : ['goerli', 'goerli'];
-  const profiles = [];
-  try {
-    const source = axios.CancelToken.source();
-    if (signal) {
-      signal.addEventListener('abort', () => {
-        source.cancel();
-      });
-    }
-    for (const networkName of networks) {
-      const result: AutID = search.searchResult.find(
-        (a: AutID) => a.name === autName && a.properties.network?.toLowerCase() === networkName?.toLowerCase()
-      );
-      const holderData = result?.properties?.holderData || (await fetchHolderData(autName, networkName, source));
-      if (holderData) {
-        const autID = await fetchAutID(holderData, networkName);
-        autID.properties.communities = await fetchHolderCommunities(holderData.communities);
-        if (autID) {
-          profiles.push(autID);
+export const fetchHolder = createAsyncThunk(
+  "fetch-holder",
+  async (data: any, { getState, rejectWithValue }) => {
+    const { autName, network, signal } = data;
+    const { search, walletProvider } = getState() as any;
+    const networks: string[] = network
+      ? [network]
+      : walletProvider.networksConfig.map((n) => n.network?.toLowerCase());
+    // const networks: string[] = network ? [network] : ['goerli', 'goerli'];
+    const profiles = [];
+    try {
+      const source = axios.CancelToken.source();
+      if (signal) {
+        signal.addEventListener("abort", () => {
+          source.cancel();
+        });
+      }
+      for (const networkName of networks) {
+        const result: AutID = search.searchResult.find(
+          (a: AutID) =>
+            a.name === autName &&
+            a.properties.network?.toLowerCase() === networkName?.toLowerCase()
+        );
+        const holderData =
+          result?.properties?.holderData ||
+          (await fetchHolderData(autName, networkName, source));
+        if (holderData) {
+          const autID = await fetchAutID(holderData, networkName);
+          autID.properties.communities = await fetchHolderCommunities(
+            holderData.communities
+          );
+          if (autID) {
+            profiles.push(autID);
+          }
         }
       }
+      if ((signal as AbortSignal)?.aborted) {
+        throw new Error("Aborted");
+      }
+      return profiles;
+    } catch (error) {
+      const message =
+        error?.message === "Aborted" ? error?.message : ErrorParser(error);
+      return rejectWithValue(message);
     }
-    if ((signal as AbortSignal)?.aborted) {
-      throw new Error('Aborted');
-    }
-    return profiles;
-  } catch (error) {
-    const message = error?.message === 'Aborted' ? error?.message : ErrorParser(error);
-    return rejectWithValue(message);
   }
-});
+);
 
 export interface HolderState {
   profiles: AutID[];
@@ -56,13 +78,13 @@ const initialState: HolderState = {
   profiles: [],
   fetchStatus: ResultState.Idle,
   status: ResultState.Idle,
-  errorMessage: '',
+  errorMessage: "",
   selectedProfileAddress: null,
-  selectedProfileNetwork: null,
+  selectedProfileNetwork: null
 };
 
 export const holderSlice = createSlice({
-  name: 'holder',
+  name: "holder",
   initialState,
   reducers: {
     resetHolderState: () => initialState,
@@ -70,7 +92,7 @@ export const holderSlice = createSlice({
       Object.keys(action.payload).forEach((key) => {
         state[key] = action.payload[key];
       });
-    },
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -81,12 +103,13 @@ export const holderSlice = createSlice({
         state.profiles = action.payload;
         if (state.profiles.length === 1) {
           state.selectedProfileAddress = state.profiles[0].properties.address;
-          state.selectedProfileNetwork = state.profiles[0].properties.network?.toLowerCase();
+          state.selectedProfileNetwork =
+            state.profiles[0].properties.network?.toLowerCase();
         }
         state.fetchStatus = ResultState.Success;
       })
       .addCase(fetchHolder.rejected, (state, action) => {
-        if (action?.payload !== 'Aborted') {
+        if (action?.payload !== "Aborted") {
           state.fetchStatus = ResultState.Failed;
         }
       })
@@ -99,13 +122,16 @@ export const holderSlice = createSlice({
         const { communityAddress, commitment } = action.payload;
         state.status = ResultState.Idle;
         state.profiles = state.profiles.map((autID) => {
-          autID.properties.communities = autID.properties.communities.map((c) => {
-            if (c.properties.address === communityAddress) {
-              c.properties.userData.commitment = commitment;
-              c.properties.userData.commitmentDescription = CommitmentMessages(+commitment);
+          autID.properties.communities = autID.properties.communities.map(
+            (c) => {
+              if (c.properties.address === communityAddress) {
+                c.properties.userData.commitment = commitment;
+                c.properties.userData.commitmentDescription =
+                  CommitmentMessages(+commitment);
+              }
+              return c;
             }
-            return c;
-          });
+          );
           return autID;
         });
       })
@@ -121,9 +147,11 @@ export const holderSlice = createSlice({
       .addCase(withdraw.fulfilled, (state, action) => {
         state.status = ResultState.Idle;
         state.profiles = state.profiles.map((autID) => {
-          autID.properties.communities = autID.properties.communities.filter((c) => {
-            return c.properties.address !== action.payload;
-          });
+          autID.properties.communities = autID.properties.communities.filter(
+            (c) => {
+              return c.properties.address !== action.payload;
+            }
+          );
           return autID;
         });
       })
@@ -148,27 +176,41 @@ export const holderSlice = createSlice({
         state.status = ResultState.Failed;
         state.errorMessage = action.payload as string;
       });
-  },
+  }
 });
 
 export const { updateHolderState } = holderSlice.actions;
 
-export const SelectedProfileAddress = (state) => state.holder.selectedProfileAddress as string;
-export const SelectedProfileNetwork = (state) => state.holder.selectedProfileNetwork as string;
+export const SelectedProfileAddress = (state) =>
+  state.holder.selectedProfileAddress as string;
+export const SelectedProfileNetwork = (state) =>
+  state.holder.selectedProfileNetwork as string;
 
 export const AutIDProfiles = (state) => state.holder.profiles as AutID[];
 
-export const HolderData = createSelector(AutIDProfiles, SelectedProfileAddress, SelectedProfileNetwork, (profiles, address, network) => {
-  return profiles.find((item) => item.properties.address === address && item.properties.network?.toLowerCase() === network?.toLowerCase());
-});
+export const HolderData = createSelector(
+  AutIDProfiles,
+  SelectedProfileAddress,
+  SelectedProfileNetwork,
+  (profiles, address, network) => {
+    return profiles.find(
+      (item) =>
+        item.properties.address === address &&
+        item.properties.network?.toLowerCase() === network?.toLowerCase()
+    );
+  }
+);
 
 export const HolderStatus = (state) => state.holder.fetchStatus as ResultState;
 
 export const UpdateStatus = (state) => state.holder.status as ResultState;
-export const UpdateErrorMessage = (state) => state.holder.errorMessage as string;
+export const UpdateErrorMessage = (state) =>
+  state.holder.errorMessage as string;
 export const SelectedCommunity = (communityAddress) =>
   createSelector(HolderData, (autId) => {
-    return autId.properties.communities.find((item) => item.properties.address === communityAddress);
+    return autId.properties.communities.find(
+      (item) => item.properties.address === communityAddress
+    );
   });
 
 export default holderSlice.reducer;

@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable react/default-props-match-prop-types */
-import { useMediaQuery, useTheme } from '@mui/material';
-import * as React from 'react';
-import { useEffect, useState, useMemo } from 'react';
+import { useMediaQuery, useTheme } from "@mui/material";
+import * as React from "react";
+import { useEffect, useState, useMemo } from "react";
 
 export interface FlipCardProps {
   /**
@@ -44,7 +45,7 @@ export interface FlipCardProps {
   /** Direction of the card flip (options are: 'horizontal' or 'vertical' )
    * @default 'horizontal'
    */
-  flipDirection?: 'horizontal' | 'vertical';
+  flipDirection?: "horizontal" | "vertical";
   onClick: any;
   children: [React.ReactNode, React.ReactNode];
 }
@@ -59,10 +60,10 @@ const Flipcard: React.FC<FlipCardProps> = (props) => {
     flipSpeedFrontToBack,
     flipSpeedBackToFront,
     infinite,
-    onClick,
+    onClick
   } = props;
   const theme = useTheme();
-  const desktop = useMediaQuery(theme.breakpoints.up('md'));
+  const desktop = useMediaQuery(theme.breakpoints.up("md"));
 
   const [isFlipped, setFlipped] = useState(props.isFlipped);
   const [rotation, setRotation] = useState(0);
@@ -75,7 +76,7 @@ const Flipcard: React.FC<FlipCardProps> = (props) => {
   }, [isFlipped, props.isFlipped]);
 
   const getContainerClassName = useMemo(() => {
-    let className = 'aut-card-flip';
+    let className = "aut-card-flip";
     if (containerClassName) {
       className += ` ${containerClassName}`;
     }
@@ -84,65 +85,78 @@ const Flipcard: React.FC<FlipCardProps> = (props) => {
 
   const getComponent = (key: 0 | 1) => {
     if (props.children.length !== 2) {
-      throw new Error('Component Flipcard requires 2 children to function');
+      throw new Error("Component Flipcard requires 2 children to function");
     }
     return props.children[key];
   };
 
-  const frontRotateY = `rotateY(${infinite ? rotation : isFlipped ? 180 : 0}deg)`;
-  const backRotateY = `rotateY(${infinite ? rotation + 180 : isFlipped ? 0 : -180}deg)`;
-  const frontRotateX = `rotateX(${infinite ? rotation : isFlipped ? 180 : 0}deg)`;
-  const backRotateX = `rotateX(${infinite ? rotation + 180 : isFlipped ? 0 : -180}deg)`;
+  const frontRotateY = `rotateY(${
+    infinite ? rotation : isFlipped ? 180 : 0
+  }deg)`;
+  const backRotateY = `rotateY(${
+    infinite ? rotation + 180 : isFlipped ? 0 : -180
+  }deg)`;
+  const frontRotateX = `rotateX(${
+    infinite ? rotation : isFlipped ? 180 : 0
+  }deg)`;
+  const backRotateX = `rotateX(${
+    infinite ? rotation + 180 : isFlipped ? 0 : -180
+  }deg)`;
 
   const styles: any = {
     back: {
-      WebkitBackfaceVisibility: 'hidden',
-      backfaceVisibility: 'hidden',
-      height: '100%',
-      left: '0',
-      position: isFlipped ? 'relative' : 'absolute',
-      top: '0',
-      transform: flipDirection === 'horizontal' ? backRotateY : backRotateX,
-      transformStyle: 'preserve-3d',
+      WebkitBackfaceVisibility: "hidden",
+      backfaceVisibility: "hidden",
+      height: "100%",
+      left: "0",
+      position: isFlipped ? "relative" : "absolute",
+      top: "0",
+      transform: flipDirection === "horizontal" ? backRotateY : backRotateX,
+      transformStyle: "preserve-3d",
       transition: `${flipSpeedFrontToBack}s`,
-      width: '100%',
-      display: 'flex',
-      justifyContent: 'center',
-      alignContent: 'center',
-      ...back,
+      width: "100%",
+      display: "flex",
+      justifyContent: "center",
+      alignContent: "center",
+      ...back
     },
     container: {
-      perspective: '1000px',
+      perspective: "1000px",
       zIndex: `${cardZIndex}`,
-      marginTop: desktop ? '20px' : '10px',
-      marginLeft: desktop ? '20px' : '10px',
-      width: '100%',
-      height: '100%',
-      display: 'flex',
+      marginTop: desktop ? "20px" : "10px",
+      marginLeft: desktop ? "20px" : "10px",
+      width: "100%",
+      height: "100%",
+      display: "flex"
     },
     flipper: {
-      height: '100%',
-      position: 'relative',
-      width: '100%',
+      height: "100%",
+      position: "relative",
+      width: "100%"
     },
     front: {
-      WebkitBackfaceVisibility: 'hidden',
-      backfaceVisibility: 'hidden',
-      height: '100%',
-      left: '0',
-      position: isFlipped ? 'absolute' : 'relative',
-      top: '0',
-      transform: flipDirection === 'horizontal' ? frontRotateY : frontRotateX,
-      transformStyle: 'preserve-3d',
+      WebkitBackfaceVisibility: "hidden",
+      backfaceVisibility: "hidden",
+      height: "100%",
+      left: "0",
+      position: isFlipped ? "absolute" : "relative",
+      top: "0",
+      transform: flipDirection === "horizontal" ? frontRotateY : frontRotateX,
+      transformStyle: "preserve-3d",
       transition: `${flipSpeedBackToFront}s`,
-      width: '100%',
-      zIndex: '2',
-      ...front,
-    },
+      width: "100%",
+      zIndex: "2",
+      ...front
+    }
   };
 
   return (
-    <div className={getContainerClassName} style={{ ...styles.container, ...containerStyle }} onClick={onClick} onKeyPress={null}>
+    <div
+      className={getContainerClassName}
+      style={{ ...styles.container, ...containerStyle }}
+      onClick={onClick}
+      onKeyPress={null}
+    >
       <div className="aut-card-flipper" style={styles.flipper}>
         <div style={styles.front}>{getComponent(0)}</div>
 
@@ -155,15 +169,15 @@ const Flipcard: React.FC<FlipCardProps> = (props) => {
 Flipcard.defaultProps = {
   cardStyles: {
     back: {},
-    front: {},
+    front: {}
   },
-  cardZIndex: 'auto',
+  cardZIndex: "auto",
   containerStyle: {},
-  flipDirection: 'horizontal',
+  flipDirection: "horizontal",
   flipSpeedBackToFront: 0.6,
   flipSpeedFrontToBack: 0.6,
   infinite: false,
-  isFlipped: false,
+  isFlipped: false
 };
 
 export default Flipcard;

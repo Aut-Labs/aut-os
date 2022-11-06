@@ -2,7 +2,7 @@ export const envionmentGenerator = (envVariables: any) =>
   Object.keys(envVariables).reduce(
     (prev, curr) => ({
       ...prev,
-      [curr]: process.env[envVariables[curr]],
+      [curr]: process.env[envVariables[curr]]
     }),
     {} as typeof envVariables
   );
@@ -17,7 +17,9 @@ export const ensureVariablesExist = (environment: any, envVariables: any) => {
   }, []);
 
   if (missingVariables.length) {
-    const message = `The following variables are missing \n${missingVariables.join('\r\n')} \n- Please define them in .env`;
+    const message = `The following variables are missing \n${missingVariables.join(
+      "\r\n"
+    )} \n- Please define them in .env`;
     throw new Error(message);
   }
 };

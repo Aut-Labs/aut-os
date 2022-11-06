@@ -1,12 +1,16 @@
 /* eslint-disable max-len */
 function PencilEdit(
   { height, width } = {
-    height: '100%',
-    width: '100%',
+    height: "100%",
+    width: "100%"
   }
 ) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" style={{ height, width }} viewBox="0 0 24 24">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      style={{ height, width }}
+      viewBox="0 0 24 24"
+    >
       <g transform="translate(-3.1 -2.7)">
         <path
           fill="#fff"

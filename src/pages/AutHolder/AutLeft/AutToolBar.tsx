@@ -1,25 +1,25 @@
-import { ReactComponent as MyAutIDLogo } from '@assets/MyAutIdLogo.svg';
-import { DautPlaceholder } from '@components/DautPlaceholder';
-import { styled, Toolbar, useMediaQuery } from '@mui/material';
-import { HolderStatus } from '@store/holder/holder.reducer';
-import { ResultState } from '@store/result-status';
-import { resetSearchState } from '@store/search/search.reducer';
-import { useAppDispatch } from '@store/store.model';
-import { pxToRem } from '@utils/text-size';
-import { useSelector } from 'react-redux';
-import { useHistory, useLocation } from 'react-router-dom';
+import { ReactComponent as MyAutIDLogo } from "@assets/MyAutIdLogo.svg";
+import { DautPlaceholder } from "@components/DautPlaceholder";
+import { styled, Toolbar } from "@mui/material";
+import { HolderStatus } from "@store/holder/holder.reducer";
+import { ResultState } from "@store/result-status";
+import { resetSearchState } from "@store/search/search.reducer";
+import { useAppDispatch } from "@store/store.model";
+import { pxToRem } from "@utils/text-size";
+import { useSelector } from "react-redux";
+import { useHistory, useLocation } from "react-router-dom";
 
 const AutBar = styled(Toolbar)(({ theme }) => ({
-  '&.MuiToolbar-root': {
+  "&.MuiToolbar-root": {
     paddingLeft: pxToRem(80),
     paddingRight: pxToRem(80),
-    justifyContent: 'space-between',
-    [theme.breakpoints.down('md')]: {
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-  },
+    justifyContent: "space-between",
+    [theme.breakpoints.down("md")]: {
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center"
+    }
+  }
 }));
 
 const AutToolBar = ({ isDesktop = false }) => {
@@ -30,20 +30,24 @@ const AutToolBar = ({ isDesktop = false }) => {
 
   function goHome() {
     const params = new URLSearchParams(location.search);
-    params.delete('network');
+    params.delete("network");
     history.push({
       pathname: `/`,
-      search: `?${params.toString()}`,
+      search: `?${params.toString()}`
     });
     dispatch(resetSearchState());
   }
   return (
     <AutBar>
-      <MyAutIDLogo height="90" style={{ cursor: 'pointer' }} onClick={() => goHome()} />
+      <MyAutIDLogo
+        height="90"
+        style={{ cursor: "pointer" }}
+        onClick={() => goHome()}
+      />
       {isDesktop && (
         <DautPlaceholder
           styles={{
-            right: pxToRem(80),
+            right: pxToRem(80)
           }}
           hide={status === ResultState.Loading}
         />

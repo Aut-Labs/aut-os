@@ -1,25 +1,35 @@
-import { useEffect } from 'react';
-import { useAppDispatch } from '@store/store.model';
-import { pxToRem } from '@utils/text-size';
-import { ConnectorTypes, NetworkConnector, setWallet } from '@store/WalletProvider/WalletProvider';
-import { ReactComponent as WalletConnectLogo } from '@assets/aut/wallet-connect.svg';
-import { ReactComponent as MetamaskLogo } from '@assets/aut/metamask.svg';
-import { Typography } from '@mui/material';
-import { useSelector } from 'react-redux';
-import { AutButton } from '@components/AutButton';
+import { useEffect } from "react";
+import { useAppDispatch } from "@store/store.model";
+import { pxToRem } from "@utils/text-size";
+import {
+  ConnectorTypes,
+  NetworkConnector,
+  setWallet
+} from "@store/WalletProvider/WalletProvider";
+import { ReactComponent as WalletConnectLogo } from "@assets/aut/wallet-connect.svg";
+import { ReactComponent as MetamaskLogo } from "@assets/aut/metamask.svg";
+import { Typography } from "@mui/material";
+import { useSelector } from "react-redux";
+import { AutButton } from "@components/AutButton";
 
 const btnConfig = {
   [ConnectorTypes.Metamask]: {
-    label: 'Metamask',
-    icon: <MetamaskLogo height="15px" />,
+    label: "Metamask",
+    icon: <MetamaskLogo height="15px" />
   },
   [ConnectorTypes.WalletConnect]: {
-    label: 'WalletConnect',
-    icon: <WalletConnectLogo height="15px" />,
-  },
+    label: "WalletConnect",
+    icon: <WalletConnectLogo height="15px" />
+  }
 };
 
-export default function ConnectorBtn({ connectorType, setConnector }: { connectorType: ConnectorTypes; setConnector: any }) {
+export default function ConnectorBtn({
+  connectorType,
+  setConnector
+}: {
+  connectorType: ConnectorTypes;
+  setConnector: any;
+}) {
   const dispatch = useAppDispatch();
   const [connector] = useSelector(NetworkConnector(connectorType));
 
@@ -41,10 +51,10 @@ export default function ConnectorBtn({ connectorType, setConnector }: { connecto
         height: pxToRem(55),
         fontSize: pxToRem(16),
         mb: pxToRem(25),
-        textTransform: 'inherit',
-        '&.MuiButton-root': {
-          letterSpacing: '0px',
-        },
+        textTransform: "inherit",
+        "&.MuiButton-root": {
+          letterSpacing: "0px"
+        }
       }}
       type="button"
       color="primary"
@@ -52,9 +62,9 @@ export default function ConnectorBtn({ connectorType, setConnector }: { connecto
     >
       <span
         style={{
-          width: '100%',
-          display: 'flex',
-          alignItems: 'center',
+          width: "100%",
+          display: "flex",
+          alignItems: "center"
         }}
       >
         {btnConfig[connectorType].icon}
@@ -62,7 +72,7 @@ export default function ConnectorBtn({ connectorType, setConnector }: { connecto
           sx={{
             flex: 1,
             fontSize: pxToRem(16),
-            color: 'white',
+            color: "white"
           }}
         >
           {btnConfig[connectorType].label}

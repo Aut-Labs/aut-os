@@ -1,6 +1,6 @@
-import { AutButton } from '@components/AutButton';
-import { pxToRem } from '@utils/text-size';
-import { NetworkConfig } from '../network.config';
+import { AutButton } from "@components/AutButton";
+import { pxToRem } from "@utils/text-size";
+import { NetworkConfig } from "../network.config";
 
 export const NetworkSelectors = ({ onSelect, networks }) => {
   return (
@@ -17,11 +17,11 @@ export const NetworkSelectors = ({ onSelect, networks }) => {
               height: pxToRem(55),
               marginBottom: pxToRem(30),
               fontSize: pxToRem(16),
-              textTransform: 'inherit',
+              textTransform: "inherit",
               letterSpacing: 0,
-              '&.MuiButton-root': {
-                letterSpacing: '0px',
-              },
+              "&.MuiButton-root": {
+                letterSpacing: "0px"
+              }
             }}
             type="button"
             color="primary"

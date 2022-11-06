@@ -1,6 +1,6 @@
-import { BaseNFTModel, HolderData } from './api.model';
-import { Community } from './community.model';
-import { httpUrlToIpfsCID } from './storage.api';
+import { BaseNFTModel, HolderData } from "./api.model";
+import { Community } from "./community.model";
+import { httpUrlToIpfsCID } from "./storage.api";
 
 export interface AutSocial {
   type: string;
@@ -10,48 +10,48 @@ export interface AutSocial {
 export const socialUrls = {
   discord: {
     hidePrefix: true,
-    placeholder: 'name#1234',
-    prefix: 'https://discord.com/users/',
+    placeholder: "name#1234",
+    prefix: "https://discord.com/users/"
   },
   github: {
-    prefix: 'https://github.com/',
-    placeholder: '',
+    prefix: "https://github.com/",
+    placeholder: ""
   },
   telegram: {
-    prefix: 'https://t.me/',
-    placeholder: '',
+    prefix: "https://t.me/",
+    placeholder: ""
   },
   twitter: {
-    prefix: 'https://twitter.com/',
-    placeholder: '',
+    prefix: "https://twitter.com/",
+    placeholder: ""
   },
   lensfrens: {
-    prefix: 'https://www.lensfrens.xyz/',
-    placeholder: '',
-  },
+    prefix: "https://www.lensfrens.xyz/",
+    placeholder: ""
+  }
 };
 
 export const DefaultSocials: AutSocial[] = [
   {
-    type: 'discord',
-    link: '',
+    type: "discord",
+    link: ""
   },
   {
-    type: 'github',
-    link: '',
+    type: "github",
+    link: ""
   },
   {
-    type: 'twitter',
-    link: '',
+    type: "twitter",
+    link: ""
   },
   {
-    type: 'telegram',
-    link: '',
+    type: "telegram",
+    link: ""
   },
   {
-    type: 'lensfrens',
-    link: '',
-  },
+    type: "lensfrens",
+    link: ""
+  }
 ];
 
 export class AutIDProperties {
@@ -82,10 +82,12 @@ export class AutIDProperties {
       this.avatar = data.avatar;
       this.address = data.address;
       this.tokenId = data.tokenId;
-      this.communities = (data.communities || []).map((community) => new Community(community));
+      this.communities = (data.communities || []).map(
+        (community) => new Community(community)
+      );
       this.ethDomain = data.ethDomain;
       this.socials = data.socials || DefaultSocials;
-      this.socials = this.socials.filter((s) => s.type !== 'eth');
+      this.socials = this.socials.filter((s) => s.type !== "eth");
       this.network = data.network;
       this.holderData = data.holderData;
     }
@@ -105,8 +107,8 @@ export class AutID extends BaseNFTModel<AutIDProperties> {
         socials: autID.properties.socials.map((social) => {
           social.link = `${socialUrls[social.type].prefix}${social.link}`;
           return social;
-        }),
-      },
+        })
+      }
     } as Partial<AutID>;
   }
 
