@@ -67,7 +67,7 @@ const Web3NetworkProvider = ({ fullScreen = false }: any) => {
       return;
     }
     setSwitchingNetwork(true);
-    await c.deactivate();
+    // await c.deactivate();
     await c.activate(chainId);
     const config = networks.find(
       (n) => n.chainId?.toString() === chainId?.toString()
