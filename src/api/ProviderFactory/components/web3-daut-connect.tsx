@@ -152,7 +152,7 @@ function Web3DautConnect({ setLoading }) {
         position: "absolute"
       }}
       id="d-aut"
-      dao-expander="0xE9713595A40DDd73874906a92255029dF52C32FE"
+      dao-expander="0xe1C16fB49620693dFfBb770488ff1d5048D1B38b"
       button-type="simple"
     />
   );

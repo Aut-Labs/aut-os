@@ -1,10 +1,5 @@
-import axios from "axios";
 import { environment } from "./environment";
 import AutSDKStorage from "@aut-protocol/sdk-storage";
-
-export const sdkStorage = new AutSDKStorage({
-  nftStorageKey: environment.nftStorageKey
-});
 
 export const isValidUrl = (uri: string) => {
   let url = null as any;
@@ -56,21 +51,4 @@ export function httpUrlToIpfsCID(url: string) {
     return `ipfs://${cid}`;
   }
   return url;
-}
-
-export async function storeMetadata(
-  json: any,
-  convertImageBlobToFile: (blob: Blob) => File = null as any
-) {
-  if (convertImageBlobToFile && isValidUrl(json.image)) {
-    const result = await axios.get(json.image, {
-      responseType: "blob"
-    });
-    json.image = convertImageBlobToFile(result.data);
-  }
-
-  if (isValidUrl(json.image)) {
-    return sdkStorage.storeAsBlob(json);
-  }
-  return sdkStorage.storeAsJson(json);
 }

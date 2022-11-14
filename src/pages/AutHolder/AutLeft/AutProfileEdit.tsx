@@ -33,7 +33,7 @@ import ErrorDialog from "@components/Dialog/ErrorPopup";
 import LoadingDialog from "@components/Dialog/LoadingPopup";
 import { ResultState } from "@store/result-status";
 import { ipfsCIDToHttpUrl } from "@api/storage.api";
-import { toBase64 } from "@utils/to-base-64";
+import { base64toFile, toBase64 } from "@utils/to-base-64";
 import {
   IsConnected,
   setProviderIsOpen
@@ -119,7 +119,7 @@ const AutProfileEdit = () => {
     control,
     handleSubmit,
     watch,
-    formState: { isDirty }
+    formState: { isDirty, isValid, errors }
   } = useForm({
     mode: "onChange",
     defaultValues: {
@@ -302,6 +302,17 @@ const AutProfileEdit = () => {
           <ImageUpload>
             <Controller
               name="image"
+              rules={{
+                required: true,
+                validate: {
+                  fileSize: (v) => {
+                    if (isDirty && v) {
+                      const file = base64toFile(v, "pic");
+                      return file.size < 8388608;
+                    }
+                  }
+                }
+              }}
               control={control}
               render={({ field: { onChange } }) => {
                 return (
@@ -322,6 +333,8 @@ const AutProfileEdit = () => {
                           onChange(null);
                         }
                       }}
+                      name="image"
+                      errors={errors}
                     />
                   </div>
                 );
@@ -352,7 +365,7 @@ const AutProfileEdit = () => {
           type="submit"
           color="primary"
           variant="outlined"
-          disabled={!isDirty}
+          disabled={!isDirty || !isValid}
         >
           Save
         </AutButton>

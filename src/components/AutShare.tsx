@@ -192,6 +192,7 @@ export function AutShareDialog(props: SimpleDialogProps) {
   return (
     <AutStyledDialog
       fullScreen={!desktop}
+      maxWidth={false}
       onClose={props.onClose}
       open={props.open}
       BackdropProps={{ style: { backdropFilter: "blur(5px)" } }}

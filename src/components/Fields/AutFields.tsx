@@ -15,7 +15,8 @@ interface FormHelperTextProps {
   name: string;
   children?: string | JSX.Element;
   errorTypes?: any;
-  value: any;
+  positionAbsolute?: boolean;
+  value?: any;
 }
 
 const defaultErrorTypes = {
@@ -27,7 +28,8 @@ export function FormHelperText({
   name,
   errorTypes,
   children = null,
-  value
+  value,
+  positionAbsolute = true
 }: FormHelperTextProps) {
   if (errors[name]) {
     const { type } = errors[name];
@@ -42,14 +44,15 @@ export function FormHelperText({
       <Typography
         whiteSpace="nowrap"
         color="red"
-        align="right"
+        align={`${positionAbsolute ? "right" : "center"}`}
         component="span"
         variant="body2"
         className="auto-helper-error"
         sx={{
           width: "100%",
-          position: "absolute",
-          left: "0"
+          position: `${positionAbsolute ? "absolute" : "static"}`,
+          left: "0",
+          ml: pxToRem(20)
         }}
       >
         {message}

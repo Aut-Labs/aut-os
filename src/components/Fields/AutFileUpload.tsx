@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { ReactComponent as UploadIcon } from "@assets/upload.svg";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
+import { FormHelperText } from "./AutFields";
 
 const UploadWrapper = styled("div")({
   height: pxToRem(100),
@@ -49,9 +50,21 @@ const Action = styled("div")(({ theme }) => ({
   }
 }));
 
+const errorTypes = {
+  fileSize: (
+    <>
+      Image too large!
+      <br /> Max size is 8Mb.
+    </>
+  ),
+  required: "Avatar is required!"
+};
+
 const AFileUpload = ({
   fileChange = (file: File) => null,
-  initialPreviewUrl = null
+  initialPreviewUrl = null,
+  name,
+  errors
 }) => {
   const [preview, setPreview] = useState(initialPreviewUrl);
   const [showAction, setShowAction] = useState(false);
@@ -122,7 +135,8 @@ const AFileUpload = ({
             style: {
               maxHeight: "100%",
               maxWidth: "100%",
-              objectFit: "cover"
+              objectFit: "cover",
+              display: `${errors.length > 0 ? "none" : ""}`
             }
           }}
         >
@@ -131,6 +145,12 @@ const AFileUpload = ({
         <Action className={`${showAction ? "show" : ""}`}>
           {preview ? <HighlightOffIcon className="remove" /> : null}
         </Action>
+        <FormHelperText
+          errorTypes={errorTypes}
+          name={name}
+          errors={errors}
+          positionAbsolute={false}
+        />
       </div>
     </UploadWrapper>
   );

@@ -1,5 +1,10 @@
 /* eslint-disable max-len */
-import { Dialog, DialogActions, DialogContent } from "@mui/material";
+import {
+  Breakpoint,
+  Dialog,
+  DialogActions,
+  DialogContent
+} from "@mui/material";
 import { pxToRem } from "@utils/text-size";
 
 export const DialogWrapper = ({
@@ -7,10 +12,12 @@ export const DialogWrapper = ({
   actions = null,
   open,
   onClose = null,
-  fullScreen = false
+  fullScreen = false,
+  maxWidth = false
 }) => {
   return (
     <Dialog
+      maxWidth={maxWidth ? (maxWidth as Breakpoint | false) : false}
       open={open}
       fullScreen={fullScreen}
       {...(onClose && {

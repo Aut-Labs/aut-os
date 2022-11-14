@@ -11,7 +11,7 @@ const SuccessDialog = ({
   return (
     <DialogWrapper open={open} onClose={handleClose} fullScreen={fullScreen}>
       <div
-        className="sw-join-dialog-content"
+        className="aut-join-dialog-content"
         style={{
           display: "flex",
           flexDirection: "column",

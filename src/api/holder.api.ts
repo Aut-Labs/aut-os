@@ -2,7 +2,7 @@ import axios, { CancelTokenSource } from "axios";
 import { ethers } from "ethers";
 import { AutID, HolderData } from "./aut.model";
 import { Community } from "./community.model";
-import { ipfsCIDToHttpUrl, isValidUrl, sdkStorage } from "./storage.api";
+import { ipfsCIDToHttpUrl, isValidUrl } from "./storage.api";
 import { base64toFile } from "@utils/to-base-64";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import AutSDK from "@aut-protocol/sdk";
@@ -212,11 +212,11 @@ export const updateProfile = createAsyncThunk(
       !isValidUrl(user.properties.avatar as string)
     ) {
       const file = base64toFile(user.properties.avatar as string, "image");
-      user.properties.avatar = await sdkStorage.storeImageAsBlob(file as File);
+      user.properties.avatar = await sdk.client.storeImageAsBlob(file as File);
       console.log("New image: ->", ipfsCIDToHttpUrl(user.properties.avatar));
     }
 
-    const uri = await sdkStorage.storeAsBlob(AutID.updateAutID(user));
+    const uri = await sdk.client.storeAsBlob(AutID.updateAutID(user));
     console.log("New metadata: ->", ipfsCIDToHttpUrl(uri));
     const response = await sdk.autID.autIDContract.setMetadataUri(uri);
 

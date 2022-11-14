@@ -30,7 +30,7 @@ const AutLoading = () => {
         autoplay
         rendererSettings={{ preserveAspectRatio: "xMidYMid slice" }}
         src={animationData}
-        style={{ height: "400px", width: "400px" }}
+        style={{ height: pxToRem(400), width: pxToRem(400) }}
       />
     </div>
   );

@@ -38,6 +38,8 @@ function App() {
         const sdk = new AutSDK({
           nftStorageApiKey: environment.nftStorageKey
         });
+
+        console.log(sdk);
       })
       .finally(() => setAppLoading(false));
   }, []);
