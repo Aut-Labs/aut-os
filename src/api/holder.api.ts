@@ -154,7 +154,7 @@ export const fetchHolder = createAsyncThunk(
         if (holderData) {
           const autID = await fetchAutID(holderData, networkName);
           autID.properties.communities = await fetchHolderCommunities(
-            holderData.communities
+            holderData.daos
           );
           if (autID) {
             profiles.push(autID);

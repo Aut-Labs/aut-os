@@ -105,7 +105,7 @@ const AutShare = (props: SimpleDialogProps) => {
           }}
         >
           <Typography
-            sx={{ textAlign: "center", mt: pxToRem(20), mb: pxToRem(50) }}
+            sx={{ textAlign: "center", mt: "20px", mb: pxToRem(50) }}
             color="white"
             component="span"
             fontSize={pxToRem(40)}

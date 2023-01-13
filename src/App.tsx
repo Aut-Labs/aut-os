@@ -22,6 +22,7 @@ import SWSnackbar from "./components/snackbar";
 import "./App.scss";
 import { environment } from "@api/environment";
 import AutSDK from "@aut-protocol/sdk";
+import axios from "axios";
 
 function App() {
   const theme = useTheme();
@@ -32,6 +33,13 @@ function App() {
   const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
+    axios
+      .get(
+        "https://gateway.ipfs.io/ipfs/bafkreihexxn6ivhakly7jqdi5wzqkc5rmisdhs33zatyzxgsfx73ihu7si"
+      )
+      .then((value) => {
+        console.log("IPFS", value);
+      });
     getAppConfig()
       .then(async (res) => {
         dispatch(setNetworks(res));

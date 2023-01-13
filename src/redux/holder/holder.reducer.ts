@@ -8,6 +8,10 @@ import {
   withdraw
 } from "@api/holder.api";
 import { CommitmentMessages } from "@components/AutSlider";
+import {
+  DummyProfile,
+  DummyProfileWCommunity
+} from "src/pages/AutHome/dummy-profile";
 
 export interface HolderState {
   profiles: AutID[];

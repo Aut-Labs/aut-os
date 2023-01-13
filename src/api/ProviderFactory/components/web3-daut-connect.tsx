@@ -4,7 +4,6 @@ import { useAppDispatch } from "@store/store.model";
 import { ResultState } from "@store/result-status";
 import { updateHolderState } from "@store/holder/holder.reducer";
 import { resetAuthState, setConnectedUserInfo } from "@auth/auth.reducer";
-import { Init } from "@aut-protocol/d-aut";
 import { fetchHolder, fetchHolderEthEns } from "@api/holder.api";
 import { AutID } from "@api/aut.model";
 import { useSelector } from "react-redux";
@@ -14,6 +13,7 @@ import {
   setNetwork
 } from "@store/WalletProvider/WalletProvider";
 import { EnableAndChangeNetwork } from "../web3.network";
+import { Init } from "@aut-labs/d-aut";
 
 function Web3DautConnect({ setLoading }) {
   const dispatch = useAppDispatch();
@@ -152,7 +152,7 @@ function Web3DautConnect({ setLoading }) {
         position: "absolute"
       }}
       id="d-aut"
-      dao-expander="0xe1C16fB49620693dFfBb770488ff1d5048D1B38b"
+      dao-expander="0x1d9258482896F8671d01Fa5b44d953693d801174"
       button-type="simple"
     />
   );

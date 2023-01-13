@@ -9,11 +9,8 @@ import {
   Typography,
   useMediaQuery
 } from "@mui/material";
-import { pxToRem } from "@utils/text-size";
 import { Controller, useForm } from "react-hook-form";
-import { AutButton } from "@components/AutButton";
 import { useHistory, useParams } from "react-router-dom";
-import { AutSlider } from "@components/AutSlider";
 import { useSelector } from "react-redux";
 import {
   SelectedCommunity,
@@ -36,6 +33,7 @@ import {
 } from "@store/WalletProvider/WalletProvider";
 import { useWeb3React } from "@web3-react/core";
 import { EditContentElements } from "@components/EditContentElements";
+import { AutCommitmentSlider } from "@theme/commitment-slider-styles";
 
 const AutCard = styled(Card)(() => ({
   "&.MuiCard-root": {
@@ -51,9 +49,7 @@ const AutCard = styled(Card)(() => ({
 }));
 
 const ExternalUrl = styled("a")(() => ({
-  color: "white",
-  fontSize: pxToRem(14),
-  marginBottom: pxToRem(10)
+  color: "white"
 }));
 
 const MiddleWrapper = styled(Box)(({ theme }) => ({
@@ -64,6 +60,17 @@ const MiddleWrapper = styled(Box)(({ theme }) => ({
   alignItems: "flex-start",
   width: "100%",
   flex: 1
+}));
+
+const CommitmentSliderWrapper = styled("div")(({ theme }) => ({
+  width: "100%",
+  maxWidth: "600px",
+  marginTop: "100px",
+  marginBottom: "150px",
+  [theme.breakpoints.down("lg")]: {
+    marginTop: "50px",
+    marginBottom: "50px"
+  }
 }));
 
 const { FormWrapper, BottomWrapper, TopWrapper } = EditContentElements;
@@ -180,27 +187,28 @@ const AutCommunityEdit = () => {
       />
       {selectedCommunity && (
         <>
-          <TopWrapper>
-            <Typography
-              fontSize={pxToRem(40)}
-              textTransform="uppercase"
-              color="background.paper"
-              textAlign="left"
-            >
+          {/* <TopWrapper>
+            <Typography variant="h3" color="white" textAlign="left">
               Edit your community
             </Typography>
-          </TopWrapper>
+          </TopWrapper> */}
 
           <MiddleWrapper>
-            <AutCard sx={{ bgcolor: "background.default", border: "none" }}>
+            <AutCard
+              sx={{ bgcolor: "transparent", border: "none", boxShadow: "none" }}
+            >
               <CardHeader
                 sx={{ alignSelf: "flex-start" }}
                 avatar={
                   <Avatar
                     sx={{
                       bgcolor: "background.default",
-                      width: pxToRem(110),
-                      height: pxToRem(110),
+                      width: {
+                        xs: "110px"
+                      },
+                      height: {
+                        xs: "110px"
+                      },
                       borderRadius: 0
                     }}
                     aria-label="community-avatar"
@@ -210,8 +218,12 @@ const AutCommunityEdit = () => {
               />
               <CardContent
                 sx={{
-                  ml: pxToRem(30),
-                  mr: pxToRem(30),
+                  ml: {
+                    xs: "30px"
+                  },
+                  mr: {
+                    xs: "30px"
+                  },
                   alignSelf: "flex-end",
                   display: "flex",
                   flexDirection: "column",
@@ -220,33 +232,32 @@ const AutCommunityEdit = () => {
                 }}
               >
                 <div style={{ display: "flex", alignItems: "center" }}>
-                  <Typography
-                    fontSize={pxToRem(25)}
-                    color="background.paper"
-                    textAlign="left"
-                  >
+                  <Typography color="white" variant="h3" textAlign="left">
                     {selectedCommunity?.name}
                   </Typography>
                 </div>
-                <ExternalUrl
+                {/* <ExternalUrl
                   href={`${blockExplorer}/address/${selectedCommunity.properties.address}`}
                   target="_blank"
                 >
-                  {trimAddress(selectedCommunity.properties.address)}
-                </ExternalUrl>
+                  <Typography variant="caption" color="white">
+                    {trimAddress(selectedCommunity.properties.address)}
+                  </Typography>
+                </ExternalUrl> */}
                 <Typography
                   variant="subtitle2"
-                  color="background.paper"
+                  color="white"
                   textAlign="left"
+                  fontWeight="normal"
                   sx={{ textWrap: "wrap" }}
                 >
                   {selectedCommunity?.properties?.market}
                 </Typography>
                 <Typography
-                  variant="body1"
-                  color="background.paper"
+                  variant="body"
+                  color="white"
                   textAlign="left"
-                  sx={{ textWrap: "wrap", pt: pxToRem(30) }}
+                  sx={{ textWrap: "wrap", padding: "20px 0" }}
                 >
                   {selectedCommunity?.description}
                 </Typography>
@@ -257,29 +268,21 @@ const AutCommunityEdit = () => {
                   sx={{
                     textDecoration: "underline",
                     textTransform: "none",
-                    padding: "0",
-                    mt: pxToRem(15),
-                    fontSize: pxToRem(16)
+                    padding: "0"
                   }}
                 >
-                  Withdraw from this community
+                  <Typography variant="subtitle2">
+                    Withdraw from this community
+                  </Typography>
                 </Button>
               </CardContent>
             </AutCard>
-            <div
-              style={{
-                marginTop: desktop
-                  ? pxToRem(100)
-                  : !xs
-                  ? pxToRem(50)
-                  : pxToRem(30),
-                width: "100%"
-              }}
-            >
+            <CommitmentSliderWrapper>
               <Typography
-                color="background.paper"
+                color="white"
+                variant="subtitle2"
                 textAlign="left"
-                sx={{ textWrap: "wrap", pb: pxToRem(20), fontSize: "20px" }}
+                sx={{ textWrap: "wrap", pb: "20px" }}
               >
                 My Commitment Level
               </Typography>
@@ -293,18 +296,16 @@ const AutCommunityEdit = () => {
                 }}
                 render={({ field: { name, value, onChange } }) => {
                   return (
-                    <AutSlider
+                    <AutCommitmentSlider
                       value={value}
                       name={name}
                       errors={errors}
-                      communityName={selectedCommunity?.name}
-                      minCommitment={selectedCommunity?.properties?.commitment}
                       sliderProps={{
                         defaultValue: 1,
                         step: 1,
                         marks: true,
                         name,
-                        value: +value || 0,
+                        value: (value as any) || 0,
                         onChange,
                         min: 0,
                         max: 10
@@ -313,34 +314,41 @@ const AutCommunityEdit = () => {
                   );
                 }}
               />
-            </div>
+            </CommitmentSliderWrapper>
           </MiddleWrapper>
+
           <BottomWrapper>
-            <AutButton
+            <Button
+              variant="outlined"
+              size="normal"
+              color="offWhite"
               onClick={() => history.goBack()}
               sx={{
-                width: desktop ? pxToRem(250) : pxToRem(150),
-                height: pxToRem(50)
+                width: {
+                  xs: "140px",
+                  md: "200px",
+                  xxl: "270px"
+                }
               }}
-              type="button"
-              color="primary"
-              variant="outlined"
             >
               Cancel
-            </AutButton>
-            <AutButton
+            </Button>
+            <Button
               disabled={!isValid || !isDirty}
-              sx={{
-                width: desktop ? pxToRem(250) : pxToRem(150),
-                height: pxToRem(50),
-                marginLeft: pxToRem(50)
-              }}
               type="submit"
-              color="primary"
               variant="outlined"
+              size="normal"
+              color="offWhite"
+              sx={{
+                width: {
+                  xs: "140px",
+                  md: "200px",
+                  xxl: "270px"
+                }
+              }}
             >
               Save
-            </AutButton>
+            </Button>
           </BottomWrapper>
         </>
       )}

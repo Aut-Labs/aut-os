@@ -2,13 +2,13 @@ import { AutID } from "@api/aut.model";
 import { ipfsCIDToHttpUrl } from "@api/storage.api";
 import { Avatar, Typography, SvgIcon, styled, Dialog } from "@mui/material";
 import { pxToRem } from "@utils/text-size";
-import { ReactComponent as RedirectIcon } from "@assets/RedirectIcon.svg";
+import { ReactComponent as RedirectIcon } from "@assets/RedirectIcon2.svg";
 import DialogWrapper from "./Dialog/DialogWrapper";
 
 const UserRow = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "row",
-  height: pxToRem(80),
+  height: "80px",
   width: "100%",
   cursor: "pointer",
   borderBottom: "1px solid white",
@@ -20,13 +20,13 @@ const UserRow = styled("div")(({ theme }) => ({
   },
 
   "&:hover": {
-    backgroundColor: "rgba(67, 158, 221, 0.15)"
+    backgroundColor: "rgba(235, 235, 242, 0.2)"
   },
 
   [theme.breakpoints.down("md")]: {
     display: "flex",
     flexDirection: "row",
-    height: pxToRem(80),
+    height: "80px",
     width: "100%",
     cursor: "pointer",
     borderBottom: "1px solid white",
@@ -49,8 +49,8 @@ export const AutIDProfileList = ({
             <Avatar
               sx={{
                 bgcolor: "background.default",
-                height: pxToRem(78),
-                width: pxToRem(78),
+                height: "78px",
+                width: "78px",
                 borderRadius: 0
               }}
               aria-label="avatar"
@@ -75,7 +75,7 @@ export const AutIDProfileList = ({
                     padding: "3px",
                     height: "100%",
                     color: "white",
-                    ml: pxToRem(20)
+                    ml: "20px"
                   }}
                   variant="h6"
                 >
@@ -96,7 +96,7 @@ export const AutIDProfileList = ({
                     display: "flex",
                     justifyContent: "center",
                     color: "white",
-                    ml: pxToRem(20),
+                    ml: "20px",
                     padding: "5px",
                     borderRadius: "3px",
                     backgroundColor: "rgba(67, 158, 221, 0.3)"
@@ -116,10 +116,10 @@ export const AutIDProfileList = ({
               >
                 <SvgIcon
                   sx={{
-                    height: pxToRem(34),
+                    height: "34px",
                     width: "100%",
-                    mt: pxToRem(10),
-                    ml: pxToRem(20),
+                    mt: "10px",
+                    ml: "20px",
                     justifyContent: "center",
                     cursor: "pointer"
                   }}
@@ -157,13 +157,13 @@ const ListWrapper = styled("div")(({ theme }) => ({
   flexDirection: "column",
   alignItems: "center",
   width: "100%",
-  marginBottom: pxToRem(20)
+  marginBottom: "20px"
 }));
 
 const Title = styled(Typography)({
   marginTop: pxToRem(25),
   letterSpacing: "3px",
-  fontSize: pxToRem(20),
+  fontSize: "20px",
   textAlign: "center",
 
   fontWeight: "500",

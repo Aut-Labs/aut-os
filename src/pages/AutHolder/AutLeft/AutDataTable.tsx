@@ -1,7 +1,6 @@
 import React, { useCallback } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { styled } from "@mui/material";
-import { pxToRem } from "@utils/text-size";
 
 const AutTable = ({
   apiRef,
@@ -36,7 +35,7 @@ const AutTable = ({
     "& .MuiDataGrid-cell": {
       lineHeight: "unset !important",
       maxHeight: "none !important",
-      maxWidth: `$${pxToRem(200)}!important`,
+      maxWidth: `200px !important`,
       whiteSpace: "normal"
     },
     "& .MuiDataGrid-row": {

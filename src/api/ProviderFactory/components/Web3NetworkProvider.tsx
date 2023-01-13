@@ -25,18 +25,18 @@ import { ethers } from "ethers";
 import AutSDK from "@aut-protocol/sdk";
 
 const Title = styled(Typography)({
-  mt: pxToRem(25),
+  mt: "25px",
   letterSpacing: "3px",
-  fontSize: pxToRem(20),
+  fontSize: "20px",
   fontWeight: "500",
   color: "white",
   textTransform: "uppercase"
 });
 
 const Subtitle = styled(Typography)({
-  mt: pxToRem(25),
+  mt: "25px",
   letterSpacing: "1.25px",
-  fontSize: pxToRem(16),
+  fontSize: "16px",
   textAlign: "center",
   color: "white",
   textTransform: "uppercase"

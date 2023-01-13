@@ -1,10 +1,8 @@
-import { ReactComponent as PersonIcon } from "@assets/PersonIcon.svg";
 import { ReactComponent as DiscordIcon } from "@assets/SocialIcons/DiscordIcon.svg";
 import { ReactComponent as GitHubIcon } from "@assets/SocialIcons/GitHubIcon.svg";
 import { ReactComponent as LensfrensIcon } from "@assets/SocialIcons/LensfrensIcon.svg";
 import { ReactComponent as TelegramIcon } from "@assets/SocialIcons/TelegramIcon.svg";
 import { ReactComponent as TwitterIcon } from "@assets/SocialIcons/TwitterIcon.svg";
-import { AutTextField } from "@components/Fields/AutFields";
 import AFileUpload from "@components/Fields/AutFileUpload";
 import {
   Box,
@@ -13,11 +11,13 @@ import {
   Typography,
   useMediaQuery,
   InputAdornment,
-  useTheme
+  useTheme,
+  Button,
+  CardHeader,
+  CardContent,
+  Card
 } from "@mui/material";
-import { pxToRem } from "@utils/text-size";
 import { Controller, useForm, useFieldArray } from "react-hook-form";
-import { AutButton } from "@components/AutButton";
 import { useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
 import {
@@ -41,6 +41,8 @@ import {
 import { useWeb3React } from "@web3-react/core";
 import { useEffect, useState } from "react";
 import { EditContentElements } from "@components/EditContentElements";
+import { DummyProfile } from "src/pages/AutHome/dummy-profile";
+import { AutTextField } from "@theme/field-text-styles";
 
 const socialIcons = {
   // eth: EthIcon,
@@ -51,53 +53,62 @@ const socialIcons = {
   lensfrens: LensfrensIcon
 };
 
+const AutCard = styled(Card)(() => ({
+  "&.MuiCard-root": {
+    display: "flex"
+  },
+  ".MuiCardHeader-root": {
+    padding: "0"
+  },
+
+  ".MuiCardContent-root:last-child": {
+    padding: "0"
+  }
+}));
+
 const MiddleWrapper = styled(Box)(({ theme }) => ({
   display: "flex",
   flex: "1",
   justifyContent: "flex-start",
-  flexDirection: "row",
+  flexDirection: "column",
   width: "100%",
-  alignItems: "flex-start",
-  [theme.breakpoints.down("lg")]: {
-    flexDirection: "column-reverse",
-    justifyContent: "flex-end"
-  }
+  alignItems: "flex-start"
 }));
 
 const LeftWrapper = styled("div")(({ theme }) => ({
   display: "flex",
+  width: "100%",
   flexDirection: "column",
-  width: "70%",
+  maxWidth: "600px",
+  paddingTop: "30px",
   justifyContent: "flex-start",
-  alignItems: "flex-start",
-  [theme.breakpoints.down("lg")]: {
-    width: "100%"
-  }
+  alignItems: "flex-start"
 }));
 
-const RightWrapper = styled("div")(({ theme }) => ({
-  width: "30%",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "flex-start",
-  alignSelf: "flex-start",
-  [theme.breakpoints.down("lg")]: {
-    justifyContent: "center",
-    alignItems: "center",
-    justifyItems: "center",
-    alignContent: "center",
-    width: "100%",
-    marginBottom: pxToRem(30)
-  }
-}));
-
-const ImageUpload = styled("div")(() => ({
-  width: pxToRem(160),
+const ImageUpload = styled("div")(({ theme }) => ({
+  width: "150px",
   display: "flex",
   flexDirection: "column",
   alignItems: "flex-start",
   justifyContent: "center",
-  textAlign: "center"
+  textAlign: "center",
+  [theme.breakpoints.down("md")]: {
+    width: "100px"
+  }
+}));
+
+const StyledTextField = styled(AutTextField)(({ theme }) => ({
+  width: "100%",
+
+  ".MuiInputLabel-root": {
+    top: "-2px"
+  },
+
+  ".MuiOutlinedInput-root, .MuiInput-underline": {
+    color: "#fff",
+    height: "45px",
+    lineHeight: "45px"
+  }
 }));
 
 const { FieldWrapper, FormWrapper, BottomWrapper, TopWrapper } =
@@ -190,24 +201,119 @@ const AutProfileEdit = () => {
         open={status === ResultState.Loading}
         message="Editing community..."
       />
-      <TopWrapper>
-        <Typography
-          fontSize={pxToRem(40)}
-          textTransform="uppercase"
-          color="background.paper"
-          textAlign="left"
+
+      <MiddleWrapper>
+        <Box
+          sx={{
+            paddingBottom: {
+              xs: "30px",
+              md: "50px"
+            },
+            display: "flex"
+          }}
         >
+          <AutCard
+            sx={{ bgcolor: "transparent", border: "none", boxShadow: "none" }}
+          >
+            <CardHeader
+              avatar={
+                <ImageUpload>
+                  <Controller
+                    name="image"
+                    rules={{
+                      required: true,
+                      validate: {
+                        fileSize: (v) => {
+                          if (isDirty && v) {
+                            const file = base64toFile(v, "pic");
+                            return file.size < 8388608;
+                          }
+                        }
+                      }
+                    }}
+                    control={control}
+                    render={({ field: { onChange } }) => {
+                      return (
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "column"
+                          }}
+                        >
+                          <AFileUpload
+                            initialPreviewUrl={ipfsCIDToHttpUrl(
+                              holderData?.properties?.avatar as string
+                            )}
+                            fileChange={async (file) => {
+                              if (file) {
+                                onChange(await toBase64(file));
+                              } else {
+                                onChange(null);
+                              }
+                            }}
+                            name="image"
+                            errors={errors}
+                          />
+                        </div>
+                      );
+                    }}
+                  />
+                </ImageUpload>
+              }
+              sx={{ alignSelf: "flex-start" }}
+            ></CardHeader>
+            <CardContent
+              sx={{
+                ml: {
+                  xs: "0",
+                  sm: "30px"
+                },
+                mr: {
+                  xs: "0",
+                  sm: "30px"
+                },
+                alignSelf: "center",
+                height: {
+                  xs: "100px",
+                  md: "150px"
+                },
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between"
+              }}
+            >
+              <div>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "flex-start",
+                    marginBottom: "5px"
+                  }}
+                >
+                  <Typography
+                    color="white"
+                    textAlign="left"
+                    lineHeight={1}
+                    variant="h3"
+                  >
+                    {holderData?.name}
+                  </Typography>
+                </div>
+              </div>
+            </CardContent>
+          </AutCard>
+        </Box>
+
+        <Typography variant="h3" color="white" textAlign="left">
           Edit your profile
         </Typography>
-      </TopWrapper>
-      <MiddleWrapper>
         <LeftWrapper>
-          <FieldWrapper>
+          {/* <FieldWrapper>
             <SvgIcon
               sx={{
                 height: pxToRem(34),
                 width: pxToRem(31),
-                mr: pxToRem(20)
+                mr: "20px"
               }}
               component={PersonIcon}
             />
@@ -224,7 +330,7 @@ const AutProfileEdit = () => {
               }}
             >
               <Typography
-                fontSize={pxToRem(20)}
+                fontSize={"20px"}
                 sx={{
                   padding: "0 14px",
                   width: "100%",
@@ -238,7 +344,7 @@ const AutProfileEdit = () => {
                 {holderData?.name}
               </Typography>
             </div>
-          </FieldWrapper>
+          </FieldWrapper> */}
           {fields.map((_, index) => {
             const AutIcon = socialIcons[Object.keys(socialIcons)[index]];
             const { prefix, hidePrefix, placeholder } =
@@ -248,10 +354,14 @@ const AutProfileEdit = () => {
               <FieldWrapper key={`socials.${index}`}>
                 <SvgIcon
                   sx={{
-                    height: pxToRem(34),
-                    width: pxToRem(34),
-                    mt: pxToRem(10),
-                    mr: pxToRem(20)
+                    height: {
+                      xs: "34px"
+                    },
+                    width: {
+                      xs: "34px"
+                    },
+                    mt: "10px",
+                    mr: "20px"
                   }}
                   key={`socials.${index}.icon`}
                   component={AutIcon}
@@ -263,17 +373,18 @@ const AutProfileEdit = () => {
                   render={({ field: { name, value, onChange } }) => {
                     return (
                       <>
-                        <AutTextField
+                        <StyledTextField
+                          variant="standard"
+                          color="offWhite"
                           placeholder={placeholder}
                           focused
                           id={name}
                           name={name}
                           value={value}
-                          width="80%"
                           autoFocus={index === 0}
                           onChange={onChange}
                           sx={{
-                            mb: pxToRem(45)
+                            mb: "15px"
                           }}
                           InputProps={{
                             startAdornment: !hidePrefix && (
@@ -298,77 +409,39 @@ const AutProfileEdit = () => {
             );
           })}
         </LeftWrapper>
-        <RightWrapper>
-          <ImageUpload>
-            <Controller
-              name="image"
-              rules={{
-                required: true,
-                validate: {
-                  fileSize: (v) => {
-                    if (isDirty && v) {
-                      const file = base64toFile(v, "pic");
-                      return file.size < 8388608;
-                    }
-                  }
-                }
-              }}
-              control={control}
-              render={({ field: { onChange } }) => {
-                return (
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column"
-                    }}
-                  >
-                    <AFileUpload
-                      initialPreviewUrl={ipfsCIDToHttpUrl(
-                        holderData?.properties?.avatar as string
-                      )}
-                      fileChange={async (file) => {
-                        if (file) {
-                          onChange(await toBase64(file));
-                        } else {
-                          onChange(null);
-                        }
-                      }}
-                      name="image"
-                      errors={errors}
-                    />
-                  </div>
-                );
-              }}
-            />
-          </ImageUpload>
-        </RightWrapper>
       </MiddleWrapper>
       <BottomWrapper>
-        <AutButton
+        <Button
+          variant="outlined"
+          size="normal"
+          color="offWhite"
           onClick={() => history.goBack()}
           sx={{
-            width: desktop ? pxToRem(250) : pxToRem(150),
-            height: pxToRem(50)
+            width: {
+              xs: "140px",
+              md: "200px",
+              xxl: "270px"
+            }
           }}
-          type="button"
-          color="primary"
-          variant="outlined"
         >
           Cancel
-        </AutButton>
-        <AutButton
-          sx={{
-            width: desktop ? pxToRem(250) : pxToRem(150),
-            height: pxToRem(50),
-            marginLeft: pxToRem(50)
-          }}
+        </Button>
+        <Button
+          disabled={!isValid || !isDirty}
           type="submit"
-          color="primary"
           variant="outlined"
-          disabled={!isDirty || !isValid}
+          size="normal"
+          color="offWhite"
+          sx={{
+            width: {
+              xs: "140px",
+              md: "200px",
+              xxl: "270px"
+            }
+          }}
         >
           Save
-        </AutButton>
+        </Button>
       </BottomWrapper>
     </FormWrapper>
   );

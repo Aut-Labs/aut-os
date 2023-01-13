@@ -72,7 +72,7 @@ function AutClipboardCopy({ url, sx = {}, trim = (v) => v }) {
           }}
           color="info.dark"
           component="span"
-          fontSize={pxToRem(18)}
+          variant="caption"
         >
           {trim(url)}
         </Typography>

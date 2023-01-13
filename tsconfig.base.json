@@ -22,7 +22,8 @@
             ],
             "@api/*": [
                 "src/api/*"
-            ]
+            ],
+            "@theme/*": ["src/theme/*"]
         }
     }
 }
