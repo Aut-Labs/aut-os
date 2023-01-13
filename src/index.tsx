@@ -10,8 +10,8 @@ import { BrowserTracing } from "@sentry/tracing";
 import { createRoot } from "react-dom/client";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import { SwTheme } from "./theme";
 import { ensureVariablesExist } from "@utils/env";
+import AutTheme from "./theme/theme";
 
 markerSDK.loadWidget({
   destination: `${process.env.REACT_APP_MARKER}`,
@@ -33,7 +33,7 @@ const root = createRoot(container);
 
 root.render(
   <StyledEngineProvider injectFirst>
-    <ThemeProvider theme={SwTheme}>
+    <ThemeProvider theme={AutTheme}>
       <Provider store={store}>
         <BrowserRouter>
           <App />

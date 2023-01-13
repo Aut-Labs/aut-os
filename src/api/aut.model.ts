@@ -4,7 +4,7 @@ import { Community } from "./community.model";
 import { httpUrlToIpfsCID } from "./storage.api";
 
 export interface HolderData {
-  communities: CommunityMembershipDetails[];
+  daos: CommunityMembershipDetails[];
   address: string;
   tokenId: string;
   metadataUri: string;

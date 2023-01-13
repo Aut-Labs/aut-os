@@ -1,3 +1,4 @@
+/* eslint-disable no-constant-condition */
 import { ReactComponent as DiscordIcon } from "@assets/SocialIcons/DiscordIcon.svg";
 
 import { ReactComponent as GitHubIcon } from "@assets/SocialIcons/GitHubIcon.svg";
@@ -14,19 +15,13 @@ import {
   styled,
   SvgIcon,
   Typography,
-  useMediaQuery,
   useTheme
 } from "@mui/material";
-import { pxToRem } from "@utils/text-size";
 import { useState } from "react";
 import PencilEdit from "@assets/PencilEditicon";
 import { useHistory, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
-import {
-  HolderData,
-  HolderStatus,
-  updateHolderState
-} from "@store/holder/holder.reducer";
+import { HolderData, HolderStatus } from "@store/holder/holder.reducer";
 import { CanUpdateProfile } from "@auth/auth.reducer";
 import { ResultState } from "@store/result-status";
 import { ipfsCIDToHttpUrl } from "@api/storage.api";
@@ -46,7 +41,7 @@ const AutTable = styled("table")(({ theme }) => ({
       "&.CanUpdateProfile": {
         cursor: "pointer",
         "&:hover": {
-          backgroundColor: "rgba(67, 158, 221, 0.3)"
+          backgroundColor: "rgba(235, 235, 242, 0.2)"
         }
       },
 
@@ -57,46 +52,53 @@ const AutTable = styled("table")(({ theme }) => ({
   },
 
   td: {
-    padding: `${pxToRem(20)} ${pxToRem(10)}`,
-    height: pxToRem(32),
+    padding: "20px 0",
+    height: "32px",
 
     [theme.breakpoints.down("md")]: {
-      padding: pxToRem(20)
+      padding: "10px 5px"
     },
 
     "&:not(:first-of-type)": {
-      paddingLeft: pxToRem(30)
+      paddingLeft: "30px",
+      [theme.breakpoints.down("md")]: {
+        paddingLeft: "15px"
+      }
     },
     borderBottom: "1px solid white"
   },
 
   th: {
-    height: pxToRem(32),
-    padding: `${pxToRem(20)} ${pxToRem(10)}`,
+    height: "32px",
+    padding: "20px 0px",
 
     [theme.breakpoints.down("md")]: {
-      padding: pxToRem(20)
+      padding: "10px 5px"
     },
-
     "&:not(:first-of-type)": {
-      paddingLeft: pxToRem(30)
+      paddingLeft: "30px",
+      [theme.breakpoints.down("md")]: {
+        paddingLeft: "15px"
+      }
     },
     borderBottom: "1px solid white"
   }
 }));
 
 const IconContainer = styled("div")(({ theme }) => ({
-  paddingTop: pxToRem(15),
+  paddingTop: "15px",
   display: "flex",
-  minHeight: pxToRem(30),
+  minHeight: "25px",
+  height: "40px",
+
   [theme.breakpoints.down("md")]: {
-    paddingTop: pxToRem(20)
+    height: "35px",
+    minHeight: "20px"
   }
 }));
 
 const ExternalUrl = styled("a")(({ theme }) => ({
-  color: "white",
-  fontSize: pxToRem(14)
+  color: "white"
 }));
 
 const AutCard = styled(Card)(({ theme }) => ({
@@ -113,6 +115,21 @@ const AutCard = styled(Card)(({ theme }) => ({
   }
 }));
 
+const EditIcon = styled("div")(({ theme }) => ({
+  height: "34px",
+  width: "34px",
+  cursor: "pointer",
+  paddingLeft: "10px",
+  display: "flex",
+  alignSelf: "flex-end",
+  marginBottom: "5px",
+
+  [theme.breakpoints.down("md")]: {
+    height: "18px",
+    width: "18px"
+  }
+}));
+
 const { FieldWrapper, FormWrapper, BottomWrapper, TopWrapper, ContentWrapper } =
   EditContentElements;
 
@@ -122,9 +139,8 @@ const AutUserInfo = ({ match }) => {
   const blockExplorer = useSelector(BlockExplorerUrl);
   const selectedNetwork = useSelector(SelectedNetworkConfig);
   const canUpdateProfile = useSelector(CanUpdateProfile);
+
   const theme = useTheme();
-  const desktop = useMediaQuery(theme.breakpoints.up("md"));
-  const xs = useMediaQuery(theme.breakpoints.down("sm"));
   const [isActiveIndex, setIsActiveIndex] = useState(null);
   const history = useHistory();
   const location = useLocation();
@@ -170,14 +186,19 @@ const AutUserInfo = ({ match }) => {
         >
           <Box
             sx={{
-              paddingBottom: pxToRem(100)
+              paddingBottom: {
+                xs: "30px",
+                md: "50px",
+                lg: "80px"
+              }
             }}
           >
             <AutCard
               sx={{
-                bgcolor: "background.default",
                 border: "none",
-                display: "flex"
+                display: "flex",
+                boxShadow: "none",
+                bgcolor: "transparent"
               }}
             >
               <CardHeader
@@ -185,11 +206,17 @@ const AutUserInfo = ({ match }) => {
                   <Avatar
                     sx={{
                       bgcolor: "background.default",
-                      width: pxToRem(150),
-                      height: pxToRem(150),
+                      height: {
+                        xs: "100px",
+                        md: "150px"
+                      },
+                      width: {
+                        xs: "100px",
+                        md: "150px"
+                      },
                       borderRadius: 0
                     }}
-                    aria-label="recipe"
+                    aria-label="avatar"
                     src={ipfsCIDToHttpUrl(
                       holderData?.properties?.avatar as string
                     )}
@@ -198,57 +225,74 @@ const AutUserInfo = ({ match }) => {
               />
               <CardContent
                 sx={{
-                  ml: xs ? "0" : pxToRem(30),
-                  mr: xs ? 0 : pxToRem(30),
+                  ml: {
+                    xs: "0",
+                    sm: "30px"
+                  },
+                  mr: {
+                    xs: "0",
+                    sm: "30px"
+                  },
                   alignSelf: "center",
-                  height: pxToRem(150)
+                  height: {
+                    xs: "100px",
+                    md: "150px"
+                  },
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between"
                 }}
               >
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "flex-start",
-                    marginBottom: "5px"
-                  }}
-                >
-                  <Typography
-                    fontSize={pxToRem(50)}
-                    color="background.paper"
-                    textAlign="left"
-                    lineHeight={1}
+                <div>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "flex-start",
+                      marginBottom: "5px"
+                    }}
                   >
-                    {holderData.name}
-                  </Typography>
-                  {canUpdateProfile && (
-                    <div
-                      style={{
-                        padding: pxToRem(10),
-                        cursor: "pointer",
-                        alignSelf: "center"
-                      }}
-                      onClick={onEdit}
+                    <Typography
+                      color="white"
+                      textAlign="left"
+                      lineHeight={1}
+                      variant="h3"
                     >
-                      <PencilEdit height={pxToRem(24)} width={pxToRem(24)} />
-                    </div>
-                  )}
-                </div>
-                <ExternalUrl
-                  href={`${blockExplorer}/address/${holderData?.properties?.address}`}
-                  target="_blank"
-                >
-                  {trimAddress(holderData.properties.address)}
-                </ExternalUrl>
-
-                {holderData.properties.ethDomain && (
-                  <Typography
-                    variant="subtitle2"
-                    color="background.paper"
-                    textAlign="left"
-                    sx={{ textDecoration: "underline", wordBreak: "break-all" }}
+                      {holderData.name}
+                    </Typography>
+                    {canUpdateProfile && (
+                      <EditIcon onClick={onEdit}>
+                        <PencilEdit />
+                      </EditIcon>
+                    )}
+                  </div>
+                  <ExternalUrl
+                    href={`${blockExplorer}/address/${holderData?.properties?.address}`}
+                    target="_blank"
                   >
-                    {holderData.properties.ethDomain}
-                  </Typography>
-                )}
+                    <Typography
+                      variant="subtitle2"
+                      color="white"
+                      fontWeight="normal"
+                    >
+                      {trimAddress(holderData.properties.address)}
+                    </Typography>
+                  </ExternalUrl>
+
+                  {/* {holderData.properties.ethDomain && (
+                    <Typography
+                      variant="subtitle2"
+                      color="white"
+                      textAlign="left"
+                      sx={{
+                        textDecoration: "underline",
+                        wordBreak: "break-all"
+                      }}
+                    >
+                      {holderData.properties.ethDomain}
+                    </Typography>
+                  )} */}
+                </div>
+
                 <IconContainer>
                   {holderData?.properties.socials.map((social, index) => {
                     const AutIcon =
@@ -264,9 +308,18 @@ const AutUserInfo = ({ match }) => {
                         >
                           <SvgIcon
                             sx={{
-                              height: pxToRem(34),
-                              width: pxToRem(31),
-                              mr: pxToRem(20)
+                              height: {
+                                xs: "25px",
+                                md: "30px"
+                              },
+                              width: {
+                                xs: "25px",
+                                md: "30px"
+                              },
+                              mr: {
+                                xs: "10px",
+                                md: "15px"
+                              }
                             }}
                             key={`socials.${index}.icon`}
                             component={AutIcon}
@@ -280,19 +333,14 @@ const AutUserInfo = ({ match }) => {
             </AutCard>
           </Box>
           <Box>
-            <Typography
-              fontSize={pxToRem(47)}
-              textTransform="uppercase"
-              color="background.paper"
-              textAlign="left"
-            >
+            <Typography color="white" textAlign="left" variant="h3">
               Communities
             </Typography>
           </Box>
           <Box
             sx={{
-              paddingTop: pxToRem(50),
-              paddingBottom: pxToRem(100)
+              paddingTop: "30px",
+              paddingBottom: "30px"
             }}
           >
             <AutTable aria-label="table" cellSpacing="0">
@@ -301,9 +349,9 @@ const AutUserInfo = ({ match }) => {
                   <th>
                     <Typography
                       variant="subtitle2"
-                      color="background.paper"
+                      fontWeight="normal"
+                      color="white"
                       textAlign="left"
-                      fontWeight="bold"
                     >
                       Community Name
                     </Typography>
@@ -311,9 +359,9 @@ const AutUserInfo = ({ match }) => {
                   <th>
                     <Typography
                       variant="subtitle2"
-                      color="background.paper"
+                      fontWeight="normal"
+                      color="white"
                       textAlign="left"
-                      fontWeight="bold"
                     >
                       Role
                     </Typography>
@@ -321,9 +369,8 @@ const AutUserInfo = ({ match }) => {
                   <th>
                     <Typography
                       variant="subtitle2"
-                      color="background.paper"
-                      textAlign="center"
-                      fontWeight="bold"
+                      fontWeight="normal"
+                      color="white"
                     >
                       Commitment
                     </Typography>
@@ -349,10 +396,18 @@ const AutUserInfo = ({ match }) => {
                           <Avatar
                             sx={{
                               bgcolor: "background.default",
-                              width: pxToRem(64),
-                              height: pxToRem(64),
+                              width: {
+                                xs: "64px",
+                                xxl: "87px"
+                              },
+                              height: {
+                                xs: "64px",
+                                xxl: "87px"
+                              },
                               borderRadius: 0,
-                              mr: pxToRem(15),
+                              mr: {
+                                xs: "15px"
+                              },
                               border: "1px solid white"
                             }}
                             aria-label="community-avatar"
@@ -363,7 +418,8 @@ const AutUserInfo = ({ match }) => {
                           >
                             <Typography
                               variant="subtitle2"
-                              color="background.paper"
+                              fontWeight="normal"
+                              color="white"
                               sx={{ pb: "5px" }}
                             >
                               {name}
@@ -373,7 +429,13 @@ const AutUserInfo = ({ match }) => {
                               href={`${blockExplorer}/address/${properties.address}`}
                               target="_blank"
                             >
-                              {trimAddress(properties.address)}
+                              <Typography
+                                variant="caption"
+                                color="white"
+                                fontWeight="normal"
+                              >
+                                {trimAddress(properties.address)}
+                              </Typography>
                             </ExternalUrl>
                           </div>
                         </div>
@@ -381,7 +443,8 @@ const AutUserInfo = ({ match }) => {
                       <td>
                         <Typography
                           variant="subtitle2"
-                          color="background.paper"
+                          color="white"
+                          fontWeight="normal"
                         >
                           {properties?.userData?.roleName}
                         </Typography>
@@ -389,19 +452,31 @@ const AutUserInfo = ({ match }) => {
                       <td>
                         <Typography
                           variant="subtitle2"
-                          color="background.paper"
+                          color="white"
                           textAlign="center"
+                          fontWeight="normal"
                           sx={{ pb: "5px" }}
                         >
                           {`${properties.userData.commitment}/10`}
                         </Typography>
-                        <Typography
-                          variant="body1"
-                          textAlign="center"
-                          color="background.paper"
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center"
+                          }}
                         >
-                          {properties.userData.commitmentDescription}
-                        </Typography>
+                          <Typography
+                            variant="caption"
+                            textAlign="center"
+                            color="white"
+                            style={{
+                              margin: "0"
+                            }}
+                          >
+                            {properties.userData.commitmentDescription}
+                          </Typography>
+                        </div>
                       </td>
                     </tr>
                   )
@@ -412,13 +487,13 @@ const AutUserInfo = ({ match }) => {
         </Box>
       ) : !selectedNetwork ? (
         <Typography
+          variant="h3"
           sx={{
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
             textAlign: "center",
             mb: "10px",
-            fontSize: pxToRem(50),
             color: "white",
             position: "absolute",
             transform: "translate(-50%, -50%)",
@@ -430,13 +505,13 @@ const AutUserInfo = ({ match }) => {
         </Typography>
       ) : (
         <Typography
+          variant="h3"
           sx={{
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
             textAlign: "center",
             mb: "10px",
-            fontSize: pxToRem(50),
             color: "white",
             position: "absolute",
             transform: "translate(-50%, -50%)",

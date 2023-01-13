@@ -8,18 +8,22 @@ import { ReactComponent as UploadIcon } from "@assets/upload.svg";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import { FormHelperText } from "./AutFields";
 
-const UploadWrapper = styled("div")({
-  height: pxToRem(100),
-  width: pxToRem(100),
+const UploadWrapper = styled("div")(({ theme }) => ({
+  height: "150px",
+  width: "150px",
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
   border: "1px solid #439EDD",
   marginBottom: "3px",
-  marginRight: pxToRem(20),
+  marginRight: "20px",
   cursor: "pointer",
-  position: "relative"
-});
+  position: "relative",
+  [theme.breakpoints.down("md")]: {
+    height: "100px",
+    width: "100px"
+  }
+}));
 
 const Action = styled("div")(({ theme }) => ({
   opacity: 0,
@@ -102,10 +106,6 @@ const AFileUpload = ({
       onMouseLeave={() => toggleActions(false)}
       onClick={handleActionClick}
       className="container"
-      style={{
-        height: pxToRem(160),
-        width: pxToRem(160)
-      }}
     >
       <div {...getRootProps({ className: "dropzone" })}>
         <input {...getInputProps()} />
@@ -146,10 +146,10 @@ const AFileUpload = ({
           {preview ? <HighlightOffIcon className="remove" /> : null}
         </Action>
         <FormHelperText
+          value={null}
           errorTypes={errorTypes}
           name={name}
           errors={errors}
-          positionAbsolute={false}
         />
       </div>
     </UploadWrapper>

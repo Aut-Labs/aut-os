@@ -9,7 +9,7 @@ export const AutButton = styled<ButtonProps<any, any>>(Button)(({ theme }) => ({
     textDecoration: "uppercase",
     color: "white",
     letterSpacing: "3px",
-    fontSize: pxToRem(20),
+    fontSize: "20px",
     "&.Mui-disabled": {
       color: "white",
       opacity: ".3"

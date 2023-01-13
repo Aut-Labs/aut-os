@@ -13,44 +13,40 @@ const TopWrapper = styled(Box)(({ theme }) => ({
 
 const BottomWrapper = styled("div")(({ theme }) => ({
   width: "100%",
-  padding: pxToRem(50),
-  marginBottom: pxToRem(50),
-  marginTop: pxToRem(50),
-  alignItems: "center",
-  justifyContent: "center",
-  alignContent: "center",
-  display: "flex",
-  [theme.breakpoints.down("lg")]: {
-    alignContent: "center",
-    justifyContent: "center",
-    padding: pxToRem(30)
-  }
+  marginBottom: "50px",
+  marginTop: "50px",
+  justifyContent: "space-between",
+  maxWidth: "600px",
+  display: "flex"
+  // [theme.breakpoints.down("lg")]: {
+  //   maxWidth: "unset"
+  // }
 }));
 
 const FormWrapper = styled("form")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   alignItems: "flex-start",
-  paddingTop: pxToRem(80),
-  paddingLeft: pxToRem(80),
-  paddingRight: pxToRem(80),
+  paddingTop: "80px",
+  paddingLeft: "80px",
+  paddingRight: "80px",
   width: "100%",
   [theme.breakpoints.down("lg")]: {
-    paddingTop: pxToRem(50),
-    paddingLeft: pxToRem(50),
-    paddingRight: pxToRem(50),
+    paddingTop: "50px",
+    paddingLeft: "50px",
+    paddingRight: "50px",
     alignItems: "center",
     justifyContent: "center",
     alignContent: "center"
   },
   [theme.breakpoints.down("md")]: {
-    width: `calc(100% - ${pxToRem(100)})`
+    width: `calc(100% - 100px)`
   },
   [theme.breakpoints.down("sm")]: {
-    paddingTop: pxToRem(30),
-    paddingLeft: pxToRem(30),
-    paddingRight: pxToRem(30),
-    width: `calc(100% - ${pxToRem(60)})`
+    paddingTop: "30px",
+    paddingLeft: "10px",
+    paddingRight: "10px",
+    width: `calc(100% - 20px)`
   }
 }));
 
@@ -58,33 +54,33 @@ const ContentWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   alignItems: "flex-start",
-  paddingTop: pxToRem(80),
-  paddingLeft: pxToRem(80),
-  paddingRight: pxToRem(80),
+  paddingTop: "80px",
+  paddingLeft: "80px",
+  paddingRight: "80px",
   width: "100%",
   [theme.breakpoints.down("lg")]: {
-    paddingTop: pxToRem(50),
-    paddingLeft: pxToRem(50),
-    paddingRight: pxToRem(50),
+    paddingTop: "50px",
+    paddingLeft: "50px",
+    paddingRight: "50px",
     alignItems: "center",
     justifyContent: "center",
     alignContent: "center"
   },
   [theme.breakpoints.down("md")]: {
-    width: `calc(100% - ${pxToRem(100)})`
+    width: `calc(100% - 100px)`
   },
   [theme.breakpoints.down("sm")]: {
-    paddingTop: pxToRem(30),
-    paddingLeft: pxToRem(30),
-    paddingRight: pxToRem(30),
-    width: `calc(100% - ${pxToRem(60)})`
+    paddingTop: "30px",
+    paddingLeft: "10px",
+    paddingRight: "10px",
+    width: `calc(100% - 20px)`
   }
 }));
 
 const FieldWrapper = styled("div")(({ theme }) => ({
   flexDirection: "row",
-  marginBottom: pxToRem(20),
-  minHeight: pxToRem(70),
+  marginBottom: "20px",
+  minHeight: "70px",
   display: "flex",
   width: "100%",
   justifyContent: "flex-start",
@@ -96,7 +92,7 @@ const FieldWrapper = styled("div")(({ theme }) => ({
   [theme.breakpoints.down("sm")]: {
     justifyContent: "flex-start",
     alignItems: "flex-start",
-    paddingLeft: pxToRem(30)
+    paddingLeft: "30px"
   }
 }));
 

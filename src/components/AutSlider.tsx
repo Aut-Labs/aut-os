@@ -158,7 +158,7 @@ export const AutSlider = (props: AutSliderProps) => {
     <div
       style={{
         position: "relative",
-        width: desktop ? pxToRem(600) : "100%"
+        width: desktop ? "600px" : "100%"
       }}
     >
       <CommitmentMessage value={props.value} />

@@ -2,13 +2,15 @@ import { Box, styled, SvgIcon, useMediaQuery, useTheme } from "@mui/material";
 import { ReactComponent as ShareIcon } from "@assets/ShareIcon.svg";
 import { pxToRem } from "@utils/text-size";
 import { useSelector } from "react-redux";
-import { HolderData } from "@store/holder/holder.reducer";
+import { HolderData, HolderStatus } from "@store/holder/holder.reducer";
 import { setOpenShare } from "@store/ui-reducer";
 import { useAppDispatch } from "@store/store.model";
 import { ipfsCIDToHttpUrl } from "@api/storage.api";
 import { browserName, isIOS } from "react-device-detect";
 import AutToolBar from "../AutLeft/AutToolBar";
 import { CanUpdateProfile } from "@auth/auth.reducer";
+import { ResultState } from "@store/result-status";
+import { DautPlaceholder } from "@components/DautPlaceholder";
 
 const CardZoom = styled<any>("img")(({ theme }) => ({
   borderRadius: 0,
@@ -97,6 +99,7 @@ const AutTunnelRight = () => {
   const theme = useTheme();
   const desktop = useMediaQuery(theme.breakpoints.up("md"));
   const isSafari = browserName === "Safari";
+  const status = useSelector(HolderStatus);
 
   const handleClickOpen = () => {
     dispatch(setOpenShare(true));
@@ -107,7 +110,7 @@ const AutTunnelRight = () => {
       {desktop ? (
         <AutRightContainer>
           <>
-            {canUpdateProfile ? (
+            {/* {canUpdateProfile ? (
               <SvgIcon
                 sx={{
                   height: pxToRem(80),
@@ -115,14 +118,22 @@ const AutTunnelRight = () => {
                   position: "absolute",
                   top: "10px",
                   right: "10px",
-                  padding: pxToRem(20),
+                  padding: "20px",
                   fill: "white",
                   cursor: "pointer"
                 }}
                 component={ShareIcon}
                 onClick={handleClickOpen}
               />
-            ) : null}
+            ) : null} */}
+            {desktop && (
+              <DautPlaceholder
+                styles={{
+                  right: "80px"
+                }}
+                hide={status === ResultState.Loading}
+              />
+            )}
           </>
           {/* <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -814,7 +825,7 @@ const AutTunnelRight = () => {
                   position: "absolute",
                   top: "10px",
                   right: "10px",
-                  padding: pxToRem(20),
+                  padding: "20px",
                   fill: "white",
                   cursor: "pointer"
                 }}

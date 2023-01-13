@@ -1,3 +1,4 @@
+/* eslint-disable no-constant-condition */
 /* eslint-disable no-unused-expressions */
 import {
   Box,
@@ -8,14 +9,14 @@ import {
   useMediaQuery,
   useTheme
 } from "@mui/material";
-import { ReactComponent as MyAutIDLogo } from "@assets/MyAutIdLogo.svg";
-import { ReactComponent as SearchIcon } from "@assets/SearchIcon.svg";
+import { ReactComponent as MyAutIDLogo } from "@assets/MyAutIdLogoPath.svg";
+import { ReactComponent as ConcentricImage } from "@assets/ConcentricImage.svg";
 
+import { ReactComponent as SearchIcon } from "@assets/SearchIcon.svg";
 import { useHistory, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { pxToRem } from "@utils/text-size";
 import { Controller, useForm } from "react-hook-form";
-import { AutTextField } from "@components/Fields/AutFields";
 import {
   NoSearchResults,
   SearchResult,
@@ -26,14 +27,18 @@ import { AutID } from "@api/aut.model";
 import { useAppDispatch } from "@store/store.model";
 import { Player } from "@lottiefiles/react-lottie-player";
 import { DautPlaceholder } from "@components/DautPlaceholder";
-import * as animationData from "../../assets/aut-load.json";
+import * as animationData from "../../assets/load-id.json";
 import { AutIDProfileList } from "@components/AutIDProfileList";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { fetchHolder, fetchSearchResults } from "@api/holder.api";
+import TextField from "@mui/material/TextField";
+import { DummyProfile } from "./dummy-profile";
+import { AutTextField } from "@theme/field-text-styles";
 
 const AutBox = styled(Box)(({ theme }) => ({
   "&.MuiBox-root": {
-    width: "100%"
+    width: "100%",
+    overflow: "hidden"
   },
   display: "flex",
   flexDirection: "column",
@@ -43,54 +48,66 @@ const AutBox = styled(Box)(({ theme }) => ({
   position: "absolute",
   transform: "translate(-50%, -50%)",
   left: "50%",
-  top: "50%"
+  top: "50%",
+
+  [theme.breakpoints.down("xl")]: {
+    justifyContent: "flex-end"
+  },
+
+  [theme.breakpoints.down("sm")]: {
+    justifyContent: "center"
+  }
 }));
+
+const StyledTextField = styled(AutTextField)(({ theme }) => ({
+  width: "100%",
+
+  ".MuiInputLabel-root": {
+    top: "-2px"
+  },
+
+  ".MuiOutlinedInput-root, .MuiInput-underline": {
+    color: "#fff",
+    height: "45px",
+    lineHeight: "45px"
+  }
+}));
+
 const TopWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  width: pxToRem(720),
+  width: "720px",
   justifyContent: "center",
   alignItems: "center",
+  marginTop: "100px",
 
-  [theme.breakpoints.down("md")]: {
-    width: "80%"
-  },
   [theme.breakpoints.down("sm")]: {
     width: "90%"
   }
 }));
 
 const ResultWrapper = styled("div")(({ theme }) => ({
-  marginTop: pxToRem(20),
+  marginTop: "20px",
   display: "flex",
   flexDirection: "column",
-  width: pxToRem(720),
-  minHeight: pxToRem(200),
+  width: "500px",
+  minHeight: "220px",
   justifyContent: "flex-start",
   alignItems: "center",
 
-  [theme.breakpoints.down("md")]: {
-    width: "80%"
-  },
   [theme.breakpoints.down("sm")]: {
-    width: "100%"
+    width: "90%"
   }
 }));
 
 const FieldWrapper = styled("div")(({ theme }) => ({
   flexDirection: "row",
-  marginBottom: pxToRem(20),
-  minHeight: pxToRem(70),
+  marginBottom: "20px",
   display: "flex",
-  width: pxToRem(720),
-  justifyContent: "flex-start",
-  alignItems: "flex-start",
+  width: "500px",
+  justifyContent: "center",
+  alignItems: "center",
 
-  [theme.breakpoints.down("md")]: {
-    justifyContent: "center",
-    alignItems: "center",
-    width: "80%"
-  },
   [theme.breakpoints.down("sm")]: {
     justifyContent: "center",
     alignItems: "center",
@@ -103,14 +120,50 @@ const FormWrapper = styled("form")(({ theme }) => ({
   flexDirection: "column",
   alignItems: "center",
   width: "100%",
+  marginTop: "30px",
 
   [theme.breakpoints.down("md")]: {
+    marginTop: "20px",
     width: "100%",
     paddingLeft: "0",
     paddingRight: "0",
     alignItems: "center",
     justifyContent: "center",
     alignContent: "center"
+  },
+
+  [theme.breakpoints.up("xxl")]: {
+    marginTop: "100px"
+  }
+}));
+
+const ConcentricImageWrapper = styled(ConcentricImage)(({ theme }) => ({
+  width: "100%",
+  zIndex: "-1",
+  position: "absolute",
+  top: "100%",
+  left: "unset",
+  display: "none",
+  transform: "translateY(-50%)",
+  [theme.breakpoints.up("md")]: {
+    display: "inherit",
+    height: "662px",
+    maxWidth: "662px",
+    right: "calc(662px / 2 * -1)"
+  },
+  [theme.breakpoints.up("xxl")]: {
+    height: "892px",
+    maxWidth: "892px",
+    right: "calc(892px / 2 * -1)"
+  }
+}));
+const MyAutIdLogoWrapper = styled(MyAutIDLogo)(({ theme }) => ({
+  width: "300px",
+  height: "90px",
+  marginBottom: "20px",
+  [theme.breakpoints.up("md")]: {
+    width: "465px",
+    height: "105px"
   }
 }));
 
@@ -127,6 +180,7 @@ const AutSearch = ({ match }) => {
   const abort = useRef<AbortController>();
 
   function selectProfile(profile: AutID) {
+    console.log(profile, "profile");
     const params = new URLSearchParams(location.search);
     params.set("network", profile.properties.network?.toLowerCase());
     history.push({
@@ -161,56 +215,54 @@ const AutSearch = ({ match }) => {
     return () => abort.current && abort.current.abort();
   }, []);
 
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     loadingg === true ? setLoadingg(false) : setLoadingg(true);
+  //     console.log(loadingg);
+  //   }, 3000);
+  //   return () => clearInterval(interval);
+  // }, []);
+
   return (
     <AutBox>
+      <ConcentricImageWrapper
+        style={{ top: "10%", left: "calc(662px / 2 * -1", right: "unset" }}
+      />
+      <ConcentricImageWrapper />
+
       <DautPlaceholder
         styles={{
-          right: pxToRem(80)
+          right: "80px"
         }}
         hide={false}
       />
       <TopWrapper>
-        <MyAutIDLogo
-          style={{
-            height: desktop ? pxToRem(120) : pxToRem(90),
-            width: desktop ? pxToRem(400) : pxToRem(300)
-          }}
-        />
+        <MyAutIdLogoWrapper />
         <Typography
+          variant="subtitle1"
+          color="white"
           sx={{
-            mt: desktop ? pxToRem(100) : xs ? pxToRem(30) : pxToRem(50),
-            mb: pxToRem(20),
-            color: "white",
-            textAlign: "center",
-            fontWeight: "bold",
-            width: "100%"
+            marginBottom: {
+              xs: "20px",
+              md: "30px"
+            }
           }}
-          variant="h1"
         >
           Own your own Identity. <br />
         </Typography>
         <Typography
+          color="white"
+          variant="body"
           sx={{
-            mb: pxToRem(50),
-            color: "white",
             textAlign: "center",
-            width: "100%"
+            marginBottom: {
+              xs: "20px",
+              md: "30px"
+            }
           }}
-          variant="subtitle1"
         >
           ĀutID is self-sovereign, unique, and portable: it lets you join new
           DAOs, and log in across DAO-powered Web3 DApps.
-        </Typography>
-        <Typography
-          sx={{
-            mb: pxToRem(50),
-            color: "white",
-            textAlign: "center",
-            width: "100%"
-          }}
-          variant="h6"
-        >
-          This is a shareable Social profile, with on-chain DAOs & contacts!
         </Typography>
       </TopWrapper>
       <FormWrapper autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
@@ -222,30 +274,28 @@ const AutSearch = ({ match }) => {
             render={({ field: { name, value, onChange } }) => {
               return (
                 <>
-                  <AutTextField
+                  <StyledTextField
                     placeholder="Search āut"
+                    variant="standard"
+                    color="offWhite"
                     focused
                     id={name}
                     name={name}
                     value={value}
-                    width="100%"
                     onChange={onChange}
-                    sx={{
-                      mb: pxToRem(45)
-                    }}
                     InputProps={{
                       endAdornment: (
                         <InputAdornment position="end">
                           <SvgIcon
                             sx={{
-                              height: pxToRem(34),
-                              width: pxToRem(34),
-                              mt: pxToRem(10),
-                              ml: pxToRem(20),
+                              height: "29px",
+                              width: "29px",
+                              mt: "10px",
+                              ml: "10px",
                               cursor: "pointer",
                               color: "white",
                               ":hover": {
-                                color: "#009ADE"
+                                color: "offWhite"
                               }
                             }}
                             key="username-icon"
@@ -262,6 +312,47 @@ const AutSearch = ({ match }) => {
           />
         </FieldWrapper>
       </FormWrapper>
+      {/* <ResultWrapper>
+        {loadingg ? (
+          <>
+            <Typography
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                color: "white"
+              }}
+              variant="caption"
+            >
+              One second, let me look...
+            </Typography>
+            <Player
+              loop
+              autoplay
+              rendererSettings={{ preserveAspectRatio: "xMidYMid slice" }}
+              src={animationData}
+              style={{ height: "189px", width: "189px" }}
+            />
+          </>
+        ) : false ? (
+          <Typography
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              color: "red"
+            }}
+            variant="caption"
+          >
+            No user found with that username. Try again!
+          </Typography>
+        ) : (
+          <AutIDProfileList
+            profiles={[DummyProfile]}
+            onSelect={selectProfile}
+          />
+        )}
+      </ResultWrapper> */}
 
       <ResultWrapper>
         {status === ResultState.Loading ? (
@@ -271,10 +362,9 @@ const AutSearch = ({ match }) => {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                color: "white",
-                fontWeight: "bold"
+                color: "white"
               }}
-              variant="h6"
+              variant="caption"
             >
               One second, let me look...
             </Typography>
@@ -283,7 +373,7 @@ const AutSearch = ({ match }) => {
               autoplay
               rendererSettings={{ preserveAspectRatio: "xMidYMid slice" }}
               src={animationData}
-              style={{ height: "130px", width: "130px" }}
+              style={{ height: "189px", width: "189px" }}
             />
           </>
         ) : noResults ? (
@@ -292,10 +382,9 @@ const AutSearch = ({ match }) => {
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-              color: "white",
-              fontWeight: "bold"
+              color: "red"
             }}
-            variant="h6"
+            variant="caption"
           >
             No user found with that username. Try again!
           </Typography>
