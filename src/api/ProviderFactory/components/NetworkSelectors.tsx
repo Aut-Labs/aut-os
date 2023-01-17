@@ -23,6 +23,7 @@ export const NetworkSelectors = ({ onSelect, networks }) => {
                 letterSpacing: "0px"
               }
             }}
+            disabled={network.disabled}
             type="button"
             color="primary"
             variant="outlined"

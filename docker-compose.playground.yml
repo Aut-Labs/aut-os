@@ -7,6 +7,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        - api_url=http://localhost:4005/api
     volumes:
       - '.:/app'
       - '/app/node_modules'

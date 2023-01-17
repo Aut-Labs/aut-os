@@ -1,8 +1,10 @@
 FROM node:latest as build
 WORKDIR /app
+ARG api_url
 ENV PATH /app/node_modules/.bin:$PATH
 ENV GENERATE_SOURCEMAP=false
 ENV NODE_OPTIONS=--openssl-legacy-provider
+ENV REACT_APP_API_URL=${api_url}
 
 COPY .npmrc ./
 COPY package.json ./
