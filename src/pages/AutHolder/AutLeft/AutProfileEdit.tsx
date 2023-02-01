@@ -28,7 +28,7 @@ import {
 } from "@store/holder/holder.reducer";
 import { useAppDispatch } from "@store/store.model";
 import { updateProfile } from "@api/holder.api";
-import { AutID, socialUrls } from "@api/aut.model";
+import { AutID } from "@api/aut.model";
 import ErrorDialog from "@components/Dialog/ErrorPopup";
 import LoadingDialog from "@components/Dialog/LoadingPopup";
 import { ResultState } from "@store/result-status";
@@ -43,6 +43,7 @@ import { useEffect, useState } from "react";
 import { EditContentElements } from "@components/EditContentElements";
 import { DummyProfile } from "src/pages/AutHome/dummy-profile";
 import { AutTextField } from "@theme/field-text-styles";
+import { socialUrls } from "@api/social.model";
 
 const socialIcons = {
   // eth: EthIcon,
