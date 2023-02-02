@@ -9,8 +9,14 @@ services:
       dockerfile: Dockerfile
       args:
         - api_url=http://localhost:4005/api
+    networks:
+      - query-server_aut-api
     volumes:
       - '.:/app'
       - '/app/node_modules'
     ports:
       - '5001:80'
+
+networks:
+  query-server_aut-api:
+    external: true
