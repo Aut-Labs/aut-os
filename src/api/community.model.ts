@@ -1,11 +1,12 @@
-import { BaseNFTModel } from "@aut-protocol/sdk/dist/models/baseNFTModel";
+import { CommitmentMessages } from "@utils/misc";
+import { httpUrlToIpfsCID } from "./storage.api";
+import { BaseNFTModel } from "@aut-labs-private/sdk/dist/models/baseNFTModel";
 import {
   DAOProperties,
   Role,
   RoleSet
-} from "@aut-protocol/sdk/dist/models/dao";
-import { CommitmentMessages } from "@components/AutSlider";
-import { httpUrlToIpfsCID } from "./storage.api";
+} from "@aut-labs-private/sdk/dist/models/dao";
+import { AutSocial } from "./social.model";
 
 export const MarketTemplates = [
   {
@@ -23,7 +24,7 @@ export const MarketTemplates = [
 ];
 
 export const findRoleName = (roleId: string, rolesSets: RoleSet[]) => {
-  const roleSet = rolesSets.find((s) =>
+  const roleSet = (rolesSets || []).find((s) =>
     s.roles.some((r) => r.id.toString() === roleId)
   );
   if (roleSet) {
@@ -35,13 +36,16 @@ export const findRoleName = (roleId: string, rolesSets: RoleSet[]) => {
 export class CommunityProperties extends DAOProperties {
   address?: string;
 
-  userData?: {
+  socials: AutSocial[];
+
+  userData?: Partial<{
     role: string;
     roleName?: string;
     commitment: string;
+    isAdmin: boolean;
     commitmentDescription?: string;
     isActive?: boolean;
-  };
+  }>;
 
   additionalProps?: any;
 
@@ -55,7 +59,9 @@ export class CommunityProperties extends DAOProperties {
       this.rolesSets = data.rolesSets;
       this.address = data.address;
       this.additionalProps = data.additionalProps;
-      this.userData = data.userData || ({} as typeof this.userData);
+      this.userData =
+        JSON.parse(JSON.stringify(data.userData)) ||
+        ({} as typeof this.userData);
 
       if (this.userData?.role) {
         this.userData.roleName = findRoleName(
@@ -69,6 +75,9 @@ export class CommunityProperties extends DAOProperties {
           +this.userData.commitment
         );
       }
+      this.socials = data.socials;
+      // @TODO - Tao to fix
+      this.userData.isAdmin = (data as any).isAdmin?.data;
     }
   }
 }

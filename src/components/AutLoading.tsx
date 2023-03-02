@@ -1,7 +1,6 @@
-import { pxToRem } from "@utils/text-size";
 // @ts-ignore
 import { Player } from "@lottiefiles/react-lottie-player";
-import * as animationData from "../assets/aut-load.json";
+import * as animationData from "@assets/aut-load.json";
 
 const defaultOptions = {
   loop: true,
@@ -12,7 +11,7 @@ const defaultOptions = {
   }
 };
 
-const AutLoading = () => {
+const AutLoading = ({ width = "300px", height = "300px" }) => {
   return (
     <div
       style={{
@@ -30,7 +29,7 @@ const AutLoading = () => {
         autoplay
         rendererSettings={{ preserveAspectRatio: "xMidYMid slice" }}
         src={animationData}
-        style={{ height: pxToRem(400), width: pxToRem(400) }}
+        style={{ height, width }}
       />
     </div>
   );

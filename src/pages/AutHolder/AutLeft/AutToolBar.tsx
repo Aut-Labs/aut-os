@@ -1,34 +1,15 @@
 import { ReactComponent as MyAutIDLogo } from "@assets/MyAutIdLogoToolbarPath.svg";
 import { CanUpdateProfile } from "@auth/auth.reducer";
-import { DautPlaceholder } from "@components/DautPlaceholder";
-import { styled, SvgIcon, Toolbar } from "@mui/material";
+import { Toolbar } from "@mui/material";
 import { HolderStatus } from "@store/holder/holder.reducer";
-import { ResultState } from "@store/result-status";
-import { ReactComponent as ShareIcon } from "@assets/ShareIcon.svg";
-
 import { resetSearchState } from "@store/search/search.reducer";
 import { useAppDispatch } from "@store/store.model";
 import { setOpenShare } from "@store/ui-reducer";
 import { useSelector } from "react-redux";
-import { useHistory, useLocation } from "react-router-dom";
-
-const AutBar = styled(Toolbar)(({ theme }) => ({
-  "&.MuiToolbar-root": {
-    paddingLeft: "80px",
-    paddingRight: "80px",
-    minHeight: "84px",
-    justifyContent: "space-between",
-    alignItems: "flex-end",
-    [theme.breakpoints.down("md")]: {
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center"
-    }
-  }
-}));
+import { useLocation, useNavigate } from "react-router-dom";
 
 const AutToolBar = ({ isDesktop = false }) => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useAppDispatch();
   const status = useSelector(HolderStatus);
@@ -36,9 +17,8 @@ const AutToolBar = ({ isDesktop = false }) => {
 
   function goHome() {
     const params = new URLSearchParams(location.search);
-
     params.delete("network");
-    history.push({
+    navigate({
       pathname: `/`,
       search: `?${params.toString()}`
     });
@@ -50,7 +30,23 @@ const AutToolBar = ({ isDesktop = false }) => {
   };
 
   return (
-    <AutBar>
+    <Toolbar
+      sx={{
+        backgroundColor: "nightBlack.main",
+        boxShadow: 2,
+        "&.MuiToolbar-root": {
+          paddingLeft: 6,
+          paddingRight: 6,
+          minHeight: "84px",
+          display: "flex",
+          justifyContent: {
+            xs: "center",
+            md: "flex-start"
+          },
+          alignItems: "center"
+        }
+      }}
+    >
       <MyAutIDLogo
         height="62"
         style={{ cursor: "pointer" }}
@@ -81,7 +77,7 @@ const AutToolBar = ({ isDesktop = false }) => {
           onClick={handleClickOpen}
         />
       ) : null} */}
-    </AutBar>
+    </Toolbar>
   );
 };
 

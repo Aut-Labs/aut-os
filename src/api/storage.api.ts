@@ -1,5 +1,4 @@
 import { environment } from "./environment";
-import AutSDKStorage from "@aut-protocol/sdk-storage";
 
 export const isValidUrl = (uri: string) => {
   let url = null as any;

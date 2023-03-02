@@ -1,22 +1,13 @@
 version: '3.7'
 
 services:
-
   holders-app:
     container_name: holders-app
     build:
       context: .
       dockerfile: Dockerfile
-      args:
-        - api_url=http://localhost:4005/api
-    networks:
-      - query-server_aut-api
     volumes:
       - '.:/app'
       - '/app/node_modules'
     ports:
       - '5001:80'
-
-networks:
-  query-server_aut-api:
-    external: true

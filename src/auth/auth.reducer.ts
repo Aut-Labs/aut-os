@@ -1,4 +1,3 @@
-import { AutID } from "@api/aut.model";
 import { createSelector, createSlice } from "@reduxjs/toolkit";
 import {
   SelectedProfileAddress,

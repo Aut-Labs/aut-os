@@ -1,6 +1,4 @@
-import { CommitmentMessages } from "@components/AutSlider";
 import { FormHelperText } from "@components/Fields/AutFields";
-import { useTheme } from "@emotion/react";
 import {
   Typography,
   Slider,
@@ -12,6 +10,8 @@ import {
   ComponentsProps,
   ComponentsVariants
 } from "@mui/material";
+import { CommitmentMessages } from "@utils/misc";
+import { pxToRem } from "@utils/text-size";
 
 export function CommitmentMessage({ value, children = null }) {
   const message = CommitmentMessages(value);
@@ -54,7 +54,7 @@ export const AutCommitmentSlider = ({
   ...props
 }: AutSliderProps) => {
   return (
-    <SliderWrapper sx={sx} className="swiper-no-swiping">
+    <SliderWrapper sx={sx}>
       <CommitmentMessage value={value} />
       <div style={{ position: "relative" }}>
         <Slider {...sliderProps} />
@@ -72,7 +72,7 @@ export const AutCommitmentSlider = ({
           name={name}
           errors={errors}
         >
-          <Typography color="white" variant="caption">
+          <Typography className="text-secondary" variant="caption">
             No worries, you’ll be able to change this later.
           </Typography>
         </FormHelperText>
@@ -104,13 +104,30 @@ export default (theme: Theme) =>
     styleOverrides: {
       root: {
         "&.MuiSlider-colorPrimary": generateColors(theme.palette.offWhite),
-        maxWidth: "600px",
         width: "100%",
-        height: "65px",
-        borderRadius: "0",
+        minWidth: pxToRem(320),
+        height: pxToRem(45),
+        [theme.breakpoints.up("xxl")]: {
+          // width: pxToRem(600),
+          // height: pxToRem(65),
+          ".MuiSlider-thumb": {
+            width: "45px",
+            height: "45px"
+          }
+        },
+        [theme.breakpoints.up("md")]: {
+          // width: pxToRem(450),
+          // height: pxToRem(45),
+          ".MuiSlider-thumb": {
+            width: "30px",
+            height: "30px"
+          }
+        },
+        borderRadius: "8.5px",
         borderWidth: "2px",
         borderStyle: "solid",
-        padding: "0 !important",
+        borderColor: theme.palette.divider,
+        padding: "0",
 
         'span[data-index="10"].MuiSlider-mark': {
           display: "none"
@@ -118,10 +135,7 @@ export default (theme: Theme) =>
         'span[data-index="0"].MuiSlider-mark': {
           display: "none"
         },
-        ".MuiSlider-thumb": {
-          width: "45px",
-          height: "45px"
-        },
+
         ".MuiSlider-mark": {
           background: "transparent",
           width: "5px",

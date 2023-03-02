@@ -2,12 +2,11 @@ import { HolderStatus, HolderData } from "@store/holder/holder.reducer";
 import { ResultState } from "@store/result-status";
 import { useAppDispatch } from "@store/store.model";
 import { useSelector } from "react-redux";
-import { styled, useMediaQuery, useTheme } from "@mui/material";
+import { Box, styled, useMediaQuery, useTheme } from "@mui/material";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination } from "swiper";
 import { AutShareDialog } from "@components/AutShare";
 import { setOpenShare } from "@store/ui-reducer";
-import { DautPlaceholder } from "@components/DautPlaceholder";
 import AutLeft from "./AutLeft/Left";
 import AutTunnelRight from "./AutRight/Right";
 
@@ -15,6 +14,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
+import { DautPlaceholder } from "@api/ProviderFactory/components/web3-daut-connect";
 
 const AutContainer = styled("div")(() => ({
   display: "flex",
@@ -105,13 +105,15 @@ const AutHolder = (props) => {
             )}
             <SwiperSlide>
               <AutLeft {...props} />
+              <Box>
+                <DautPlaceholder
+                // hide={status === ResultState.Loading}
+                // horizontal="center"
+                // vertical="bottom"
+                />
+              </Box>
             </SwiperSlide>
           </AutSwiper>
-          <DautPlaceholder
-            hide={status === ResultState.Loading}
-            horizontal="center"
-            vertical="bottom"
-          />
         </>
       )}
     </>

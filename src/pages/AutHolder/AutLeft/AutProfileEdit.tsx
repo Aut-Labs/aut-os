@@ -18,7 +18,6 @@ import {
   Card
 } from "@mui/material";
 import { Controller, useForm, useFieldArray } from "react-hook-form";
-import { useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
 import {
   HolderData,
@@ -38,12 +37,12 @@ import {
   IsConnected,
   setProviderIsOpen
 } from "@store/WalletProvider/WalletProvider";
-import { useWeb3React } from "@web3-react/core";
 import { useEffect, useState } from "react";
 import { EditContentElements } from "@components/EditContentElements";
-import { DummyProfile } from "src/pages/AutHome/dummy-profile";
 import { AutTextField } from "@theme/field-text-styles";
 import { socialUrls } from "@api/social.model";
+import { useNavigate } from "react-router-dom";
+import { useEthers } from "@usedapp/core";
 
 const socialIcons = {
   // eth: EthIcon,
@@ -98,34 +97,20 @@ const ImageUpload = styled("div")(({ theme }) => ({
   }
 }));
 
-const StyledTextField = styled(AutTextField)(({ theme }) => ({
-  width: "100%",
-
-  ".MuiInputLabel-root": {
-    top: "-2px"
-  },
-
-  ".MuiOutlinedInput-root, .MuiInput-underline": {
-    color: "#fff",
-    height: "45px",
-    lineHeight: "45px"
-  }
-}));
-
 const { FieldWrapper, FormWrapper, BottomWrapper, TopWrapper } =
   EditContentElements;
 
 const AutProfileEdit = () => {
   const theme = useTheme();
   const dispatch = useAppDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
   const desktop = useMediaQuery(theme.breakpoints.up("md"));
   const holderData = useSelector(HolderData);
   const status = useSelector(UpdateStatus);
   const errorMessage = useSelector(UpdateErrorMessage);
   const isConnected = useSelector(IsConnected);
   const [editInitiated, setEditInitiated] = useState(false);
-  const { isActive } = useWeb3React();
+  const { active: isActive } = useEthers();
 
   const {
     control,
@@ -242,6 +227,7 @@ const AutProfileEdit = () => {
                           }}
                         >
                           <AFileUpload
+                            color="offWhite"
                             initialPreviewUrl={ipfsCIDToHttpUrl(
                               holderData?.properties?.avatar as string
                             )}
@@ -252,8 +238,7 @@ const AutProfileEdit = () => {
                                 onChange(null);
                               }
                             }}
-                            name="image"
-                            errors={errors}
+                            // errors={errors}
                           />
                         </div>
                       );
@@ -355,12 +340,13 @@ const AutProfileEdit = () => {
               <FieldWrapper key={`socials.${index}`}>
                 <SvgIcon
                   sx={{
-                    height: {
-                      xs: "34px"
-                    },
-                    width: {
-                      xs: "34px"
-                    },
+                    color: "offWhite.main",
+                    // height: {
+                    //   xs: "34px"
+                    // },
+                    // width: {
+                    //   xs: "34px"
+                    // },
                     mt: "10px",
                     mr: "20px"
                   }}
@@ -374,17 +360,17 @@ const AutProfileEdit = () => {
                   render={({ field: { name, value, onChange } }) => {
                     return (
                       <>
-                        <StyledTextField
+                        <AutTextField
                           variant="standard"
                           color="offWhite"
                           placeholder={placeholder}
-                          focused
                           id={name}
                           name={name}
                           value={value}
                           autoFocus={index === 0}
                           onChange={onChange}
                           sx={{
+                            width: "100%",
                             mb: "15px"
                           }}
                           InputProps={{
@@ -392,8 +378,7 @@ const AutProfileEdit = () => {
                               <InputAdornment position="start">
                                 <p
                                   style={{
-                                    color: "white",
-                                    marginRight: "-5px"
+                                    color: "white"
                                   }}
                                 >
                                   {prefix}
@@ -416,7 +401,7 @@ const AutProfileEdit = () => {
           variant="outlined"
           size="normal"
           color="offWhite"
-          onClick={() => history.goBack()}
+          onClick={() => navigate(-1)}
           sx={{
             width: {
               xs: "140px",
@@ -432,7 +417,7 @@ const AutProfileEdit = () => {
           type="submit"
           variant="outlined"
           size="normal"
-          color="offWhite"
+          color="primary"
           sx={{
             width: {
               xs: "140px",

@@ -1,15 +1,17 @@
 import axios, { CancelTokenSource } from "axios";
 import { ethers } from "ethers";
-import { AutID, HolderData } from "./aut.model";
+import { AutID } from "./aut.model";
 import { Community } from "./community.model";
 import { ipfsCIDToHttpUrl, isValidUrl } from "./storage.api";
 import { base64toFile } from "@utils/to-base-64";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import AutSDK from "@aut-protocol/sdk";
 import { ErrorParser } from "@utils/error-parser";
 import { NetworkConfig } from "./ProviderFactory/network.config";
-import { CommunityMembershipDetails } from "@aut-protocol/sdk/dist/models/holder";
 import { environment } from "./environment";
+import AutSDK, {
+  CommunityMembershipDetails,
+  HolderData
+} from "@aut-labs-private/sdk";
 
 export const fetchHolderEthEns = async (address: string) => {
   if (typeof window.ethereum !== "undefined") {
@@ -180,7 +182,7 @@ export const editCommitment = createAsyncThunk(
     { rejectWithValue }
   ) => {
     const sdk = AutSDK.getInstance();
-    const response = await sdk.autID.autIDContract.editCommitment(
+    const response = await sdk.autID.contract.editCommitment(
       requestBody.communityAddress,
       requestBody.commitment
     );
@@ -195,7 +197,7 @@ export const withdraw = createAsyncThunk(
   "holder/withdraw",
   async (communityAddress: string, { rejectWithValue }) => {
     const sdk = AutSDK.getInstance();
-    const response = await sdk.autID.autIDContract.withdraw(communityAddress);
+    const response = await sdk.autID.contract.withdraw(communityAddress);
     if (response?.isSuccess) {
       return communityAddress;
     }
@@ -218,7 +220,7 @@ export const updateProfile = createAsyncThunk(
 
     const uri = await sdk.client.storeAsBlob(AutID.updateAutID(user));
     console.log("New metadata: ->", ipfsCIDToHttpUrl(uri));
-    const response = await sdk.autID.autIDContract.setMetadataUri(uri);
+    const response = await sdk.autID.contract.setMetadataUri(uri);
 
     if (response.isSuccess) {
       return user;

@@ -11,79 +11,30 @@ import {
   Card,
   CardContent,
   CardHeader,
+  IconButton,
   Link,
+  Stack,
   styled,
   SvgIcon,
-  Typography,
-  useTheme
+  Tooltip,
+  Typography
 } from "@mui/material";
 import { useState } from "react";
 import PencilEdit from "@assets/PencilEditicon";
-import { useHistory, useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { HolderData, HolderStatus } from "@store/holder/holder.reducer";
 import { CanUpdateProfile } from "@auth/auth.reducer";
 import { ResultState } from "@store/result-status";
 import { ipfsCIDToHttpUrl } from "@api/storage.api";
-import { trimAddress } from "@utils/trim-address";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import {
   BlockExplorerUrl,
   SelectedNetworkConfig
 } from "@store/WalletProvider/WalletProvider";
 import { EditContentElements } from "@components/EditContentElements";
-import { useAppDispatch } from "@store/store.model";
-
-const AutTable = styled("table")(({ theme }) => ({
-  width: "100%",
-
-  tr: {
-    "&:not(:first-of-type)": {
-      "&.CanUpdateProfile": {
-        cursor: "pointer",
-        "&:hover": {
-          backgroundColor: "rgba(235, 235, 242, 0.2)"
-        }
-      },
-
-      "&.isActive": {
-        backgroundColor: theme.palette.primary.main
-      }
-    }
-  },
-
-  td: {
-    padding: "20px 0",
-    height: "32px",
-
-    [theme.breakpoints.down("md")]: {
-      padding: "10px 5px"
-    },
-
-    "&:not(:first-of-type)": {
-      paddingLeft: "30px",
-      [theme.breakpoints.down("md")]: {
-        paddingLeft: "15px"
-      }
-    },
-    borderBottom: "1px solid white"
-  },
-
-  th: {
-    height: "32px",
-    padding: "20px 0px",
-
-    [theme.breakpoints.down("md")]: {
-      padding: "10px 5px"
-    },
-    "&:not(:first-of-type)": {
-      paddingLeft: "30px",
-      [theme.breakpoints.down("md")]: {
-        paddingLeft: "15px"
-      }
-    },
-    borderBottom: "1px solid white"
-  }
-}));
+import CommunitiesTable from "./CommunitiesTable";
+import CopyAddress from "@components/CopyAddress";
 
 const IconContainer = styled("div")(({ theme }) => ({
   paddingTop: "15px",
@@ -95,10 +46,6 @@ const IconContainer = styled("div")(({ theme }) => ({
     height: "35px",
     minHeight: "20px"
   }
-}));
-
-const ExternalUrl = styled("a")(({ theme }) => ({
-  color: "white"
 }));
 
 const AutCard = styled(Card)(({ theme }) => ({
@@ -116,8 +63,8 @@ const AutCard = styled(Card)(({ theme }) => ({
 }));
 
 const EditIcon = styled("div")(({ theme }) => ({
-  height: "34px",
-  width: "34px",
+  height: "30px",
+  width: "30px",
   cursor: "pointer",
   paddingLeft: "10px",
   display: "flex",
@@ -130,19 +77,16 @@ const EditIcon = styled("div")(({ theme }) => ({
   }
 }));
 
-const { FieldWrapper, FormWrapper, BottomWrapper, TopWrapper, ContentWrapper } =
-  EditContentElements;
+const { ContentWrapper } = EditContentElements;
 
-const AutUserInfo = ({ match }) => {
+const AutUserInfo = () => {
   const holderData = useSelector(HolderData);
   const holderStatus = useSelector(HolderStatus);
   const blockExplorer = useSelector(BlockExplorerUrl);
   const selectedNetwork = useSelector(SelectedNetworkConfig);
   const canUpdateProfile = useSelector(CanUpdateProfile);
-
-  const theme = useTheme();
   const [isActiveIndex, setIsActiveIndex] = useState(null);
-  const history = useHistory();
+  const navigate = useNavigate();
   const location = useLocation();
 
   const socialIcons = {
@@ -154,8 +98,8 @@ const AutUserInfo = ({ match }) => {
   };
 
   const onEdit = () => {
-    history.push({
-      pathname: `${match.url}/edit-profile`,
+    navigate({
+      pathname: "edit-profile",
       search: location.search
     });
   };
@@ -166,12 +110,14 @@ const AutUserInfo = ({ match }) => {
       } else {
         setIsActiveIndex(index);
       }
-      history.push({
-        pathname: `${match.url}/edit-community/${address}`,
+      navigate({
+        pathname: `edit-community/${address}`,
         search: location.search
       });
     }
   }
+
+  const selectedNetworkConfig = useSelector(SelectedNetworkConfig);
 
   return (
     <ContentWrapper>
@@ -187,9 +133,9 @@ const AutUserInfo = ({ match }) => {
           <Box
             sx={{
               paddingBottom: {
-                xs: "30px",
-                md: "50px",
-                lg: "80px"
+                xs: 3,
+                md: 4,
+                xxl: 6
               }
             }}
           >
@@ -198,6 +144,7 @@ const AutUserInfo = ({ match }) => {
                 border: "none",
                 display: "flex",
                 boxShadow: "none",
+                alignItems: "flex-start",
                 bgcolor: "transparent"
               }}
             >
@@ -208,11 +155,11 @@ const AutUserInfo = ({ match }) => {
                       bgcolor: "background.default",
                       height: {
                         xs: "100px",
-                        md: "150px"
+                        xxl: "150px"
                       },
                       width: {
                         xs: "100px",
-                        md: "150px"
+                        xxl: "150px"
                       },
                       borderRadius: 0
                     }}
@@ -234,10 +181,10 @@ const AutUserInfo = ({ match }) => {
                     sm: "30px"
                   },
                   alignSelf: "center",
-                  height: {
-                    xs: "100px",
-                    md: "150px"
-                  },
+                  // height: {
+                  //   xs: "100px",
+                  //   md: "150px"
+                  // },
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "space-between"
@@ -260,12 +207,32 @@ const AutUserInfo = ({ match }) => {
                       {holderData.name}
                     </Typography>
                     {canUpdateProfile && (
-                      <EditIcon onClick={onEdit}>
-                        <PencilEdit />
-                      </EditIcon>
+                      <Tooltip title="Edit profile">
+                        <EditIcon onClick={onEdit}>
+                          <PencilEdit />
+                        </EditIcon>
+                      </Tooltip>
                     )}
                   </div>
-                  <ExternalUrl
+
+                  <Stack direction="row" alignItems="center">
+                    <CopyAddress address={holderData?.properties?.address} />
+                    <Tooltip
+                      title={`Explore in ${selectedNetworkConfig?.name}`}
+                    >
+                      <IconButton
+                        sx={{ p: 0, ml: 1 }}
+                        href={`${blockExplorer}/address/${holderData?.properties?.address}`}
+                        target="_blank"
+                        color="offWhite"
+                      >
+                        <OpenInNewIcon
+                          sx={{ cursor: "pointer", width: "20px" }}
+                        />
+                      </IconButton>
+                    </Tooltip>
+                  </Stack>
+                  {/* <ExternalUrl
                     href={`${blockExplorer}/address/${holderData?.properties?.address}`}
                     target="_blank"
                   >
@@ -276,7 +243,7 @@ const AutUserInfo = ({ match }) => {
                     >
                       {trimAddress(holderData.properties.address)}
                     </Typography>
-                  </ExternalUrl>
+                  </ExternalUrl> */}
 
                   {/* {holderData.properties.ethDomain && (
                     <Typography
@@ -299,33 +266,41 @@ const AutUserInfo = ({ match }) => {
                       socialIcons[Object.keys(socialIcons)[index]];
 
                     return (
-                      social.link && (
-                        <Link
-                          key={`social-icon-${index}`}
-                          href={social.link}
-                          target="_blank"
-                          component="a"
-                        >
-                          <SvgIcon
-                            sx={{
-                              height: {
-                                xs: "25px",
-                                md: "30px"
-                              },
-                              width: {
-                                xs: "25px",
-                                md: "30px"
-                              },
-                              mr: {
-                                xs: "10px",
-                                md: "15px"
-                              }
-                            }}
-                            key={`socials.${index}.icon`}
-                            component={AutIcon}
-                          />
-                        </Link>
-                      )
+                      <Link
+                        key={`social-icon-${index}`}
+                        {...(!!social.link && {
+                          color: "offwhite.main",
+                          component: "a",
+                          href: social.link,
+                          target: "_blank"
+                        })}
+                        {...(!social.link && {
+                          sx: {
+                            color: "divider"
+                          },
+                          component: "button",
+                          disabled: true
+                        })}
+                      >
+                        <SvgIcon
+                          sx={{
+                            height: {
+                              xs: "25px",
+                              xxl: "30px"
+                            },
+                            width: {
+                              xs: "25px",
+                              xxl: "30px"
+                            },
+                            mr: {
+                              xs: "10px",
+                              xxl: "15px"
+                            }
+                          }}
+                          key={`socials.${index}.icon`}
+                          component={AutIcon}
+                        />
+                      </Link>
                     );
                   })}
                 </IconContainer>
@@ -337,153 +312,10 @@ const AutUserInfo = ({ match }) => {
               Communities
             </Typography>
           </Box>
-          <Box
-            sx={{
-              paddingTop: "30px",
-              paddingBottom: "30px"
-            }}
-          >
-            <AutTable aria-label="table" cellSpacing="0">
-              <tbody>
-                <tr>
-                  <th>
-                    <Typography
-                      variant="subtitle2"
-                      fontWeight="normal"
-                      color="white"
-                      textAlign="left"
-                    >
-                      Community Name
-                    </Typography>
-                  </th>
-                  <th>
-                    <Typography
-                      variant="subtitle2"
-                      fontWeight="normal"
-                      color="white"
-                      textAlign="left"
-                    >
-                      Role
-                    </Typography>
-                  </th>
-                  <th>
-                    <Typography
-                      variant="subtitle2"
-                      fontWeight="normal"
-                      color="white"
-                    >
-                      Commitment
-                    </Typography>
-                  </th>
-                </tr>
-                {holderData.properties.communities.map(
-                  ({ image, name, properties }, index) => (
-                    <tr
-                      key={`row-key-${index}`}
-                      className={`${
-                        isActiveIndex === index ? "isActive" : " "
-                      } ${canUpdateProfile ? "CanUpdateProfile" : ""}`}
-                      onClick={() => clickRow(index, properties.address)}
-                    >
-                      <td>
-                        <div
-                          style={{
-                            display: "flex",
-                            flexDirection: "row",
-                            alignItems: "center"
-                          }}
-                        >
-                          <Avatar
-                            sx={{
-                              bgcolor: "background.default",
-                              width: {
-                                xs: "64px",
-                                xxl: "87px"
-                              },
-                              height: {
-                                xs: "64px",
-                                xxl: "87px"
-                              },
-                              borderRadius: 0,
-                              mr: {
-                                xs: "15px"
-                              },
-                              border: "1px solid white"
-                            }}
-                            aria-label="community-avatar"
-                            src={ipfsCIDToHttpUrl(image as string)}
-                          />
-                          <div
-                            style={{ display: "flex", flexDirection: "column" }}
-                          >
-                            <Typography
-                              variant="subtitle2"
-                              fontWeight="normal"
-                              color="white"
-                              sx={{ pb: "5px" }}
-                            >
-                              {name}
-                            </Typography>
-                            <ExternalUrl
-                              onClick={(event) => event.stopPropagation()}
-                              href={`${blockExplorer}/address/${properties.address}`}
-                              target="_blank"
-                            >
-                              <Typography
-                                variant="caption"
-                                color="white"
-                                fontWeight="normal"
-                              >
-                                {trimAddress(properties.address)}
-                              </Typography>
-                            </ExternalUrl>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <Typography
-                          variant="subtitle2"
-                          color="white"
-                          fontWeight="normal"
-                        >
-                          {properties?.userData?.roleName}
-                        </Typography>
-                      </td>
-                      <td>
-                        <Typography
-                          variant="subtitle2"
-                          color="white"
-                          textAlign="center"
-                          fontWeight="normal"
-                          sx={{ pb: "5px" }}
-                        >
-                          {`${properties.userData.commitment}/10`}
-                        </Typography>
-                        <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center"
-                          }}
-                        >
-                          <Typography
-                            variant="caption"
-                            textAlign="center"
-                            color="white"
-                            style={{
-                              margin: "0"
-                            }}
-                          >
-                            {properties.userData.commitmentDescription}
-                          </Typography>
-                        </div>
-                      </td>
-                    </tr>
-                  )
-                )}
-              </tbody>
-            </AutTable>
-          </Box>
+          <CommunitiesTable
+            communities={holderData.properties.communities}
+            isLoading={false}
+          />
         </Box>
       ) : !selectedNetwork ? (
         <Typography

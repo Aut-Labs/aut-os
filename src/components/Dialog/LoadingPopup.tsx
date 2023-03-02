@@ -2,47 +2,40 @@ import { Typography } from "@mui/material";
 import AutLoading from "../AutLoading";
 import DialogWrapper from "./DialogWrapper";
 
-const LoadingDialog = ({
-  open,
-  subtitle,
-  message,
-  fullScreen = false
-}: any) => {
+const LoadingDialog = ({ open, message = null, fullScreen = false }: any) => {
   return (
     <DialogWrapper open={open} fullScreen={fullScreen}>
       <div
-        className="aut-join-dialog-content"
+        className="sw-join-dialog-content"
         style={{
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          justifyContent: "center",
+          justifyContent: "space-around",
           flex: 1
         }}
       >
-        <AutLoading />
-        {/* <Typography
-          sx={{
-            color: 'white',
-            textAlign: 'center',
-            mt: 2,
+        {message && (
+          <Typography
+            sx={{
+              textAlign: "center",
+              mt: 2
+            }}
+            className="text-secondary"
+            component="div"
+            variant="subtitle1"
+          >
+            {message}
+          </Typography>
+        )}
+        <div
+          style={{
+            flex: 1,
+            position: "relative"
           }}
-          component="div"
-          variant="subtitle2"
         >
-          {message}
-        </Typography> */}
-        {/* <Typography
-          sx={{
-            color: 'white',
-            textAlign: 'center',
-            mt: 2,
-          }}
-          component="div"
-          variant="body2"
-        >
-          {subtitle}
-        </Typography> */}
+          <AutLoading width="200px" height="200px" />
+        </div>
       </div>
     </DialogWrapper>
   );

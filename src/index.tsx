@@ -12,6 +12,7 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { ensureVariablesExist } from "@utils/env";
 import AutTheme from "./theme/theme";
+import CssBaseline from "@mui/material/CssBaseline";
 
 markerSDK.loadWidget({
   destination: `${process.env.REACT_APP_MARKER}`,
@@ -34,6 +35,7 @@ const root = createRoot(container);
 root.render(
   <StyledEngineProvider injectFirst>
     <ThemeProvider theme={AutTheme}>
+      <CssBaseline />
       <Provider store={store}>
         <BrowserRouter>
           <App />

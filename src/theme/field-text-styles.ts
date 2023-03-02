@@ -5,7 +5,6 @@ import {
   ComponentsVariants,
   PaletteColor,
   TextField,
-  InputAdornment,
   Theme
 } from "@mui/material";
 
@@ -48,17 +47,8 @@ const generateColors = (color: PaletteColor, white: PaletteColor) => ({
     letterSpacing: "-0.008em",
     fontFamily: "FractulRegular"
   },
-  ".MuiInputAdornment-root": {
-    color: white.dark,
-    fontWeight: "normal",
-    letterSpacing: "-0.008em",
-    fontFamily: "FractulRegular"
-  },
-  ".MuiTextField-root": {
-    color: white.dark,
-    fontWeight: "normal",
-    letterSpacing: "-0.008em",
-    fontFamily: "FractulRegular"
+  ".MuiInputBase-multiline": {
+    borderRadius: "8.5px"
   },
   ".MuiInputBase-root:before, .MuiInputBase-root:not(.Mui-Focused) fieldset": {
     borderColor: color.dark
@@ -92,9 +82,6 @@ export default (theme: Theme) =>
             fontSize: fontSize[key]
           };
           styles.textarea[theme.breakpoints.up(key)] = {
-            fontSize: fontSize[key]
-          };
-          styles[".MuiInputAdornment-root"][theme.breakpoints.up(key)] = {
             fontSize: fontSize[key]
           };
         });

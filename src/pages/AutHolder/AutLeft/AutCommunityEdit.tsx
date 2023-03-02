@@ -10,7 +10,7 @@ import {
   useMediaQuery
 } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
-import { useHistory, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import {
   SelectedCommunity,
@@ -25,15 +25,14 @@ import { editCommitment, withdraw } from "@api/holder.api";
 import ErrorDialog from "@components/Dialog/ErrorPopup";
 import LoadingDialog from "@components/Dialog/LoadingPopup";
 import { ipfsCIDToHttpUrl } from "@api/storage.api";
-import { trimAddress } from "@utils/trim-address";
 import {
   BlockExplorerUrl,
   IsConnected,
   setProviderIsOpen
 } from "@store/WalletProvider/WalletProvider";
-import { useWeb3React } from "@web3-react/core";
 import { EditContentElements } from "@components/EditContentElements";
 import { AutCommitmentSlider } from "@theme/commitment-slider-styles";
+import { useEthers } from "@usedapp/core";
 
 const AutCard = styled(Card)(() => ({
   "&.MuiCard-root": {
@@ -65,8 +64,8 @@ const MiddleWrapper = styled(Box)(({ theme }) => ({
 const CommitmentSliderWrapper = styled("div")(({ theme }) => ({
   width: "100%",
   maxWidth: "600px",
-  marginTop: "100px",
-  marginBottom: "150px",
+  marginTop: theme.spacing(6),
+  marginBottom: theme.spacing(6),
   [theme.breakpoints.down("lg")]: {
     marginTop: "50px",
     marginBottom: "50px"
@@ -87,14 +86,14 @@ const AutCommunityEdit = () => {
   const selectedCommunity = useSelector(
     SelectedCommunity(params.communityAddress)
   );
-  const history = useHistory();
+  const navigate = useNavigate();
   const status = useSelector(UpdateStatus);
   const errorMessage = useSelector(UpdateErrorMessage);
   const blockExplorer = useSelector(BlockExplorerUrl);
   const isConnected = useSelector(IsConnected);
   const [editInitiated, setEditInitiated] = useState(false);
   const [withdrawInitiated, setWithdrawInitiated] = useState(false);
-  const { isActive } = useWeb3React();
+  const { active: isActive } = useEthers();
 
   const {
     control,
@@ -141,7 +140,7 @@ const AutCommunityEdit = () => {
     setWithdrawInitiated(false);
     const result = await dispatch(withdraw(params.communityAddress));
     if (result.meta.requestStatus === "fulfilled") {
-      history.goBack();
+      navigate(-1);
     }
   };
 
@@ -203,11 +202,13 @@ const AutCommunityEdit = () => {
                   <Avatar
                     sx={{
                       bgcolor: "background.default",
-                      width: {
-                        xs: "110px"
-                      },
                       height: {
-                        xs: "110px"
+                        xs: "100px",
+                        xxl: "150px"
+                      },
+                      width: {
+                        xs: "100px",
+                        xxl: "150px"
                       },
                       borderRadius: 0
                     }}
@@ -322,7 +323,7 @@ const AutCommunityEdit = () => {
               variant="outlined"
               size="normal"
               color="offWhite"
-              onClick={() => history.goBack()}
+              onClick={() => navigate(-1)}
               sx={{
                 width: {
                   xs: "140px",
@@ -338,7 +339,7 @@ const AutCommunityEdit = () => {
               type="submit"
               variant="outlined"
               size="normal"
-              color="offWhite"
+              color="primary"
               sx={{
                 width: {
                   xs: "140px",

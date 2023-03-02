@@ -1,5 +1,4 @@
-import { AutButton } from "@components/AutButton";
-import { Typography } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import { pxToRem } from "@utils/text-size";
 import DialogWrapper from "./DialogWrapper";
 
@@ -17,22 +16,22 @@ const ErrorDialog = ({
       open={open}
       fullScreen={fullScreen}
       actions={
-        <AutButton
+        <Button
           onClick={() => handleClose("close")}
           sx={{
             width: pxToRem(250),
             height: pxToRem(50)
           }}
           type="submit"
-          color="primary"
+          color="offWhite"
           variant="outlined"
         >
           Dismiss
-        </AutButton>
+        </Button>
       }
     >
       <div
-        className="aut-join-dialog-content"
+        className="sw-join-dialog-content"
         style={{
           display: "flex",
           flexDirection: "column",
@@ -44,7 +43,7 @@ const ErrorDialog = ({
         <Typography
           sx={{ color: "red", textAlign: "center", mt: 2 }}
           component="div"
-          variant="subtitle2"
+          variant="h4"
         >
           {message}
         </Typography>
@@ -55,20 +54,10 @@ const ErrorDialog = ({
             mt: 2
           }}
           component="div"
-          variant="body2"
+          variant="body1"
         >
           {subtitle}
         </Typography>
-        {hasRetry && (
-          <AutButton
-            onClick={() => handleClose("retry")}
-            type="button"
-            color="primary"
-            variant="outlined"
-          >
-            Retry
-          </AutButton>
-        )}
       </div>
     </DialogWrapper>
   );

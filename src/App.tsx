@@ -1,53 +1,83 @@
-import { useEffect, useState } from "react";
-import {
-  withRouter,
-  Switch,
-  Route,
-  Redirect as RedirectRoute,
-  useLocation
-} from "react-router-dom";
-import { Box, CssBaseline, useMediaQuery, useTheme } from "@mui/material";
+import { Suspense, useEffect, useState } from "react";
+import { Route, Routes, Navigate } from "react-router-dom";
+import { Box } from "@mui/material";
 import { useAppDispatch } from "@store/store.model";
 import { setNetworks } from "@store/WalletProvider/WalletProvider";
-import NotFound from "@components/NotFound";
 import AutLoading from "@components/AutLoading";
-import Web3NetworkProvider from "@api/ProviderFactory/components/Web3NetworkProvider";
-import { pxToRem } from "@utils/text-size";
-import Web3AutProvider from "@api/ProviderFactory/components/Web3Provider";
 import Web3DautConnect from "@api/ProviderFactory/components/web3-daut-connect";
-import { getAppConfig } from "@api/aut.api";
 import AutSearch from "./pages/AutHome/AutSearch";
 import AutHolder from "./pages/AutHolder/AutHolder";
 import SWSnackbar from "./components/snackbar";
-import "./App.scss";
 import { environment } from "@api/environment";
-import AutSDK from "@aut-protocol/sdk";
-import axios from "axios";
+import { NetworkConfig } from "@api/ProviderFactory/network.config";
+import { ethers } from "ethers";
+import { Network } from "@ethersproject/networks";
+import { getAppConfig } from "@api/aut.api";
+import { Config, DAppProvider, MetamaskConnector } from "@usedapp/core";
+import { WalletConnectConnector } from "@usedapp/wallet-connect-connector";
+import AutSDK from "@aut-labs-private/sdk";
+import "./App.scss";
+
+const generateConfig = (networks: NetworkConfig[]): Config => {
+  const readOnlyUrls = networks.reduce((prev, curr) => {
+    const network: Network = {
+      name: "mumbai",
+      chainId: 80001,
+      _defaultProvider: (providers) =>
+        new providers.JsonRpcProvider(curr.rpcUrls[0])
+    };
+    const provider = ethers.getDefaultProvider(network);
+    prev[curr.chainId] = provider;
+    return prev;
+  }, {});
+
+  return {
+    readOnlyUrls,
+    networks: networks.map(
+      (n) =>
+        ({
+          isLocalChain: false,
+          isTestChain: environment.networkEnv === "testing",
+          chainId: n.chainId,
+          chainName: n.network,
+          rpcUrl: n.rpcUrls[0],
+          nativeCurrency: n.nativeCurrency
+        } as any)
+    ),
+    connectors: {
+      metamask: new MetamaskConnector(),
+      walletConnect: new WalletConnectConnector({
+        infuraId: "d8df2cb7844e4a54ab0a782f608749dd"
+      })
+    }
+  };
+};
 
 function App() {
-  const theme = useTheme();
   const dispatch = useAppDispatch();
-  const location = useLocation<any>();
-  const desktop = useMediaQuery(theme.breakpoints.up("md"));
   const [appLoading, setAppLoading] = useState(true);
   const [isLoading, setLoading] = useState(false);
+  const [config, setConfig] = useState<Config>(null);
 
   useEffect(() => {
-    axios
-      .get(
-        "https://gateway.ipfs.io/ipfs/bafkreihexxn6ivhakly7jqdi5wzqkc5rmisdhs33zatyzxgsfx73ihu7si"
-      )
-      .then((value) => {
-        console.log("IPFS", value);
-      });
+    getAppConfig()
+      .then(async (res) => {
+        dispatch(setNetworks(res));
+        setConfig(generateConfig(res));
+        const sdk = new AutSDK({
+          nftStorageApiKey: environment.nftStorageKey
+        });
+      })
+      .finally(() => setAppLoading(false));
+  }, []);
+
+  useEffect(() => {
     getAppConfig()
       .then(async (res) => {
         dispatch(setNetworks(res));
         const sdk = new AutSDK({
           nftStorageApiKey: environment.nftStorageKey
         });
-
-        console.log(sdk);
       })
       .finally(() => setAppLoading(false));
   }, []);
@@ -57,40 +87,30 @@ function App() {
       {appLoading ? (
         <AutLoading />
       ) : (
-        <Web3AutProvider>
-          <Web3DautConnect setLoading={setLoading} />
-          <Web3NetworkProvider />
-          <CssBaseline />
+        <DAppProvider config={config}>
+          <Web3DautConnect config={config} setLoading={setLoading} />
           <SWSnackbar />
           <Box
             sx={{
-              ...(!desktop && {
-                height: `calc(100% - ${pxToRem(120)})`
-              })
+              height: "100vh"
             }}
-            className={isLoading ? "sw-loading" : ""}
           >
             {isLoading ? (
               <AutLoading />
             ) : (
-              <Switch>
-                <Route
-                  exact
-                  render={(props) => <AutSearch {...props} />}
-                  path="/"
-                />
-                <Route component={AutHolder} path="/:holderAddress" />
-                <Route component={NotFound} /> :{" "}
-                <RedirectRoute
-                  to={{ pathname: "/", state: { from: location.pathname } }}
-                />
-              </Switch>
+              <Suspense fallback={<AutLoading />}>
+                <Routes>
+                  <Route path="/" element={<AutSearch />} />
+                  <Route path="/:holderAddress/*" element={<AutHolder />} />
+                  <Route path="*" element={<Navigate to="/" />} />
+                </Routes>
+              </Suspense>
             )}
           </Box>
-        </Web3AutProvider>
+        </DAppProvider>
       )}
     </>
   );
 }
 
-export default withRouter(App);
+export default App;

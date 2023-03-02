@@ -13,8 +13,8 @@ const TopWrapper = styled(Box)(({ theme }) => ({
 
 const BottomWrapper = styled("div")(({ theme }) => ({
   width: "100%",
-  marginBottom: "50px",
-  marginTop: "50px",
+  marginBottom: theme.spacing(4),
+  marginTop: theme.spacing(4),
   justifyContent: "space-between",
   maxWidth: "600px",
   display: "flex"
@@ -27,14 +27,14 @@ const FormWrapper = styled("form")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   alignItems: "flex-start",
-  paddingTop: "80px",
-  paddingLeft: "80px",
-  paddingRight: "80px",
+  paddingTop: theme.spacing(6),
+  paddingLeft: theme.spacing(6),
+  paddingRight: theme.spacing(6),
   width: "100%",
   [theme.breakpoints.down("lg")]: {
-    paddingTop: "50px",
-    paddingLeft: "50px",
-    paddingRight: "50px",
+    paddingTop: theme.spacing(4),
+    paddingLeft: theme.spacing(4),
+    paddingRight: theme.spacing(4),
     alignItems: "center",
     justifyContent: "center",
     alignContent: "center"
@@ -54,14 +54,14 @@ const ContentWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   alignItems: "flex-start",
-  paddingTop: "80px",
-  paddingLeft: "80px",
-  paddingRight: "80px",
+  paddingTop: theme.spacing(6),
+  paddingLeft: theme.spacing(6),
+  paddingRight: theme.spacing(6),
   width: "100%",
   [theme.breakpoints.down("lg")]: {
-    paddingTop: "50px",
-    paddingLeft: "50px",
-    paddingRight: "50px",
+    paddingTop: theme.spacing(4),
+    paddingLeft: theme.spacing(4),
+    paddingRight: theme.spacing(4),
     alignItems: "center",
     justifyContent: "center",
     alignContent: "center"

@@ -7,6 +7,8 @@ export interface NetworkContracts {
   autIDAddress: string;
   daoExpanderRegistryAddress: string;
   daoExpanderFactoryAddress: string;
+  autDaoRegistryAddress: string;
+  autDaoFactoryAddress: string;
   hackerDaoAddress: string;
   daoTypesAddress: string;
 }
@@ -17,7 +19,8 @@ export interface NetworkConfig {
   chainId: string | number;
   rpcUrls: string[];
   explorerUrls: string[];
-  disabled: boolean;
-  contracts: NetworkContracts;
   biconomyApiKey: string;
+  contracts: NetworkContracts;
+  disabled: boolean;
+  nativeCurrency: any;
 }

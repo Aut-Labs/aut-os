@@ -1,22 +1,13 @@
 version: '3.7'
 
 services:
-
   playground:
     container_name: playground
     build:
       context: .
       dockerfile: Dockerfile
-      args:
-        - api_url=http://localhost:4005/api
-    networks:
-      - query-server_aut-api
     volumes:
       - '.:/app'
       - '/app/node_modules'
     ports:
       - '5002:80'
-
-networks:
-  query-server_aut-api:
-    external: true

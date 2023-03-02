@@ -1,9 +1,5 @@
 import { NetworkConfig } from "@api/ProviderFactory/network.config";
-import { initializeConnectors } from "@api/ProviderFactory/web3.connectors";
 import { createSelector, createSlice } from "@reduxjs/toolkit";
-import { Web3ReactHooks } from "@web3-react/core";
-import { MetaMask } from "@web3-react/metamask";
-import { WalletConnect } from "@web3-react/walletconnect";
 import { ethers } from "ethers";
 
 export enum ConnectorTypes {
@@ -17,7 +13,7 @@ export interface WalletProviderState {
   selectedNetwork: string;
   networksConfig: NetworkConfig[];
   isOpen: boolean;
-  connectors: [MetaMask | WalletConnect, Web3ReactHooks][];
+  sdkInitialized: boolean;
   wallets: any;
 }
 
@@ -26,8 +22,8 @@ const initialState: WalletProviderState = {
   selectedWalletType: null,
   selectedNetwork: null,
   isOpen: false,
+  sdkInitialized: false,
   networksConfig: [],
-  connectors: [],
   wallets: {}
 };
 
@@ -35,6 +31,11 @@ export const walletProviderSlice = createSlice({
   name: "walletProvider",
   initialState,
   reducers: {
+    updateWalletProviderState(state, action) {
+      Object.keys(action.payload).forEach((key: string) => {
+        state[key] = action.payload[key];
+      });
+    },
     setSigner(state, action) {
       state.signer = action.payload;
     },
@@ -49,20 +50,9 @@ export const walletProviderSlice = createSlice({
     },
     setNetworks(state, action) {
       state.networksConfig = action.payload;
-      const { metaMaskConnector, walletConnectConnector } =
-        initializeConnectors(action.payload);
-      const [metamask, metaMaskHooks] = metaMaskConnector;
-      const [walletConnect, walletConnectHooks] = walletConnectConnector;
-
-      const connectors: [MetaMask | WalletConnect, Web3ReactHooks][] = [
-        [metamask, metaMaskHooks],
-        [walletConnect, walletConnectHooks]
-      ];
-      state.wallets = {
-        [ConnectorTypes.Metamask]: metaMaskConnector,
-        [ConnectorTypes.WalletConnect]: walletConnectConnector
-      };
-      state.connectors = connectors;
+    },
+    initializeSdk(state, action) {
+      state.sdkInitialized = action.payload;
     },
     resetWalletProviderState: () => initialState
   }
@@ -73,36 +63,47 @@ export const {
   setWallet,
   setNetwork,
   setNetworks,
+  updateWalletProviderState,
+  initializeSdk,
   setProviderIsOpen
 } = walletProviderSlice.actions;
 
-export const NetworkSelectorIsOpen = (state: any) =>
+const networkSelectorIsOpen = (state: any) =>
   state.walletProvider.isOpen as boolean;
-export const SelectedWalletType = (state: any) =>
+export const NetworkSelectorIsOpen = createSelector(
+  [networkSelectorIsOpen],
+  (a) => a
+);
+
+export const ssSdkInitialized = (state: any) =>
+  state.walletProvider.sdkInitialized as boolean;
+export const IsSdkInitialized = createSelector([ssSdkInitialized], (a) => a);
+
+export const selectedWalletType = (state: any) =>
   state.walletProvider.selectedWalletType as string;
-export const NetworkSigner = (state: any) =>
+export const SelectedWalletType = createSelector(
+  [selectedWalletType],
+  (a) => a
+);
+
+export const networkSigner = (state: any) =>
   state.walletProvider.signer as ethers.providers.JsonRpcSigner;
-export const NetworksConfig = (state: any) =>
+export const NetworkSigner = createSelector([networkSigner], (a) => a);
+
+export const networksConfig = (state: any) =>
   state.walletProvider.networksConfig as NetworkConfig[];
-export const NetworkConnectors = (state: any) =>
-  state.walletProvider.connectors as [
-    MetaMask | WalletConnect,
-    Web3ReactHooks
-  ][];
-export const NetworkWalletConnectors = (state: any) =>
-  state.walletProvider.wallets as any;
-export const SelectedNetwork = (state: any) =>
+export const NetworksConfig = createSelector([networksConfig], (a) => a);
+
+export const selectedNetwork = (state: any) =>
   state.walletProvider.selectedNetwork as string;
+export const SelectedNetwork = createSelector([selectedNetwork], (a) => a);
+
 export const SelectedNetworkConfig = createSelector(
   NetworksConfig,
   SelectedNetwork,
-  (networks, networkName) =>
-    networks.find(
-      (r) => r.network?.toLowerCase() === networkName?.toLowerCase()
-    )
+  (networks, networkName) => networks.find((r) => r.network === networkName)
 );
-export const NetworkConnector = (connectorName: string) =>
-  createSelector(NetworkWalletConnectors, (x1) => x1[connectorName]);
+
 export const BlockExplorerUrl = createSelector(
   SelectedNetworkConfig,
   (config) => {
@@ -120,5 +121,10 @@ export const IsConnected = createSelector(
     return !isOpen && !!network && !!signer;
   }
 );
+
+export const NetworkWalletConnectors = (state: any) =>
+  state.walletProvider.wallets as any;
+export const NetworkConnector = (connectorName: string) =>
+  createSelector(NetworkWalletConnectors, (x1) => x1[connectorName]);
 
 export default walletProviderSlice.reducer;

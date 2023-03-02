@@ -5,17 +5,16 @@ import {
   InputAdornment,
   styled,
   SvgIcon,
+  Toolbar,
   Typography,
   useMediaQuery,
   useTheme
 } from "@mui/material";
 import { ReactComponent as MyAutIDLogo } from "@assets/MyAutIdLogoPath.svg";
 import { ReactComponent as ConcentricImage } from "@assets/ConcentricImage.svg";
-
 import { ReactComponent as SearchIcon } from "@assets/SearchIcon.svg";
-import { useHistory, useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { pxToRem } from "@utils/text-size";
 import { Controller, useForm } from "react-hook-form";
 import {
   NoSearchResults,
@@ -26,14 +25,12 @@ import { ResultState } from "@store/result-status";
 import { AutID } from "@api/aut.model";
 import { useAppDispatch } from "@store/store.model";
 import { Player } from "@lottiefiles/react-lottie-player";
-import { DautPlaceholder } from "@components/DautPlaceholder";
 import * as animationData from "../../assets/load-id.json";
 import { AutIDProfileList } from "@components/AutIDProfileList";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { fetchHolder, fetchSearchResults } from "@api/holder.api";
-import TextField from "@mui/material/TextField";
-import { DummyProfile } from "./dummy-profile";
 import { AutTextField } from "@theme/field-text-styles";
+import { DautPlaceholder } from "@api/ProviderFactory/components/web3-daut-connect";
 
 const AutBox = styled(Box)(({ theme }) => ({
   "&.MuiBox-root": {
@@ -167,7 +164,7 @@ const MyAutIdLogoWrapper = styled(MyAutIDLogo)(({ theme }) => ({
   }
 }));
 
-const AutSearch = ({ match }) => {
+const AutSearch = () => {
   const dispatch = useAppDispatch();
   const status = useSelector(SearchStatus);
   const noResults = useSelector(NoSearchResults);
@@ -175,7 +172,7 @@ const AutSearch = ({ match }) => {
   const theme = useTheme();
   const desktop = useMediaQuery(theme.breakpoints.up("md"));
   const xs = useMediaQuery(theme.breakpoints.down("sm"));
-  const history = useHistory();
+  const navigate = useNavigate();
   const location = useLocation();
   const abort = useRef<AbortController>();
 
@@ -183,7 +180,7 @@ const AutSearch = ({ match }) => {
     console.log(profile, "profile");
     const params = new URLSearchParams(location.search);
     params.set("network", profile.properties.network?.toLowerCase());
-    history.push({
+    navigate({
       pathname: `/${profile.name}`,
       search: `?${params.toString()}`
     });
@@ -224,95 +221,112 @@ const AutSearch = ({ match }) => {
   // }, []);
 
   return (
-    <AutBox>
-      <ConcentricImageWrapper
-        style={{ top: "10%", left: "calc(662px / 2 * -1", right: "unset" }}
-      />
-      <ConcentricImageWrapper />
-
-      <DautPlaceholder
-        styles={{
-          right: "80px"
+    <>
+      <Toolbar
+        sx={{
+          width: "100%",
+          position: "fixed",
+          // backgroundColor: "nightBlack.main",
+          // boxShadow: 2,
+          "&.MuiToolbar-root": {
+            paddingLeft: 6,
+            paddingRight: 6,
+            minHeight: "84px",
+            justifyContent: "flex-end",
+            alignItems: "center"
+          }
         }}
-        hide={false}
-      />
-      <TopWrapper>
-        <MyAutIdLogoWrapper />
-        <Typography
-          variant="subtitle1"
-          color="white"
-          sx={{
-            marginBottom: {
-              xs: "20px",
-              md: "30px"
-            }
-          }}
-        >
-          Own your own Identity. <br />
-        </Typography>
-        <Typography
-          color="white"
-          variant="body"
-          sx={{
-            textAlign: "center",
-            marginBottom: {
-              xs: "20px",
-              md: "30px"
-            }
-          }}
-        >
-          ĀutID is self-sovereign, unique, and portable: it lets you join new
-          DAOs, and log in across DAO-powered Web3 DApps.
-        </Typography>
-      </TopWrapper>
-      <FormWrapper autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
-        <FieldWrapper>
-          <Controller
-            key="username"
-            name="username"
-            control={control}
-            render={({ field: { name, value, onChange } }) => {
-              return (
-                <>
-                  <StyledTextField
-                    placeholder="Search āut"
-                    variant="standard"
-                    color="offWhite"
-                    focused
-                    id={name}
-                    name={name}
-                    value={value}
-                    onChange={onChange}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <SvgIcon
-                            sx={{
-                              height: "29px",
-                              width: "29px",
-                              mt: "10px",
-                              ml: "10px",
-                              cursor: "pointer",
-                              color: "white",
-                              ":hover": {
-                                color: "offWhite"
-                              }
-                            }}
-                            key="username-icon"
-                            component={SearchIcon}
-                            onClick={handleSubmit(onSubmit)}
-                          />
-                        </InputAdornment>
-                      )
-                    }}
-                  />
-                </>
-              );
+      >
+        <DautPlaceholder
+        // styles={{
+        //   right: "80px"
+        // }}
+        // hide={false}
+        />
+      </Toolbar>
+      <AutBox>
+        <ConcentricImageWrapper
+          style={{ top: "10%", left: "calc(662px / 2 * -1", right: "unset" }}
+        />
+        <ConcentricImageWrapper />
+
+        <TopWrapper>
+          <MyAutIdLogoWrapper />
+          <Typography
+            variant="subtitle1"
+            color="white"
+            sx={{
+              marginBottom: {
+                xs: "20px",
+                md: "30px"
+              }
             }}
-          />
-        </FieldWrapper>
-      </FormWrapper>
-      {/* <ResultWrapper>
+          >
+            Own your own Identity. <br />
+          </Typography>
+          <Typography
+            color="white"
+            variant="body"
+            sx={{
+              textAlign: "center",
+              marginBottom: {
+                xs: "20px",
+                md: "30px"
+              }
+            }}
+          >
+            ĀutID is self-sovereign, unique, and portable: it lets you join new
+            DAOs, and log in across DAO-powered Web3 DApps.
+          </Typography>
+        </TopWrapper>
+        <FormWrapper autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
+          <FieldWrapper>
+            <Controller
+              key="username"
+              name="username"
+              control={control}
+              render={({ field: { name, value, onChange } }) => {
+                return (
+                  <>
+                    <StyledTextField
+                      placeholder="Search āut"
+                      variant="standard"
+                      color="offWhite"
+                      focused
+                      id={name}
+                      name={name}
+                      value={value}
+                      onChange={onChange}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <SvgIcon
+                              sx={{
+                                height: "29px",
+                                width: "29px",
+                                mt: "10px",
+                                ml: "10px",
+                                cursor: "pointer",
+                                color: "white",
+                                ":hover": {
+                                  color: "offWhite"
+                                }
+                              }}
+                              key="username-icon"
+                              component={SearchIcon}
+                              onClick={handleSubmit(onSubmit)}
+                            />
+                          </InputAdornment>
+                        )
+                      }}
+                    />
+                  </>
+                );
+              }}
+            />
+          </FieldWrapper>
+        </FormWrapper>
+        {/* <ResultWrapper>
         {loadingg ? (
           <>
             <Typography
@@ -354,45 +368,49 @@ const AutSearch = ({ match }) => {
         )}
       </ResultWrapper> */}
 
-      <ResultWrapper>
-        {status === ResultState.Loading ? (
-          <>
+        <ResultWrapper>
+          {status === ResultState.Loading ? (
+            <>
+              <Typography
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  color: "white"
+                }}
+                variant="caption"
+              >
+                One second, let me look...
+              </Typography>
+              <Player
+                loop
+                autoplay
+                rendererSettings={{ preserveAspectRatio: "xMidYMid slice" }}
+                src={animationData}
+                style={{ height: "189px", width: "189px" }}
+              />
+            </>
+          ) : noResults ? (
             <Typography
               sx={{
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                color: "white"
+                color: "red"
               }}
               variant="caption"
             >
-              One second, let me look...
+              No user found with that username. Try again!
             </Typography>
-            <Player
-              loop
-              autoplay
-              rendererSettings={{ preserveAspectRatio: "xMidYMid slice" }}
-              src={animationData}
-              style={{ height: "189px", width: "189px" }}
+          ) : (
+            <AutIDProfileList
+              profiles={searchResult}
+              onSelect={selectProfile}
             />
-          </>
-        ) : noResults ? (
-          <Typography
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              color: "red"
-            }}
-            variant="caption"
-          >
-            No user found with that username. Try again!
-          </Typography>
-        ) : (
-          <AutIDProfileList profiles={searchResult} onSelect={selectProfile} />
-        )}
-      </ResultWrapper>
-    </AutBox>
+          )}
+        </ResultWrapper>
+      </AutBox>
+    </>
   );
 };
 

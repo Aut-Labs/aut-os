@@ -2,7 +2,9 @@ import { PaletteColor } from "@mui/material";
 
 declare module "@mui/material/styles/createTypography" {
   interface Typography {
+    // @ts-ignore
     xl?: React.CSSProperties;
+    // @ts-ignore
     xxl?: React.CSSProperties;
     subtitle1?: React.CSSProperties;
     body?: React.CSSProperties;
@@ -12,6 +14,7 @@ declare module "@mui/material/styles/createTypography" {
 
   interface TypographyOptions {
     xl?: React.CSSProperties;
+    // @ts-ignore
     xxl?: React.CSSProperties;
     subtitle1?: React.CSSProperties;
     body?: React.CSSProperties;
@@ -35,6 +38,27 @@ declare module "@mui/material/Button" {
   }
 
   interface ButtonPropsColorOverrides {
+    offWhite?: true;
+    nightBlack?: true;
+  }
+}
+
+declare module "@mui/material/Link" {
+  interface LinkPropsColorOverrides {
+    offWhite?: true;
+    nightBlack?: true;
+  }
+}
+
+declare module "@mui/material/IconButton" {
+  interface IconButtonPropsColorOverrides {
+    offWhite?: true;
+    nightBlack?: true;
+  }
+}
+
+declare module "@mui/material/CircularProgress" {
+  interface CircularProgressPropsColorOverrides {
     offWhite?: true;
     nightBlack?: true;
   }
@@ -103,7 +127,9 @@ declare module "@mui/material/styles" {
 
 declare module "@mui/material/Typography/Typography" {
   interface TypographyPropsVariantOverrides {
+    // @ts-ignore
     xl?: true;
+    // @ts-ignore
     xxl?: true;
     body?: true;
     subtitle1?: true;
