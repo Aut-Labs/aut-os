@@ -10,7 +10,8 @@ import { NetworkConfig } from "./ProviderFactory/network.config";
 import { environment } from "./environment";
 import AutSDK, {
   CommunityMembershipDetails,
-  HolderData
+  HolderData,
+  fetchMetadata
 } from "@aut-labs-private/sdk";
 
 export const fetchHolderEthEns = async (address: string) => {
@@ -48,11 +49,14 @@ export const fetchHolderCommunities = async (
       .filter((c) => c.holderIsActive)
       .map((curr: CommunityMembershipDetails) => {
         const communityMetadataUri = ipfsCIDToHttpUrl(curr.metadata);
-        return axios.get<Community>(communityMetadataUri).then((metadata) => {
+        return fetchMetadata<Community>(
+          communityMetadataUri,
+          environment.nftStorageUrl
+        ).then((metadata) => {
           return new Community({
-            ...metadata.data,
+            ...metadata,
             properties: {
-              ...metadata.data.properties,
+              ...metadata.properties,
               additionalProps: curr,
               address: curr.daoAddress,
               userData: {
@@ -71,7 +75,10 @@ export const fetchAutID = async (
   network: string
 ): Promise<AutID> => {
   const userMetadataUri = ipfsCIDToHttpUrl(holderData.metadataUri);
-  const userMetadata: AutID = (await axios.get(userMetadataUri)).data;
+  const userMetadata: AutID = await fetchMetadata<AutID>(
+    userMetadataUri,
+    environment.nftStorageUrl
+  );
   const ethDomain = await fetchHolderEthEns(userMetadata.properties.address);
   const autID = new AutID({
     ...userMetadata,
