@@ -141,7 +141,9 @@ export const fetchHolder = createAsyncThunk(
     const { search, walletProvider } = getState() as any;
     const networks: string[] = network
       ? [network]
-      : walletProvider.networksConfig.map((n) => n.network?.toLowerCase());
+      : walletProvider.networksConfig
+          .filter((n: NetworkConfig) => !n.disabled)
+          .map((n: NetworkConfig) => n.network?.toLowerCase());
     // const networks: string[] = network ? [network] : ['goerli', 'goerli'];
     const profiles = [];
     try {

@@ -2,19 +2,26 @@ import { HolderStatus, HolderData } from "@store/holder/holder.reducer";
 import { ResultState } from "@store/result-status";
 import { useAppDispatch } from "@store/store.model";
 import { useSelector } from "react-redux";
-import { Box, styled, useMediaQuery, useTheme } from "@mui/material";
+import {
+  Box,
+  Button,
+  Typography,
+  styled,
+  useMediaQuery,
+  useTheme
+} from "@mui/material";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination } from "swiper";
 import { AutShareDialog } from "@components/AutShare";
 import { setOpenShare } from "@store/ui-reducer";
 import AutLeft from "./AutLeft/Left";
 import AutTunnelRight from "./AutRight/Right";
-
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import { DautPlaceholder } from "@api/ProviderFactory/components/web3-daut-connect";
+import { useNavigate } from "react-router-dom";
 
 const AutContainer = styled("div")(() => ({
   display: "flex",
@@ -34,6 +41,7 @@ const AutHolder = (props) => {
   const theme = useTheme();
   const desktop = useMediaQuery(theme.breakpoints.up("md"));
   const holderData = useSelector(HolderData);
+  const navigate = useNavigate();
 
   const handleClose = () => {
     dispatch(setOpenShare(false));
@@ -80,40 +88,76 @@ const AutHolder = (props) => {
         }}
         onClose={handleClose}
       />
-      {desktop ? (
-        <AutContainer>
-          <AutLeft {...props} />
-          {status === ResultState.Success && <AutTunnelRight />}
-        </AutContainer>
+
+      {!holderData ? (
+        <Box
+          sx={{
+            height: "100%"
+          }}
+        >
+          <Box
+            sx={{
+              height: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexDirection: "column"
+            }}
+          >
+            <Typography color="white" variant="h2">
+              ĀutID not found
+            </Typography>
+            <Button
+              variant="outlined"
+              size="normal"
+              color="offWhite"
+              onClick={() => navigate("/")}
+              sx={{
+                mt: 4
+              }}
+            >
+              Home
+            </Button>
+          </Box>
+        </Box>
       ) : (
         <>
-          <AutSwiper
-            direction="horizontal"
-            slidesPerView={1}
-            spaceBetween={30}
-            mousewheel
-            pagination={{
-              clickable: true
-            }}
-            modules={[Pagination]}
-            className="mySwiper"
-          >
-            {status === ResultState.Success && (
-              <SwiperSlide>
-                <AutTunnelRight />
-              </SwiperSlide>
-            )}
-            <SwiperSlide>
+          {desktop ? (
+            <AutContainer>
               <AutLeft {...props} />
-              <Box>
-                <DautPlaceholder
-                // hide={status === ResultState.Loading}
-                // horizontal="center"
-                // vertical="bottom"
-                />
-              </Box>
-            </SwiperSlide>
-          </AutSwiper>
+              {status === ResultState.Success && <AutTunnelRight />}
+            </AutContainer>
+          ) : (
+            <>
+              <AutSwiper
+                direction="horizontal"
+                slidesPerView={1}
+                spaceBetween={30}
+                mousewheel
+                pagination={{
+                  clickable: true
+                }}
+                modules={[Pagination]}
+                className="mySwiper"
+              >
+                {status === ResultState.Success && (
+                  <SwiperSlide>
+                    <AutTunnelRight />
+                  </SwiperSlide>
+                )}
+                <SwiperSlide>
+                  <AutLeft {...props} />
+                  <Box>
+                    <DautPlaceholder
+                    // hide={status === ResultState.Loading}
+                    // horizontal="center"
+                    // vertical="bottom"
+                    />
+                  </Box>
+                </SwiperSlide>
+              </AutSwiper>
+            </>
+          )}
         </>
       )}
     </>

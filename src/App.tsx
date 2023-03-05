@@ -33,17 +33,19 @@ const generateConfig = (networks: NetworkConfig[]): Config => {
 
   return {
     readOnlyUrls,
-    networks: networks.map(
-      (n) =>
-        ({
-          isLocalChain: false,
-          isTestChain: environment.networkEnv === "testing",
-          chainId: n.chainId,
-          chainName: n.network,
-          rpcUrl: n.rpcUrls[0],
-          nativeCurrency: n.nativeCurrency
-        } as any)
-    ),
+    networks: networks
+      .filter((n) => !n.disabled)
+      .map(
+        (n) =>
+          ({
+            isLocalChain: false,
+            isTestChain: environment.networkEnv === "testing",
+            chainId: n.chainId,
+            chainName: n.network,
+            rpcUrl: n.rpcUrls[0],
+            nativeCurrency: n.nativeCurrency
+          } as any)
+      ),
     connectors: {
       metamask: new MetamaskConnector(),
       walletConnect: new WalletConnectConnector({
