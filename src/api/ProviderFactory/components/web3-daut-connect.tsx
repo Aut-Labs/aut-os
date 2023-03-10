@@ -249,7 +249,6 @@ function Web3DautConnect({
         }}
         id="d-aut"
         ipfs-gateway="https://ipfs.nftstorage.link/ipfs"
-        dao-expander="0xbAac78A371432Ce5e0FAaFd01E45Df4364a7E6a4"
         button-type="simple"
       />
       <DialogWrapper open={openForSelectNetwork}>

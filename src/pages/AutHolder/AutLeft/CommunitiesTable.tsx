@@ -25,6 +25,7 @@ import { Link } from "react-router-dom";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import {
   BlockExplorerUrl,
+  IsConnected,
   SelectedNetworkConfig
 } from "@store/WalletProvider/WalletProvider";
 import { useSelector } from "react-redux";
@@ -47,6 +48,7 @@ const TaskStyledTableCell = styled(TableCell)(({ theme }) => ({
 
 const CommunityListItem = memo(({ row }: { row: Community }) => {
   const blockExplorer = useSelector(BlockExplorerUrl);
+  const isConnected = useSelector(IsConnected);
   const selectedNetworkConfig = useSelector(SelectedNetworkConfig);
   return (
     <StyledTableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
@@ -91,12 +93,17 @@ const CommunityListItem = memo(({ row }: { row: Community }) => {
           }}
         >
           <Box>
-            <Tooltip title="View community details">
+            <Tooltip
+              disableHoverListener={!isConnected}
+              title={isConnected ? "View community details" : ""}
+            >
               <BtnLink
                 color="primary"
                 variant="subtitle2"
-                to={`edit-community/${row.properties.address}`}
-                component={Link}
+                {...(isConnected && {
+                  to: `edit-community/${row.properties.address}`,
+                  component: Link
+                })}
               >
                 {row?.name || "n/a"}
               </BtnLink>
