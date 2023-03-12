@@ -341,12 +341,6 @@ const AutProfileEdit = () => {
                 <SvgIcon
                   sx={{
                     color: "offWhite.main",
-                    // height: {
-                    //   xs: "34px"
-                    // },
-                    // width: {
-                    //   xs: "34px"
-                    // },
                     mt: "10px",
                     mr: "20px"
                   }}
@@ -370,7 +364,7 @@ const AutProfileEdit = () => {
                           autoFocus={index === 0}
                           onChange={onChange}
                           sx={{
-                            width: "100%",
+                            width: "calc(100% - 50px)",
                             mb: "15px"
                           }}
                           InputProps={{

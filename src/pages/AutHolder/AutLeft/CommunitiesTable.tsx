@@ -100,6 +100,14 @@ const CommunityListItem = memo(({ row }: { row: Community }) => {
               <BtnLink
                 color="primary"
                 variant="subtitle2"
+                sx={{
+                  "&:hover": {
+                    textDecoration: {
+                      xs: "none",
+                      sm: "underline"
+                    }
+                  }
+                }}
                 {...(isConnected && {
                   to: `edit-community/${row.properties.address}`,
                   component: Link

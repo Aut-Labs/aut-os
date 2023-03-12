@@ -80,20 +80,20 @@ const ContentWrapper = styled("div")(({ theme }) => ({
 const FieldWrapper = styled("div")(({ theme }) => ({
   flexDirection: "row",
   marginBottom: "20px",
-  minHeight: "70px",
+  // minHeight: "70px",
   display: "flex",
   width: "100%",
   justifyContent: "flex-start",
-  alignItems: "flex-start",
-  [theme.breakpoints.down("lg")]: {
-    justifyContent: "center",
-    alignItems: "center"
-  },
-  [theme.breakpoints.down("sm")]: {
-    justifyContent: "flex-start",
-    alignItems: "flex-start",
-    paddingLeft: "30px"
-  }
+  alignItems: "flex-start"
+  // [theme.breakpoints.down("lg")]: {
+  //   justifyContent: "center",
+  //   alignItems: "center"
+  // },
+  // [theme.breakpoints.down("sm")]: {
+  //   justifyContent: "flex-start",
+  //   alignItems: "flex-start"
+  //   // paddingLeft: "30px"
+  // }
 }));
 
 export const EditContentElements = {

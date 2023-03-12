@@ -150,24 +150,6 @@ const AutHolder = (props) => {
                   <AutLeft />
                 </SwiperSlide>
               </AutSwiper>
-              <Toolbar
-                sx={{
-                  width: "100%",
-                  backgroundColor: "nightBlack.main",
-                  boxShadow: 0,
-                  "&.MuiToolbar-root": {
-                    paddingLeft: 6,
-                    paddingRight: 6,
-                    minHeight: "84px",
-                    bottom: "35px",
-                    position: "fixed",
-                    justifyContent: "flex-end",
-                    alignItems: "center"
-                  }
-                }}
-              >
-                <DautPlaceholder />
-              </Toolbar>
             </>
           )}
         </>
