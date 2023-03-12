@@ -28,7 +28,7 @@ const AutLeftContainer = styled("div")(({ theme }) => ({
 const AutCommunityEdit = lazy(() => import("./AutCommunityEdit"));
 const AutProfileEdit = lazy(() => import("./AutProfileEdit"));
 
-const AutLeft = ({ match }) => {
+const AutLeft = () => {
   const dispatch = useAppDispatch();
   const status = useSelector(HolderStatus);
   const profiles = useSelector(AutIDProfiles);

@@ -178,7 +178,13 @@ const CommunitiesTable = ({
   return (
     <TableContainer
       sx={{
-        width: "100%",
+        minWidth: {
+          sm: "100%"
+        },
+        width: {
+          xs: "360px",
+          sm: "unset"
+        },
         borderRadius: "16px",
         backgroundColor: "nightBlack.main",
         borderColor: "divider",
@@ -188,6 +194,10 @@ const CommunitiesTable = ({
     >
       <Table
         sx={{
+          minWidth: {
+            xs: "700px",
+            sm: "unset"
+          },
           ".MuiTableBody-root > .MuiTableRow-root:hover": {
             backgroundColor: "#ffffff0a"
           }

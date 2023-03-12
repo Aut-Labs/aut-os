@@ -56,19 +56,19 @@ const AutBox = styled(Box)(({ theme }) => ({
   }
 }));
 
-const StyledTextField = styled(AutTextField)(({ theme }) => ({
-  width: "100%",
+// const StyledTextField = styled(AutTextField)(({ theme }) => ({
+//   width: "100%",
 
-  ".MuiInputLabel-root": {
-    top: "-2px"
-  },
+//   ".MuiInputLabel-root": {
+//     top: "-2px"
+//   },
 
-  ".MuiOutlinedInput-root, .MuiInput-underline": {
-    color: "#fff",
-    height: "45px",
-    lineHeight: "45px"
-  }
-}));
+//   ".MuiOutlinedInput-root, .MuiInput-underline": {
+//     color: "#fff",
+//     height: "45px",
+//     lineHeight: "45px"
+//   }
+// }));
 
 const TopWrapper = styled("div")(({ theme }) => ({
   display: "flex",
@@ -232,7 +232,10 @@ const AutSearch = () => {
             paddingLeft: 6,
             paddingRight: 6,
             minHeight: "84px",
-            justifyContent: "flex-end",
+            justifyContent: {
+              xs: "center",
+              sm: "flex-end"
+            },
             alignItems: "center"
           }
         }}
@@ -272,6 +275,11 @@ const AutSearch = () => {
               marginBottom: {
                 xs: "20px",
                 md: "30px"
+              },
+              maxWidth: {
+                xs: "100%",
+                md: "600px",
+                xxl: "800px"
               }
             }}
           >
@@ -288,15 +296,18 @@ const AutSearch = () => {
               render={({ field: { name, value, onChange } }) => {
                 return (
                   <>
-                    <StyledTextField
+                    <AutTextField
                       placeholder="Search āut"
                       variant="standard"
                       color="offWhite"
-                      focused
+                      autoFocus
                       id={name}
                       name={name}
                       value={value}
                       onChange={onChange}
+                      sx={{
+                        width: "100%"
+                      }}
                       InputProps={{
                         endAdornment: (
                           <InputAdornment position="end">
@@ -304,12 +315,10 @@ const AutSearch = () => {
                               sx={{
                                 height: "29px",
                                 width: "29px",
-                                mt: "10px",
-                                ml: "10px",
                                 cursor: "pointer",
-                                color: "white",
+                                color: "offWhite.dark",
                                 ":hover": {
-                                  color: "offWhite"
+                                  color: "offWhite.main"
                                 }
                               }}
                               key="username-icon"

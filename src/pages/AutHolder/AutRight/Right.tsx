@@ -1,39 +1,21 @@
 import {
-  Avatar,
   Box,
   CardMedia,
   styled,
-  SvgIcon,
   Toolbar,
   useMediaQuery,
   useTheme
 } from "@mui/material";
-import { ReactComponent as ShareIcon } from "@assets/ShareIcon.svg";
-import { pxToRem } from "@utils/text-size";
 import { useSelector } from "react-redux";
-import { HolderData, HolderStatus } from "@store/holder/holder.reducer";
+import { HolderData } from "@store/holder/holder.reducer";
 import { setOpenShare } from "@store/ui-reducer";
 import { useAppDispatch } from "@store/store.model";
 import { ipfsCIDToHttpUrl } from "@api/storage.api";
-import { browserName, isIOS } from "react-device-detect";
 import AutToolBar from "../AutLeft/AutToolBar";
-import { CanUpdateProfile } from "@auth/auth.reducer";
 import { DautPlaceholder } from "@api/ProviderFactory/components/web3-daut-connect";
 
 const CardZoom = styled<any>(CardMedia)(({ theme }) => ({
   borderRadius: 0,
-  // border: "1px solid white",
-  // // background: theme.palette.background.paper,
-  // boxShadow: theme.shadows[1],
-  // position: "relative",
-  // width: "calc(100% - 40px)",
-  // height: "calc(100% - 40px)",
-  // margin: "20px",
-  // display: "flex",
-  // alignItems: "center",
-  // justifyContent: "center",
-
-  // backgroundColor: '#141414',
   "@keyframes zoom-in-zoom-out": {
     "0%": {
       transform: "scale(1, 1)"
@@ -106,11 +88,8 @@ const AutIdCard = ({ avatar }) => {
 const AutTunnelRight = () => {
   const dispatch = useAppDispatch();
   const holderData = useSelector(HolderData);
-  const canUpdateProfile = useSelector(CanUpdateProfile);
   const theme = useTheme();
   const desktop = useMediaQuery(theme.breakpoints.up("md"));
-  const isSafari = browserName === "Safari";
-  const status = useSelector(HolderStatus);
 
   const handleClickOpen = () => {
     dispatch(setOpenShare(true));
@@ -177,7 +156,11 @@ const AutTunnelRight = () => {
             <CardZoom
               component="img"
               sx={{
-                width: "300px"
+                width: "300px",
+                mb: {
+                  xs: "84px",
+                  sm: "unset"
+                }
               }}
               src={ipfsCIDToHttpUrl(holderData?.image as string)}
             />
@@ -695,7 +678,11 @@ const AutTunnelRight = () => {
             <CardZoom
               component="img"
               sx={{
-                width: "300px"
+                width: "300px",
+                mb: {
+                  xs: "84px",
+                  sm: "unset"
+                }
               }}
               src={ipfsCIDToHttpUrl(holderData?.image as string)}
             />

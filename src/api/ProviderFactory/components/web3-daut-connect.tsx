@@ -304,6 +304,8 @@ export const DautPlaceholder = memo(() => {
   useLayoutEffect(() => {
     let dautEl: HTMLElement = document.querySelector("#d-aut");
     dautEl.style.display = "none";
+    dautEl.style.left = "0";
+    dautEl.style.top = "0";
     const updateDautPosition = () => {
       if (!dautEl) {
         dautEl = document.querySelector("#d-aut");

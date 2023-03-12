@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import {
   Box,
   Button,
+  Toolbar,
   Typography,
   styled,
   useMediaQuery,
@@ -89,7 +90,7 @@ const AutHolder = (props) => {
         onClose={handleClose}
       />
 
-      {!holderData ? (
+      {!holderData && status === ResultState.Success ? (
         <Box
           sx={{
             height: "100%"
@@ -146,16 +147,27 @@ const AutHolder = (props) => {
                   </SwiperSlide>
                 )}
                 <SwiperSlide>
-                  <AutLeft {...props} />
-                  <Box>
-                    <DautPlaceholder
-                    // hide={status === ResultState.Loading}
-                    // horizontal="center"
-                    // vertical="bottom"
-                    />
-                  </Box>
+                  <AutLeft />
                 </SwiperSlide>
               </AutSwiper>
+              <Toolbar
+                sx={{
+                  width: "100%",
+                  backgroundColor: "nightBlack.main",
+                  boxShadow: 0,
+                  "&.MuiToolbar-root": {
+                    paddingLeft: 6,
+                    paddingRight: 6,
+                    minHeight: "84px",
+                    bottom: "35px",
+                    position: "fixed",
+                    justifyContent: "flex-end",
+                    alignItems: "center"
+                  }
+                }}
+              >
+                <DautPlaceholder />
+              </Toolbar>
             </>
           )}
         </>
