@@ -217,20 +217,22 @@ const AutUserInfo = () => {
 
                   <Stack direction="row" alignItems="center">
                     <CopyAddress address={holderData?.properties?.address} />
-                    <Tooltip
-                      title={`Explore in ${selectedNetworkConfig?.name}`}
-                    >
-                      <IconButton
-                        sx={{ p: 0, ml: 1 }}
-                        href={`${blockExplorer}/address/${holderData?.properties?.address}`}
-                        target="_blank"
-                        color="offWhite"
+                    {selectedNetworkConfig?.name && (
+                      <Tooltip
+                        title={`Explore in ${selectedNetworkConfig?.name}`}
                       >
-                        <OpenInNewIcon
-                          sx={{ cursor: "pointer", width: "20px" }}
-                        />
-                      </IconButton>
-                    </Tooltip>
+                        <IconButton
+                          sx={{ p: 0, ml: 1 }}
+                          href={`${blockExplorer}/address/${holderData?.properties?.address}`}
+                          target="_blank"
+                          color="offWhite"
+                        >
+                          <OpenInNewIcon
+                            sx={{ cursor: "pointer", width: "20px" }}
+                          />
+                        </IconButton>
+                      </Tooltip>
+                    )}
                   </Stack>
                   {/* <ExternalUrl
                     href={`${blockExplorer}/address/${holderData?.properties?.address}`}

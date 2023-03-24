@@ -119,16 +119,18 @@ const CommunityListItem = memo(({ row }: { row: Community }) => {
           </Box>
           <Stack direction="row" alignItems="center">
             <CopyAddress address={row.properties.address} />
-            <Tooltip title={`Explore in ${selectedNetworkConfig?.name}`}>
-              <IconButton
-                sx={{ color: "white", p: 0, ml: 1 }}
-                href={`${blockExplorer}/address/${row.properties.address}`}
-                target="_blank"
-                color="offWhite"
-              >
-                <OpenInNewIcon sx={{ cursor: "pointer", width: "20px" }} />
-              </IconButton>
-            </Tooltip>
+            {selectedNetworkConfig?.name && (
+              <Tooltip title={`Explore in ${selectedNetworkConfig?.name}`}>
+                <IconButton
+                  sx={{ color: "white", p: 0, ml: 1 }}
+                  href={`${blockExplorer}/address/${row.properties.address}`}
+                  target="_blank"
+                  color="offWhite"
+                >
+                  <OpenInNewIcon sx={{ cursor: "pointer", width: "20px" }} />
+                </IconButton>
+              </Tooltip>
+            )}
           </Stack>
           <OverflowTooltip
             typography={{
