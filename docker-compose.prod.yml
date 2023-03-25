@@ -1,8 +1,8 @@
 version: '3.7'
 
 services:
-  holders-app:
-    container_name: holders-app
+  my_aut_id_prod:
+    container_name: my_aut_id_prod
     build:
       context: .
       dockerfile: Dockerfile

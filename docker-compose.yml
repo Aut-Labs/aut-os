@@ -1,8 +1,8 @@
 version: '3.7'
 
 services:
-  playground:
-    container_name: playground
+  my_aut_id_dev:
+    container_name: my_aut_id_dev
     build:
       context: .
       dockerfile: Dockerfile
