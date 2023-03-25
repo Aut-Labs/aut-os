@@ -7,11 +7,7 @@ import {
   updateProfile,
   withdraw
 } from "@api/holder.api";
-import { CommitmentMessages } from "@components/AutSlider";
-import {
-  DummyProfile,
-  DummyProfileWCommunity
-} from "src/pages/AutHome/dummy-profile";
+import { CommitmentMessages } from "@utils/misc";
 
 export interface HolderState {
   profiles: AutID[];

@@ -9,6 +9,7 @@ import {
 import { pxToRem } from "@utils/text-size";
 import { FieldErrors } from "react-hook-form";
 import { FormHelperText } from "./Fields/AutFields";
+import { CommitmentMessages } from "@utils/misc";
 
 // const CommitmentMessages = (value: number) => {
 //   switch (+value) {
@@ -91,28 +92,6 @@ const StyledSlider = styled(Slider)<CustomSliderProps>(
     }
   })
 );
-
-export const CommitmentMessages = (value: number) => {
-  switch (+value) {
-    case 1:
-    case 2:
-      return `Just lurking 👀`;
-    case 3:
-    case 4:
-      return "gm gm 😪";
-    case 5:
-    case 6:
-      return "buidler ⚙️";
-    case 7:
-    case 8:
-      return "Trusted seed 🌱";
-    case 9:
-    case 10:
-      return `Soulbound ⛓️`;
-    default:
-      return `Minimum Commitment Level for new Members.`;
-  }
-};
 
 /* eslint-disable max-len */
 export function CommitmentMessage({ value, children = null }) {
