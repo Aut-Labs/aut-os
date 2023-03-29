@@ -17,7 +17,8 @@ import {
   styled,
   SvgIcon,
   Tooltip,
-  Typography
+  Typography,
+  useTheme
 } from "@mui/material";
 import { useState } from "react";
 import PencilEdit from "@assets/PencilEditicon";
@@ -88,6 +89,7 @@ const AutUserInfo = () => {
   const [isActiveIndex, setIsActiveIndex] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const theme = useTheme();
 
   const socialIcons = {
     discord: DiscordIcon,
@@ -271,14 +273,20 @@ const AutUserInfo = () => {
                       <Link
                         key={`social-icon-${index}`}
                         {...(!!social.link && {
-                          color: "offwhite.main",
                           component: "a",
                           href: social.link,
-                          target: "_blank"
+                          target: "_blank",
+                          sx: {
+                            svg: {
+                              color: theme.palette.offWhite.main
+                            }
+                          }
                         })}
                         {...(!social.link && {
                           sx: {
-                            color: "divider"
+                            svg: {
+                              color: theme.palette.divider
+                            }
                           },
                           component: "button",
                           disabled: true
