@@ -140,8 +140,10 @@ const CommunityListItem = memo(({ row }: { row: Community }) => {
           />
         </span>
       </TaskStyledTableCell>
-      <TaskStyledTableCell align="right">
-        {row?.properties?.userData?.roleName}
+      <TaskStyledTableCell align="center">
+        <Typography variant="subtitle2" fontWeight="normal" color="white">
+          {row?.properties?.userData?.roleName}
+        </Typography>
       </TaskStyledTableCell>
       <TaskStyledTableCell align="right">
         <Typography
@@ -221,10 +223,20 @@ const CommunitiesTable = ({
                 pl: 0
               }}
             >
-              Community Name
+              <Typography variant="subtitle2" fontWeight="normal" color="white">
+                Community Name
+              </Typography>
             </TaskStyledTableCell>
-            <TaskStyledTableCell align="right">Role</TaskStyledTableCell>
-            <TaskStyledTableCell align="right">Commitment</TaskStyledTableCell>
+            <TaskStyledTableCell align="center">
+              <Typography variant="subtitle2" fontWeight="normal" color="white">
+                Role
+              </Typography>
+            </TaskStyledTableCell>
+            <TaskStyledTableCell align="center">
+              <Typography variant="subtitle2" fontWeight="normal" color="white">
+                Commitment
+              </Typography>
+            </TaskStyledTableCell>
           </TableRow>
         </TableHead>
         <TableBody>

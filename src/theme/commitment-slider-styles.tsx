@@ -54,7 +54,7 @@ export const AutCommitmentSlider = ({
   ...props
 }: AutSliderProps) => {
   return (
-    <SliderWrapper sx={sx}>
+    <SliderWrapper sx={sx} className="swiper-no-swiping">
       <CommitmentMessage value={value} />
       <div style={{ position: "relative" }}>
         <Slider {...sliderProps} />
