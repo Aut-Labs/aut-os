@@ -19,8 +19,9 @@ import AutSDK from "@aut-labs-private/sdk";
 import "./App.scss";
 
 const generateConfig = (networks: NetworkConfig[]): Config => {
-  const readOnlyUrls = networks.reduce((prev, curr) => {
-    const network: Network = {
+  const enabled_networks = networks.filter((n) => !n.disabled);
+  const readOnlyUrls = enabled_networks.reduce((prev, curr) => {
+    const network = {
       name: "mumbai",
       chainId: 80001,
       _defaultProvider: (providers) =>
@@ -33,22 +34,32 @@ const generateConfig = (networks: NetworkConfig[]): Config => {
 
   return {
     readOnlyUrls,
-    networks: networks
-      .filter((n) => !n.disabled)
-      .map(
-        (n) =>
-          ({
-            isLocalChain: false,
-            isTestChain: environment.networkEnv === "testing",
-            chainId: n.chainId,
-            chainName: n.network,
-            rpcUrl: n.rpcUrls[0],
-            nativeCurrency: n.nativeCurrency
-          } as any)
-      ),
+    notifications: {
+      expirationPeriod: 0
+    },
+    autoConnect: false,
+    // @ts-ignore
+    networks: enabled_networks.map((n) => ({
+      isLocalChain: false,
+      isTestChain: environment.networkEnv === "testing",
+      chainId: n.chainId,
+      chainName: n.network,
+      rpcUrl: n.rpcUrls[0],
+      nativeCurrency: n.nativeCurrency
+    })),
+    gasLimitBufferPercentage: 50000,
+    pollingIntervals: enabled_networks.reduce((prev, curr) => {
+      prev[curr.chainId] = 40000;
+      return prev;
+    }, {}),
     connectors: {
       metamask: new MetamaskConnector(),
       walletConnect: new WalletConnectConnector({
+        rpc: enabled_networks.reduce((prev, curr) => {
+          // eslint-disable-next-line prefer-destructuring
+          prev[curr.chainId] = curr.rpcUrls[0];
+          return prev;
+        }, {}),
         infuraId: "d8df2cb7844e4a54ab0a782f608749dd"
       })
     }

@@ -25,10 +25,11 @@ import { Link } from "react-router-dom";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import {
   BlockExplorerUrl,
-  IsConnected,
   SelectedNetworkConfig
 } from "@store/WalletProvider/WalletProvider";
 import { useSelector } from "react-redux";
+import { HolderData } from "@store/holder/holder.reducer";
+import { CanUpdateProfile } from "@auth/auth.reducer";
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
@@ -46,137 +47,143 @@ const TaskStyledTableCell = styled(TableCell)(({ theme }) => ({
   }
 }));
 
-const CommunityListItem = memo(({ row }: { row: Community }) => {
-  const blockExplorer = useSelector(BlockExplorerUrl);
-  const isConnected = useSelector(IsConnected);
-  const selectedNetworkConfig = useSelector(SelectedNetworkConfig);
-  return (
-    <StyledTableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
-      <TaskStyledTableCell
-        sx={{
-          pr: 0
-        }}
+const CommunityListItem = memo(
+  ({
+    row,
+    canUpdateProfile
+  }: {
+    row: Community;
+    canUpdateProfile: boolean;
+  }) => {
+    const blockExplorer = useSelector(BlockExplorerUrl);
+    const selectedNetworkConfig = useSelector(SelectedNetworkConfig);
+    return (
+      <StyledTableRow
+        sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
       >
-        <Avatar
+        <TaskStyledTableCell
           sx={{
-            bgcolor: "background.default",
-            width: {
-              xs: "64px",
-              xxl: "87px"
-            },
-            height: {
-              xs: "64px",
-              xxl: "87px"
-            },
-            borderRadius: 0,
-            mr: {
-              xs: "15px"
-            },
-            border: "1px solid white"
-          }}
-          aria-label="community-avatar"
-          src={ipfsCIDToHttpUrl(row.image as string)}
-        />
-      </TaskStyledTableCell>
-      <TaskStyledTableCell
-        sx={{
-          pl: 0
-        }}
-        component="th"
-        scope="row"
-      >
-        <span
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gridGap: "8px"
+            pr: 0
           }}
         >
-          <Box>
-            <Tooltip
-              disableHoverListener={!isConnected}
-              title={isConnected ? "View community details" : ""}
-            >
-              <BtnLink
-                color="primary"
-                variant="subtitle2"
-                sx={{
-                  "&:hover": {
-                    textDecoration: {
-                      xs: "none",
-                      sm: "underline"
-                    }
-                  }
-                }}
-                {...(isConnected && {
-                  to: `edit-community/${row.properties.address}`,
-                  component: Link
-                })}
-              >
-                {row?.name || "n/a"}
-              </BtnLink>
-            </Tooltip>
-          </Box>
-          <Stack direction="row" alignItems="center">
-            <CopyAddress address={row.properties.address} />
-            {selectedNetworkConfig?.name && (
-              <Tooltip title={`Explore in ${selectedNetworkConfig?.name}`}>
-                <IconButton
-                  sx={{ color: "white", p: 0, ml: 1 }}
-                  href={`${blockExplorer}/address/${row.properties.address}`}
-                  target="_blank"
-                  color="offWhite"
-                >
-                  <OpenInNewIcon sx={{ cursor: "pointer", width: "20px" }} />
-                </IconButton>
-              </Tooltip>
-            )}
-          </Stack>
-          <OverflowTooltip
-            typography={{
-              maxWidth: "300px"
+          <Avatar
+            sx={{
+              bgcolor: "background.default",
+              width: {
+                xs: "64px",
+                xxl: "87px"
+              },
+              height: {
+                xs: "64px",
+                xxl: "87px"
+              },
+              borderRadius: 0,
+              mr: {
+                xs: "15px"
+              },
+              border: "1px solid white"
             }}
-            text={row?.description}
+            aria-label="community-avatar"
+            src={ipfsCIDToHttpUrl(row.image as string)}
           />
-        </span>
-      </TaskStyledTableCell>
-      <TaskStyledTableCell align="center">
-        <Typography variant="subtitle2" fontWeight="normal" color="white">
-          {row?.properties?.userData?.roleName}
-        </Typography>
-      </TaskStyledTableCell>
-      <TaskStyledTableCell align="right">
-        <Typography
-          variant="subtitle2"
-          color="white"
-          textAlign="center"
-          fontWeight="normal"
-          sx={{ pb: "5px" }}
-        >
-          {`${row?.properties.userData.commitment}/10`}
-        </Typography>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center"
+        </TaskStyledTableCell>
+        <TaskStyledTableCell
+          sx={{
+            pl: 0
           }}
+          component="th"
+          scope="row"
         >
-          <Typography
-            variant="caption"
-            textAlign="center"
-            color="white"
+          <span
             style={{
-              margin: "0"
+              display: "flex",
+              flexDirection: "column",
+              gridGap: "8px"
             }}
           >
-            {row?.properties.userData.commitmentDescription}
+            <Box>
+              <Tooltip
+                disableHoverListener={!canUpdateProfile}
+                title={canUpdateProfile ? "View community details" : ""}
+              >
+                <BtnLink
+                  color="primary"
+                  variant="subtitle2"
+                  sx={{
+                    "&:hover": {
+                      textDecoration: !canUpdateProfile ? "unset" : "underline"
+                    }
+                  }}
+                  {...(canUpdateProfile && {
+                    to: `edit-community/${row.properties.address}`,
+                    component: Link
+                  })}
+                >
+                  {row?.name || "n/a"}
+                </BtnLink>
+              </Tooltip>
+            </Box>
+            <Stack direction="row" alignItems="center">
+              <CopyAddress address={row.properties.address} />
+              {selectedNetworkConfig?.name && (
+                <Tooltip title={`Explore in ${selectedNetworkConfig?.name}`}>
+                  <IconButton
+                    sx={{ color: "white", p: 0, ml: 1 }}
+                    href={`${blockExplorer}/address/${row.properties.address}`}
+                    target="_blank"
+                    color="offWhite"
+                  >
+                    <OpenInNewIcon sx={{ cursor: "pointer", width: "20px" }} />
+                  </IconButton>
+                </Tooltip>
+              )}
+            </Stack>
+            <OverflowTooltip
+              typography={{
+                maxWidth: "300px"
+              }}
+              text={row?.description}
+            />
+          </span>
+        </TaskStyledTableCell>
+        <TaskStyledTableCell align="center">
+          <Typography variant="subtitle2" fontWeight="normal" color="white">
+            {row?.properties?.userData?.roleName}
           </Typography>
-        </div>
-      </TaskStyledTableCell>
-    </StyledTableRow>
-  );
-});
+        </TaskStyledTableCell>
+        <TaskStyledTableCell align="right">
+          <Typography
+            variant="subtitle2"
+            color="white"
+            textAlign="center"
+            fontWeight="normal"
+            sx={{ pb: "5px" }}
+          >
+            {`${row?.properties.userData.commitment}/10`}
+          </Typography>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center"
+            }}
+          >
+            <Typography
+              variant="caption"
+              textAlign="center"
+              color="white"
+              style={{
+                margin: "0"
+              }}
+            >
+              {row?.properties.userData.commitmentDescription}
+            </Typography>
+          </div>
+        </TaskStyledTableCell>
+      </StyledTableRow>
+    );
+  }
+);
 
 interface TableParamsParams {
   isLoading: boolean;
@@ -187,6 +194,7 @@ const CommunitiesTable = ({
   isLoading = false,
   communities = []
 }: TableParamsParams) => {
+  const canUpdateProfile = useSelector(CanUpdateProfile);
   return (
     <TableContainer
       sx={{
@@ -241,7 +249,11 @@ const CommunitiesTable = ({
         </TableHead>
         <TableBody>
           {communities?.map((row, index) => (
-            <CommunityListItem key={`table-row-${index}`} row={row} />
+            <CommunityListItem
+              canUpdateProfile={canUpdateProfile}
+              key={`table-row-${index}`}
+              row={row}
+            />
           ))}
         </TableBody>
       </Table>

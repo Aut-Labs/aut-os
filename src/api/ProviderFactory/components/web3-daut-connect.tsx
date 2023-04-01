@@ -8,7 +8,7 @@ import {
 } from "react";
 import { useAppDispatch } from "@store/store.model";
 import { ResultState } from "@store/result-status";
-import { updateHolderState } from "@store/holder/holder.reducer";
+import { HolderData, updateHolderState } from "@store/holder/holder.reducer";
 import { resetAuthState, setConnectedUserInfo } from "@auth/auth.reducer";
 import { fetchHolder, fetchHolderEthEns } from "@api/holder.api";
 import { AutID } from "@api/aut.model";
@@ -17,10 +17,8 @@ import { useSelector } from "react-redux";
 import {
   NetworkWalletConnectors,
   NetworksConfig,
-  setNetwork,
   updateWalletProviderState
 } from "@store/WalletProvider/WalletProvider";
-import { EnableAndChangeNetwork } from "../web3.network";
 import { Typography, debounce, styled } from "@mui/material";
 import AutLoading from "@components/AutLoading";
 import DialogWrapper from "@components/Dialog/DialogWrapper";
@@ -31,6 +29,7 @@ import AutSDK from "@aut-labs-private/sdk";
 import { useConnector, useEthers, Connector, Config } from "@usedapp/core";
 import { ethers } from "ethers";
 import { useLocation, useNavigate } from "react-router-dom";
+import { IAutButtonConfig } from "@aut-labs/d-aut/build/components/AutButtonMenu/AutMenuUtils";
 
 const DialogInnerContent = styled("div")({
   display: "flex",
@@ -51,6 +50,7 @@ function Web3DautConnect({
   const dispatch = useAppDispatch();
   const abort = useRef<AbortController>();
   const networks = useSelector(NetworksConfig);
+  const holderData = useSelector(HolderData);
   const [currentChainId, setCurrentChainId] = useState(null);
   const [dAutConnected, setDAutConnected] = useState(false);
   const [loadingNetwork, setIsLoadingNetwork] = useState(false);
@@ -222,14 +222,46 @@ function Web3DautConnect({
     dispatch(resetAuthState());
   };
 
+  const onAutMenuProfile = () => {
+    const profile = JSON.parse(sessionStorage.getItem("aut-data"));
+    const params = new URLSearchParams(window.location.search);
+    navigate({
+      pathname: `/${profile.name}`,
+      search: `?${params.toString()}`
+    });
+  };
+
   useEffect(() => {
+    window.addEventListener("aut_profile", onAutMenuProfile);
     window.addEventListener("aut-Init", onAutInit);
     window.addEventListener("aut-onConnected", onAutLogin);
     window.addEventListener("aut-onDisconnected", onDisconnected);
 
-    Init();
+    const config: IAutButtonConfig = {
+      defaultText: "Connect Wallet",
+      textAlignment: "right",
+      menuTextAlignment: "left",
+      theme: {
+        color: "offWhite",
+        // color: 'nightBlack',
+        // color: colors.amber['500'],
+        // color: '#7b1fa2',
+        type: "main"
+      },
+      // size: "default" // large & extraLarge or see below
+      size: {
+        width: 240,
+        height: 50,
+        padding: 3
+      }
+    };
+
+    Init({
+      config
+    });
 
     return () => {
+      window.removeEventListener("aut_profile", onAutMenuProfile);
       window.removeEventListener("aut-Init", onAutInit);
       window.removeEventListener("aut-onConnected", onAutLogin);
       window.removeEventListener("aut-onDisconnected", onAutLogin);
@@ -248,8 +280,9 @@ function Web3DautConnect({
           zIndex: 99999
         }}
         id="d-aut"
+        menu-items='[{"name":"Profile","actionType":"event_emit","eventName":"aut_profile"}]'
+        flow-config='{"mode" : "dashboard", "customCongratsMessage": ""}'
         ipfs-gateway="https://ipfs.nftstorage.link/ipfs"
-        button-type="simple"
       />
       <DialogWrapper open={openForSelectNetwork}>
         <>
