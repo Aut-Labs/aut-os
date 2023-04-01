@@ -105,7 +105,10 @@ export const fetchSearchResults = createAsyncThunk(
       });
       const result = [];
       const state = thunkAPI.getState() as any;
-      const networks: NetworkConfig[] = state.walletProvider.networksConfig;
+      const networks: NetworkConfig[] =
+        state.walletProvider.networksConfig.filter(
+          (n: NetworkConfig) => !n.disabled
+        );
 
       for (const network of networks) {
         const holderData = await fetchHolderData(
