@@ -84,17 +84,6 @@ function App() {
       .finally(() => setAppLoading(false));
   }, []);
 
-  useEffect(() => {
-    getAppConfig()
-      .then(async (res) => {
-        dispatch(setNetworks(res));
-        const sdk = new AutSDK({
-          nftStorageApiKey: environment.nftStorageKey
-        });
-      })
-      .finally(() => setAppLoading(false));
-  }, []);
-
   return (
     <>
       {appLoading ? (

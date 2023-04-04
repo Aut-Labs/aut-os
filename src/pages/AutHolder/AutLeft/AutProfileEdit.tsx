@@ -212,6 +212,9 @@ const AutProfileEdit = () => {
                         fileSize: (v) => {
                           if (isDirty && v) {
                             const file = base64toFile(v, "pic");
+                            if (!file) {
+                              return true;
+                            }
                             return file.size < 8388608;
                           }
                         }

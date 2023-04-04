@@ -8,7 +8,7 @@ export const toBase64 = (file: File) => {
 };
 
 export const isBase64 = (str: string) => {
-  if (str === "" || str.trim() === "") {
+  if (str === "" || str?.trim() === "") {
     return false;
   }
   try {
@@ -24,10 +24,11 @@ export const base64toFile = (dataurl = "", filename: string) => {
     throw new Error("No content was provided");
   }
   const [metadata, base64] = dataurl.split(",");
-  const mime = metadata.match(/:(.*?);/)[1];
+  const mime = metadata.match(/:(.*?);/);
 
   if (!isBase64(base64)) {
-    throw new Error("Content provided is not of base64");
+    // throw new Error("Content provided is not of base64");
+    return null;
   }
   const bstr = atob(base64);
   let n = bstr.length;
@@ -38,5 +39,5 @@ export const base64toFile = (dataurl = "", filename: string) => {
     u8arr[n] = bstr.charCodeAt(n);
   }
 
-  return new File([u8arr], filename, { type: mime });
+  return new File([u8arr], filename, { type: mime[1] });
 };
