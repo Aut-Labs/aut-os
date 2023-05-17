@@ -213,6 +213,7 @@ const CommunitiesTable = ({
       component={Paper}
     >
       <Table
+        className="swiper-no-swiping"
         sx={{
           minWidth: {
             xs: "700px",

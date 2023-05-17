@@ -185,7 +185,7 @@ const AutProfileEdit = () => {
       <LoadingDialog
         handleClose={handleDialogClose}
         open={status === ResultState.Loading}
-        message="Editing community..."
+        message="Editing profile..."
       />
 
       <MiddleWrapper>

@@ -102,9 +102,9 @@ const AutTunnelRight = () => {
           <Toolbar
             sx={{
               width: "100%",
-              backgroundColor: "nightBlack.main",
               boxShadow: 2,
               "&.MuiToolbar-root": {
+                width: "100%",
                 paddingLeft: 6,
                 paddingRight: 6,
                 minHeight: "84px",
@@ -127,7 +127,10 @@ const AutTunnelRight = () => {
             <CardZoom
               component="img"
               sx={{
-                width: "300px"
+                width: {
+                  xs: "300px",
+                  xxl: "400px"
+                }
               }}
               src={ipfsCIDToHttpUrl(holderData?.image as string)}
             />
@@ -148,20 +151,34 @@ const AutTunnelRight = () => {
             <CardZoom
               component="img"
               sx={{
-                width: "300px",
-                mb: "100px"
+                width: {
+                  xs: "unset",
+                  md: "300px"
+                },
+                maxWidth: {
+                  xs: "300px"
+                },
+                maxHeight: {
+                  xs: "calc(100vh - 220px)",
+                  md: "unset"
+                },
+                mb: "100px",
+                mr: "15px"
               }}
               src={ipfsCIDToHttpUrl(holderData?.image as string)}
             />
             <Toolbar
               sx={{
-                backgroundColor: "nightBlack.main",
                 boxShadow: 0,
+                width: "100%",
+                display: "flex",
+                justifyContent: "center",
+                alignContent: "center",
                 "&.MuiToolbar-root": {
                   position: "fixed",
                   bottom: "35px",
                   minHeight: "84px",
-                  justifyContent: "flex-end",
+                  justifyContent: "center",
                   alignItems: "center"
                 }
               }}

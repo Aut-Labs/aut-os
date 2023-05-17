@@ -362,7 +362,7 @@ export const DautPlaceholder = memo(() => {
     <div
       ref={ref}
       style={{
-        width: "270px",
+        width: "244px",
         height: "55px",
         position: "relative",
         zIndex: -1
