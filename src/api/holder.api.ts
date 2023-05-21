@@ -198,6 +198,21 @@ export const editCommitment = createAsyncThunk(
       requestBody.communityAddress,
       requestBody.commitment
     );
+    try {
+      const autIdData = JSON.parse(window.sessionStorage.getItem("aut-data"));
+      autIdData.properties.communities = autIdData.properties.communities.map(
+        (c) => {
+          if (c.properties.address === requestBody.communityAddress) {
+            c.properties.commitment = requestBody.commitment;
+            c.properties.userData.commitment = `${requestBody.commitment}`;
+          }
+          return c;
+        }
+      );
+      window.sessionStorage.setItem("aut-data", JSON.stringify(autIdData));
+    } catch (err) {
+      console.log(err);
+    }
     if (response?.isSuccess) {
       return requestBody;
     }
@@ -210,6 +225,21 @@ export const withdraw = createAsyncThunk(
   async (communityAddress: string, { rejectWithValue }) => {
     const sdk = AutSDK.getInstance();
     const response = await sdk.autID.contract.withdraw(communityAddress);
+
+    try {
+      const autIdData = JSON.parse(window.sessionStorage.getItem("aut-data"));
+      autIdData.properties.communities = autIdData.properties.communities.map(
+        (c) => {
+          if (c.properties.address === communityAddress) {
+            c.properties.userData.isActive = false;
+          }
+          return c;
+        }
+      );
+      window.sessionStorage.setItem("aut-data", JSON.stringify(autIdData));
+    } catch (err) {
+      console.log(err);
+    }
     if (response?.isSuccess) {
       return communityAddress;
     }
@@ -230,9 +260,23 @@ export const updateProfile = createAsyncThunk(
       console.log("New image: ->", ipfsCIDToHttpUrl(user.properties.avatar));
     }
 
-    const uri = await sdk.client.storeAsBlob(AutID.updateAutID(user));
+    const updatedUser = AutID.updateAutID(user);
+    const uri = await sdk.client.storeAsBlob(updatedUser);
     console.log("New metadata: ->", ipfsCIDToHttpUrl(uri));
+    console.log("avatar: ->", ipfsCIDToHttpUrl(updatedUser.properties.avatar));
+    console.log("badge: ->", ipfsCIDToHttpUrl(updatedUser.image));
     const response = await sdk.autID.contract.setMetadataUri(uri);
+
+    try {
+      const autIdData = JSON.parse(window.sessionStorage.getItem("aut-data"));
+      autIdData.name = updatedUser.name;
+      autIdData.description = updatedUser.description;
+      autIdData.properties.avatar = updatedUser.properties.avatar;
+      autIdData.properties.socials = updatedUser.properties.socials;
+      window.sessionStorage.setItem("aut-data", JSON.stringify(autIdData));
+    } catch (err) {
+      console.log(err);
+    }
 
     if (response.isSuccess) {
       return user;

@@ -120,7 +120,7 @@ const AutProfileEdit = () => {
   } = useForm({
     mode: "onChange",
     defaultValues: {
-      image: holderData?.properties?.avatar,
+      avatar: holderData?.properties?.avatar,
       socials: (holderData?.properties?.socials || []).map((social) => {
         return {
           ...social,
@@ -147,17 +147,18 @@ const AutProfileEdit = () => {
     }
   };
 
-  const onEditProfile = (data: typeof values) => {
-    dispatch(
+  const onEditProfile = async (data: typeof values) => {
+    await dispatch(
       updateProfile({
         ...holderData,
         properties: {
           ...holderData.properties,
           socials: data.socials,
-          avatar: data.image
+          avatar: data.avatar
         }
       } as AutID)
     );
+    setEditInitiated(false);
   };
 
   const handleDialogClose = () => {
@@ -205,7 +206,7 @@ const AutProfileEdit = () => {
               avatar={
                 <ImageUpload>
                   <Controller
-                    name="image"
+                    name="avatar"
                     rules={{
                       required: true,
                       validate: {

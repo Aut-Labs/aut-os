@@ -111,7 +111,7 @@ export const holderSlice = createSlice({
         state.status = ResultState.Idle;
         state.profiles = state.profiles.map((autID) => {
           if (autID.properties.address === action.payload.properties.address) {
-            action.payload;
+            return action.payload;
           }
           return autID;
         });

@@ -43,7 +43,7 @@ const ErrorDialog = ({
         <Typography
           sx={{ color: "red", textAlign: "center", mt: 2 }}
           component="div"
-          variant="h4"
+          variant="subtitle2"
         >
           {message}
         </Typography>
