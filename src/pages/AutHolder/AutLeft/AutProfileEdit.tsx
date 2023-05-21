@@ -48,8 +48,8 @@ const socialIcons = {
   // eth: EthIcon,
   discord: DiscordIcon,
   github: GitHubIcon,
-  telegram: TelegramIcon,
   twitter: TwitterIcon,
+  telegram: TelegramIcon,
   lensfrens: LensfrensIcon
 };
 
@@ -340,6 +340,7 @@ const AutProfileEdit = () => {
             const { prefix, hidePrefix, placeholder } =
               socialUrls[Object.keys(socialUrls)[index]];
 
+            console.log(prefix, placeholder, index);
             return (
               <FieldWrapper key={`socials.${index}`}>
                 <SvgIcon

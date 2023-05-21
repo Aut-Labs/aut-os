@@ -36,6 +36,7 @@ import {
 import { EditContentElements } from "@components/EditContentElements";
 import CommunitiesTable from "./CommunitiesTable";
 import CopyAddress from "@components/CopyAddress";
+import { socialUrls } from "@api/social.model";
 
 const IconContainer = styled("div")(({ theme }) => ({
   paddingTop: "15px",
@@ -282,7 +283,8 @@ const AutUserInfo = () => {
                             }
                           }
                         })}
-                        {...(!social.link && {
+                        {...((!social.link ||
+                          social.link === socialUrls[social.type].prefix) && {
                           sx: {
                             svg: {
                               color: theme.palette.divider

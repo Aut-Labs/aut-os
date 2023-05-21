@@ -16,12 +16,12 @@ export const socialUrls = {
     prefix: "https://github.com/",
     placeholder: ""
   },
-  telegram: {
-    prefix: "https://t.me/",
-    placeholder: ""
-  },
   twitter: {
     prefix: "https://twitter.com/",
+    placeholder: ""
+  },
+  telegram: {
+    prefix: "https://t.me/",
     placeholder: ""
   },
   lensfrens: {
