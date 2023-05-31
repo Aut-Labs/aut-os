@@ -30,12 +30,12 @@ const OverflowTooltip = ({ text, ...rest }: Partial<OverflowTooltipParams>) => {
         {...(rest?.typography || {})}
       >
         <LinesEllipsis
-          text={text}
+          text={text || ""}
           onReflow={({ clamped }) => setTooltipEnabled(clamped)}
           maxLine={rest.maxLine || 1}
           ellipsis={rest.ellipsis || "..."}
           trimRight={rest.trimRight || true}
-          basedOn={rest.basedOn || "letters"}
+          basedOn={(rest.basedOn as any) || "letters"}
         />
       </Text>
     </Tooltip>
