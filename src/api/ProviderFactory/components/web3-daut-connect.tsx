@@ -69,7 +69,7 @@ function Web3DautConnect({
   ) => {
     const sdk = AutSDK.getInstance();
     return sdk.init(signer, {
-      autDaoRegistryAddress: network.contracts.autDaoRegistryAddress,
+      novaRegistryAddress: network.contracts.novaRegistryAddress,
       autIDAddress: network.contracts.autIDAddress,
       daoExpanderRegistryAddress: network.contracts.daoExpanderRegistryAddress
     });
