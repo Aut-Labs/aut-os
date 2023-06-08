@@ -279,6 +279,7 @@ function Web3DautConnect({
           position: "absolute",
           zIndex: 99999
         }}
+        use-dev={process.env.NODE_ENV === "development" ? "true" : "false"}
         id="d-aut"
         menu-items='[{"name":"Profile","actionType":"event_emit","eventName":"aut_profile"}]'
         flow-config='{"mode" : "dashboard", "customCongratsMessage": ""}'
