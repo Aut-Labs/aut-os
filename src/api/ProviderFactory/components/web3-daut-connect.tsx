@@ -30,6 +30,7 @@ import { useConnector, useEthers, Connector, Config } from "@usedapp/core";
 import { ethers } from "ethers";
 import { useLocation, useNavigate } from "react-router-dom";
 import { IAutButtonConfig } from "@aut-labs/d-aut/build/components/AutButtonMenu/AutMenuUtils";
+import { EnvMode, environment } from "@api/environment";
 
 const DialogInnerContent = styled("div")({
   display: "flex",
@@ -279,7 +280,7 @@ function Web3DautConnect({
           position: "absolute",
           zIndex: 99999
         }}
-        use-dev={process.env.NODE_ENV === "development" ? "true" : "false"}
+        use-dev={environment.env == EnvMode.Development}
         id="d-aut"
         menu-items='[{"name":"Profile","actionType":"event_emit","eventName":"aut_profile"}]'
         flow-config='{"mode" : "dashboard", "customCongratsMessage": ""}'
