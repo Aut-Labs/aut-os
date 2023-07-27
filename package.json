@@ -30,10 +30,10 @@
     ]
   },
   "dependencies": {
-    "@aut-labs-private/abi-types": "^0.0.37",
-    "@aut-labs-private/sdk": "^0.0.61",
-    "@aut-labs-private/sdk-biconomy": "^0.0.3",
+    "@aut-labs/abi-types": "^0.0.39",
     "@aut-labs/d-aut": "^1.0.34",
+    "@aut-labs/sdk": "^0.0.71",
+    "@aut-labs/sdk-biconomy": "^0.0.2",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@lottiefiles/lottie-player": "^1.5.7",

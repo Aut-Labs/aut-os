@@ -12,7 +12,7 @@ import AutSDK, {
   CommunityMembershipDetails,
   HolderData,
   fetchMetadata
-} from "@aut-labs-private/sdk";
+} from "@aut-labs/sdk";
 
 export const fetchHolderEthEns = async (address: string) => {
   if (typeof window.ethereum !== "undefined") {

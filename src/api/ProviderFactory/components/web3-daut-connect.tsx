@@ -25,7 +25,7 @@ import DialogWrapper from "@components/Dialog/DialogWrapper";
 import { NetworkConfig } from "../network.config";
 import { NetworkSelectors } from "./NetworkSelectors";
 import AppTitle from "@components/AppTitle";
-import AutSDK from "@aut-labs-private/sdk";
+import AutSDK from "@aut-labs/sdk";
 import { useConnector, useEthers, Connector, Config } from "@usedapp/core";
 import { ethers } from "ethers";
 import { useLocation, useNavigate } from "react-router-dom";
