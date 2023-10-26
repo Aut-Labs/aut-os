@@ -19,8 +19,8 @@ const UploadWrapper = styled("div")(({ theme, color }) => {
     cursor: "pointer",
     position: "relative",
     [theme.breakpoints.up("xs")]: {
-      height: "100px",
-      width: "100px"
+      height: "150px",
+      width: "150px"
     },
     [theme.breakpoints.up("xxl")]: {
       height: "150px",

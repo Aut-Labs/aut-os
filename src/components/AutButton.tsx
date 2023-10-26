@@ -20,3 +20,23 @@ export const AutButton = styled<ButtonProps<any, any>>(Button)(({ theme }) => ({
     }
   }
 }));
+
+export const AutButtonVariant = styled<ButtonProps<any, any>>(Button)(
+  ({ theme }) => ({
+    "&.MuiButton-root": {
+      border: `2px solid white`,
+      textDecoration: "uppercase",
+      color: "white",
+      letterSpacing: "3px",
+      fontSize: "12px",
+      "&.Mui-disabled": {
+        color: "white",
+        opacity: ".3"
+      },
+      "&:hover": {
+        backgroundColor: "#009ADE",
+        color: "white"
+      }
+    }
+  })
+);

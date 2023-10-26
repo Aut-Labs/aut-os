@@ -180,6 +180,17 @@ const CommunityListItem = memo(
             </Typography>
           </div>
         </TaskStyledTableCell>
+        <TaskStyledTableCell align="right">
+          <Typography
+            variant="subtitle2"
+            color="white"
+            textAlign="center"
+            fontWeight="normal"
+            sx={{ pb: "5px" }}
+          >
+            {"1.24"}
+          </Typography>
+        </TaskStyledTableCell>
       </StyledTableRow>
     );
   }
@@ -244,6 +255,11 @@ const CommunitiesTable = ({
             <TaskStyledTableCell align="center">
               <Typography variant="subtitle2" fontWeight="normal" color="white">
                 Commitment
+              </Typography>
+            </TaskStyledTableCell>
+            <TaskStyledTableCell align="center">
+              <Typography variant="subtitle2" fontWeight="normal" color="white">
+                Local Rep.
               </Typography>
             </TaskStyledTableCell>
           </TableRow>

@@ -1,7 +1,10 @@
 /* eslint-disable no-constant-condition */
 /* eslint-disable no-unused-expressions */
 import {
+  Autocomplete,
+  Avatar,
   Box,
+  debounce,
   InputAdornment,
   styled,
   SvgIcon,
@@ -11,11 +14,13 @@ import {
   useTheme
 } from "@mui/material";
 import { ReactComponent as MyAutIDLogo } from "@assets/MyAutIdLogoPath.svg";
+import { ReactComponent as RedirectIcon } from "@assets/RedirectIcon2.svg";
 import { ReactComponent as ConcentricImage } from "@assets/ConcentricImage.svg";
 import { ReactComponent as SearchIcon } from "@assets/SearchIcon.svg";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Controller, useForm } from "react-hook-form";
+import parse from "autosuggest-highlight/parse";
 import {
   NoSearchResults,
   SearchResult,
@@ -31,6 +36,37 @@ import { useEffect, useRef } from "react";
 import { fetchHolder, fetchSearchResults } from "@api/holder.api";
 import { AutTextField } from "@theme/field-text-styles";
 import { DautPlaceholder } from "@api/ProviderFactory/components/web3-daut-connect";
+import React from "react";
+import UserBubbles from "@components/UserBubbles";
+interface UserProfile {
+  name: string;
+}
+
+const UserRow = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "row",
+  height: "40px",
+  width: "100%",
+  cursor: "pointer",
+  backgroundColor: theme.palette.background.default,
+
+  "&:not(:last-of-type)": {
+    borderBottom: "1px solid white",
+    borderTop: "none"
+  },
+
+  "&:hover": {
+    backgroundColor: "rgba(235, 235, 242, 0.2)"
+  },
+
+  [theme.breakpoints.down("md")]: {
+    display: "flex",
+    flexDirection: "row",
+    height: "40px",
+    width: "100%",
+    cursor: "pointer"
+  }
+}));
 
 const AutBox = styled(Box)(({ theme }) => ({
   "&.MuiBox-root": {
@@ -56,19 +92,15 @@ const AutBox = styled(Box)(({ theme }) => ({
   }
 }));
 
-// const StyledTextField = styled(AutTextField)(({ theme }) => ({
-//   width: "100%",
+const UserAvatarsWrapper = styled(Box)(({ theme }) => ({
+  display: "flex",
+  width: "100%",
+  height: "100%",
 
-//   ".MuiInputLabel-root": {
-//     top: "-2px"
-//   },
-
-//   ".MuiOutlinedInput-root, .MuiInput-underline": {
-//     color: "#fff",
-//     height: "45px",
-//     lineHeight: "45px"
-//   }
-// }));
+  [theme.breakpoints.down("md")]: {
+    display: "none"
+  }
+}));
 
 const TopWrapper = styled("div")(({ theme }) => ({
   display: "flex",
@@ -164,6 +196,8 @@ const MyAutIdLogoWrapper = styled(MyAutIDLogo)(({ theme }) => ({
   }
 }));
 
+const autocompleteService = { current: null };
+
 const AutSearch = () => {
   const dispatch = useAppDispatch();
   const status = useSelector(SearchStatus);
@@ -175,19 +209,20 @@ const AutSearch = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const abort = useRef<AbortController>();
+  const [value, setValue] = React.useState<UserProfile | null>(null);
+  const [inputValue, setInputValue] = React.useState("");
+  const [options, setOptions] = React.useState<readonly UserProfile[]>([]);
+  const loaded = React.useRef(false);
 
   function selectProfile(profile: AutID) {
-    console.log(profile, "profile");
     const params = new URLSearchParams(location.search);
-    params.set("network", profile.properties.network?.toLowerCase());
     navigate({
-      pathname: `/${profile.name}`,
-      search: `?${params.toString()}`
+      pathname: `/${profile.name}.aut`
     });
     dispatch(
       fetchHolder({
         autName: profile.name,
-        network: profile.properties.network?.toLowerCase()
+        network: "mumbai"
       })
     );
   }
@@ -212,13 +247,95 @@ const AutSearch = () => {
     return () => abort.current && abort.current.abort();
   }, []);
 
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     loadingg === true ? setLoadingg(false) : setLoadingg(true);
-  //     console.log(loadingg);
-  //   }, 3000);
-  //   return () => clearInterval(interval);
-  // }, []);
+  const fetch = React.useMemo(
+    () =>
+      debounce(
+        (
+          request: { input: string },
+          callback: (results?: readonly UserProfile[]) => void
+        ) => {
+          // Simulate network request
+          setTimeout(() => {
+            // Simulated results (mocked data)
+            const results = [
+              {
+                name: "Taulant",
+                network: "mumbai"
+              },
+              {
+                name: "Ana",
+                network: "mumbai"
+              },
+              {
+                name: "Banana",
+                network: "mumbai"
+              }
+            ].filter((user) =>
+              user.name.toLowerCase().includes(request.input.toLowerCase())
+            );
+
+            callback(results as unknown as UserProfile[]);
+          }, 400);
+        },
+        400 // debounce delay
+      ),
+    []
+  );
+  React.useEffect(() => {
+    let active = true;
+
+    if (inputValue === "") {
+      setOptions(value ? [value] : []);
+      return undefined;
+    }
+
+    fetch({ input: inputValue }, (results?: readonly UserProfile[]) => {
+      if (active) {
+        let newOptions: readonly UserProfile[] = [];
+
+        if (value) {
+          newOptions = [value];
+        }
+
+        if (results) {
+          newOptions = [...newOptions, ...results];
+        }
+
+        setOptions(newOptions);
+      }
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [value, inputValue, fetch]);
+
+  const randomUsers = [
+    {
+      name: "Taulant",
+      avatar: "https://picsum.photos/200/300"
+    },
+    {
+      name: "Jessica",
+      avatar: "https://picsum.photos/300/300"
+    },
+    {
+      name: "Daniel",
+      avatar: "https://picsum.photos/200/200"
+    },
+    {
+      name: "Selena",
+      avatar: "https://picsum.photos/200/400"
+    },
+    {
+      name: "Tom",
+      avatar: "https://picsum.photos/200/250"
+    },
+    {
+      name: "Angela",
+      avatar: "https://picsum.photos/250/250"
+    }
+  ];
 
   return (
     <>
@@ -252,6 +369,9 @@ const AutSearch = () => {
           style={{ top: "10%", left: "calc(662px / 2 * -1", right: "unset" }}
         />
         <ConcentricImageWrapper />
+        <UserAvatarsWrapper>
+          <UserBubbles users={randomUsers}></UserBubbles>
+        </UserAvatarsWrapper>
 
         <TopWrapper>
           <MyAutIdLogoWrapper />
@@ -296,39 +416,167 @@ const AutSearch = () => {
               render={({ field: { name, value, onChange } }) => {
                 return (
                   <>
-                    <AutTextField
-                      placeholder="Search āut"
-                      variant="standard"
-                      color="offWhite"
-                      autoFocus
-                      id={name}
-                      name={name}
+                    <Autocomplete
+                      id="search-aut"
+                      sx={{ width: 400 }}
+                      getOptionLabel={(option) =>
+                        typeof option === "string" ? option : option.name
+                      }
+                      filterOptions={(x) => x}
+                      options={options}
+                      autoComplete
+                      includeInputInList
+                      filterSelectedOptions
                       value={value}
-                      onChange={onChange}
-                      sx={{
-                        width: "100%"
+                      noOptionsText="No āutID found"
+                      onChange={(event: any, newValue: UserProfile | null) => {
+                        setOptions(newValue ? [newValue, ...options] : options);
+                        setValue(newValue);
                       }}
-                      InputProps={{
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <SvgIcon
-                              sx={{
-                                height: "29px",
-                                width: "29px",
-                                cursor: "pointer",
-                                color: "offWhite.dark",
-                                ":hover": {
-                                  color: "offWhite.main"
-                                }
+                      onInputChange={(event, newInputValue) => {
+                        setInputValue(newInputValue);
+                      }}
+                      ListboxProps={{
+                        style: {
+                          background: theme.palette.background.default
+                        }
+                      }}
+                      renderInput={(params) => (
+                        <AutTextField
+                          {...params}
+                          variant="standard"
+                          color="offWhite"
+                          label="Search āut"
+                          sx={{
+                            ".MuiInputLabel-root": {
+                              color: "white"
+                            },
+                            ".MuiAutocomplete-clearIndicator, .MuiAutocomplete-popupIndicator":
+                              {
+                                color: "white"
+                              }
+                          }}
+                        />
+                      )}
+                      renderOption={(props, option: any) => {
+                        return (
+                          <UserRow
+                            onClick={() => selectProfile(option)}
+                            key={option.name}
+                          >
+                            <div
+                              style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                flex: "1",
+                                overflow: "hidden"
                               }}
-                              key="username-icon"
-                              component={SearchIcon}
-                              onClick={handleSubmit(onSubmit)}
-                            />
-                          </InputAdornment>
-                        )
+                            >
+                              <div
+                                style={{
+                                  justifyContent: "start",
+                                  width: "75%",
+                                  alignItems: "center",
+                                  height: "100%",
+                                  display: "flex",
+                                  flex: "1"
+                                }}
+                              >
+                                <Typography
+                                  sx={{
+                                    display: "flex",
+                                    alignSelf: "start",
+                                    justifyContent: "start",
+                                    alignItems: "start",
+                                    padding: "3px",
+                                    height: "100%",
+                                    color: "white",
+                                    ml: "20px"
+                                  }}
+                                  variant="h6"
+                                >
+                                  {option?.name}
+                                </Typography>
+                              </div>
+
+                              <div
+                                style={{
+                                  width: "25%",
+                                  display: "flex",
+                                  alignContent: "center",
+                                  alignSelf: "center"
+                                }}
+                              >
+                                <SvgIcon
+                                  sx={{
+                                    height: "18px",
+                                    width: "100%",
+                                    mt: "10px",
+                                    ml: "20px",
+                                    justifyContent: "center",
+                                    cursor: "pointer"
+                                  }}
+                                  key="redirect-icon"
+                                  component={RedirectIcon}
+                                />
+                              </div>
+                            </div>
+                          </UserRow>
+                        );
                       }}
                     />
+                    {/* <Autocomplete
+                      sx={{ width: 500 }}
+                      getOptionLabel={(option) =>
+                        typeof option === "string" ? option : option.name
+                      }
+                      filterOptions={(x) => x}
+                      options={options}
+                      autoComplete
+                      includeInputInList
+                      filterSelectedOptions
+                      value={value}
+                      noOptionsText="No users"
+                      onChange={(event: any, newValue: UserProfile | null) => {
+                        setOptions(newValue ? [newValue, ...options] : options);
+                        setValue(newValue);
+                      }}
+                      onInputChange={(event, newInputValue) => {
+                        setInputValue(newInputValue);
+                        console.log(newInputValue, "NEW INPUT VALUE");
+                      }}
+                      renderInput={(params) => (
+                        <AutTextField
+                          {...params}
+                          variant="standard"
+                          color="offWhite"
+                          label="Search for a user..."
+                        />
+                      )}
+                      renderOption={(props, option) => {
+                        debugger;
+                        const matches =
+                          option.structured_formatting
+                            .main_text_matched_substrings || [];
+
+                        const parts = parse(
+                          option.structured_formatting.main_text,
+                          matches.map((match: any) => [
+                            match.offset,
+                            match.offset + match.length
+                          ])
+                        );
+
+                        return (
+                          <li {...props}>
+                            <AutIDProfileList
+                              profiles={parts}
+                              onSelect={selectProfile}
+                            />
+                          </li>
+                        );
+                      }}
+                    /> */}
                   </>
                 );
               }}

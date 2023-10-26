@@ -25,7 +25,7 @@ const BottomWrapper = styled("div")(({ theme }) => ({
 
 const FormWrapper = styled("form")(({ theme }) => ({
   display: "flex",
-  flexDirection: "column",
+  flexDirection: "row",
   alignItems: "flex-start",
   paddingTop: theme.spacing(8),
   paddingLeft: theme.spacing(8),

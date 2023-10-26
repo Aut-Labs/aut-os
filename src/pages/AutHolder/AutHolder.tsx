@@ -48,7 +48,7 @@ const AutHolder = (props) => {
     dispatch(setOpenShare(false));
   };
 
-  const url = `https://my.aut.id/${holderData?.name}`;
+  const url = `https://my.aut.id/${holderData?.name}.aut`;
 
   return (
     <>

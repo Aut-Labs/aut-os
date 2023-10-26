@@ -17,6 +17,10 @@ import { Config, DAppProvider, MetamaskConnector } from "@usedapp/core";
 import { WalletConnectConnector } from "@usedapp/wallet-connect-connector";
 import AutSDK from "@aut-labs/sdk";
 import "./App.scss";
+import { useSelector } from "react-redux";
+import { CanUpdateProfile } from "@auth/auth.reducer";
+import AutCommunityEdit from "./pages/AutHolder/AutLeft/AutCommunityEdit";
+import AutProfileEdit from "./pages/AutHolder/AutLeft/AutProfileEdit";
 
 const generateConfig = (networks: NetworkConfig[]): Config => {
   const enabled_networks = networks.filter((n) => !n.disabled);
@@ -71,6 +75,7 @@ function App() {
   const [appLoading, setAppLoading] = useState(true);
   const [isLoading, setLoading] = useState(false);
   const [config, setConfig] = useState<Config>(null);
+  const canUpdateProfile = useSelector(CanUpdateProfile);
 
   useEffect(() => {
     getAppConfig()
@@ -104,6 +109,14 @@ function App() {
                 <Routes>
                   <Route path="/" element={<AutSearch />} />
                   <Route path="/:holderAddress/*" element={<AutHolder />} />
+                  <Route
+                    path="/:holderAddress/edit-community/:communityAddress"
+                    element={<AutCommunityEdit />}
+                  />
+                  <Route
+                    path="/:holderAddress/edit-profile"
+                    element={<AutProfileEdit />}
+                  />
                   <Route path="*" element={<Navigate to="/" />} />
                 </Routes>
               </Suspense>

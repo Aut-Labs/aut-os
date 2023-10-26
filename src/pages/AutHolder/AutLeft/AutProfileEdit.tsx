@@ -4,6 +4,7 @@ import { ReactComponent as LensfrensIcon } from "@assets/SocialIcons/LensfrensIc
 import { ReactComponent as TelegramIcon } from "@assets/SocialIcons/TelegramIcon.svg";
 import { ReactComponent as TwitterIcon } from "@assets/SocialIcons/TwitterIcon.svg";
 import AFileUpload from "@components/Fields/AutFileUpload";
+import { ReactComponent as MyAutIDLogo } from "@assets/MyAutIdLogoToolbarPath.svg";
 import {
   Box,
   styled,
@@ -15,9 +16,11 @@ import {
   Button,
   CardHeader,
   CardContent,
-  Card
+  Card,
+  Toolbar
 } from "@mui/material";
 import { Controller, useForm, useFieldArray } from "react-hook-form";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useSelector } from "react-redux";
 import {
   HolderData,
@@ -43,6 +46,9 @@ import { AutTextField } from "@theme/field-text-styles";
 import { socialUrls } from "@api/social.model";
 import { useNavigate } from "react-router-dom";
 import { useEthers } from "@usedapp/core";
+import { resetSearchState } from "@store/search/search.reducer";
+import { DautPlaceholder } from "@api/ProviderFactory/components/web3-daut-connect";
+import { AutButtonVariant } from "@components/AutButton";
 
 const socialIcons = {
   // eth: EthIcon,
@@ -79,10 +85,9 @@ const LeftWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   width: "100%",
   flexDirection: "column",
-  maxWidth: "600px",
   paddingTop: "30px",
-  justifyContent: "flex-start",
-  alignItems: "flex-start"
+  justifyContent: "center",
+  alignItems: "center"
 }));
 
 const ImageUpload = styled("div")(({ theme }) => ({
@@ -168,6 +173,15 @@ const AutProfileEdit = () => {
       })
     );
   };
+  function goHome() {
+    const params = new URLSearchParams(location.search);
+    params.delete("network");
+    navigate({
+      pathname: `/`,
+      search: `?${params.toString()}`
+    });
+    dispatch(resetSearchState());
+  }
 
   useEffect(() => {
     if (!editInitiated || !isActive || !isConnected) {
@@ -177,20 +191,53 @@ const AutProfileEdit = () => {
   }, [isActive, isConnected, editInitiated]);
 
   return (
-    <FormWrapper autoComplete="off" onSubmit={handleSubmit(beforeEdit)}>
-      <ErrorDialog
-        handleClose={handleDialogClose}
-        open={status === ResultState.Failed}
-        message={errorMessage}
-      />
-      <LoadingDialog
-        handleClose={handleDialogClose}
-        open={status === ResultState.Loading}
-        message="Editing profile..."
-      />
-
-      <MiddleWrapper>
-        <Box
+    <>
+      <Toolbar
+        sx={{
+          width: "100%",
+          boxShadow: 2,
+          "&.MuiToolbar-root": {
+            width: "100%",
+            paddingLeft: 6,
+            paddingRight: 6,
+            minHeight: "84px",
+            justifyContent: "space-between",
+            alignItems: "center"
+          }
+        }}
+      >
+        <MyAutIDLogo
+          height="62"
+          style={{ cursor: "pointer" }}
+          onClick={() => goHome()}
+        />
+        <DautPlaceholder />
+      </Toolbar>
+      <FormWrapper autoComplete="off" onSubmit={handleSubmit(beforeEdit)}>
+        <ErrorDialog
+          handleClose={handleDialogClose}
+          open={status === ResultState.Failed}
+          message={errorMessage}
+        />
+        <LoadingDialog
+          handleClose={handleDialogClose}
+          open={status === ResultState.Loading}
+          message="Editing profile..."
+        />
+        <Button
+          startIcon={<ArrowBackIcon />}
+          color="offWhite"
+          sx={{
+            position: "absolute",
+            top: "100px",
+            mb: 2
+          }}
+          onClick={() => navigate(-1)}
+        >
+          Back
+        </Button>
+        <MiddleWrapper>
+          {/* <Box
           sx={{
             paddingBottom: {
               xs: "30px",
@@ -208,7 +255,6 @@ const AutProfileEdit = () => {
                   <Controller
                     name="avatar"
                     rules={{
-                      required: true,
                       validate: {
                         fileSize: (v) => {
                           if (isDirty && v) {
@@ -292,13 +338,25 @@ const AutProfileEdit = () => {
               </div>
             </CardContent>
           </AutCard>
-        </Box>
+        </Box> */}
 
-        <Typography variant="h3" color="white" textAlign="left">
-          Edit your profile
-        </Typography>
-        <LeftWrapper>
-          {/* <FieldWrapper>
+          <Box
+            sx={{
+              width: "50%",
+              alignSelf: "center"
+            }}
+          >
+            <Typography variant="h3" color="white" textAlign="center">
+              Add Social Records
+            </Typography>
+            <Typography variant="subtitle2" color="white" textAlign="center">
+              words to go here words to go here words to go here words to go
+              here words to go here words to go here words to go here words to
+              go here
+            </Typography>
+          </Box>
+          <LeftWrapper>
+            {/* <FieldWrapper>
             <SvgIcon
               sx={{
                 height: pxToRem(34),
@@ -335,67 +393,80 @@ const AutProfileEdit = () => {
               </Typography>
             </div>
           </FieldWrapper> */}
-          {fields.map((_, index) => {
-            const AutIcon = socialIcons[Object.keys(socialIcons)[index]];
-            const { prefix, hidePrefix, placeholder } =
-              socialUrls[Object.keys(socialUrls)[index]];
+            <Box
+              sx={{
+                display: "grid",
+                gridGap: "20px",
+                gridTemplateColumns: "50% 50%",
+                mt: 4
+              }}
+            >
+              {fields.map((_, index) => {
+                const AutIcon = socialIcons[Object.keys(socialIcons)[index]];
+                const { prefix, hidePrefix, placeholder } =
+                  socialUrls[Object.keys(socialUrls)[index]];
 
-            console.log(prefix, placeholder, index);
-            return (
-              <FieldWrapper key={`socials.${index}`}>
-                <SvgIcon
-                  sx={{
-                    color: "offWhite.main",
-                    mt: "10px",
-                    mr: "20px"
-                  }}
-                  key={`socials.${index}.icon`}
-                  component={AutIcon}
-                />
-                <Controller
-                  key={`socials.${index}.link`}
-                  name={`socials.${index}.link`}
-                  control={control}
-                  render={({ field: { name, value, onChange } }) => {
-                    return (
-                      <>
-                        <AutTextField
-                          variant="standard"
-                          color="offWhite"
-                          placeholder={placeholder}
-                          id={name}
-                          name={name}
-                          value={value}
-                          autoFocus={index === 0}
-                          onChange={onChange}
-                          sx={{
-                            width: "calc(100% - 50px)",
-                            mb: "15px"
-                          }}
-                          InputProps={{
-                            startAdornment: !hidePrefix && (
-                              <InputAdornment position="start">
-                                <p
-                                  style={{
-                                    color: "white"
-                                  }}
-                                >
-                                  {prefix}
-                                </p>
-                              </InputAdornment>
-                            )
-                          }}
-                        />
-                      </>
-                    );
-                  }}
-                />
-              </FieldWrapper>
-            );
-          })}
-        </LeftWrapper>
-      </MiddleWrapper>
-      <BottomWrapper>
+                console.log(prefix, placeholder, index);
+                return (
+                  <FieldWrapper key={`socials.${index}`}>
+                    <SvgIcon
+                      sx={{
+                        color: "offWhite.main",
+                        mt: "10px",
+                        mr: "20px"
+                      }}
+                      key={`socials.${index}.icon`}
+                      component={AutIcon}
+                    />
+                    <Controller
+                      key={`socials.${index}.link`}
+                      name={`socials.${index}.link`}
+                      control={control}
+                      render={({ field: { name, value, onChange } }) => {
+                        return (
+                          <>
+                            <AutTextField
+                              variant="standard"
+                              color="offWhite"
+                              placeholder={placeholder}
+                              id={name}
+                              name={name}
+                              value={value}
+                              autoFocus={index === 0}
+                              onChange={onChange}
+                              sx={{
+                                width: "250px",
+                                mb: "15px",
+                                mr: "15px"
+                              }}
+                              InputProps={{
+                                startAdornment: !hidePrefix && (
+                                  <InputAdornment position="start">
+                                    <p
+                                      style={{
+                                        color: "white"
+                                      }}
+                                    >
+                                      {prefix}
+                                    </p>
+                                  </InputAdornment>
+                                )
+                              }}
+                            />
+                          </>
+                        );
+                      }}
+                    />
+                    <AutButtonVariant sx={{ minWidth: "180px" }}>
+                      Verify Account
+                    </AutButtonVariant>
+                  </FieldWrapper>
+                );
+              })}
+            </Box>
+          </LeftWrapper>
+        </MiddleWrapper>
+        {/* <BottomWrapper>
         <Button
           variant="outlined"
           size="normal"
@@ -427,8 +498,9 @@ const AutProfileEdit = () => {
         >
           Save
         </Button>
-      </BottomWrapper>
-    </FormWrapper>
+      </BottomWrapper> */}
+      </FormWrapper>
+    </>
   );
 };
 

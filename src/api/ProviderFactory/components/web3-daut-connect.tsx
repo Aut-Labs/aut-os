@@ -120,33 +120,34 @@ function Web3DautConnect({
       const result = await dispatch(
         fetchHolder({
           signal: abort.current.signal,
-          autName: username,
-          network: params.get("network")
+          autName: username
+          // network: params.get("network")
         })
       );
       if (result.meta.requestStatus === "fulfilled") {
         if ((result.payload as AutID[])?.length == 1) {
           const [profile] = result.payload as AutID[];
-          params.set("network", profile.properties.network);
+          // params.set("network", profile.properties.network);
         }
         const connetectedAlready = sessionStorage.getItem("aut-data");
         if (!connetectedAlready) {
           setLoading(false);
         }
+        debugger;
         navigate({
-          pathname: location.pathname,
-          search: `?${params.toString()}`
+          pathname: location.pathname
+          // search: `?${params.toString()}`
         });
       }
     } else {
-      params.delete("network");
+      // params.delete("network");
       const connetectedAlready = sessionStorage.getItem("aut-data");
       if (!connetectedAlready) {
         setLoading(false);
       }
       navigate({
-        pathname: `/`,
-        search: `?${params.toString()}`
+        pathname: `/`
+        // search: `?${params.toString()}`
       });
     }
   };
@@ -181,10 +182,10 @@ function Web3DautConnect({
     autID.properties.ethDomain = ethDomain;
 
     const params = new URLSearchParams(window.location.search);
-    params.set("network", autID.properties.network?.toLowerCase());
+    // params.set("network", autID.properties.network?.toLowerCase());
     navigate({
-      pathname: `/${autID.name}`,
-      search: `?${params.toString()}`
+      pathname: `/${autID.name}.aut`
+      // search: `?${params.toString()}`
     });
     await dispatch(
       setConnectedUserInfo({

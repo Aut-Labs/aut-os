@@ -60,7 +60,7 @@ const CardBack = styled("div")(({ theme }) => ({
 }));
 
 const AutRightContainer = styled("div")(() => ({
-  width: "50%"
+  width: "40%"
 }));
 const AutRightMobileContainer = styled("div")(() => ({
   width: "100%",

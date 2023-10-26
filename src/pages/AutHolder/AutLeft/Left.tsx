@@ -3,7 +3,6 @@ import { CanUpdateProfile } from "@auth/auth.reducer";
 import AutLoading from "@components/AutLoading";
 import { styled, useMediaQuery, useTheme } from "@mui/material";
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
-import Scrollbar from "@components/Scrollbar";
 import {
   AutIDProfiles,
   HolderData,
@@ -41,10 +40,10 @@ const AutLeft = () => {
 
   const onSelect = async (profile: AutID) => {
     const params = new URLSearchParams(location.search);
-    params.set("network", profile.properties.network?.toLowerCase());
+    // params.set("network", profile.properties.network?.toLowerCase());
     navigate({
-      pathname: `/${profile.name}`,
-      search: `?${params.toString()}`
+      pathname: `/${profile.name}.aut`
+      // search: `?${params.toString()}`
     });
     await dispatch(
       updateHolderState({
@@ -57,7 +56,7 @@ const AutLeft = () => {
   return (
     <AutLeftContainer
       style={{
-        width: desktop && status === ResultState.Success ? "50%" : "100%",
+        width: desktop && status === ResultState.Success ? "60%" : "100%",
         height: "100vh"
       }}
     >
@@ -83,11 +82,11 @@ const AutLeft = () => {
               {holderData && <Route index element={<AutUserInfo />} />}
               {canUpdateProfile && (
                 <>
-                  <Route
+                  {/* <Route
                     path="edit-community/:communityAddress"
                     element={<AutCommunityEdit />}
-                  />
-                  <Route path="edit-profile" element={<AutProfileEdit />} />
+                  /> */}
+                  {/* <Route path="edit-profile" element={<AutProfileEdit />} /> */}
                 </>
               )}
             </Routes>

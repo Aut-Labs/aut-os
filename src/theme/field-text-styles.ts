@@ -5,6 +5,7 @@ import {
   ComponentsVariants,
   PaletteColor,
   TextField,
+  TextareaAutosize,
   Theme
 } from "@mui/material";
 
@@ -66,6 +67,7 @@ const generateColors = (color: PaletteColor, white: PaletteColor) => ({
 });
 
 export const AutTextField = TextField;
+export const AutTextAreaField = TextareaAutosize;
 
 export default (theme: Theme) =>
   ({
