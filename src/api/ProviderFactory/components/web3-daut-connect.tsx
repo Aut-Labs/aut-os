@@ -1,119 +1,72 @@
-import {
-  memo,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState
-} from "react";
+import { memo, useEffect, useLayoutEffect, useRef } from "react";
 import { useAppDispatch } from "@store/store.model";
 import { ResultState } from "@store/result-status";
-import { HolderData, updateHolderState } from "@store/holder/holder.reducer";
+import { updateHolderState } from "@store/holder/holder.reducer";
 import { resetAuthState, setConnectedUserInfo } from "@auth/auth.reducer";
 import { fetchHolder, fetchHolderEthEns } from "@api/holder.api";
 import { AutID } from "@api/aut.model";
 import { Init } from "@aut-labs/d-aut";
 import { useSelector } from "react-redux";
 import {
-  NetworkWalletConnectors,
   NetworksConfig,
   updateWalletProviderState
 } from "@store/WalletProvider/WalletProvider";
-import { Typography, debounce, styled } from "@mui/material";
-import AutLoading from "@components/AutLoading";
-import DialogWrapper from "@components/Dialog/DialogWrapper";
+import { debounce } from "@mui/material";
 import { NetworkConfig } from "../network.config";
-import { NetworkSelectors } from "./NetworkSelectors";
-import AppTitle from "@components/AppTitle";
 import AutSDK from "@aut-labs/sdk";
-import { useConnector, useEthers, Connector, Config } from "@usedapp/core";
-import { ethers } from "ethers";
 import { useLocation, useNavigate } from "react-router-dom";
-import { IAutButtonConfig } from "@aut-labs/d-aut/build/components/AutButtonMenu/AutMenuUtils";
 import { EnvMode, environment } from "@api/environment";
-
-const DialogInnerContent = styled("div")({
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  justifyContent: "center",
-  flex: 1,
-  gridGap: "30px"
-});
+import { MultiSigner } from "@aut-labs/sdk/dist/models/models";
+import { WalletClient, useAccount, useConnect } from "wagmi";
+import { Config } from "prettier";
+import { useEthersSigner, walletClientToSigner } from "../ethers";
 
 function Web3DautConnect({
-  setLoading,
-  config
+  setLoading
 }: {
   setLoading: (loading: boolean) => void;
   config: Config;
 }) {
   const dispatch = useAppDispatch();
   const abort = useRef<AbortController>();
-  const networks = useSelector(NetworksConfig);
-  const holderData = useSelector(HolderData);
-  const [currentChainId, setCurrentChainId] = useState(null);
-  const [dAutConnected, setDAutConnected] = useState(false);
-  const [loadingNetwork, setIsLoadingNetwork] = useState(false);
-  const { connector, activate } = useConnector();
   const navigate = useNavigate();
   const location = useLocation();
-  const { activateBrowserWallet, switchNetwork, chainId } = useEthers();
 
-  const openForSelectNetwork = useMemo(() => {
-    return dAutConnected && currentChainId && currentChainId != chainId;
-  }, [chainId, dAutConnected, currentChainId]);
+  const networks = useSelector(NetworksConfig);
+  const { connector, isConnected } = useAccount();
+  const { connectAsync, connectors } = useConnect();
+  const multiSigner = useEthersSigner();
 
   const initialiseSDK = async (
     network: NetworkConfig,
-    signer: ethers.providers.JsonRpcSigner
+    multiSigner: MultiSigner
   ) => {
     const sdk = AutSDK.getInstance();
-    return sdk.init(signer, {
+    return sdk.init(multiSigner, {
       novaRegistryAddress: network.contracts.novaRegistryAddress,
       autIDAddress: network.contracts.autIDAddress,
       daoExpanderRegistryAddress: network.contracts.daoExpanderRegistryAddress
     });
   };
 
-  const activateNetwork = async (
-    network: NetworkConfig,
-    conn: Connector,
-    wallet?: string
-  ) => {
-    setIsLoadingNetwork(true);
-    try {
-      await activate(conn);
-      await switchNetwork(+network.chainId);
-    } catch (error) {
-      console.error(error, "error");
+  useEffect(() => {
+    if (connector?.ready && isConnected && multiSigner) {
+      const start = async () => {
+        const [network] = networks.filter((d) => !d.disabled);
+        const itemsToUpdate = {
+          sdkInitialized: true,
+          selectedNetwork: network
+          // signer: multiSigner
+        };
+        await initialiseSDK(network, multiSigner);
+        await dispatch(updateWalletProviderState(itemsToUpdate));
+      };
+      start();
     }
-    const signer = conn?.provider?.getSigner();
-    const itemsToUpdate = {
-      sdkInitialized: true,
-      selectedWalletType: wallet,
-      selectedNetwork: network.network,
-      signer
-    };
-    if (!wallet) {
-      delete itemsToUpdate.selectedWalletType;
-    }
-    await dispatch(updateWalletProviderState(itemsToUpdate));
-    await initialiseSDK(network, signer as ethers.providers.JsonRpcSigner);
-    setCurrentChainId(+network.chainId);
-    setIsLoadingNetwork(false);
-  };
-
-  // const onAutInit = async () => {
-  //   const connetectedAlready = sessionStorage.getItem("aut-data");
-  //   if (!connetectedAlready) {
-  //     setLoading(false);
-  //   }
-  // };
+  }, [isConnected, connector?.ready, multiSigner]);
 
   const onAutInit = async () => {
     const [, username] = location.pathname.split("/");
-    const params = new URLSearchParams(location.search);
     if (username) {
       setLoading(true);
       abort.current = new AbortController();
@@ -133,21 +86,18 @@ function Web3DautConnect({
         if (!connetectedAlready) {
           setLoading(false);
         }
-        debugger;
         navigate({
           pathname: location.pathname
           // search: `?${params.toString()}`
         });
       }
     } else {
-      // params.delete("network");
       const connetectedAlready = sessionStorage.getItem("aut-data");
       if (!connetectedAlready) {
         setLoading(false);
       }
       navigate({
         pathname: `/`
-        // search: `?${params.toString()}`
       });
     }
   };
@@ -163,47 +113,57 @@ function Web3DautConnect({
       return c.properties.userData?.isActive;
     });
     autID.properties.address = profile.address;
-    autID.properties.network = profile.network?.toLowerCase();
+    autID.properties.network = profile.network?.network?.toLowerCase();
 
-    const network = networks.find(
-      (n) =>
-        n.network?.toLowerCase() === autID?.properties?.network?.toLowerCase()
-    );
-
-    if (network && !network?.disabled) {
-      const connector = config.connectors[profile.provider];
-      activateBrowserWallet({ type: profile.provider });
-      await activateNetwork(network, connector, profile.provider);
-    }
-
-    autID.properties.address = profile.address;
-    autID.properties.network = profile.network?.toLowerCase();
     const ethDomain = await fetchHolderEthEns(autID.properties.address);
     autID.properties.ethDomain = ethDomain;
 
-    const params = new URLSearchParams(window.location.search);
-    // params.set("network", autID.properties.network?.toLowerCase());
-    navigate({
-      pathname: `/${autID.name}.aut`
-      // search: `?${params.toString()}`
-    });
-    await dispatch(
-      setConnectedUserInfo({
-        connectedAddress: autID.properties.address,
-        connectedNetwork: autID.properties.network?.toLowerCase()
-      })
-    );
-    await dispatch(
-      updateHolderState({
-        profiles: [autID],
-        selectedProfileAddress: autID.properties.address,
-        selectedProfileNetwork: autID.properties.network?.toLowerCase(),
-        fetchStatus: ResultState.Success,
-        status: ResultState.Idle
-      })
-    );
-    setDAutConnected(true);
-    setLoading(false);
+    if (autID.properties.network) {
+      const walletName = localStorage.getItem("wagmi.wallet").replace(/"/g, "");
+      const [network] = networks.filter((d) => !d.disabled);
+      if (walletName) {
+        const c = connectors.find((c) => c.id === walletName);
+        if (c && !isConnected) {
+          const client = await connectAsync({
+            connector: c,
+            chainId: c.chains[0].id
+          });
+
+          client["transport"] = client["provider"];
+          const temp_signer = walletClientToSigner(
+            client as unknown as WalletClient
+          );
+          await initialiseSDK(network, temp_signer);
+        }
+      }
+
+      const itemsToUpdate = {
+        sdkInitialized: true,
+        selectedNetwork: network
+      };
+      await dispatch(updateWalletProviderState(itemsToUpdate));
+
+      navigate({
+        pathname: `/${autID.name}.aut`
+        // search: `?${params.toString()}`
+      });
+      await dispatch(
+        setConnectedUserInfo({
+          connectedAddress: autID.properties.address,
+          connectedNetwork: autID.properties.network?.toLowerCase()
+        })
+      );
+      await dispatch(
+        updateHolderState({
+          profiles: [autID],
+          selectedProfileAddress: autID.properties.address,
+          selectedProfileNetwork: autID.properties.network?.toLowerCase(),
+          fetchStatus: ResultState.Success,
+          status: ResultState.Idle
+        })
+      );
+      setLoading(false);
+    }
   };
 
   const onDisconnected = () => {
@@ -239,7 +199,7 @@ function Web3DautConnect({
     window.addEventListener("aut-onConnected", onAutLogin);
     window.addEventListener("aut-onDisconnected", onDisconnected);
 
-    const config: IAutButtonConfig = {
+    const config = {
       defaultText: "Connect Wallet",
       textAlignment: "right",
       menuTextAlignment: "left",
@@ -287,50 +247,6 @@ function Web3DautConnect({
         flow-config='{"mode" : "dashboard", "customCongratsMessage": ""}'
         ipfs-gateway="https://ipfs.nftstorage.link/ipfs"
       />
-      <DialogWrapper open={openForSelectNetwork}>
-        <>
-          <AppTitle
-            mb={{
-              xs: "16px",
-              lg: "24px",
-              xxl: "32px"
-            }}
-            variant="h2"
-          />
-          {loadingNetwork && (
-            <div style={{ position: "relative", flex: 1 }}>
-              <AutLoading />
-            </div>
-          )}
-          {!loadingNetwork && (
-            <>
-              <>
-                <Typography
-                  mb={{
-                    xs: "8px"
-                  }}
-                  color="white"
-                  variant="subtitle1"
-                >
-                  Change Network
-                </Typography>
-
-                <Typography color="white" variant="body">
-                  You will need to switch your wallet’s network.
-                </Typography>
-              </>
-              <DialogInnerContent>
-                <NetworkSelectors
-                  networks={networks}
-                  onSelect={async (network: NetworkConfig) => {
-                    activateNetwork(network, connector.connector);
-                  }}
-                />
-              </DialogInnerContent>
-            </>
-          )}
-        </>
-      </DialogWrapper>
     </>
   );
 }

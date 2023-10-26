@@ -45,7 +45,6 @@ import { EditContentElements } from "@components/EditContentElements";
 import { AutTextField } from "@theme/field-text-styles";
 import { socialUrls } from "@api/social.model";
 import { useNavigate } from "react-router-dom";
-import { useEthers } from "@usedapp/core";
 import { resetSearchState } from "@store/search/search.reducer";
 import { DautPlaceholder } from "@api/ProviderFactory/components/web3-daut-connect";
 import { AutButtonVariant } from "@components/AutButton";
@@ -115,7 +114,6 @@ const AutProfileEdit = () => {
   const errorMessage = useSelector(UpdateErrorMessage);
   const isConnected = useSelector(IsConnected);
   const [editInitiated, setEditInitiated] = useState(false);
-  const { active: isActive } = useEthers();
 
   const {
     control,
@@ -147,9 +145,9 @@ const AutProfileEdit = () => {
 
   const beforeEdit = () => {
     setEditInitiated(true);
-    if (!isActive || !isConnected) {
-      dispatch(setProviderIsOpen(true));
-    }
+    // if (!isActive || !isConnected) {
+    //   dispatch(setProviderIsOpen(true));
+    // }
   };
 
   const onEditProfile = async (data: typeof values) => {
@@ -183,12 +181,12 @@ const AutProfileEdit = () => {
     dispatch(resetSearchState());
   }
 
-  useEffect(() => {
-    if (!editInitiated || !isActive || !isConnected) {
-      return;
-    }
-    onEditProfile(values);
-  }, [isActive, isConnected, editInitiated]);
+  // useEffect(() => {
+  //   if (!editInitiated || !isActive || !isConnected) {
+  //     return;
+  //   }
+  //   onEditProfile(values);
+  // }, [isActive, isConnected, editInitiated]);
 
   return (
     <>

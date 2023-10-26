@@ -50,9 +50,7 @@ import ErrorDialog from "@components/Dialog/ErrorPopup";
 import LoadingDialog from "@components/Dialog/LoadingPopup";
 import { Controller, useForm } from "react-hook-form";
 import { useAppDispatch } from "@store/store.model";
-import { useEthers } from "@usedapp/core";
 import { updateProfile } from "@api/holder.api";
-import { AutID } from "@aut-labs/sdk";
 import { AutButtonVariant } from "@components/AutButton";
 import { AutTextField } from "@theme/field-text-styles";
 
@@ -132,8 +130,6 @@ const AutUserInfo = () => {
   const dispatch = useAppDispatch();
   const status = useSelector(UpdateStatus);
   const errorMessage = useSelector(UpdateErrorMessage);
-  const isConnected = useSelector(IsConnected);
-  const { active: isActive } = useEthers();
 
   const {
     control,
@@ -190,9 +186,9 @@ const AutUserInfo = () => {
 
   const beforeEdit = () => {
     setEditInitiated(true);
-    if (!isActive || !isConnected) {
-      dispatch(setProviderIsOpen(true));
-    }
+    // if (!isConnected) {
+    //   dispatch(setProviderIsOpen(true));
+    // }
   };
 
   const onEditProfile = async (data: typeof values) => {

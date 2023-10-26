@@ -41,12 +41,10 @@ import {
 } from "@store/WalletProvider/WalletProvider";
 import { EditContentElements } from "@components/EditContentElements";
 import { AutCommitmentSlider } from "@theme/commitment-slider-styles";
-import { useEthers } from "@usedapp/core";
 import CopyAddress from "@components/CopyAddress";
 import AutTabs from "@components/AutTabs";
 import { CommunityTasksTable } from "./CommunityTabs";
 import CountdownClock from "@components/CountdownClock";
-import AutToolBar from "./AutToolBar";
 import { DautPlaceholder } from "@api/ProviderFactory/components/web3-daut-connect";
 import { resetSearchState } from "@store/search/search.reducer";
 import { AutButtonVariant } from "@components/AutButton";
@@ -123,7 +121,7 @@ const AutCommunityEdit = () => {
   const isConnected = useSelector(IsConnected);
   const [editInitiated, setEditInitiated] = useState(false);
   const [withdrawInitiated, setWithdrawInitiated] = useState(false);
-  const { active: isActive } = useEthers();
+  // const { active: isActive } = useEthers();
   const selectedNetworkConfig = useSelector(SelectedNetworkConfig);
 
   const {
@@ -142,9 +140,9 @@ const AutCommunityEdit = () => {
 
   const beforeEdit = () => {
     setEditInitiated(true);
-    if (!isActive || !isConnected) {
-      dispatch(setProviderIsOpen(true));
-    }
+    // if (!isActive || !isConnected) {
+    //   dispatch(setProviderIsOpen(true));
+    // }
   };
 
   const onEditCommitment = async (data) => {
@@ -162,9 +160,9 @@ const AutCommunityEdit = () => {
 
   const beforeWithdraw = () => {
     setWithdrawInitiated(true);
-    if (!isActive || !isConnected) {
-      dispatch(setProviderIsOpen(true));
-    }
+    // if (!isActive || !isConnected) {
+    //   dispatch(setProviderIsOpen(true));
+    // }
   };
 
   const onWithdraw = async () => {
@@ -175,19 +173,19 @@ const AutCommunityEdit = () => {
     }
   };
 
-  useEffect(() => {
-    if (!withdrawInitiated || !isActive || !isConnected) {
-      return;
-    }
-    onWithdraw();
-  }, [isActive, isConnected, withdrawInitiated]);
+  // useEffect(() => {
+  //   if (!withdrawInitiated || !isActive || !isConnected) {
+  //     return;
+  //   }
+  //   onWithdraw();
+  // }, [isActive, isConnected, withdrawInitiated]);
 
-  useEffect(() => {
-    if (!editInitiated || !isActive || !isConnected) {
-      return;
-    }
-    onEditCommitment(values);
-  }, [isActive, isConnected, editInitiated]);
+  // useEffect(() => {
+  //   if (!editInitiated || !isActive || !isConnected) {
+  //     return;
+  //   }
+  //   onEditCommitment(values);
+  // }, [isActive, isConnected, editInitiated]);
 
   const handleDialogClose = () => {
     dispatch(

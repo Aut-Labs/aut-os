@@ -20,7 +20,6 @@ import { ReactComponent as SearchIcon } from "@assets/SearchIcon.svg";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Controller, useForm } from "react-hook-form";
-import parse from "autosuggest-highlight/parse";
 import {
   NoSearchResults,
   SearchResult,

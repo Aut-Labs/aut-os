@@ -10,7 +10,7 @@ export enum ConnectorTypes {
 export interface WalletProviderState {
   signer: ethers.providers.JsonRpcSigner;
   selectedWalletType: "injected" | "walletConnect";
-  selectedNetwork: string;
+  selectedNetwork: NetworkConfig;
   networksConfig: NetworkConfig[];
   isOpen: boolean;
   sdkInitialized: boolean;
@@ -46,7 +46,7 @@ export const walletProviderSlice = createSlice({
       state.isOpen = action.payload;
     },
     setNetwork(state, action) {
-      state.selectedNetwork = action.payload as string;
+      state.selectedNetwork = action.payload as NetworkConfig;
     },
     setNetworks(state, action) {
       state.networksConfig = action.payload;
