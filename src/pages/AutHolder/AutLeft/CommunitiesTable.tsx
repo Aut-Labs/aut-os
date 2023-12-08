@@ -109,11 +109,6 @@ const CommunityListItem = memo(
                 <BtnLink
                   color="primary"
                   variant="subtitle2"
-                  sx={{
-                    "&:hover": {
-                      textDecoration: !canUpdateProfile ? "unset" : "underline"
-                    }
-                  }}
                   {...(canUpdateProfile && {
                     to: `edit-community/${row.properties.address}`,
                     component: Link

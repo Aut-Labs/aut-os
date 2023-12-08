@@ -8,6 +8,8 @@ const initialState = {
     duration: 2000
   },
   openShare: false,
+  openCommitment: false,
+  openEditProfile: false,
   previousRoute: "/",
   transactionState: null,
   title: ""
@@ -41,6 +43,12 @@ export const uiSlice = createSlice({
     setOpenShare(state, action) {
       state.openShare = action.payload;
     },
+    setOpenCommitment(state, action) {
+      state.openCommitment = action.payload;
+    },
+    setOpenEditProfile(state, action) {
+      state.openEditProfile = action.payload;
+    },
     resetUIState: () => initialState
   }
 });
@@ -51,6 +59,8 @@ export const {
   setTitle,
   setPreviusRoute,
   setOpenShare,
+  setOpenCommitment,
+  setOpenEditProfile,
   updateTransactionState
 } = uiSlice.actions;
 

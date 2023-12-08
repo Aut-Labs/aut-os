@@ -1,7 +1,7 @@
 /* eslint-disable react/button-has-type */
 import { CanUpdateProfile } from "@auth/auth.reducer";
 import AutLoading from "@components/AutLoading";
-import { styled, useMediaQuery, useTheme } from "@mui/material";
+import { Toolbar, styled, useMediaQuery, useTheme } from "@mui/material";
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import {
   AutIDProfiles,
@@ -13,18 +13,21 @@ import PerfectScrollbar from "react-perfect-scrollbar";
 import { ResultState } from "@store/result-status";
 import { useSelector } from "react-redux";
 import AutToolBar from "./AutToolBar";
+import { ReactComponent as AutOsLogo } from "@assets/autos/os-logo.svg";
+
 import AutUserInfo from "./AutUserInfo";
 import SelectAutIDProfileDialog from "@components/AutIDProfileList";
 import { AutID } from "@api/aut.model";
 import { useAppDispatch } from "@store/store.model";
 import { lazy } from "react";
+import { DautPlaceholder } from "@api/ProviderFactory/components/web3-daut-connect";
 
 const AutLeftContainer = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column"
 }));
 
-const AutCommunityEdit = lazy(() => import("./AutCommunityEdit"));
+const AutCommunityEdit = lazy(() => import("../../AutCommunity/AutNova"));
 const AutProfileEdit = lazy(() => import("./AutProfileEdit"));
 
 const AutLeft = () => {
@@ -56,7 +59,7 @@ const AutLeft = () => {
   return (
     <AutLeftContainer
       style={{
-        width: desktop && status === ResultState.Success ? "60%" : "100%",
+        width: desktop && status === ResultState.Success ? "100%" : "100%",
         height: "100vh"
       }}
     >
@@ -70,9 +73,10 @@ const AutLeft = () => {
         <AutLoading />
       ) : (
         <>
-          <AutToolBar isDesktop={desktop} />
+          <AutToolBar></AutToolBar>
           <PerfectScrollbar
             style={{
+              top: "84px",
               height: "calc(100% - 84px)",
               display: "flex",
               flexDirection: "column"

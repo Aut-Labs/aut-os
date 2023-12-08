@@ -5,12 +5,11 @@ import { ReactComponent as GitHubIcon } from "@assets/SocialIcons/GitHubIcon.svg
 import { ReactComponent as LensfrensIcon } from "@assets/SocialIcons/LensfrensIcon.svg";
 import { ReactComponent as TelegramIcon } from "@assets/SocialIcons/TelegramIcon.svg";
 import { ReactComponent as TwitterIcon } from "@assets/SocialIcons/TwitterIcon.svg";
+import { ReactComponent as CalendarCheckIcon } from "@assets/autos/calendar-check.svg";
+
 import {
   Avatar,
   Box,
-  Card,
-  CardContent,
-  CardHeader,
   IconButton,
   Link,
   Stack,
@@ -51,11 +50,20 @@ import LoadingDialog from "@components/Dialog/LoadingPopup";
 import { Controller, useForm } from "react-hook-form";
 import { useAppDispatch } from "@store/store.model";
 import { updateProfile } from "@api/holder.api";
-import { AutButtonVariant } from "@components/AutButton";
+import {
+  AutButton,
+  AutButtonVariant,
+  AutOsButton
+} from "@components/AutButton";
 import { AutTextField } from "@theme/field-text-styles";
+import { parseTimestamp } from "@utils/date-format";
+import AutTabs from "@components/AutTabs";
+import AutUserTabs from "../AutUserTabs/AutUserTabs";
+import { SubtitleWithInfo } from "@components/SubtitleWithInfoIcon";
+import { setOpenEditProfile } from "@store/ui-reducer";
+import { AutEditProfileDialog } from "@components/AutEditProfileDialog";
 
-const IconContainer = styled("div")(({ theme }) => ({
-  paddingTop: "15px",
+export const IconContainer = styled("div")(({ theme }) => ({
   display: "flex",
   minHeight: "25px",
   height: "40px",
@@ -66,63 +74,29 @@ const IconContainer = styled("div")(({ theme }) => ({
   }
 }));
 
-const AutCard = styled(Card)(({ theme }) => ({
-  "&.MuiCard-root": {
-    display: "flex"
-  },
-
-  ".MuiCardHeader-root": {
-    padding: "0"
-  },
-
-  ".MuiCardContent-root:last-child": {
-    padding: "0"
-  }
-}));
-
-const ImageUpload = styled("div")(({ theme }) => ({
-  width: "150px",
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "flex-start",
-  justifyContent: "center",
-  textAlign: "center",
-  [theme.breakpoints.down("xxl")]: {
-    width: "150px"
-  }
-}));
-
 const FollowWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  alignItems: "center",
-  width: "50%",
+  alignItems: "flex-start",
+  width: "150px",
   justifyContent: "center"
 }));
 
-const EditIcon = styled("div")(({ theme }) => ({
-  height: "30px",
-  width: "30px",
-  cursor: "pointer",
-  paddingLeft: "10px",
-  display: "flex",
-  alignSelf: "flex-end",
-  marginBottom: "5px",
-
-  [theme.breakpoints.down("md")]: {
-    height: "18px",
-    width: "18px"
-  }
-}));
-
-const { FieldWrapper, FormWrapper, BottomWrapper, TopWrapper, ContentWrapper } =
-  EditContentElements;
+export const socialIcons = {
+  discord: DiscordIcon,
+  github: GitHubIcon,
+  twitter: TwitterIcon,
+  telegram: TelegramIcon,
+  lensfrens: LensfrensIcon
+};
+const { FormWrapper } = EditContentElements;
 
 const AutUserInfo = () => {
   const holderData = useSelector(HolderData);
   const holderStatus = useSelector(HolderStatus);
   const blockExplorer = useSelector(BlockExplorerUrl);
-  const selectedNetwork = useSelector(SelectedNetworkConfig);
+  // const selectedNetwork = useSelector(SelectedNetworkConfig);
+  const selectedNetwork = "mumbai";
   const canUpdateProfile = useSelector(CanUpdateProfile);
   const [isActiveIndex, setIsActiveIndex] = useState(null);
   const [inlineEditing, setInlineEditing] = useState(false);
@@ -130,13 +104,13 @@ const AutUserInfo = () => {
   const dispatch = useAppDispatch();
   const status = useSelector(UpdateStatus);
   const errorMessage = useSelector(UpdateErrorMessage);
+  const parsedTimeStamp = new Intl.DateTimeFormat("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "2-digit"
+  }).format(parseTimestamp(holderData?.properties?.timestamp));
 
-  const {
-    control,
-    handleSubmit,
-    watch,
-    formState: { isDirty, isValid, errors }
-  } = useForm({
+  const { handleSubmit, watch } = useForm({
     mode: "onChange",
     defaultValues: {
       avatar: holderData?.properties?.avatar,
@@ -146,63 +120,22 @@ const AutUserInfo = () => {
   });
 
   const values = watch();
+  console.log("holder data", holderData);
 
   const navigate = useNavigate();
   const location = useLocation();
   const theme = useTheme();
 
-  const socialIcons = {
-    discord: DiscordIcon,
-    github: GitHubIcon,
-    twitter: TwitterIcon,
-    telegram: TelegramIcon,
-    lensfrens: LensfrensIcon
-  };
-
   const onEditInfo = () => {
     setInlineEditing(!inlineEditing);
     return null;
   };
-  const onEditSocials = () => {
-    navigate({
-      pathname: "edit-profile",
-      search: location.search
-    });
-  };
-
-  function clickRow(index, address: string) {
-    if (CanUpdateProfile) {
-      if (isActiveIndex === index) {
-        setIsActiveIndex(null);
-      } else {
-        setIsActiveIndex(index);
-      }
-      navigate({
-        pathname: `edit-community/${address}`,
-        search: location.search
-      });
-    }
-  }
 
   const beforeEdit = () => {
     setEditInitiated(true);
     // if (!isConnected) {
     //   dispatch(setProviderIsOpen(true));
     // }
-  };
-
-  const onEditProfile = async (data: typeof values) => {
-    await dispatch(
-      updateProfile({
-        ...holderData,
-        // bio: data.bio,
-        properties: {
-          ...holderData?.properties,
-          avatar: data.avatar
-        }
-      })
-    );
-    setEditInitiated(false);
   };
 
   const handleDialogClose = () => {
@@ -213,173 +146,119 @@ const AutUserInfo = () => {
     );
   };
 
+  const { openEditProfile } = useSelector((state: any) => state.ui);
+
+  const handleClose = () => {
+    dispatch(setOpenEditProfile(false));
+  };
+
+  const openEditProfileModal = () => {
+    dispatch(setOpenEditProfile(true));
+  };
+
   const selectedNetworkConfig = useSelector(SelectedNetworkConfig);
 
   return (
-    <FormWrapper autoComplete="off" onSubmit={handleSubmit(beforeEdit)}>
-      <ErrorDialog
-        handleClose={handleDialogClose}
-        open={status === ResultState.Failed}
-        message={errorMessage}
+    <>
+      <AutEditProfileDialog
+        open={openEditProfile}
+        hideCloseBtn={false}
+        title="Edit Profile"
+        onClose={handleClose}
       />
-      <LoadingDialog
-        handleClose={handleDialogClose}
-        open={status === ResultState.Loading}
-        message="Editing profile..."
-      />
+      <FormWrapper autoComplete="off" onSubmit={handleSubmit(beforeEdit)}>
+        <ErrorDialog
+          handleClose={handleDialogClose}
+          open={status === ResultState.Failed}
+          message={errorMessage}
+        />
+        <LoadingDialog
+          handleClose={handleDialogClose}
+          open={status === ResultState.Loading}
+          message="Editing profile..."
+        />
 
-      {holderStatus === ResultState.Success ? (
-        <Box
-          style={{
-            width: "100%",
-            display: "flex",
-            flexDirection: "column",
-            flex: "1"
-          }}
-        >
+        {holderStatus === ResultState.Success ? (
           <Box
             sx={{
-              paddingBottom: {
-                xs: 3,
-                md: 4,
-                xxl: 6
+              width: "100%",
+              display: "flex",
+              flexDirection: {
+                xs: "column",
+                md: "row"
+              },
+              flex: "1",
+              gap: {
+                xs: "10px",
+                md: "30px",
+                xxl: "40px"
               }
             }}
           >
-            <Box sx={{ display: "flex" }}>
-              <Stack sx={{ width: "60%" }}>
-                <AutCard
-                  sx={{
-                    border: "none",
-                    display: "flex",
-                    boxShadow: "none",
-                    alignItems: "flex-start",
-                    bgcolor: "transparent"
-                  }}
-                >
-                  {inlineEditing ? (
-                    <CardHeader
-                      avatar={
-                        <ImageUpload>
-                          <Controller
-                            name="avatar"
-                            rules={{
-                              validate: {
-                                fileSize: (v) => {
-                                  if (isDirty && v) {
-                                    const file = base64toFile(v, "pic");
-                                    if (!file) {
-                                      return true;
-                                    }
-                                    return file.size < 8388608;
-                                  }
-                                }
-                              }
-                            }}
-                            control={control}
-                            render={({ field: { onChange } }) => {
-                              return (
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    height: "150px",
-                                    width: "150px"
-                                  }}
-                                >
-                                  <AFileUpload
-                                    color="offWhite"
-                                    // initialPreviewUrl={ipfsCIDToHttpUrl(
-                                    //   holderData?.properties?.avatar as string
-                                    // )}
-
-                                    fileChange={async (file) => {
-                                      if (file) {
-                                        onChange(await toBase64(file));
-                                      } else {
-                                        onChange(null);
-                                      }
-                                    }}
-                                    // errors={errors}
-                                  />
-                                </div>
-                              );
-                            }}
-                          />
-                        </ImageUpload>
-                      }
-                      sx={{ alignSelf: "flex-start" }}
-                    ></CardHeader>
-                  ) : (
-                    <CardHeader
-                      avatar={
-                        <Avatar
-                          sx={{
-                            bgcolor: "background.default",
-                            height: {
-                              xs: "150px",
-                              xxl: "150px"
-                            },
-                            width: {
-                              xs: "150px",
-                              xxl: "150px"
-                            },
-                            borderRadius: 0
-                          }}
-                          aria-label="avatar"
-                          src={ipfsCIDToHttpUrl(
-                            holderData?.properties?.avatar as string
-                          )}
-                        />
-                      }
-                    />
-                  )}
-                  <CardContent
+            <Box
+              sx={{
+                width: {
+                  xs: "100%",
+                  md: "30%",
+                  padding: "24px",
+                  borderRadius: "72px",
+                  background: "rgba(240, 245, 255, 0.01)",
+                  backdropFilter: "blur(12px)",
+                  height: "fit-content"
+                }
+              }}
+            >
+              <Box sx={{ display: "flex" }}>
+                <Stack>
+                  <Avatar
                     sx={{
-                      ml: {
-                        xs: "0",
-                        sm: "30px"
+                      height: {
+                        xs: "150px",
+                        md: "160px",
+                        xxl: "160px"
                       },
-                      mr: {
-                        xs: "0",
-                        sm: "30px"
+                      width: {
+                        xs: "150px",
+                        md: "160px",
+                        xxl: "160px"
                       },
-                      alignSelf: "center",
-                      // height: {
-                      //   xs: "100px",
-                      //   md: "150px"
-                      // },
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "space-between"
+                      borderRadius: "50%",
+                      bgcolor: "purple"
+                    }}
+                    aria-label="avatar"
+                    src={ipfsCIDToHttpUrl(
+                      holderData?.properties?.avatar as string
+                    )}
+                  />
+                  <Stack
+                    sx={{
+                      marginTop: theme.spacing(3)
                     }}
                   >
                     <div>
                       <div
                         style={{
                           display: "flex",
-                          alignItems: "flex-start",
-                          marginBottom: "5px"
+                          alignItems: "flex-start"
                         }}
                       >
                         <Typography
-                          color="white"
+                          color="offWhite.main"
                           textAlign="left"
                           lineHeight={1}
-                          variant="h3"
+                          variant="h2"
                         >
                           {holderData.name}
                         </Typography>
-                        {canUpdateProfile && (
-                          <Tooltip title="Edit profile">
-                            <EditIcon onClick={onEditInfo}>
-                              <PencilEdit />
-                            </EditIcon>
-                          </Tooltip>
-                        )}
                       </div>
 
-                      <Stack direction="row" alignItems="center">
+                      <Stack
+                        sx={{
+                          marginTop: theme.spacing(3)
+                        }}
+                        direction="row"
+                        alignItems="center"
+                      >
                         <CopyAddress
                           address={holderData?.properties?.address}
                         />
@@ -399,36 +278,92 @@ const AutUserInfo = () => {
                             </IconButton>
                           </Tooltip>
                         )}
+                        {canUpdateProfile && (
+                          <AutOsButton
+                            onClick={openEditProfileModal}
+                            type="button"
+                            color="primary"
+                            variant="outlined"
+                            sx={{
+                              ml: theme.spacing(3)
+                            }}
+                          >
+                            <Typography
+                              fontWeight="700"
+                              fontSize="16px"
+                              lineHeight="26px"
+                            >
+                              Edit Profile
+                            </Typography>
+                          </AutOsButton>
+                        )}
                       </Stack>
-
-                      {/* <ExternalUrl
-                    href={`${blockExplorer}/address/${holderData?.properties?.address}`}
-                    target="_blank"
-                  >
-                    <Typography
-                      variant="subtitle2"
-                      color="white"
-                      fontWeight="normal"
-                    >
-                      {trimAddress(holderData.properties.address)}
-                    </Typography>
-                  </ExternalUrl> */}
-
-                      {/* {holderData.properties.ethDomain && (
-                    <Typography
-                      variant="subtitle2"
-                      color="white"
-                      textAlign="left"
-                      sx={{
-                        textDecoration: "underline",
-                        wordBreak: "break-all"
-                      }}
-                    >
-                      {holderData.properties.ethDomain}
-                    </Typography>
-                  )} */}
                     </div>
+                  </Stack>
 
+                  <Stack
+                    sx={{
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "flex-start",
+                      alignContent: "flex-start",
+                      marginTop: theme.spacing(3)
+                    }}
+                  >
+                    <FollowWrapper>
+                      {/* TODO: Provide correct reputation from holderData and implement color rules */}
+                      <Typography
+                        variant="subtitle1"
+                        color="offWhite.main"
+                        fontSize="24px"
+                        fontWeight="bold"
+                      >
+                        200
+                      </Typography>
+                      <SubtitleWithInfo
+                        title="reputation"
+                        description="This is your reputation"
+                      ></SubtitleWithInfo>
+                    </FollowWrapper>
+                    <FollowWrapper>
+                      {/* TODO: Provide correct number of connections from holderData */}
+
+                      <Typography
+                        variant="subtitle1"
+                        fontSize="24px"
+                        color="offWhite.main"
+                        fontWeight="bold"
+                      >
+                        200
+                      </Typography>
+                      <SubtitleWithInfo
+                        title="connections"
+                        description={null}
+                      ></SubtitleWithInfo>
+                    </FollowWrapper>
+                  </Stack>
+
+                  <Box
+                    sx={{
+                      marginTop: theme.spacing(2)
+                    }}
+                  >
+                    <Box sx={{ padding: "16.5px 0px" }}>
+                      <Typography
+                        color="offWhite.main"
+                        textAlign="left"
+                        variant="body"
+                      >
+                        {holderData?.description || "No bio yet..."}
+                      </Typography>
+                    </Box>
+                  </Box>
+
+                  <Box
+                    sx={{
+                      marginTop: theme.spacing(2)
+                    }}
+                  >
                     <IconContainer>
                       {holderData?.properties.socials.map((social, index) => {
                         const AutIcon =
@@ -451,7 +386,7 @@ const AutUserInfo = () => {
                               social.link ===
                                 socialUrls[social.type].prefix) && {
                               sx: {
-                                display: "none",
+                                // display: "none",
                                 svg: {
                                   color: theme.palette.divider
                                 }
@@ -482,88 +417,38 @@ const AutUserInfo = () => {
                         );
                       })}
                     </IconContainer>
-                    {inlineEditing ? (
-                      <Box sx={{ height: "40px", mt: 1 }}>
-                        <AutButtonVariant onClick={onEditSocials}>
-                          Add Socials
-                        </AutButtonVariant>
-                      </Box>
-                    ) : (
-                      <Box sx={{ height: "40px", mt: 1 }}></Box>
-                    )}
-                  </CardContent>
-                </AutCard>
-                <Box
-                  sx={{
-                    paddingBottom: {
-                      xs: 3,
-                      md: 4,
-                      xxl: 6
-                    }
-                  }}
-                >
-                  <Typography
-                    color="white"
-                    textAlign="left"
-                    variant="h3"
-                    sx={{ my: 2 }}
+                  </Box>
+                  <Box
+                    sx={{
+                      marginTop: theme.spacing(2),
+                      display: "flex"
+                    }}
                   >
-                    {canUpdateProfile ? "Your Bio" : "Bio"}
-                  </Typography>
-                  {inlineEditing ? (
-                    <Controller
-                      key="bio"
-                      name="bio"
-                      control={control}
-                      render={({ field: { name, value, onChange } }) => {
-                        return (
-                          <>
-                            <AutTextField
-                              variant="outlined"
-                              color="offWhite"
-                              multiline
-                              id={name}
-                              name={name}
-                              value={value}
-                              onChange={onChange}
-                              sx={{
-                                width: "100%",
-                                mb: "15px",
-                                mr: "15px"
-                              }}
-                            />
-                          </>
-                        );
-                      }}
-                    />
-                  ) : (
-                    <Box sx={{ padding: "16.5px 0px" }}>
-                      <Typography color="white" textAlign="left" variant="body">
-                        {holderData?.description ||
-                          // eslint-disable-next-line max-len
-                          "Your bio here Your bio here Your bio here Your bio here Your bio here Your bio here Your bio here Your bio here Your bio here Your bio here Your bio here Your bio here Your bio here Your bio here Your bio here Your bio here Your bio here Your bio here Your bio here Your bio here "}
-                      </Typography>
-                    </Box>
-                  )}
-                  {inlineEditing ? (
-                    <Box
+                    <SvgIcon
                       sx={{
-                        width: "100%",
-                        alignItems: "flex-end",
-                        display: "flex",
-                        justifyContent: "flex-end"
+                        height: {
+                          xs: "20px",
+                          xxl: "20px"
+                        },
+                        width: {
+                          xs: "20px",
+                          xxl: "20px"
+                        },
+                        fill: "transparent"
                       }}
+                      key={"joined-on"}
+                      component={CalendarCheckIcon}
+                    />
+                    <Typography
+                      color="offWhite.main"
+                      textAlign="left"
+                      variant="caption"
                     >
-                      <AutButtonVariant onClick={onEditProfile}>
-                        Save
-                      </AutButtonVariant>
-                    </Box>
-                  ) : (
-                    <></>
-                  )}
-                </Box>
-              </Stack>
-              <Box
+                      {`Joined ${parsedTimeStamp}`}
+                    </Typography>
+                  </Box>
+                </Stack>
+                {/* <Box
                 sx={{
                   height: "300px",
                   width: "300px",
@@ -596,30 +481,7 @@ const AutUserInfo = () => {
                       alignItems: "center"
                     }}
                   >
-                    <FollowWrapper>
-                      <Typography
-                        variant="subtitle1"
-                        color="white"
-                        fontWeight="bold"
-                      >
-                        200
-                      </Typography>
-                      <Typography variant="caption" color="white">
-                        Followers
-                      </Typography>
-                    </FollowWrapper>
-                    <FollowWrapper>
-                      <Typography
-                        variant="subtitle1"
-                        color="white"
-                        fontWeight="bold"
-                      >
-                        200
-                      </Typography>
-                      <Typography variant="caption" color="white">
-                        Following
-                      </Typography>
-                    </FollowWrapper>
+                  
                   </Box>
                   <Box
                     sx={{
@@ -642,58 +504,70 @@ const AutUserInfo = () => {
                     </Box>
                   </Box>
                 </Box>
+              </Box> */}
               </Box>
             </Box>
-          </Box>
 
-          <Box>
+            {/* <Box>
             <Typography color="white" textAlign="left" variant="h3">
               {canUpdateProfile ? "Your Novæ" : "Novæ"}
             </Typography>
+          </Box> */}
+            <Box
+              sx={{
+                width: {
+                  xs: "100%",
+                  md: "70%"
+                }
+              }}
+            >
+              <AutUserTabs communities={holderData.properties.communities} />
+
+              {/* <CommunitiesTable
+              communities={holderData.properties.communities}
+              isLoading={false}
+            /> */}
+            </Box>
           </Box>
-          <CommunitiesTable
-            communities={holderData.properties.communities}
-            isLoading={false}
-          />
-        </Box>
-      ) : !selectedNetwork ? (
-        <Typography
-          variant="h3"
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            textAlign: "center",
-            mb: "10px",
-            color: "white",
-            position: "absolute",
-            transform: "translate(-50%, -50%)",
-            left: "50%",
-            top: "50%"
-          }}
-        >
-          Oops, it looks like we don't support this network yet.
-        </Typography>
-      ) : (
-        <Typography
-          variant="h3"
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            textAlign: "center",
-            mb: "10px",
-            color: "white",
-            position: "absolute",
-            transform: "translate(-50%, -50%)",
-            left: "50%",
-            top: "50%"
-          }}
-        >
-          This āutID hasn't been claimed yet.
-        </Typography>
-      )}
-    </FormWrapper>
+        ) : !selectedNetwork ? (
+          <Typography
+            variant="h3"
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              textAlign: "center",
+              mb: "10px",
+              color: "white",
+              position: "absolute",
+              transform: "translate(-50%, -50%)",
+              left: "50%",
+              top: "50%"
+            }}
+          >
+            Oops, it looks like we don't support this network yet.
+          </Typography>
+        ) : (
+          <Typography
+            variant="h3"
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              textAlign: "center",
+              mb: "10px",
+              color: "white",
+              position: "absolute",
+              transform: "translate(-50%, -50%)",
+              left: "50%",
+              top: "50%"
+            }}
+          >
+            This āutID hasn't been claimed yet.
+          </Typography>
+        )}
+      </FormWrapper>
+    </>
   );
 };
 

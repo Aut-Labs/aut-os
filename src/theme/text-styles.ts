@@ -14,7 +14,7 @@ export const textStyles = {
       xxl: "96px"
     },
     fontWeight: "bold",
-    letterSpacing: "-0.015em",
+    letterSpacing: "0.66px",
     fontFamily: "FractulAltBold"
   },
   h2: {
@@ -26,7 +26,7 @@ export const textStyles = {
       xxl: "60px"
     },
     fontWeight: "bold",
-    letterSpacing: "-0.005em",
+    letterSpacing: "0.66px",
     fontFamily: "FractulAltBold"
   },
   h3: {
@@ -38,7 +38,7 @@ export const textStyles = {
       xxl: "48px"
     },
     fontWeight: "bold",
-    letterSpacing: "-0.015em",
+    letterSpacing: "0.66px",
     fontFamily: "FractulAltBold"
   },
   subtitle1: {
@@ -50,7 +50,7 @@ export const textStyles = {
       xxl: "34px"
     },
     fontWeight: "normal",
-    letterSpacing: "0.0025em",
+    letterSpacing: "0.66px",
     fontFamily: "FractulRegular"
   },
   subtitle2: {
@@ -62,7 +62,7 @@ export const textStyles = {
       xxl: "24px"
     },
     fontWeight: "bold",
-    letterSpacing: "0.0025em",
+    letterSpacing: "0.66px",
     fontFamily: "FractulRegular"
   },
   body: {
@@ -74,7 +74,7 @@ export const textStyles = {
       xxl: "24px"
     },
     fontWeight: "normal",
-    letterSpacing: "-0.008em",
+    letterSpacing: "0.66px",
     fontFamily: "FractulRegular"
   },
   body1: {
@@ -86,7 +86,7 @@ export const textStyles = {
       xxl: "16px"
     },
     fontWeight: "normal",
-    letterSpacing: "-0.008em",
+    letterSpacing: "0.66px",
     fontFamily: "FractulRegular"
   },
   caption: {
@@ -98,7 +98,7 @@ export const textStyles = {
       xxl: "16px"
     },
     fontWeight: "normal",
-    letterSpacing: "0.004em",
+    letterSpacing: "0.66px",
     fontFamily: "FractulRegular"
   },
   overline: {
@@ -110,7 +110,7 @@ export const textStyles = {
       xxl: "16px"
     },
     fontWeight: "normal",
-    letterSpacing: "0.015em",
+    letterSpacing: "0.66px",
     fontFamily: "FractulRegular",
     textTransform: "uppercase"
   }
@@ -136,6 +136,7 @@ export default (theme: Theme) =>
     {
       ...theme.typography,
       fontSize: 16,
+      letterSpacing: "0.66px",
       fontFamily: ["FractulRegular", " sans-serif"].join(",")
     } as TypographyOptions
   ) as unknown as Typography;

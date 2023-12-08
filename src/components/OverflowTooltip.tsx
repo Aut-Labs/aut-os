@@ -24,11 +24,7 @@ const OverflowTooltip = ({ text, ...rest }: Partial<OverflowTooltipParams>) => {
       disableFocusListener
       disableHoverListener={!tooltipEnabled}
     >
-      <Text
-        variant="body"
-        className="text-secondary"
-        {...(rest?.typography || {})}
-      >
+      <Text variant="body" color="offWhite.main" {...(rest?.typography || {})}>
         <LinesEllipsis
           text={text || ""}
           onReflow={({ clamped }) => setTooltipEnabled(clamped)}

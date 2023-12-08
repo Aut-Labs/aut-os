@@ -14,7 +14,7 @@ import AutSDK from "@aut-labs/sdk";
 import "./App.scss";
 import { useSelector } from "react-redux";
 import { CanUpdateProfile } from "@auth/auth.reducer";
-import AutCommunityEdit from "./pages/AutHolder/AutLeft/AutCommunityEdit";
+import AutCommunityEdit from "./pages/AutCommunity/AutNova";
 import AutProfileEdit from "./pages/AutHolder/AutLeft/AutProfileEdit";
 import { WagmiConfig } from "wagmi";
 import { generateNetworkConfig } from "@api/ProviderFactory/setup.config";

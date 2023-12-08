@@ -1,9 +1,11 @@
 import { Button, Typography } from "@mui/material";
 import { pxToRem } from "@utils/text-size";
 import DialogWrapper from "./DialogWrapper";
+import { AutOsButton } from "@components/AutButton";
 
 const ErrorDialog = ({
-  mode = "light",
+  height,
+  width,
   open,
   hasRetry = false,
   handleClose,
@@ -14,20 +16,23 @@ const ErrorDialog = ({
   return (
     <DialogWrapper
       open={open}
+      height={height}
+      width={width}
       fullScreen={fullScreen}
       actions={
-        <Button
+        <AutOsButton
           onClick={() => handleClose("close")}
-          sx={{
-            width: pxToRem(250),
-            height: pxToRem(50)
-          }}
-          type="submit"
-          color="offWhite"
+          type="button"
+          color="primary"
           variant="outlined"
+          sx={{
+            width: "100px"
+          }}
         >
-          Dismiss
-        </Button>
+          <Typography fontWeight="normal" fontSize="16px" lineHeight="26px">
+            Dismiss
+          </Typography>
+        </AutOsButton>
       }
     >
       <div
@@ -49,7 +54,7 @@ const ErrorDialog = ({
         </Typography>
         <Typography
           sx={{
-            color: mode === "light" ? "primary.main" : "text.primary",
+            color: "offWhite.main",
             textAlign: "center",
             mt: 2
           }}

@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import { FormHelperText } from "@components/Fields/AutFields";
 import {
   Typography,
@@ -45,7 +46,43 @@ const SliderWrapper = styled("div")({
   position: "relative"
 });
 
-export const AutCommitmentSlider = ({
+// export const AutCommitmentSlider = ({
+//   value,
+//   name,
+//   errors,
+//   sx,
+//   sliderProps,
+//   ...props
+// }: AutSliderProps) => {
+//   return (
+//     <SliderWrapper sx={sx} className="swiper-no-swiping">
+//       <CommitmentMessage value={value} />
+//       <div style={{ position: "relative" }}>
+//         <Slider {...sliderProps} />
+//       </div>
+//       <div
+//         style={{
+//           marginTop: "-3px",
+//           display: "flex",
+//           justifyContent: "flex-end"
+//         }}
+//       >
+//         <FormHelperText
+//           errorTypes={errorTypes}
+//           value={value}
+//           name={name}
+//           errors={errors}
+//         >
+//           <Typography className="text-secondary" variant="caption">
+//             No worries, you’ll be able to change this later.
+//           </Typography>
+//         </FormHelperText>
+//       </div>
+//     </SliderWrapper>
+//   );
+// };
+
+export const AutOSCommitmentSlider = ({
   value,
   name,
   errors,
@@ -55,9 +92,18 @@ export const AutCommitmentSlider = ({
 }: AutSliderProps) => {
   return (
     <SliderWrapper sx={sx} className="swiper-no-swiping">
-      <CommitmentMessage value={value} />
       <div style={{ position: "relative" }}>
-        <Slider {...sliderProps} />
+        <Slider
+          {...sliderProps}
+          sx={{
+            "&.MuiSlider-root": {
+              [`span[data-index="${value}"].MuiSlider-mark`]: {
+                borderTop: "2px solid #14ECEC",
+                borderBottom: "2px solid #14ECEC"
+              }
+            }
+          }}
+        />
       </div>
       <div
         style={{
@@ -65,88 +111,79 @@ export const AutCommitmentSlider = ({
           display: "flex",
           justifyContent: "flex-end"
         }}
-      >
-        <FormHelperText
-          errorTypes={errorTypes}
-          value={value}
-          name={name}
-          errors={errors}
-        >
-          <Typography className="text-secondary" variant="caption">
-            No worries, you’ll be able to change this later.
-          </Typography>
-        </FormHelperText>
-      </div>
+      ></div>
+      <CommitmentMessage value={value} />
     </SliderWrapper>
   );
 };
-
-const generateColors = (color: PaletteColor) => ({
-  color: color.dark,
-  ".MuiSlider-mark": {
-    borderColor: color.light
-  },
-  ".MuiSlider-track": {
-    background: color.light
-  },
-  ".MuiSlider-thumb": {
-    background: color.main,
-    boxShadow: `0px 0px 0px 0px`
-  },
-  ".MuiTypography-root": {
-    color: color.main
-  }
-});
 
 export default (theme: Theme) =>
   ({
     ...theme.components.MuiSelect,
     styleOverrides: {
       root: {
-        "&.MuiSlider-colorPrimary": generateColors(theme.palette.offWhite),
-        width: "100%",
-        minWidth: pxToRem(320),
-        height: pxToRem(45),
+        width: "354px",
+        padding: "0 !important",
+        marginLeft: "-34px",
+        border: "none",
+        "&.MuiSlider-colorPrimary": {
+          color: "#14ECEC",
+          "&.MuiSlider-rail": {
+            display: "none"
+          },
+          ".MuiSlider-track": {
+            display: "none"
+            // marginLeft: "34px",
+            // boxShadow:
+            //   "0px 16px 80px 0px #2E90FA, 0px 16px 64px 0px rgba(20, 200, 236, 0.64), 0px 8px 32px 0px rgba(20, 200, 236, 0.32), 0px 16px 80px 0px #2E90FA, 0px 16px 64px 0px rgba(20, 200, 236, 0.64), 0px 8px 32px 0px rgba(20, 200, 236, 0.32)",
+            // background: "transparent",
+            // height: "6px",
+            // border: "none",
+            // borderRadius: 0
+          },
+          ".MuiTypography-root": {
+            color: theme.palette.offWhite.main
+          }
+        },
+        minWidth: "354px",
+        height: "20px",
         [theme.breakpoints.up("xxl")]: {
-          // width: pxToRem(600),
-          // height: pxToRem(65),
           ".MuiSlider-thumb": {
-            width: "45px",
-            height: "45px"
+            display: "none"
           }
         },
         [theme.breakpoints.up("md")]: {
-          // width: pxToRem(450),
-          // height: pxToRem(45),
           ".MuiSlider-thumb": {
-            width: "30px",
-            height: "30px"
+            display: "none"
           }
         },
-        borderRadius: "8.5px",
-        borderWidth: "2px",
-        borderStyle: "solid",
-        borderColor: theme.palette.divider,
-        padding: "0",
 
-        'span[data-index="10"].MuiSlider-mark': {
-          display: "none"
-        },
         'span[data-index="0"].MuiSlider-mark': {
           display: "none"
         },
 
         ".MuiSlider-mark": {
-          background: "transparent",
-          width: "5px",
-          height: "5px",
-          borderRadius: "50%",
-          borderStyle: "solid",
-          borderWidth: "1px",
+          background: "#818CA2",
+          opacity: 1,
+          width: "32px",
+          height: "6px",
+          marginRight: "2px",
 
           "&.MuiSlider-markActive": {
-            border: "none"
+            background: "#14ECEC",
+            boxShadow: `
+            0px 8px 20px 0px rgba(46, 144, 250, 0.25),
+            0px 4px 16px 0px rgba(20, 200, 236, 0.22),
+            0px 2px 8px 0px rgba(20, 200, 236, 0.18)
+          `,
+            // boxShadow:
+            //   "0px 16px 80px 0px #2E90FA, 0px 16px 64px 0px rgba(20, 200, 236, 0.64), 0px 8px 32px 0px rgba(20, 200, 236, 0.32), 0px 16px 80px 0px #2E90FA, 0px 16px 64px 0px rgba(20, 200, 236, 0.64), 0px 8px 32px 0px rgba(20, 200, 236, 0.32)",
+
+            overflow: "hidden"
           }
+        },
+        ".MuiSlider-thumb": {
+          display: "none"
         },
         ".MuiSlider-track": {
           borderRight: "0"

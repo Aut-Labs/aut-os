@@ -1,18 +1,25 @@
 import { Box } from "@mui/material";
+import theme from "@theme/theme";
 
-const Bubble = ({ size, top, left, user }) => (
+export const Bubble = ({ user }) => (
   <Box
     sx={{
-      willChange: "transform",
-      transform: "translateY(-17.88px)",
-      top: `${top}%`,
-      left: `${left}%`,
-      position: "absolute"
+      willChange: "transform"
     }}
   >
     <img
       src={user?.avatar}
-      style={{ borderRadius: "50%", width: `${size}px`, height: `${size}px` }}
+      style={{
+        borderRadius: "50%",
+        width: `64px`,
+        height: `64px`,
+        background:
+          "linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.00) 100%)",
+        boxShadow:
+          // eslint-disable-next-line max-len
+          `0px 16px 80px 0px ${theme.palette.primary.main}, 0px 0px 16px 0px rgba(20, 200, 236, 0.64), 0px 0px 16px 0px rgba(20, 200, 236, 0.32)`,
+        backdropFilter: "blur(8px)"
+      }}
       draggable="false"
       alt="Profile"
     />
@@ -41,13 +48,7 @@ const UserBubbles = ({ users }) => {
       }}
     >
       {users.map((user, index) => (
-        <Bubble
-          size={sizes[index]}
-          top={positions[index].top}
-          left={positions[index].left}
-          user={user}
-          key={index}
-        />
+        <Bubble user={user} key={index} />
       ))}
     </Box>
   );

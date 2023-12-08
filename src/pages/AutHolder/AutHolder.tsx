@@ -23,13 +23,22 @@ import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import { DautPlaceholder } from "@api/ProviderFactory/components/web3-daut-connect";
 import { useNavigate } from "react-router-dom";
+import backgroundImage from "@assets/autos/background.png";
 
 const AutContainer = styled("div")(() => ({
   display: "flex",
-  height: "100%"
+  height: "100%",
+  backgroundImage: `url(${backgroundImage})`,
+  backgroundBlendMode: "hard-light",
+  backgroundSize: "cover",
+  backgroundRepeat: "repeat-y"
 }));
 const AutSwiper = styled(Swiper)(({ theme }) => ({
   height: "100%",
+  backgroundImage: `url(${backgroundImage})`,
+  backgroundBlendMode: "hard-light",
+  backgroundSize: "cover",
+  backgroundRepeat: "repeat-y",
   ".swiper-pagination-bullet": {
     backgroundColor: theme.palette.background.paper
   }
@@ -123,35 +132,31 @@ const AutHolder = (props) => {
         </Box>
       ) : (
         <>
-          {desktop ? (
-            <AutContainer>
-              <AutLeft {...props} />
-              {status === ResultState.Success && <AutTunnelRight />}
-            </AutContainer>
-          ) : (
-            <>
-              <AutSwiper
-                direction="horizontal"
-                slidesPerView={1}
-                spaceBetween={30}
-                mousewheel
-                pagination={{
-                  clickable: true
-                }}
-                modules={[Pagination]}
-                className="mySwiper"
-              >
-                {status === ResultState.Success && (
-                  <SwiperSlide>
-                    <AutTunnelRight />
-                  </SwiperSlide>
-                )}
+          <AutContainer>
+            <AutLeft {...props} />
+          </AutContainer>
+          <>
+            {/* <AutSwiper
+              direction="horizontal"
+              slidesPerView={1}
+              spaceBetween={30}
+              mousewheel
+              pagination={{
+                clickable: true
+              }}
+              modules={[Pagination]}
+              className="mySwiper"
+            >
+              {status === ResultState.Success && (
                 <SwiperSlide>
-                  <AutLeft />
+                  <AutTunnelRight />
                 </SwiperSlide>
-              </AutSwiper>
-            </>
-          )}
+              )}
+              <SwiperSlide>
+                <AutLeft />
+              </SwiperSlide>
+            </AutSwiper> */}
+          </>
         </>
       )}
     </>

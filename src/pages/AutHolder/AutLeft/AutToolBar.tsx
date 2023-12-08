@@ -1,3 +1,4 @@
+import { DautPlaceholder } from "@api/ProviderFactory/components/web3-daut-connect";
 import { ReactComponent as MyAutIDLogo } from "@assets/MyAutIdLogoToolbarPath.svg";
 import { CanUpdateProfile } from "@auth/auth.reducer";
 import { Toolbar } from "@mui/material";
@@ -7,6 +8,7 @@ import { useAppDispatch } from "@store/store.model";
 import { setOpenShare } from "@store/ui-reducer";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
+import { ReactComponent as AutOsLogo } from "@assets/autos/os-logo.svg";
 
 const AutToolBar = ({ isDesktop = false }) => {
   const navigate = useNavigate();
@@ -32,51 +34,33 @@ const AutToolBar = ({ isDesktop = false }) => {
   return (
     <Toolbar
       sx={{
-        backgroundColor: "nightBlack.main",
-        boxShadow: 2,
+        width: "100%",
+        position: "fixed",
         "&.MuiToolbar-root": {
-          paddingLeft: 6,
-          paddingRight: 6,
+          zIndex: 5,
+          paddingLeft: {
+            _: 4,
+            md: 8
+          },
+          paddingRight: {
+            _: 4,
+            md: 8
+          },
           minHeight: "84px",
-          display: "flex",
           justifyContent: {
-            xs: "center",
-            md: "flex-start"
+            xs: "space-between",
+            sm: "space-between"
           },
           alignItems: "center"
         }
       }}
     >
-      <MyAutIDLogo
+      <AutOsLogo
         height="62"
         style={{ cursor: "pointer" }}
         onClick={() => goHome()}
-      />
-      {/* {canUpdateProfile ? (
-        <SvgIcon
-          sx={{
-            height: {
-              xs: "40px",
-              md: "80px"
-            },
-            width: {
-              xs: "40px",
-              md: "80px"
-            },
-            display: {
-              xs: "none",
-              md: "inherit"
-            },
-            top: "10px",
-            right: "10px",
-            padding: "20px",
-            fill: "white",
-            cursor: "pointer"
-          }}
-          component={ShareIcon}
-          onClick={handleClickOpen}
-        />
-      ) : null} */}
+      ></AutOsLogo>
+      <DautPlaceholder></DautPlaceholder>
     </Toolbar>
   );
 };
