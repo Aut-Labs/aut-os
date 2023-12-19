@@ -60,20 +60,10 @@ import Countdown from "react-countdown";
 import { AutCountdown } from "@components/AutCountdown";
 import { AutChangeCommitmentDialog } from "@components/AutChangeCommitment";
 import { setOpenCommitment } from "@store/ui-reducer";
+import { setOpenWithdraw } from "@store/ui-reducer";
+
 import AutNovaTabs from "./AutNovaTabs/AutNovaTabs";
-
-const AutCard = styled(Card)(() => ({
-  "&.MuiCard-root": {
-    display: "flex"
-  },
-  ".MuiCardHeader-root": {
-    padding: "0"
-  },
-
-  ".MuiCardContent-root:last-child": {
-    padding: "0"
-  }
-}));
+import { AutConfirmDialog } from "@components/Dialog/AutOsConfirmationDialog";
 
 const AutContainer = styled("div")(() => ({
   display: "flex",
@@ -123,7 +113,7 @@ const AutCommunityEdit = () => {
   const blockExplorer = useSelector(BlockExplorerUrl);
   const canUpdateProfile = useSelector(CanUpdateProfile);
   const isConnected = useSelector(IsConnected);
-  const isNovaMember = false;
+  const isNovaMember = true;
   const [editInitiated, setEditInitiated] = useState(false);
   const [withdrawInitiated, setWithdrawInitiated] = useState(false);
   // const { active: isActive } = useEthers();
@@ -179,6 +169,7 @@ const AutCommunityEdit = () => {
   //   onEditCommitment(values);
   // }, [isActive, isConnected, editInitiated]);
   const { openCommitment } = useSelector((state: any) => state.ui);
+  const { openWithdraw } = useSelector((state: any) => state.ui);
 
   const handleDialogClose = () => {
     dispatch(
@@ -208,6 +199,14 @@ const AutCommunityEdit = () => {
     dispatch(setOpenCommitment(false));
   };
 
+  const handleWithdrawClose = () => {
+    dispatch(setOpenWithdraw(false));
+  };
+
+  const openWithdrawConfirmation = () => {
+    dispatch(setOpenWithdraw(true));
+  };
+
   const openCommitmentModal = () => {
     dispatch(setOpenCommitment(true));
   };
@@ -226,6 +225,13 @@ const AutCommunityEdit = () => {
         hideCloseBtn={false}
         title="Change Commitment Level"
         onClose={handleClose}
+      />
+      <AutConfirmDialog
+        open={openWithdraw}
+        hideCloseBtn={false}
+        title="Are you sure you want to withdraw from this community?"
+        onClose={handleWithdrawClose}
+        onSubmit={onWithdraw}
       />
       <AutContainer>
         <AutToolBar></AutToolBar>
@@ -246,7 +252,7 @@ const AutCommunityEdit = () => {
             <LoadingDialog
               handleClose={handleDialogClose}
               open={status === ResultState.Loading}
-              message="Changing commitment level..."
+              message="Your change is in progress..."
             />
             {selectedCommunity && (
               <>
@@ -442,7 +448,7 @@ const AutCommunityEdit = () => {
                         </Typography>
                       </AutOsButton>
                       <AutOsButton
-                        onClick={onWithdraw}
+                        onClick={openWithdrawConfirmation}
                         type="button"
                         color="primary"
                         variant="outlined"

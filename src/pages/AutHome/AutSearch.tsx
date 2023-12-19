@@ -35,13 +35,14 @@ import { useAppDispatch } from "@store/store.model";
 import { Player } from "@lottiefiles/react-lottie-player";
 import * as animationData from "../../assets/load-id.json";
 import { AutIDProfileList } from "@components/AutIDProfileList";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { fetchHolder, fetchSearchResults } from "@api/holder.api";
 import { AutTextField } from "@theme/field-text-styles";
 import { DautPlaceholder } from "@api/ProviderFactory/components/web3-daut-connect";
 import React from "react";
 import MainBackground from "../../MainBackground";
 import AutToolBar from "../AutHolder/AutLeft/AutToolBar";
+import { FollowPopover } from "@components/FollowPopover";
 interface UserProfile {
   name: string;
 }
@@ -198,6 +199,7 @@ const AutSearch = () => {
   const [inputValue, setInputValue] = React.useState("");
   const [options, setOptions] = React.useState<readonly UserProfile[]>([]);
   const loaded = React.useRef(false);
+  const [popoverEl, setPopoverEl] = useState(null);
 
   const [dimensions, setDimensions] = React.useState({
     width: 0,
@@ -330,7 +332,15 @@ const AutSearch = () => {
     <>
       <AutToolBar></AutToolBar>
 
-      <MainBackground dimensions={dimensions}></MainBackground>
+      {/* <FollowPopover
+        anchorEl={popoverEl}
+        data={{ username: "test" } as any}
+        open={!!popoverEl}
+      /> */}
+      <MainBackground
+        setPopoverEl={setPopoverEl}
+        dimensions={dimensions}
+      ></MainBackground>
       <AutBox>
         <ContentWrapper>
           <FormWrapper autoComplete="off" onSubmit={handleSubmit(onSubmit)}>

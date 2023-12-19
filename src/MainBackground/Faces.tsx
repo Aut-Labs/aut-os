@@ -1,5 +1,6 @@
 /* eslint-disable max-len */
 /* eslint-disable prefer-const */
+import { FollowPopover } from "@components/FollowPopover";
 import { Bubble } from "@components/UserBubbles";
 import {
   motion,
@@ -49,7 +50,14 @@ const users = [
   }
 ];
 
-const AvatarCircle = ({ user, x, y, circleDimension, key }: any) => {
+const AvatarCircle = ({
+  user,
+  x,
+  y,
+  circleDimension,
+  key,
+  setPopoverEl
+}: any) => {
   return (
     <foreignObject
       x={x - circleDimension / 2}
@@ -57,15 +65,16 @@ const AvatarCircle = ({ user, x, y, circleDimension, key }: any) => {
       style={{
         width: `${circleDimension}px`,
         height: `${circleDimension}px`,
-        overflow: "visible"
+        overflow: "visible",
+        cursor: "pointer"
       }}
     >
-      <Bubble user={user} key={key} />
+      <Bubble setPopoverEl={setPopoverEl} user={user} key={key} />
     </foreignObject>
   );
 };
 
-const Faces = ({ dimensions }: any) => {
+const Faces = ({ dimensions, setPopoverEl }: any) => {
   const designWidth = 1440;
   const designHeight = 800;
 
@@ -95,6 +104,7 @@ const Faces = ({ dimensions }: any) => {
         strokeWidth={1.33}
       /> */}
       <AvatarCircle
+        setPopoverEl={setPopoverEl}
         x={331.5}
         y={359}
         circleDimension={circleDimension}
@@ -123,6 +133,7 @@ const Faces = ({ dimensions }: any) => {
       />
 
       <AvatarCircle
+        setPopoverEl={setPopoverEl}
         x={90}
         y={451}
         circleDimension={circleDimension}
@@ -152,6 +163,7 @@ const Faces = ({ dimensions }: any) => {
       />
 
       <AvatarCircle
+        setPopoverEl={setPopoverEl}
         x={160}
         y={200}
         circleDimension={circleDimension}
@@ -170,6 +182,7 @@ const Faces = ({ dimensions }: any) => {
       />
 
       <AvatarCircle
+        setPopoverEl={setPopoverEl}
         x={301}
         y={592.167}
         circleDimension={circleDimension}
@@ -187,6 +200,7 @@ const Faces = ({ dimensions }: any) => {
         strokeWidth={1.33}
       />
       <AvatarCircle
+        setPopoverEl={setPopoverEl}
         x={510}
         y={182}
         circleDimension={circleDimension}
@@ -204,6 +218,7 @@ const Faces = ({ dimensions }: any) => {
         strokeWidth={1.33}
       />
       <AvatarCircle
+        setPopoverEl={setPopoverEl}
         x={946}
         y={626}
         circleDimension={circleDimension}
@@ -222,6 +237,7 @@ const Faces = ({ dimensions }: any) => {
         strokeWidth={1.33}
       />
       <AvatarCircle
+        setPopoverEl={setPopoverEl}
         x={1232}
         y={454}
         circleDimension={circleDimension}
@@ -239,6 +255,7 @@ const Faces = ({ dimensions }: any) => {
         strokeWidth={1.33}
       />
       <AvatarCircle
+        setPopoverEl={setPopoverEl}
         x={1357}
         y={92}
         circleDimension={circleDimension}
@@ -255,6 +272,7 @@ const Faces = ({ dimensions }: any) => {
         strokeWidth={1.33}
       />
       <AvatarCircle
+        setPopoverEl={setPopoverEl}
         x={873}
         y={88}
         circleDimension={circleDimension}

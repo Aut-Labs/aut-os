@@ -4,7 +4,7 @@ import Dots from "./Dots";
 import Faces from "./Faces";
 import { MainBG } from "./MainBG";
 
-const MainBackground = ({ dimensions }: any) => {
+const MainBackground = ({ dimensions, setPopoverEl }: any) => {
   return (
     <svg
       style={{
@@ -51,7 +51,7 @@ const MainBackground = ({ dimensions }: any) => {
       </g>
       <GridLines dimensions={dimensions} />
       <Dots dimensions={dimensions} />
-      <Faces dimensions={dimensions} />
+      <Faces setPopoverEl={setPopoverEl} dimensions={dimensions} />
       {<MainBG dimensions={dimensions} />}
     </svg>
   );

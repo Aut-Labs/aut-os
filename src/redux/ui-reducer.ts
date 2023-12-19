@@ -9,6 +9,7 @@ const initialState = {
   },
   openShare: false,
   openCommitment: false,
+  openWithdraw: false,
   openEditProfile: false,
   previousRoute: "/",
   transactionState: null,
@@ -46,6 +47,9 @@ export const uiSlice = createSlice({
     setOpenCommitment(state, action) {
       state.openCommitment = action.payload;
     },
+    setOpenWithdraw(state, action) {
+      state.openWithdraw = action.payload;
+    },
     setOpenEditProfile(state, action) {
       state.openEditProfile = action.payload;
     },
@@ -60,6 +64,7 @@ export const {
   setPreviusRoute,
   setOpenShare,
   setOpenCommitment,
+  setOpenWithdraw,
   setOpenEditProfile,
   updateTransactionState
 } = uiSlice.actions;

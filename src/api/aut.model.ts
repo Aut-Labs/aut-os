@@ -70,6 +70,10 @@ export class AutIDProperties {
 
   network?: string;
 
+  bio?: string;
+
+  email?: string;
+
   holderData?: HolderData;
 
   isAdmin?: boolean;
