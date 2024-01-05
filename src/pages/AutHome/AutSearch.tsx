@@ -78,8 +78,8 @@ const UserRow = styled("div")(({ theme }) => ({
 
 const AutBox = styled(Box)(({ theme }) => ({
   "&.MuiBox-root": {
-    width: "100%",
-    overflow: "hidden"
+    // width: "100%",
+    // overflow: "hidden"
   },
   display: "flex",
   flexDirection: "column",
@@ -105,8 +105,8 @@ const AutBox = styled(Box)(({ theme }) => ({
 }));
 const ContentWrapper = styled(Box)(({ theme }) => ({
   "&.MuiBox-root": {
-    width: "100%",
-    overflow: "hidden"
+    width: "100%"
+    // overflow: "hidden"
   },
   display: "flex",
   flexDirection: "column",
@@ -279,6 +279,10 @@ const AutSearch = () => {
                 network: "mumbai"
               },
               {
+                name: "Taoooo",
+                network: "mumbai"
+              },
+              {
                 name: "Ana",
                 network: "mumbai"
               },
@@ -331,7 +335,13 @@ const AutSearch = () => {
       <AutToolBar></AutToolBar>
 
       <MainBackground dimensions={dimensions}></MainBackground>
-      <AutBox>
+      <AutBox
+        sx={{
+          position: "fixed",
+          width: "520px",
+          height: "200px"
+        }}
+      >
         <ContentWrapper>
           <FormWrapper autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
             <FieldWrapper>

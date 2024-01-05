@@ -148,6 +148,7 @@ function InteractionMap({ parentRef: containerRef }) {
         enableZoomInteraction={false}
       />
       <FollowPopover
+        type="custom"
         anchorPos={anchorPos}
         data={hoveredNode}
         open={showPopover}

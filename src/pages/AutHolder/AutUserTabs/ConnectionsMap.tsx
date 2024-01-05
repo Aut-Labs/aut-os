@@ -18,7 +18,7 @@ const AutMap = ({ communities = [] }) => {
         alignItems: "center",
         position: "relative",
         width: "100%",
-        height: "800px", // Assign a height to the container so that it can be defined
+        height: "100%", // Assign a height to the container so that it can be defined
         overflow: "hidden",
         marginTop: theme.spacing(4)
       }}

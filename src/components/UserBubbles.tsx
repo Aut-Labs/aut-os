@@ -1,33 +1,67 @@
 import { Box } from "@mui/material";
 import theme from "@theme/theme";
+import { FollowPopover } from "./FollowPopover";
+import { useState } from "react";
 
-export const Bubble = ({ user }) => (
-  <Box
-    sx={{
-      willChange: "transform"
-    }}
-  >
-    <img
-      src={user?.avatar}
-      style={{
-        borderRadius: "50%",
-        width: `64px`,
-        height: `64px`,
-        background:
-          "linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.00) 100%)",
-        boxShadow:
-          // eslint-disable-next-line max-len
-          `0px 16px 80px 0px ${theme.palette.primary.main}, 0px 0px 16px 0px rgba(20, 200, 236, 0.64), 0px 0px 16px 0px rgba(20, 200, 236, 0.32)`,
-        backdropFilter: "blur(8px)"
+export const Bubble = ({ user }) => {
+  const [anchorEl, setAnchorEl] = useState(null);
+  let leaveTimeout = null;
+
+  const handlePopoverOpen = (event) => {
+    clearTimeout(leaveTimeout);
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handlePopoverClose = () => {
+    leaveTimeout = setTimeout(() => {
+      setAnchorEl(null);
+    }, 100);
+  };
+
+  const cancelPopoverClose = () => {
+    clearTimeout(leaveTimeout);
+  };
+
+  const popoverOpen = Boolean(anchorEl);
+
+  return (
+    <Box
+      onMouseLeave={handlePopoverClose}
+      sx={{
+        willChange: "transform",
+        position: "relative"
       }}
-      draggable="false"
-      alt="Profile"
-    />
-  </Box>
-);
+    >
+      <img
+        src={user?.avatar}
+        onMouseEnter={handlePopoverOpen}
+        style={{
+          borderRadius: "50%",
+          width: `64px`,
+          height: `64px`,
+          background:
+            "linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.00) 100%)",
+          boxShadow:
+            // eslint-disable-next-line max-len
+            `0px 16px 80px 0px ${theme.palette.primary.main}, 0px 0px 16px 0px rgba(20, 200, 236, 0.64), 0px 0px 16px 0px rgba(20, 200, 236, 0.32)`,
+          backdropFilter: "blur(8px)"
+        }}
+        draggable="false"
+        alt="Profile"
+      />
+      <FollowPopover
+        type="anchor"
+        open={popoverOpen}
+        anchorEl={anchorEl}
+        onMouseEnter={cancelPopoverClose}
+        onMouseLeave={handlePopoverClose}
+        data={user}
+      />
+    </Box>
+  );
+};
 
 const UserBubbles = ({ users }) => {
-  console.log(users, "USERS");
   const sizes = [180, 90, 100, 90, 60, 150]; // size of bubbles
   const positions = [
     // positions of bubbles

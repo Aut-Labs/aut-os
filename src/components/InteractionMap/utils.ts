@@ -6,8 +6,6 @@ import { AutId, Nova } from "@api/map.model";
 
 export const generateNovas = () => {
   return mockNovas.map((nova) => {
-    console.log(nova);
-
     const members = [];
     const newNova = new Nova(
       nova.market,
@@ -25,6 +23,7 @@ export const generateNovas = () => {
         member.commitment,
         member.role,
         member.completedInteractionsCount,
+        member.avatar,
         newNova
       );
       members.push(newMember);
@@ -93,7 +92,7 @@ export const getProximityLevels = () => {
       [minRadius, maxRadius] = [120, 120];
       break;
     case 2:
-      [minRadius, maxRadius] = [120, 200];
+      [minRadius, maxRadius] = [120, 180];
       break;
     case 3:
       [minRadius, maxRadius] = [80, 200];
@@ -153,7 +152,7 @@ function generateNodes(plValues, centralNode) {
       user.y = y;
       const userLevel = pl.level;
 
-      const minPercentage = 0.3;
+      const minPercentage = 0.5;
       const maxPercentage = 0.7;
 
       const numberOfLevels = plValues.length;
@@ -166,6 +165,8 @@ function generateNodes(plValues, centralNode) {
       } else {
         nodeSizePercentage = 1;
       }
+
+      console.log("nodeSizePercentage:", nodeSizePercentage);
 
       user.size = CENTRAL_NODE_SIZE * nodeSizePercentage;
       user.color = `hsl(${(pl.level - 1) * 120}, 100%, 70%)`;
@@ -196,10 +197,15 @@ const generateLinks = (sourceId, nodes, linkStrengths) => {
 
 export const generateGraphData = (centralAutId, plValues): GraphData => {
   // Central node based on specific AutId data
+
+  const img = new Image();
+  img.src = centralAutId.avatar;
+
   const centralNode = {
     id: centralAutId.id,
     username: centralAutId.username,
     role: centralAutId.role,
+    img: centralAutId.img,
     completedInteractionsCount: centralAutId.completedInteractionsCount,
     pl: 0,
     x: 0,

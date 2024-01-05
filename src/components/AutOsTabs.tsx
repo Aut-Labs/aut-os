@@ -67,9 +67,10 @@ function AutOsTabs(props: AutOsTabsParams) {
       className="aut-tabs"
       sx={{
         width: "100%",
+        height: "100%",
         display: "flex",
         flexDirection: "column",
-        marginBottom: theme.spacing(4),
+        // marginBottom: theme.spacing(4),
         ...props.tabStyles
       }}
     >

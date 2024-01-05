@@ -1,41 +1,70 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { AutId } from "@api/map.model";
 import { Box, Button, Popover, PopoverProps, Typography } from "@mui/material";
 
 interface FollowPopoverProps {
+  type: "anchor" | "custom";
   anchorEl?: HTMLElement | null;
   anchorPos?: { x: number; y: number };
   data: AutId;
   open: boolean;
+  handleClose?: any;
+  onMouseEnter?: any;
+  onMouseLeave?: any;
+  onView?: any;
 }
 
 export const FollowPopover = ({
-  anchorPos,
+  type,
+  anchorPos = null,
   anchorEl,
   data,
-  open
+  open,
+  handleClose = null,
+  onMouseEnter = null,
+  onMouseLeave = null,
+  onView = null
 }: FollowPopoverProps) => {
-  const anchorProps: Partial<PopoverProps> = anchorEl
-    ? { anchorEl }
-    : {
-        anchorReference: "anchorPosition",
-        anchorPosition: { left: anchorPos.x, top: anchorPos.y }
-      };
+  const anchorProps: Partial<PopoverProps> =
+    type == "anchor"
+      ? {
+          anchorEl,
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "center"
+          },
+          transformOrigin: {
+            vertical: "top",
+            horizontal: "center"
+          }
+        }
+      : {
+          anchorReference: "anchorPosition",
+          transformOrigin: {
+            vertical: "top",
+            horizontal: "center"
+          },
+          anchorPosition: {
+            left: anchorPos?.x || 0,
+            top: anchorPos?.y || 0
+          }
+        };
+
   return (
     <Popover
       open={open}
       hideBackdrop
-      disablePortal
+      onClose={handleClose}
       {...anchorProps}
-      transformOrigin={{
-        horizontal: "center",
-        vertical: "top"
-      }}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
       slotProps={{
         root: {
           style: {
             background: "transparent",
             width: "200px",
-            height: "200px"
+            height: "200px",
+            overflow: "visible"
           }
         }
       }}
@@ -47,7 +76,8 @@ export const FollowPopover = ({
           background: "#2F3746",
           display: "flex",
           flexDirection: "column",
-          justifyContent: "space-between"
+          justifyContent: "space-between",
+          overflow: "visible"
         }
       }}
     >
@@ -81,11 +111,12 @@ export const FollowPopover = ({
             display: "block"
           }}
         >
-          @{data?.username}
+          @{data?.username || "Unknown"}
         </Typography>
       </Box>
       <Box>
         <Button
+          onClick={onView}
           sx={{
             mx: 0.5,
             mb: 0.5,
@@ -104,7 +135,7 @@ export const FollowPopover = ({
             variant="subtitle2"
             color="white"
           >
-            Follow
+            View
           </Typography>
         </Button>
       </Box>

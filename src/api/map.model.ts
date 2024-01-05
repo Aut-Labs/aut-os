@@ -52,10 +52,11 @@ export class AutId {
     commitment,
     role,
     completedInteractionsCount,
+    avatar,
     nova
   ) {
     const img = new Image();
-    img.src = getRandomImage();
+    img.src = avatar;
     this.id = generateUniqueIdBetter();
     this.owner = owner;
     this.username = username;
