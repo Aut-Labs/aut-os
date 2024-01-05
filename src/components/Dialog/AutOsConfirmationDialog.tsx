@@ -11,32 +11,19 @@ import {
 } from "@mui/material";
 import { AutOSCommitmentSlider } from "@theme/commitment-slider-styles";
 import { Controller, useForm } from "react-hook-form";
-import { AutOsButton } from "./AutButton";
 import { useAppDispatch } from "@store/store.model";
 import { useState } from "react";
 import { editCommitment } from "@api/holder.api";
 import { setOpenCommitment } from "@store/ui-reducer";
+import { AutOsButton } from "@components/AutButton";
 
-export interface CommitmentDialogProps {
+export interface ConfirmDialogProps {
   title: string;
-  description?: JSX.Element;
-  open?: boolean;
-  nova: Community;
+  open: boolean;
   onClose?: () => void;
   onSubmit?: () => void;
   hideCloseBtn?: boolean;
 }
-
-const CommitmentSliderWrapper = styled("div")(({ theme }) => ({
-  width: "100%",
-  maxWidth: "600px",
-  marginTop: theme.spacing(6),
-  marginBottom: theme.spacing(6),
-  [theme.breakpoints.down("lg")]: {
-    marginTop: "32px",
-    marginBottom: "32px"
-  }
-}));
 
 const AutStyledDialog = styled(Dialog)(({ theme }) => ({
   ".MuiPaper-root": {
@@ -62,36 +49,7 @@ const AutStyledDialog = styled(Dialog)(({ theme }) => ({
   }
 }));
 
-export function AutChangeCommitmentDialog(props: CommitmentDialogProps) {
-  const {
-    control,
-    handleSubmit,
-    watch,
-    formState: { errors, isValid, isDirty }
-  } = useForm({
-    mode: "onChange",
-    defaultValues: {
-      commitment: props.nova?.properties?.userData?.commitment
-    }
-  });
-  const dispatch = useAppDispatch();
-  const [editInitiated, setEditInitiated] = useState(false);
-
-  const onEditCommitment = async (data) => {
-    setEditInitiated(false);
-    dispatch(setOpenCommitment(false));
-    const result = await dispatch(
-      editCommitment({
-        communityAddress: props.nova.properties.address,
-        commitment: data.commitment
-      })
-    );
-    if (result.meta.requestStatus === "fulfilled") {
-      console.log("changed", result);
-      props.onClose();
-    }
-  };
-
+export function AutConfirmDialog(props: ConfirmDialogProps) {
   const theme = useTheme();
   const desktop = useMediaQuery(theme.breakpoints.up("md"));
   return (
@@ -99,6 +57,7 @@ export function AutChangeCommitmentDialog(props: CommitmentDialogProps) {
       fullScreen={!desktop}
       maxWidth={false}
       onClose={props.onClose}
+      onSubmit={props.onSubmit}
       open={props.open}
     >
       <DialogContent
@@ -134,36 +93,6 @@ export function AutChangeCommitmentDialog(props: CommitmentDialogProps) {
               {props?.title}
             </Typography>
           </Box>
-          <CommitmentSliderWrapper>
-            <Controller
-              name="commitment"
-              key="commitment"
-              control={control}
-              rules={{
-                min: props.nova?.properties?.commitment,
-                required: true
-              }}
-              render={({ field: { name, value, onChange } }) => {
-                return (
-                  <AutOSCommitmentSlider
-                    value={value}
-                    name={name}
-                    errors={errors}
-                    sliderProps={{
-                      defaultValue: 1,
-                      step: 1,
-                      marks: true,
-                      name,
-                      value: (value as any) || 0,
-                      onChange,
-                      min: 0,
-                      max: 10
-                    }}
-                  />
-                );
-              }}
-            />
-          </CommitmentSliderWrapper>
         </Box>
       </DialogContent>
       <DialogActions
@@ -190,7 +119,7 @@ export function AutChangeCommitmentDialog(props: CommitmentDialogProps) {
           </Typography>
         </AutOsButton>
         <AutOsButton
-          onClick={handleSubmit(onEditCommitment)}
+          onClick={props.onSubmit}
           type="button"
           color="primary"
           variant="outlined"

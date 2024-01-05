@@ -61,31 +61,31 @@ export const Bubble = ({ user }) => {
   );
 };
 
-const UserBubbles = ({ users }) => {
-  const sizes = [180, 90, 100, 90, 60, 150]; // size of bubbles
-  const positions = [
-    // positions of bubbles
-    { top: 15, left: 75 }, // left top corner
-    { top: 70, left: 85 }, // middle top
-    { top: 80, left: 70 }, // right top corner
-    { top: 70, left: 5 }, // left middle
-    { top: 85, left: 15 }, // left middle
-    { top: 25, left: 10 } // right middle
-  ];
+// const UserBubbles = ({ users }) => {
+//   const sizes = [180, 90, 100, 90, 60, 150]; // size of bubbles
+//   const positions = [
+//     // positions of bubbles
+//     { top: 15, left: 75 }, // left top corner
+//     { top: 70, left: 85 }, // middle top
+//     { top: 80, left: 70 }, // right top corner
+//     { top: 70, left: 5 }, // left middle
+//     { top: 85, left: 15 }, // left middle
+//     { top: 25, left: 10 } // right middle
+//   ];
 
-  return (
-    <Box
-      sx={{
-        width: "100%",
-        height: "100%",
-        position: "absolute"
-      }}
-    >
-      {users.map((user, index) => (
-        <Bubble user={user} key={index} />
-      ))}
-    </Box>
-  );
-};
+//   return (
+//     <Box
+//       sx={{
+//         width: "100%",
+//         height: "100%",
+//         position: "absolute"
+//       }}
+//     >
+//       {users.map((user, index) => (
+//         <Bubble user={user} key={index} />
+//       ))}
+//     </Box>
+//   );
+// };
 
-export default UserBubbles;
+// export default UserBubbles;

@@ -5,17 +5,43 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
+  InputAdornment,
+  SvgIcon,
   Typography,
   styled,
   useMediaQuery,
   useTheme
 } from "@mui/material";
+import { ReactComponent as DiscordIcon } from "@assets/SocialIcons/DiscordIcon.svg";
+import { ReactComponent as GitHubIcon } from "@assets/SocialIcons/GitHubIcon.svg";
+import { ReactComponent as LensfrensIcon } from "@assets/SocialIcons/LensfrensIcon.svg";
+import { ReactComponent as TelegramIcon } from "@assets/SocialIcons/TelegramIcon.svg";
+import { ReactComponent as TwitterIcon } from "@assets/SocialIcons/TwitterIcon.svg";
 import { AutOSCommitmentSlider } from "@theme/commitment-slider-styles";
+import PerfectScrollbar from "react-perfect-scrollbar";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
-import { AutOsButton } from "./AutButton";
+import { AutButtonVariant, AutOsButton } from "./AutButton";
 import { AutID, socialUrls } from "@api/aut.model";
 import { useSelector } from "react-redux";
-import { HolderData } from "@store/holder/holder.reducer";
+import {
+  HolderData,
+  UpdateErrorMessage,
+  UpdateStatus
+} from "@store/holder/holder.reducer";
+import { ReactComponent as CloseIcon } from "@assets/autos/close-icon.svg";
+import { ReactComponent as SocialCheckIcon } from "@assets/autos/social-check.svg";
+
+import { IsConnected } from "@auth/auth.reducer";
+import { useAppDispatch } from "@store/store.model";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { updateProfile } from "@api/holder.api";
+import { EditContentElements } from "./EditContentElements";
+import { AutTextField } from "@theme/field-text-styles";
+import { ipfsCIDToHttpUrl } from "@api/storage.api";
+import { base64toFile, toBase64 } from "@utils/to-base-64";
+import AFileUpload from "./Fields/AutFileUpload";
+import AutOsFileUpload from "./Fields/AutOsFileUpload";
 
 export interface EditDialogProps {
   title: string;
@@ -28,8 +54,11 @@ export interface EditDialogProps {
 const AutStyledDialog = styled(Dialog)(({ theme }) => ({
   ".MuiPaper-root": {
     margin: "0",
-    width: "420px",
+    width: "620px",
+    height: "720px",
     border: "none",
+    position: "relative",
+    flexDirection: "column-reverse",
     backgroundColor: "#1E2430",
     borderRadius: "30px",
     padding: "30px 0px",
@@ -41,13 +70,103 @@ const AutStyledDialog = styled(Dialog)(({ theme }) => ({
       margin: "0",
       height: "100%",
       width: "100%",
-      border: "none"
+      border: "none",
+      borderRadius: "0",
+      boxShadow: "none"
     }
+  }
+}));
+
+const SocialWrapper = styled(Box)(({ theme }) => ({
+  display: "flex",
+  justifyContent: "flex-start",
+  flexDirection: "column",
+  width: "100%",
+  alignItems: "flex-start",
+  marginTop: theme.spacing(2)
+}));
+
+const SocialFieldWrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  minWidth: "240px",
+  height: "48px",
+  border: "1.5px solid #576176 !important",
+  borderRadius: "6px",
+  background: "#2F3746",
+  justifyContent: "space-between",
+  alignItems: "center"
+}));
+const TextFieldWrapper = styled(Box)(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column"
+}));
+
+const StyledTextField = styled(AutTextField)(({ theme }) => ({
+  width: "100%",
+  ".MuiInputBase-input": {
+    fontSize: "16px",
+    color: theme.palette.offWhite.main,
+    "&::placeholder": {
+      color: theme.palette.offWhite.main,
+      opacity: 0.5
+    },
+    "&.Mui-disabled": {
+      color: "#7C879D",
+      textFillColor: "#7C879D"
+    }
+  },
+  ".MuiInputBase-root": {
+    caretColor: theme.palette.primary.main,
+    fieldset: {
+      border: "1.5px solid #576176 !important",
+      borderRadius: "6px"
+    },
+    borderRadius: "6px",
+    background: "#2F3746"
+  },
+  ".MuiInputLabel-root": {
+    color: "#7C879D"
+  }
+}));
+
+const FormWrapper = styled("form")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing(2),
+  alignItems: "flex-start",
+  width: "100%",
+  [theme.breakpoints.down("lg")]: {
+    alignItems: "center",
+    justifyContent: "center",
+    alignContent: "center"
+  },
+  [theme.breakpoints.down("md")]: {
+    width: `calc(100% - 100px)`
+  },
+  [theme.breakpoints.down("sm")]: {
+    width: `calc(100% - 20px)`
   }
 }));
 
 export function AutEditProfileDialog(props: EditDialogProps) {
   const holderData = useSelector(HolderData);
+  const theme = useTheme();
+  const desktop = useMediaQuery(theme.breakpoints.up("md"));
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const status = useSelector(UpdateStatus);
+  const errorMessage = useSelector(UpdateErrorMessage);
+  const isConnected = useSelector(IsConnected);
+  const [editInitiated, setEditInitiated] = useState(false);
+
+  const socialIcons = {
+    // eth: EthIcon,
+    discord: DiscordIcon,
+    github: GitHubIcon,
+    twitter: TwitterIcon,
+    telegram: TelegramIcon,
+    lensfrens: LensfrensIcon
+  };
 
   const {
     control,
@@ -57,14 +176,24 @@ export function AutEditProfileDialog(props: EditDialogProps) {
   } = useForm({
     mode: "onChange",
     defaultValues: {
+      name: holderData.name,
+      email: holderData.properties.email,
+      bio: holderData.properties.bio,
       avatar: holderData?.properties?.avatar,
-      socials: (holderData?.properties?.socials || []).map((social) => {
+      socials: (holderData?.properties?.socials || []).map((social, index) => {
+        if (index > 2) {
+          return {
+            ...social,
+            link: (social.link as string).replace(
+              socialUrls[social.type].prefix,
+              ""
+            )
+          };
+        }
+
         return {
           ...social,
-          link: (social.link as string).replace(
-            socialUrls[social.type].prefix,
-            ""
-          )
+          link: "username"
         };
       })
     }
@@ -77,8 +206,27 @@ export function AutEditProfileDialog(props: EditDialogProps) {
 
   const values = watch();
 
-  const theme = useTheme();
-  const desktop = useMediaQuery(theme.breakpoints.up("md"));
+  const beforeEdit = () => {
+    setEditInitiated(true);
+    // if (!isActive || !isConnected) {
+    //   dispatch(setProviderIsOpen(true));
+    // }
+  };
+
+  const onEditProfile = async (data: any) => {
+    await dispatch(
+      updateProfile({
+        ...holderData,
+        properties: {
+          ...holderData.properties,
+          socials: data.socials,
+          avatar: data.avatar
+        }
+      } as AutID)
+    );
+    setEditInitiated(false);
+  };
+
   return (
     <AutStyledDialog
       fullScreen={!desktop}
@@ -89,9 +237,332 @@ export function AutEditProfileDialog(props: EditDialogProps) {
       <DialogContent
         sx={{
           border: 0,
-          padding: "0px 30px"
+          padding: "20px 30px"
         }}
-      ></DialogContent>
+      >
+        <PerfectScrollbar
+          style={{
+            height: "calc(100%)",
+            display: "flex",
+            flexDirection: "column"
+          }}
+        >
+          <FormWrapper autoComplete="off" onSubmit={handleSubmit(beforeEdit)}>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column"
+              }}
+            >
+              <Typography
+                variant="caption"
+                color="offWhite.main"
+                mb={theme.spacing(1)}
+              >
+                Profile Photo
+              </Typography>
+              <Controller
+                name="avatar"
+                rules={{
+                  validate: {
+                    fileSize: (v) => {
+                      if (isDirty && v) {
+                        const file = base64toFile(v, "pic");
+                        if (!file) {
+                          return true;
+                        }
+                        return file.size < 8388608;
+                      }
+                    }
+                  }
+                }}
+                control={control}
+                render={({ field: { onChange } }) => {
+                  return (
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column"
+                      }}
+                    >
+                      <AutOsFileUpload
+                        color="offWhite"
+                        initialPreviewUrl={ipfsCIDToHttpUrl(
+                          holderData?.properties?.avatar as string
+                        )}
+                        fileChange={async (file) => {
+                          if (file) {
+                            onChange(await toBase64(file));
+                          } else {
+                            onChange(null);
+                          }
+                        }}
+                        // errors={errors}
+                      />
+                    </div>
+                  );
+                }}
+              />
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                width: "100%",
+                gap: theme.spacing(2)
+              }}
+            >
+              <TextFieldWrapper>
+                <Typography
+                  variant="caption"
+                  color="offWhite.main"
+                  mb={theme.spacing(1)}
+                >
+                  Name
+                </Typography>
+                <Controller
+                  key={`name`}
+                  name={`name`}
+                  control={control}
+                  render={({ field: { name, value, onChange } }) => {
+                    return (
+                      <>
+                        <StyledTextField
+                          color="offWhite"
+                          value={value}
+                          disabled
+                          sx={{
+                            height: "48px"
+                          }}
+                        />
+                      </>
+                    );
+                  }}
+                />
+              </TextFieldWrapper>
+              <TextFieldWrapper>
+                <Typography
+                  variant="caption"
+                  color="offWhite.main"
+                  mb={theme.spacing(1)}
+                >
+                  E-mail address
+                </Typography>
+                <Controller
+                  key={`email`}
+                  name={`email`}
+                  control={control}
+                  render={({ field: { name, value, onChange } }) => {
+                    return (
+                      <>
+                        <StyledTextField
+                          color="offWhite"
+                          value={value}
+                          sx={{
+                            height: "48px"
+                          }}
+                        />
+                      </>
+                    );
+                  }}
+                />
+              </TextFieldWrapper>
+              <TextFieldWrapper>
+                <Typography
+                  variant="caption"
+                  color="offWhite.main"
+                  mb={theme.spacing(1)}
+                >
+                  Bio
+                </Typography>
+                <Controller
+                  key={`bio`}
+                  name={`bio`}
+                  control={control}
+                  render={({ field: { name, value, onChange } }) => {
+                    return (
+                      <>
+                        <StyledTextField
+                          color="offWhite"
+                          rows="3"
+                          multiline
+                          value={value}
+                        />
+                      </>
+                    );
+                  }}
+                />
+              </TextFieldWrapper>
+            </Box>
+            <SocialWrapper>
+              <Box
+                sx={{
+                  display: "grid",
+                  gridGap: "20px",
+                  width: "100%",
+                  gridTemplateColumns: {
+                    xs: "1fr",
+                    md: "1fr 1fr"
+                  }
+                }}
+              >
+                {fields.map((field, index) => {
+                  const AutIcon = socialIcons[Object.keys(socialIcons)[index]];
+                  const social = Object.keys(socialIcons)[index];
+
+                  return (
+                    <Box key={`socials.${index}`}>
+                      <Controller
+                        key={`socials.${index}.link`}
+                        name={`socials.${index}.link`}
+                        control={control}
+                        render={({ field: { name, value, onChange } }) => {
+                          console.log(field, value, "VALUEEEEE");
+                          return (
+                            <SocialFieldWrapper
+                              sx={{ cursor: value ? "unset" : "pointer" }}
+                            >
+                              <Box
+                                sx={{ display: "flex", alignItems: "center" }}
+                              >
+                                <SvgIcon
+                                  sx={{
+                                    color: value
+                                      ? theme.palette.offWhite.main
+                                      : "#576176",
+                                    ml: theme.spacing(2),
+                                    mt: "5px"
+                                  }}
+                                  key={`socials.${index}.icon`}
+                                  component={AutIcon}
+                                />
+                                <Box>
+                                  <Typography
+                                    fontSize="16px"
+                                    color={
+                                      value
+                                        ? theme.palette.offWhite.main
+                                        : "#576176"
+                                    }
+                                    sx={{
+                                      ml: theme.spacing(1)
+                                    }}
+                                  >
+                                    {value ? value : "connect"}
+                                  </Typography>
+                                  {value && (
+                                    <Typography
+                                      fontSize="12px"
+                                      color="offWhite.dark"
+                                      sx={{
+                                        ml: theme.spacing(1),
+                                        "&.MuiTypography-root": {
+                                          fontSize: "12px"
+                                        }
+                                      }}
+                                    >
+                                      {social}
+                                    </Typography>
+                                  )}
+                                </Box>
+                              </Box>
+
+                              {value && (
+                                <SvgIcon
+                                  sx={{
+                                    mr: theme.spacing(2)
+                                  }}
+                                  key={`socials.${index}.checkmark`}
+                                  component={SocialCheckIcon}
+                                ></SvgIcon>
+                              )}
+                            </SocialFieldWrapper>
+                          );
+                        }}
+                      />
+                    </Box>
+                  );
+                })}
+              </Box>
+            </SocialWrapper>
+          </FormWrapper>
+        </PerfectScrollbar>
+      </DialogContent>
+      <DialogActions
+        sx={{
+          justifyContent: "space-between",
+          width: "100%",
+          padding: "0px 30px",
+          mt: {
+            xs: "64px",
+            md: "0"
+          }
+        }}
+      >
+        <Box
+          sx={{
+            width: {
+              xs: "17%",
+              md: "33%"
+            }
+          }}
+        >
+          <SvgIcon
+            onClick={props.onClose}
+            sx={{
+              fill: "transparent",
+              height: "30px",
+              width: "30px",
+              cursor: "pointer"
+            }}
+            component={CloseIcon}
+          />
+        </Box>
+
+        <Box
+          sx={{
+            width: {
+              xs: "50%",
+              md: "33%"
+            },
+            justifyContent: "center",
+            display: "flex"
+          }}
+        >
+          <Typography
+            variant="subtitle1"
+            fontSize={{
+              xs: "14px",
+              md: "20px"
+            }}
+            color="offWhite.main"
+            fontWeight="bold"
+          >
+            Edit Profile
+          </Typography>
+        </Box>
+        <Box
+          sx={{
+            width: "33%",
+            justifyContent: "flex-end",
+            display: "flex"
+          }}
+        >
+          <AutOsButton
+            onClick={handleSubmit(onEditProfile)}
+            type="button"
+            color="primary"
+            variant="outlined"
+            sx={{
+              width: "100px"
+            }}
+          >
+            <Typography fontWeight="bold" fontSize="16px" lineHeight="26px">
+              Update
+            </Typography>
+          </AutOsButton>
+        </Box>
+      </DialogActions>
     </AutStyledDialog>
   );
 }
