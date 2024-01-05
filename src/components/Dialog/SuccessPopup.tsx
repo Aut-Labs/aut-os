@@ -26,9 +26,9 @@ const SuccessDialog = ({
             mt: 2
           }}
           component="div"
-          variant="h1"
+          variant="h3"
         >
-          {message}
+          {subtitle}
         </Typography>
         <Typography
           sx={{
@@ -37,9 +37,9 @@ const SuccessDialog = ({
             mt: 2
           }}
           component="div"
-          variant="h2"
+          variant="subtitle2"
         >
-          {subtitle}
+          {message}
         </Typography>
       </div>
     </DialogWrapper>

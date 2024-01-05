@@ -78,7 +78,10 @@ const LeftWrapper = styled(Box)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   height: "100%",
-  width: "30%"
+  width: "30%",
+  [theme.breakpoints.down("md")]: {
+    width: "100%"
+  }
 }));
 
 const RightWrapper = styled(Box)(({ theme }) => ({
@@ -89,10 +92,41 @@ const RightWrapper = styled(Box)(({ theme }) => ({
   marginLeft: "50px",
   height: "100%",
   position: "relative",
-  width: "70%"
+  width: "70%",
+  [theme.breakpoints.down("md")]: {
+    width: "100%",
+    marginLeft: "0",
+    marginTop: "50px"
+  }
 }));
 
-const { FormWrapper } = EditContentElements;
+const NovaWrapper = styled(Box)(({ theme }) => ({
+  display: "flex",
+  flexDirection: "row",
+  alignItems: "flex-start",
+  paddingTop: theme.spacing(4),
+  paddingLeft: theme.spacing(8),
+  paddingRight: theme.spacing(8),
+  width: "100%",
+  [theme.breakpoints.down("lg")]: {
+    paddingTop: theme.spacing(2),
+    paddingLeft: theme.spacing(4),
+    paddingRight: theme.spacing(4),
+    alignItems: "center",
+    justifyContent: "center",
+    alignContent: "center"
+  },
+  [theme.breakpoints.down("md")]: {
+    width: `calc(100% - 20px)`,
+    flexDirection: "column",
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
+    alignContent: "flex-start",
+    paddingTop: "30px",
+    paddingLeft: "10px",
+    paddingRight: "10px"
+  }
+}));
 
 const AutCommunityEdit = () => {
   const dispatch = useAppDispatch();
@@ -243,7 +277,7 @@ const AutCommunityEdit = () => {
             flexDirection: "column"
           }}
         >
-          <FormWrapper autoComplete="off" onSubmit={handleSubmit(beforeEdit)}>
+          <NovaWrapper>
             <ErrorDialog
               handleClose={handleDialogClose}
               open={status === ResultState.Failed}
@@ -480,14 +514,22 @@ const AutCommunityEdit = () => {
                       sx={{
                         mb: 4,
                         display: "flex",
-                        alignItems: "center"
+                        alignItems: "center",
+                        flexDirection: {
+                          xs: "column",
+                          md: "row"
+                        }
                       }}
                     >
                       <Box
                         sx={{
                           border: "1px solid",
                           borderColor: "#576176",
-                          width: "100%"
+                          width: "100%",
+                          flexDirection: {
+                            xs: "column",
+                            md: "row"
+                          }
                         }}
                       >
                         <NovaTopWrapper
@@ -531,6 +573,10 @@ const AutCommunityEdit = () => {
                                   <Typography
                                     variant="subtitle1"
                                     fontWeight="bold"
+                                    fontSize={{
+                                      xs: "16px",
+                                      md: "24px"
+                                    }}
                                     color="offWhite.main"
                                   >
                                     Current Period Contribution
@@ -864,35 +910,10 @@ const AutCommunityEdit = () => {
                     </Box>
                   )}
                   <AutNovaTabs isNovaMember={isNovaMember}></AutNovaTabs>
-
-                  {/* <Box
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-              width: "100%",
-              mt: 4
-            }}
-          >
-            <Button
-              onClick={beforeWithdraw}
-              type="button"
-              color="error"
-              sx={{
-                // textDecoration: "underline",
-                // textTransform: "none",
-                // padding: "0"
-                mb: 4
-              }}
-            >
-              <Typography variant="subtitle2">
-                Withdraw from Nova
-              </Typography>
-            </Button>
-          </Box> */}
                 </RightWrapper>
               </>
             )}
-          </FormWrapper>
+          </NovaWrapper>
         </PerfectScrollbar>
       </AutContainer>
     </>

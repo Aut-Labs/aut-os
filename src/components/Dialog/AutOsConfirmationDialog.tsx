@@ -42,7 +42,9 @@ const AutStyledDialog = styled(Dialog)(({ theme }) => ({
       margin: "0",
       height: "100%",
       width: "100%",
-      border: "none"
+      border: "none",
+      borderRadius: "0",
+      boxShadow: "none"
     }
   }
 }));
@@ -61,7 +63,11 @@ export function AutConfirmDialog(props: ConfirmDialogProps) {
       <DialogContent
         sx={{
           border: 0,
-          padding: "0px 30px"
+          padding: "0px 30px",
+          mt: {
+            xs: "64px",
+            md: "0"
+          }
         }}
       >
         <Box

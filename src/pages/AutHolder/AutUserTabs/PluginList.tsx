@@ -11,13 +11,23 @@ import {
   SvgIcon,
   Tooltip
 } from "@mui/material";
-import { memo } from "react";
+import { memo, useState } from "react";
 import { useSelector } from "react-redux";
 import { HolderData } from "@store/holder/holder.reducer";
 import { CanUpdateProfile } from "@auth/auth.reducer";
 import { AutOsButton } from "@components/AutButton";
 import PluginBlur from "@assets/autos/plugin-blur.png";
 import OverflowTooltip from "@components/OverflowTooltip";
+import ErrorDialog from "@components/Dialog/ErrorPopup";
+import { ResultState } from "@store/result-status";
+import LoadingDialog from "@components/Dialog/LoadingPopup";
+import { useAppDispatch } from "@store/store.model";
+import {
+  PluginErrorMessage,
+  PluginStatus,
+  updatePluginState
+} from "@store/plugins/plugins.reducer";
+import SuccessDialog from "@components/Dialog/SuccessPopup";
 
 const NetworkListItem = memo(
   ({
@@ -181,11 +191,13 @@ const PluginListItem = memo(
   ({
     plugin,
     holderReputation,
-    canUpdateProfile
+    canUpdateProfile,
+    openDialog
   }: {
     plugin: any;
     holderReputation: number;
     canUpdateProfile: boolean;
+    openDialog: any;
   }) => {
     const theme = useTheme();
     return (
@@ -270,7 +282,9 @@ const PluginListItem = memo(
                 <Box>
                   <AutOsButton
                     type="button"
+                    className="button-to-check"
                     disabled={holderReputation < plugin.reputation}
+                    onClick={openDialog}
                     color="primary"
                     variant="outlined"
                   >
@@ -303,6 +317,7 @@ const PluginListItem = memo(
               <AutOsButton
                 type="button"
                 disabled={holderReputation < plugin.reputation}
+                onClick={openDialog}
                 color="primary"
                 variant="outlined"
               >
@@ -327,10 +342,41 @@ const PluginList = ({ isLoading = false, plugins = [] }: TableParamsParams) => {
   const theme = useTheme();
   const canUpdateProfile = useSelector(CanUpdateProfile);
   const holderData = useSelector(HolderData);
+  const dispatch = useAppDispatch();
+  const status = useSelector(PluginStatus);
+  const errorMessage = useSelector(PluginErrorMessage);
+  const [successMessage, setSuccessMessage] = useState("");
+
+  const handleDialogClose = () => {
+    dispatch(
+      updatePluginState({
+        status: ResultState.Idle
+      })
+    );
+  };
+
+  const openDialog = (plugin) => {
+    debugger;
+    dispatch(
+      updatePluginState({
+        status: ResultState.Loading
+      })
+    );
+    setTimeout(() => {
+      setSuccessMessage(
+        `The plugin ${plugin?.title} has been successfully activated!`
+      );
+      dispatch(
+        updatePluginState({
+          status: ResultState.Success
+        })
+      );
+    }, 2000);
+  };
 
   const mockedHolderData = {
     ...holderData,
-    holderReputation: 99
+    holderReputation: 101
   };
   return (
     <Box
@@ -347,6 +393,22 @@ const PluginList = ({ isLoading = false, plugins = [] }: TableParamsParams) => {
       }}
       component={Paper}
     >
+      <ErrorDialog
+        handleClose={handleDialogClose}
+        open={status === ResultState.Failed}
+        message={errorMessage}
+      />
+      <LoadingDialog
+        handleClose={handleDialogClose}
+        open={status === ResultState.Loading}
+        message="Activating plugin..."
+      />
+      <SuccessDialog
+        handleClose={handleDialogClose}
+        open={status === ResultState.Success}
+        message={successMessage}
+        subtitle="Congratulations!"
+      />
       <Box sx={{ display: "flex", my: theme.spacing(3) }}>
         <Typography color="offWhite.main" variant="h3">
           Plugins
@@ -379,6 +441,7 @@ const PluginList = ({ isLoading = false, plugins = [] }: TableParamsParams) => {
         {plugins?.map((plugin, index) => (
           <PluginListItem
             canUpdateProfile={canUpdateProfile}
+            openDialog={() => openDialog(plugin)}
             key={`nova-row-${index}`}
             plugin={plugin}
             holderReputation={mockedHolderData.holderReputation}

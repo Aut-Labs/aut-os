@@ -70,7 +70,9 @@ const AutStyledDialog = styled(Dialog)(({ theme }) => ({
       margin: "0",
       height: "100%",
       width: "100%",
-      border: "none"
+      border: "none",
+      borderRadius: "0",
+      boxShadow: "none"
     }
   }
 }));
@@ -398,7 +400,10 @@ export function AutEditProfileDialog(props: EditDialogProps) {
                   display: "grid",
                   gridGap: "20px",
                   width: "100%",
-                  gridTemplateColumns: "1fr 1fr"
+                  gridTemplateColumns: {
+                    xs: "1fr",
+                    md: "1fr 1fr"
+                  }
                 }}
               >
                 {fields.map((field, index) => {
@@ -487,13 +492,19 @@ export function AutEditProfileDialog(props: EditDialogProps) {
         sx={{
           justifyContent: "space-between",
           width: "100%",
-          padding: "0px 30px"
+          padding: "0px 30px",
+          mt: {
+            xs: "64px",
+            md: "0"
+          }
         }}
       >
         <Box
           sx={{
-            minWidth: "128px",
-            width: "33%"
+            width: {
+              xs: "17%",
+              md: "33%"
+            }
           }}
         >
           <SvgIcon
@@ -510,13 +521,20 @@ export function AutEditProfileDialog(props: EditDialogProps) {
 
         <Box
           sx={{
-            width: "33%",
+            width: {
+              xs: "50%",
+              md: "33%"
+            },
             justifyContent: "center",
             display: "flex"
           }}
         >
           <Typography
             variant="subtitle1"
+            fontSize={{
+              xs: "14px",
+              md: "20px"
+            }}
             color="offWhite.main"
             fontWeight="bold"
           >
