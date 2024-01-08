@@ -2,26 +2,50 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import ForceGraph2D, {
   NodeObject,
   ForceGraphMethods,
-  GraphData
+  GraphData,
+  LinkObject
 } from "react-force-graph-2d";
-import {
-  cloneGraphData,
-  generateGraphData,
-  getProximityLevels,
-  linkWidth
-} from "./utils";
 import * as d3 from "d3-force";
-
+import PublicIcon from "@mui/icons-material/Public"; // Example icon for market indication
+import PeopleIcon from "@mui/icons-material/People"; // Example icon for member count
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import {
   NODE_PADDING,
   NODE_BORDER_WIDTH,
   LINK_COLOR,
-  NODE_FILL_COLOR
-} from "./map-constants";
+  NODE_FILL_COLOR,
+  STROKE_COLOR
+} from "./misc/map-constants";
 import { FollowPopover } from "@components/FollowPopover";
+import {
+  Badge,
+  BadgeProps,
+  Box,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  Tooltip,
+  Typography,
+  styled
+} from "@mui/material";
+import {
+  calculatePLCircleCentersAndRadii,
+  getProximityLevels
+} from "./misc/pl-generator";
+import { generateGraphData, cloneGraphData, linkWidth } from "./misc/map-utils";
+import { MapLink, MapNode } from "./node.model";
 
-const { plValues, centralAutId } = getProximityLevels();
-const _graphData = generateGraphData(centralAutId, plValues);
+const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
+  "& .MuiBadge-badge": {
+    right: -3,
+    top: 13,
+    padding: "0"
+  }
+}));
+
+const { proximityLevels, centralAutId } = getProximityLevels();
+const _graphData = generateGraphData(centralAutId, proximityLevels);
 
 function InteractionMap({ parentRef: containerRef }) {
   const fgRef = useRef<ForceGraphMethods>();
@@ -29,8 +53,28 @@ function InteractionMap({ parentRef: containerRef }) {
   const [hoveredNode, setHoveredNode] = useState(null);
   const [showPopover, setShowPopover] = useState(false);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-  const [graphData, setGraphData] = useState<GraphData>(
-    cloneGraphData(_graphData)
+  const [highlightedPl, setHighlightedPl] = useState(null);
+  const [graphData, setGraphData] = useState<
+    GraphData<MapNode, LinkObject<MapNode, MapLink>>
+  >(cloneGraphData(_graphData));
+  const [isDragging, setIsDragging] = useState(false);
+
+  const onRenderFramePre = useCallback(
+    (ctx: CanvasRenderingContext2D) => {
+      const circleData = calculatePLCircleCentersAndRadii(_graphData.nodes);
+
+      Object.values(circleData).forEach((circle: any) => {
+        ctx.beginPath();
+        ctx.arc(circle.centerX, circle.centerY, circle.radius, 0, 2 * Math.PI);
+        ctx.strokeStyle =
+          circle?.pl === highlightedPl
+            ? "rgba(54, 191, 250, 1)"
+            : "rgba(54, 191, 250, 0.3)";
+        ctx.lineWidth = circle?.pl === highlightedPl ? 1 : 0.5;
+        ctx.stroke();
+      });
+    },
+    [highlightedPl]
   );
 
   useEffect(() => {
@@ -42,18 +86,14 @@ function InteractionMap({ parentRef: containerRef }) {
         });
       }
     }
-
-    // const resizeObserver = new ResizeObserver(updateSize);
     if (containerRef.current) {
-      //   resizeObserver.observe(containerRef.current);
       updateSize();
     }
-
-    // return () => resizeObserver.disconnect();
   }, [containerRef]);
 
   const handleNodeHover = useCallback(
-    (node: NodeObject) => {
+    (node: NodeObject<MapNode>) => {
+      if (isDragging) return;
       setShowPopover(!!node);
       if (!node) return;
       setHoveredNode(node);
@@ -74,10 +114,19 @@ function InteractionMap({ parentRef: containerRef }) {
       const popoverX = centerScreen.x + containerRect.left;
       const popoverY = centerScreen.y + containerRect.top;
 
-      setAnchorPos({ x: popoverX, y: popoverY });
+      setAnchorPos({ x: popoverX, y: popoverY + node.size });
     },
-    [fgRef, containerRef]
+    [fgRef, containerRef, isDragging]
   );
+
+  const handleNodeDrag = useCallback(() => {
+    setIsDragging(true);
+    setShowPopover(false);
+  }, []);
+
+  const handleNodeDragEnd = useCallback(() => {
+    setIsDragging(false);
+  }, []);
 
   useEffect(() => {
     if (!fgRef.current) return;
@@ -88,7 +137,7 @@ function InteractionMap({ parentRef: containerRef }) {
   }, [fgRef]);
 
   const drawNode = useCallback(
-    (node: NodeObject, ctx: CanvasRenderingContext2D) => {
+    (node: NodeObject<MapNode>, ctx: CanvasRenderingContext2D) => {
       const size = node.size;
       const nodeOuterSize = size + NODE_PADDING * 2 + NODE_BORDER_WIDTH * 2;
 
@@ -116,15 +165,20 @@ function InteractionMap({ parentRef: containerRef }) {
         ctx.restore();
       }
 
-      // Draw the border with padding
       ctx.beginPath();
       ctx.arc(node.x, node.y, nodeOuterSize / 2, 0, Math.PI * 2, false);
       ctx.lineWidth = NODE_BORDER_WIDTH;
-      ctx.strokeStyle = "#36BFFA";
+      ctx.strokeStyle = STROKE_COLOR;
       ctx.stroke();
     },
     []
   );
+
+  const getNovaInfoByPl = (level: number): any => {
+    return (
+      proximityLevels.find((pl) => pl.level === level)?.members[0].nova || {}
+    );
+  };
 
   return (
     <>
@@ -133,26 +187,143 @@ function InteractionMap({ parentRef: containerRef }) {
         width={dimensions.width}
         height={dimensions.height}
         graphData={graphData}
-        onNodeDragEnd={() => setGraphData(cloneGraphData(_graphData))}
+        onRenderFramePre={onRenderFramePre}
         onEngineStop={() => fgRef.current.zoomToFit(300)}
-        nodeVal={(node: NodeObject) => node.size + NODE_BORDER_WIDTH * 2}
+        nodeVal={(node: NodeObject<MapNode>) =>
+          node.size + NODE_BORDER_WIDTH * 2
+        }
         nodeLabel={() => null}
         linkColor={() => LINK_COLOR}
         onNodeHover={handleNodeHover}
+        onNodeDrag={handleNodeDrag}
+        onNodeDragEnd={() => {
+          handleNodeDragEnd();
+          setGraphData(cloneGraphData(_graphData));
+        }}
         linkWidth={linkWidth}
         nodeCanvasObject={drawNode}
         linkDirectionalParticles={0.5}
         linkDirectionalParticleWidth={3}
         d3VelocityDecay={1}
         cooldownTicks={0}
-        enableZoomInteraction={false}
+        // enableZoomInteraction={false}
       />
       <FollowPopover
         type="custom"
         anchorPos={anchorPos}
         data={hoveredNode}
-        open={showPopover}
+        open={showPopover && !isDragging}
       />
+      <Box
+        sx={{
+          borderRadius: "8px",
+          overflow: "hidden",
+          position: "absolute",
+          minWidth: "200px",
+          top: "0",
+          right: "0",
+          boxShadow: 2,
+          background: "rgba(240, 245, 255, 0.05)",
+          backdropFilter: "blur(12px)",
+          zIndex: 10
+        }}
+      >
+        <List
+          sx={{
+            py: 0
+          }}
+        >
+          {proximityLevels.map(({ level, name, description, members }) => {
+            const novaInfo = getNovaInfoByPl(level);
+            return (
+              <ListItem
+                key={`pl-${level}`}
+                disablePadding
+                onMouseEnter={() => setHighlightedPl(level)}
+                onMouseLeave={() => setHighlightedPl(null)}
+              >
+                <ListItemButton
+                  sx={{
+                    pt: 0
+                  }}
+                >
+                  <ListItemText
+                    primaryTypographyProps={{
+                      sx: {
+                        display: "flex"
+                      }
+                    }}
+                    primary={
+                      <>
+                        <StyledBadge
+                          badgeContent={
+                            <Tooltip title={description}>
+                              <HelpOutlineIcon
+                                color="primary"
+                                sx={{ width: "12px", ml: 1 }}
+                              />
+                            </Tooltip>
+                          }
+                        >
+                          <Typography
+                            color="white"
+                            textAlign="center"
+                            variant="subtitle2"
+                          >
+                            {name}
+                          </Typography>
+                        </StyledBadge>
+                      </>
+                    }
+                    secondary={
+                      <>
+                        <Typography
+                          sx={{
+                            display: "flex",
+                            alignItems: "center"
+                          }}
+                          variant="caption"
+                          display="block"
+                          color="white"
+                        >
+                          <PublicIcon
+                            sx={{
+                              fontSize: "12px",
+                              mr: 0.5
+                            }}
+                          />
+                          Market: {novaInfo?.market || "N/A"}
+                        </Typography>
+                        <Typography
+                          sx={{
+                            display: "flex",
+                            alignItems: "center"
+                          }}
+                          variant="caption"
+                          display="block"
+                          color="white"
+                        >
+                          <PeopleIcon
+                            sx={{
+                              fontSize: "12px",
+                              mr: 0.5
+                            }}
+                          />
+                          Members: {members?.length || 0}
+                        </Typography>
+                        {/* <Typography variant="caption" display="block">
+                            <BadgeIcon fontSize="small" color="secondary" />
+                            Roles: {novaInfo?.roles.join(", ") || "None"}
+                          </Typography> */}
+                      </>
+                    }
+                  />
+                </ListItemButton>
+              </ListItem>
+            );
+          })}
+        </List>
+      </Box>
     </>
   );
 }

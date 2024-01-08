@@ -69,7 +69,7 @@ const AvatarCircle = ({
         cursor: "pointer"
       }}
     >
-      <Bubble setPopoverEl={setPopoverEl} user={user} key={key} />
+      <Bubble user={user} key={key} />
     </foreignObject>
   );
 };

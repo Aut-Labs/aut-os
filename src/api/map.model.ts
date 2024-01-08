@@ -26,7 +26,14 @@ export class Nova {
   minCommitment: number;
   members: AutId[];
 
-  constructor(market, roles, metadata, avatar, minCommitment, members) {
+  constructor(
+    market: string,
+    roles: number[],
+    metadata: string,
+    avatar: string,
+    minCommitment: number,
+    members: AutId[]
+  ) {
     this.id = generateUniqueIdBetter();
     this.market = market;
     this.roles = roles;
@@ -37,6 +44,14 @@ export class Nova {
   }
 }
 
+export interface AutIdInteractions {
+  type: string;
+  name: string;
+  description: string;
+  weight: string;
+  status: "Complete" | "Incomplete";
+}
+
 export class AutId {
   id: string;
   owner: string;
@@ -44,14 +59,14 @@ export class AutId {
   img: HTMLImageElement;
   commitment: number;
   role: number;
-  completedInteractionsCount: number;
+  interactions: AutIdInteractions[];
   nova: Nova;
   constructor(
-    owner,
-    username,
-    commitment,
-    role,
-    completedInteractionsCount,
+    owner: string,
+    username: string,
+    commitment: number,
+    role: number,
+    interactions,
     avatar,
     nova
   ) {
@@ -63,7 +78,7 @@ export class AutId {
     this.img = img;
     this.commitment = commitment;
     this.role = role;
-    this.completedInteractionsCount = completedInteractionsCount;
+    this.interactions = interactions;
     this.nova = nova;
   }
 }
