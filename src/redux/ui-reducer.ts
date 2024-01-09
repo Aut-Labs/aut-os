@@ -11,6 +11,7 @@ const initialState = {
   openCommitment: false,
   openWithdraw: false,
   openEditProfile: false,
+  openInteractions: false,
   previousRoute: "/",
   transactionState: null,
   title: ""
@@ -53,6 +54,9 @@ export const uiSlice = createSlice({
     setOpenEditProfile(state, action) {
       state.openEditProfile = action.payload;
     },
+    setOpenInteractions(state, action) {
+      state.openInteractions = action.payload;
+    },
     resetUIState: () => initialState
   }
 });
@@ -66,6 +70,7 @@ export const {
   setOpenCommitment,
   setOpenWithdraw,
   setOpenEditProfile,
+  setOpenInteractions,
   updateTransactionState
 } = uiSlice.actions;
 

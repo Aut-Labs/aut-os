@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import AutTabs from "@components/AutTabs";
 import { CommunityTasksTable } from "../../AutCommunity/AutNovaTabs/NovaTaskTable";
 import PerfectScrollbar from "react-perfect-scrollbar";
@@ -12,52 +13,50 @@ const plugins = [
   {
     image:
       "ipfs://bafybeifbq3ysgpfmknctgc5nda7gxmdmkqhhurj7typk5a34svp6nlsvg4/AutID.png",
-    title: "NFT Profile Showcase",
-    type: "NFT",
+    title: "Message in a bottle",
     description:
-      "Enhance your web3 profile with customizable NFT galleries and decentralized identity.",
-    reputation: 100,
-    xp: 100
+      "Allows anyone with an ĀutID to write a message, a statement, a proposal, a bio, an SOS, an ad, an eulogy or anything, really - to anyone who is connected to them in a customizable degree of proximity (i.e.: min. 4/5/200 interactions)",
+    reputation: 100
   },
   {
     image:
       "ipfs://bafybeifbq3ysgpfmknctgc5nda7gxmdmkqhhurj7typk5a34svp6nlsvg4/AutID.png",
-    title: "Decentralized Chat Hub",
-    type: "Communication",
+    title: "Portfolio ",
     description:
-      "Connect and chat securely with web3 friends, preserving privacy and ownership.",
-    reputation: 100,
-    xp: 100
+      "Highlight your favorite on-chain works, contributions or interactions in a custom-widget page.",
+    reputation: 100
   },
   {
     image:
       "ipfs://bafybeifbq3ysgpfmknctgc5nda7gxmdmkqhhurj7typk5a34svp6nlsvg4/AutID.png",
-    title: "Crypto Wallet Integrator",
-    type: "Financial Tools",
+    title: "Propose Collab",
     description:
-      "Seamlessly manage assets and transactions with integrated crypto wallet support..",
-    reputation: 100,
-    xp: 100
+      "You have one shot to connect to and work together with the most interesting stranger you've found in the entire decentralized world. What will you say to them?",
+    reputation: 100
   },
   {
     image:
       "ipfs://bafybeifbq3ysgpfmknctgc5nda7gxmdmkqhhurj7typk5a34svp6nlsvg4/AutID.png",
-    title: "Web3 Analytics Tracker",
-    type: "Data Insights",
+    title: "Private Thread",
     description:
-      "Gain valuable insights into your web3 activity and trends with detailed analytics.",
-    reputation: 100,
-    xp: 100
+      'Create a decentralized, Reddit-like thread with custom rules such as ["same Role"; "same Nova"; "min Reputation"; etc.]. And start a conversation with provably like-minded people.',
+    reputation: 100
   },
   {
     image:
       "ipfs://bafybeifbq3ysgpfmknctgc5nda7gxmdmkqhhurj7typk5a34svp6nlsvg4/AutID.png",
-    title: "Token Swap Wizard",
-    type: "Defi",
+    title: "Accept Tips",
     description:
-      "Effortlessly exchange tokens, liquidity, and yield farm on web3 DeFi platforms.",
-    reputation: 100,
-    xp: 100
+      'Add a fancy, customizable "Tip me" button to your profile - and accept support, funding or donations from anyone.',
+    reputation: 100
+  },
+  {
+    image:
+      "ipfs://bafybeifbq3ysgpfmknctgc5nda7gxmdmkqhhurj7typk5a34svp6nlsvg4/AutID.png",
+    title: "Multi-sig Thread",
+    description:
+      "Some conversations are more important than others. Create and export a multi-sig thread, in the form of an NFT that all the participants can own and create rules of distribution for. Think of it as a decentralized, portable protocol to record and enforce IPs.",
+    reputation: 100
   }
 ];
 

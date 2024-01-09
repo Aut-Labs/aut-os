@@ -29,164 +29,6 @@ import {
 } from "@store/plugins/plugins.reducer";
 import SuccessDialog from "@components/Dialog/SuccessPopup";
 
-const NetworkListItem = memo(
-  ({
-    plugin,
-    holderReputation,
-    holderXp,
-    canUpdateProfile
-  }: {
-    plugin: any;
-    holderReputation: number;
-    holderXp: number;
-    canUpdateProfile: boolean;
-  }) => {
-    const theme = useTheme();
-    return (
-      <Box
-        sx={{
-          display: "flex",
-          border: "1px solid",
-          borderColor: "#576176",
-          minWidth: "240px",
-          padding: theme.spacing(3)
-        }}
-      >
-        <Box
-          sx={{
-            height: "100%",
-            display: "flex",
-            justifyContent: "space-between",
-            flexDirection: "column"
-          }}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: {
-                xs: "row"
-              },
-              justifyContent: {
-                xs: "flex-start"
-              }
-            }}
-          >
-            <Avatar
-              sx={{
-                bgcolor: "purple",
-                width: {
-                  xs: "72px",
-                  xxl: "72px"
-                },
-                height: {
-                  xs: "72px",
-                  xxl: "72px"
-                },
-                borderRadius: "0"
-              }}
-              aria-label="nova-avatar"
-              src={ipfsCIDToHttpUrl(plugin.image as string)}
-            />
-            <Box
-              sx={{
-                marginLeft: theme.spacing(3),
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between"
-              }}
-            >
-              <Typography variant="subtitle2" color="offWhite.main">
-                {plugin.title}
-              </Typography>
-              <Typography variant="caption" color="offWhite.dark">
-                {plugin.type}
-              </Typography>
-            </Box>
-          </Box>
-          <Box
-            sx={{
-              marginTop: theme.spacing(3)
-            }}
-          >
-            <Typography variant="caption" color="offWhite.main">
-              {plugin.description}
-            </Typography>
-          </Box>
-          <Box
-            sx={{
-              display: "flex",
-              marginTop: theme.spacing(3)
-            }}
-          >
-            <AutOsButton
-              type="button"
-              disabled={holderXp < plugin.xp}
-              color="primary"
-              variant="outlined"
-            >
-              <Typography fontWeight="700" fontSize="16px" lineHeight="26px">
-                Activate
-              </Typography>
-              {holderXp < plugin.xp && (
-                <SvgIcon
-                  sx={{
-                    height: {
-                      xs: "16px"
-                    },
-                    width: {
-                      xs: "16px"
-                    },
-
-                    fill: "transparent"
-                  }}
-                  viewBox="0 0 16 16"
-                  key={`activate-lock`}
-                  component={KeyIcon}
-                />
-              )}
-            </AutOsButton>
-            {holderXp < plugin.xp && (
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  ml: theme.spacing(2)
-                }}
-              >
-                <Typography
-                  fontWeight="400"
-                  fontSize="16px"
-                  color="offWhite.main"
-                >
-                  Unlock at
-                </Typography>
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "flex-end"
-                  }}
-                >
-                  <Typography
-                    fontFamily="FractulAltBold"
-                    fontSize="24px !important"
-                    lineHeight="24px"
-                    color="offWhite.main"
-                  >
-                    {plugin.xp}
-                  </Typography>
-                  <Typography fontSize="18px !important" color="offWhite.main">
-                    REP
-                  </Typography>
-                </Box>
-              </Box>
-            )}
-          </Box>
-        </Box>
-      </Box>
-    );
-  }
-);
-
 const PluginListItem = memo(
   ({
     plugin,
@@ -276,14 +118,13 @@ const PluginListItem = memo(
             {holderReputation < plugin.reputation ? (
               <Tooltip
                 disableHoverListener={false}
-                title={`Unlock at ${plugin.xp} REP`}
+                title={`Unlock at ${plugin.reputation} REP`}
                 sx={{}}
               >
                 <Box>
                   <AutOsButton
                     type="button"
-                    className="button-to-check"
-                    disabled={holderReputation < plugin.reputation}
+                    disabled={true}
                     onClick={openDialog}
                     color="primary"
                     variant="outlined"
@@ -316,7 +157,8 @@ const PluginListItem = memo(
             ) : (
               <AutOsButton
                 type="button"
-                disabled={holderReputation < plugin.reputation}
+                // disabled={holderReputation < plugin.reputation}
+                disabled={true}
                 onClick={openDialog}
                 color="primary"
                 variant="outlined"
@@ -376,7 +218,7 @@ const PluginList = ({ isLoading = false, plugins = [] }: TableParamsParams) => {
 
   const mockedHolderData = {
     ...holderData,
-    holderReputation: 101
+    holderReputation: 99
   };
   return (
     <Box
