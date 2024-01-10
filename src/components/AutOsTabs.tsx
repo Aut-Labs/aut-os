@@ -36,6 +36,7 @@ function TabPanel(props: any) {
         <Box
           className="tab-content"
           sx={{
+            position: "relative",
             borderColor: "divider",
             height: "calc(100%)",
             ...(sx || {})
