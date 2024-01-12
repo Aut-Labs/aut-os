@@ -35,6 +35,11 @@ import {
 } from "./misc/pl-generator";
 import { generateGraphData, cloneGraphData, linkWidth } from "./misc/map-utils";
 import { MapLink, MapNode } from "./node.model";
+import { AutOsButton } from "@components/AutButton";
+import { AutInteractionsDialog } from "@components/AutInteractionsDialog";
+import { useAppDispatch } from "@store/store.model";
+import { setOpenInteractions } from "@store/ui-reducer";
+import { useSelector } from "react-redux";
 
 const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -47,7 +52,7 @@ const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
 const { proximityLevels, centralAutId } = getProximityLevels();
 const _graphData = generateGraphData(centralAutId, proximityLevels);
 
-function InteractionMap({ parentRef: containerRef }) {
+function InteractionMap({ parentRef: containerRef, isActive }) {
   const fgRef = useRef<ForceGraphMethods>();
   const [anchorPos, setAnchorPos] = useState({ x: 0, y: 0 });
   const [hoveredNode, setHoveredNode] = useState(null);
@@ -58,6 +63,17 @@ function InteractionMap({ parentRef: containerRef }) {
     GraphData<MapNode, LinkObject<MapNode, MapLink>>
   >(cloneGraphData(_graphData));
   const [isDragging, setIsDragging] = useState(false);
+
+  const dispatch = useAppDispatch();
+  const { openInteractions } = useSelector((state: any) => state.ui);
+
+  const handleClose = () => {
+    dispatch(setOpenInteractions(false));
+  };
+
+  const openInteractionsModal = () => {
+    dispatch(setOpenInteractions(true));
+  };
 
   const onRenderFramePre = useCallback(
     (ctx: CanvasRenderingContext2D) => {
@@ -93,7 +109,7 @@ function InteractionMap({ parentRef: containerRef }) {
 
   const handleNodeHover = useCallback(
     (node: NodeObject<MapNode>) => {
-      if (isDragging) return;
+      if (isDragging || !isActive) return;
       setShowPopover(!!node);
       if (!node) return;
       setHoveredNode(node);
@@ -116,7 +132,7 @@ function InteractionMap({ parentRef: containerRef }) {
 
       setAnchorPos({ x: popoverX, y: popoverY + node.size });
     },
-    [fgRef, containerRef, isDragging]
+    [fgRef, containerRef, isDragging, isActive]
   );
 
   const handleNodeDrag = useCallback(() => {
@@ -208,11 +224,16 @@ function InteractionMap({ parentRef: containerRef }) {
         cooldownTicks={0}
         // enableZoomInteraction={false}
       />
+      <AutInteractionsDialog
+        open={openInteractions}
+        title="Interactions"
+        onClose={handleClose}
+      />
       <FollowPopover
         type="custom"
         anchorPos={anchorPos}
         data={hoveredNode}
-        open={showPopover && !isDragging}
+        open={showPopover && !isDragging && isActive}
       />
       <Box
         sx={{
@@ -323,6 +344,25 @@ function InteractionMap({ parentRef: containerRef }) {
             );
           })}
         </List>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "flex-end",
+            pb: 1
+          }}
+        >
+          <AutOsButton
+            onClick={openInteractionsModal}
+            type="button"
+            color="primary"
+            size="small"
+            variant="outlined"
+          >
+            <Typography fontWeight="700" fontSize="16px" lineHeight="26px">
+              View Interactions
+            </Typography>
+          </AutOsButton>
+        </Box>
       </Box>
     </>
   );
