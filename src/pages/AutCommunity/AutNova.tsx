@@ -141,6 +141,13 @@ const AutCommunityEdit = () => {
   const selectedCommunity = useSelector(
     SelectedCommunity(params.communityAddress)
   );
+
+  const exampleCommunity = {
+    ...selectedCommunity,
+    name: "Āut DAO",
+    description: `Āut is a collective building decentralized standards for self-sovereign Identity (SSID, IAM), Reputation and Communities (DAOs, Hacktivists, Network States). 
+    A Laboratory of Experimentation questioning the borders imposed by the status quo.`
+  };
   const navigate = useNavigate();
   const status = useSelector(UpdateStatus);
   const errorMessage = useSelector(UpdateErrorMessage);
@@ -245,7 +252,7 @@ const AutCommunityEdit = () => {
     dispatch(setOpenCommitment(true));
   };
 
-  const nextPeriod = new Date("1/10/2024");
+  const nextPeriod = new Date("3/31/2024");
   // eslint-disable-next-line @typescript-eslint/no-inferrable-types
   const communityRep: number = 80;
   // eslint-disable-next-line @typescript-eslint/no-inferrable-types
@@ -328,7 +335,9 @@ const AutCommunityEdit = () => {
                             lineHeight={1}
                             variant="h2"
                           >
-                            {selectedCommunity.name}
+                            {/* TODO: Revert */}
+                            {/* {selectedCommunity.name} */}
+                            {exampleCommunity?.name}
                           </Typography>
                         </div>
 
@@ -383,7 +392,10 @@ const AutCommunityEdit = () => {
                           textAlign="left"
                           variant="body"
                         >
-                          {selectedCommunity?.description ||
+                          {/* TODO: Revert */}
+                          {/* {selectedCommunity?.description ||
+                            "No description yet..."} */}
+                          {exampleCommunity?.description ||
                             "No description yet..."}
                         </Typography>
                       </Box>
@@ -850,10 +862,12 @@ const AutCommunityEdit = () => {
                               color="offWhite.main"
                               fontWeight="normal"
                             >
-                              {
+                              {/* TODO: Revert */}
+                              {/* {
                                 selectedCommunity?.properties?.userData
                                   ?.roleName
-                              }
+                              } */}
+                              {"Contributor"}
                             </Typography>
                             <SubtitleWithInfo
                               title="role"

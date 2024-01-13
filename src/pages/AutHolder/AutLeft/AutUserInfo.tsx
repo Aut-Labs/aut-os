@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable no-constant-condition */
 import { ReactComponent as DiscordIcon } from "@assets/SocialIcons/DiscordIcon.svg";
 
@@ -109,6 +110,12 @@ const AutUserInfo = () => {
     month: "long",
     day: "2-digit"
   }).format(parseTimestamp(holderData?.properties?.timestamp));
+  const exampleCommunity = {
+    ...holderData?.properties.communities[0],
+    name: "Āut DAO",
+    description: `Āut is a collective building decentralized standards for self-sovereign Identity (SSID, IAM), Reputation and Communities (DAOs, Hacktivists, Network States). 
+    A Laboratory of Experimentation questioning the borders imposed by the status quo.`
+  };
 
   const { handleSubmit, watch } = useForm({
     mode: "onChange",
@@ -521,8 +528,9 @@ const AutUserInfo = () => {
                 }
               }}
             >
-              <AutUserTabs communities={holderData.properties.communities} />
-
+              {/* TODO: Revert hardcoded community name and description */}
+              {/* <AutUserTabs communities={holderData.properties.communities} /> */}
+              <AutUserTabs communities={[exampleCommunity]} />
               {/* <CommunitiesTable
               communities={holderData.properties.communities}
               isLoading={false}

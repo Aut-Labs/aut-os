@@ -227,7 +227,9 @@ const NovaListItem = memo(
               color="offWhite.main"
               fontWeight="normal"
             >
-              {row?.properties?.userData?.roleName}
+              {/* TODO: Revert */}
+              {/* {row?.properties?.userData?.roleName} */}
+              {"Contributor"}
             </Typography>
             <SubtitleWithInfo
               title="role"

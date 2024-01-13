@@ -13,39 +13,48 @@ import { useEffect, useState } from "react";
 
 const users = [
   {
-    name: "Tao",
+    owner: "Luke",
+    username: "skywalker1",
     avatar: "https://picsum.photos/200/300"
   },
   {
-    name: "Jessica",
+    owner: "Morty",
+    username: "mortysmith",
     avatar: "https://picsum.photos/300/300"
   },
   {
-    name: "Daniel",
+    owner: "Angie",
+    username: "angiekins",
     avatar: "https://picsum.photos/200/200"
   },
   {
-    name: "Selena",
+    owner: "Denis",
+    username: "menaceboy9",
     avatar: "https://picsum.photos/200/400"
   },
   {
-    name: "Tom",
+    owner: "Jaskier",
+    username: "dandelion",
     avatar: "https://picsum.photos/200/250"
   },
   {
-    name: "Angela",
+    owner: "Peter",
+    username: "spidey",
     avatar: "https://picsum.photos/250/250"
   },
   {
-    name: "Angela",
+    owner: "Carly",
+    username: "traveler3645",
     avatar: "https://picsum.photos/250/260"
   },
   {
-    name: "Angela",
+    owner: "Ted",
+    username: "mosbiusdesigns",
     avatar: "https://picsum.photos/250/280"
   },
   {
-    name: "Angela",
+    owner: "Marshall",
+    username: "judgefudge",
     avatar: "https://picsum.photos/250/270"
   }
 ];

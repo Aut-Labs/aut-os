@@ -273,23 +273,31 @@ const AutSearch = () => {
                 network: "mumbai"
               },
               {
-                name: "Taoo",
+                name: "Barbaros",
                 network: "mumbai"
               },
               {
-                name: "Taooo",
+                name: "jabyl",
                 network: "mumbai"
               },
               {
-                name: "Taoooo",
+                name: "JL",
                 network: "mumbai"
               },
               {
-                name: "Ana",
+                name: "ProudLemon",
                 network: "mumbai"
               },
               {
-                name: "Banana",
+                name: "Eulalie",
+                network: "mumbai"
+              },
+              {
+                name: "Mihanix",
+                network: "mumbai"
+              },
+              {
+                name: "AntAnt",
                 network: "mumbai"
               }
             ].filter((user) =>

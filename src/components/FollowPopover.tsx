@@ -96,7 +96,7 @@ export const FollowPopover = ({
           variant="subtitle1"
           color="white"
         >
-          Name
+          {data?.owner || "Name"}
         </Typography>
         <Typography
           fontWeight="400"

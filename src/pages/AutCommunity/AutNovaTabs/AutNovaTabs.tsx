@@ -13,33 +13,22 @@ const mocktabs = [
           name: "Write a Blog Post",
           description:
             "Contribute to our blog by sharing your insights on the latest crypto trends and developments.",
-          startDate: new Date("2022-01-01"),
-          endDate: new Date("2022-01-05")
+          startDate: new Date("2024-02-01"),
+          endDate: new Date("2024-02-05")
         },
         {
           name: "Code Review Session",
           description:
             "Help review and optimize a fellow developer's smart contract. Your expertise is valuable to the community.",
-          startDate: new Date("2022-02-01"),
-          endDate: new Date("2022-02-10")
+          startDate: new Date("2024-02-01"),
+          endDate: new Date("2024-02-10")
         },
         {
-          name: "Task 3",
-          description: "Description for task 3",
-          startDate: new Date("2022-03-01"),
-          endDate: new Date("2022-03-10")
-        },
-        {
-          name: "Task 4",
-          description: "Description for task 4",
-          startDate: new Date("2022-04-01"),
-          endDate: new Date("2022-04-10")
-        },
-        {
-          name: "Task 5",
-          description: "Description for task 5",
-          startDate: new Date("2022-05-01"),
-          endDate: new Date("2022-05-10")
+          name: "Volunteer for Charity Drive",
+          description:
+            "Join our charity initiative by offering your time or resources to support a social cause.",
+          startDate: new Date("2024-03-01"),
+          endDate: new Date("2024-03-10")
         }
       ]
     },
@@ -50,34 +39,25 @@ const mocktabs = [
     props: {
       tasks: [
         {
-          name: "Poll 1",
-          description: "Description for poll 1",
-          startDate: new Date("2022-03-01"),
-          endDate: new Date("2022-03-10")
-        },
-        {
-          name: "Poll 2",
-          description: "Description for poll 2",
+          name: "Select the Next Featured Artist",
+          description:
+            "Vote for the artist whose NFT collection will be featured in our upcoming exhibition.",
           startDate: new Date("2022-04-01"),
           endDate: new Date("2022-04-10")
         },
         {
-          name: "Poll 3",
-          description: "Description for poll 3",
-          startDate: new Date("2022-05-01"),
-          endDate: new Date("2022-05-10")
+          name: "Debate: Yield Farming Strategies",
+          description:
+            "Share your perspective on the most effective DeFi yield farming strategies in our community debate.",
+          startDate: new Date("2024-05-01"),
+          endDate: new Date("2024-05-10")
         },
         {
-          name: "Poll 4",
-          description: "Description for poll 4",
-          startDate: new Date("2022-06-01"),
-          endDate: new Date("2022-06-10")
-        },
-        {
-          name: "Poll 5",
-          description: "Description for poll 5",
-          startDate: new Date("2022-07-01"),
-          endDate: new Date("2022-07-10")
+          name: "Eco-Friendly Blockchain Solutions",
+          description:
+            "Cast your vote to prioritize eco-friendly projects that promote sustainability within the blockchain space.",
+          startDate: new Date("2024-03-01"),
+          endDate: new Date("2024-03-10")
         }
       ]
     },
@@ -88,34 +68,25 @@ const mocktabs = [
     props: {
       tasks: [
         {
-          name: "Event 1",
-          description: "Description for event 1",
-          startDate: new Date("2022-05-01"),
-          endDate: new Date("2022-05-10")
+          name: "Digital Art Showcase",
+          description:
+            "Join us for an online exhibition of web3-inspired art created by members of our collective.",
+          startDate: new Date("2024-05-01"),
+          endDate: new Date("2024-05-10")
         },
         {
-          name: "Event 2",
-          description: "Description for event 2",
-          startDate: new Date("2022-06-01"),
-          endDate: new Date("2022-06-10")
+          name: "Play-to-Earn Game Night",
+          description:
+            "Participate in a virtual game night where you can earn tokens by playing blockchain-based games.",
+          startDate: new Date("2024-06-01"),
+          endDate: new Date("2024-06-10")
         },
         {
-          name: "Event 3",
-          description: "Description for event 3",
-          startDate: new Date("2022-07-01"),
-          endDate: new Date("2022-07-10")
-        },
-        {
-          name: "Event 4",
-          description: "Description for event 4",
-          startDate: new Date("2022-08-01"),
-          endDate: new Date("2022-08-10")
-        },
-        {
-          name: "Event 5",
-          description: "Description for event 5",
-          startDate: new Date("2022-09-01"),
-          endDate: new Date("2022-09-10")
+          name: "Tokenomics Webinar",
+          description:
+            "Attend our interactive webinar to learn about the latest trends in tokenomics and network with experts in the field.",
+          startDate: new Date("2024-07-01"),
+          endDate: new Date("2024-07-10")
         }
       ]
     },
