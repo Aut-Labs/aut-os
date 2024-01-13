@@ -243,7 +243,7 @@ function Web3DautConnect({
         }}
         use-dev={environment.env == EnvMode.Development}
         id="d-aut"
-        allowed-role-id={1}
+        allowed-role-id={2}
         menu-items='[{"name":"Profile","actionType":"event_emit","eventName":"aut_profile"}]'
         flow-config='{"mode" : "tryAut", "customCongratsMessage": ""}'
         nova-address="0x2D26a34D4DcaCb7A6C50Bd8b4C52EAB8537eb6d6"

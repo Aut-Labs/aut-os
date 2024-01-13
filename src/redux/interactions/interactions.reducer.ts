@@ -17,14 +17,14 @@ export interface InteractionState {
   status: ResultState;
   errorMessage: string;
   interaction: any;
-  hasCommonInteractions: boolean;
+  interactions: any[];
 }
 
 const initialState: InteractionState = {
   status: ResultState.Idle,
   errorMessage: "",
   interaction: null,
-  hasCommonInteractions: false
+  interactions: []
 };
 
 export const interactionSlice = createSlice({
@@ -37,8 +37,8 @@ export const interactionSlice = createSlice({
         state[key] = action.payload[key];
       });
     },
-    setHasCommonInteractions(state, action) {
-      state.hasCommonInteractions = action.payload;
+    addInteraction(state, action) {
+      state.interactions.push(action.payload);
     }
   },
   extraReducers: (builder) => {
@@ -53,14 +53,14 @@ export const interactionSlice = createSlice({
   }
 });
 
-export const { setHasCommonInteractions, updateInteractionState } =
+export const { addInteraction, updateInteractionState } =
   interactionSlice.actions;
 
 export const InteractionStatus = (state) =>
   state.interaction.status as ResultState;
 export const InteractionForAction = (state) => state.interaction.interaction;
-export const CommonInteractions = (state) =>
-  state.interaction.hasCommonInteractions as boolean;
+export const AdddInteractions = (state) =>
+  state.interaction.interactions as any[];
 export const InteractionErrorMessage = (state) =>
   state.interaction.errorMessage as string;
 

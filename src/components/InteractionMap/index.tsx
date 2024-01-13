@@ -40,6 +40,11 @@ import { AutInteractionsDialog } from "@components/AutInteractionsDialog";
 import { useAppDispatch } from "@store/store.model";
 import { setOpenInteractions } from "@store/ui-reducer";
 import { useSelector } from "react-redux";
+import { AdddInteractions } from "@store/interactions/interactions.reducer";
+import jabyl from "@assets/aut-team-avatars/jabyl.png";
+import { interactionsMock } from "./misc/mock";
+import { useAccount } from "wagmi";
+import { IsConnected } from "@auth/auth.reducer";
 
 const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -49,9 +54,6 @@ const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
   }
 }));
 
-const { proximityLevels, centralAutId } = getProximityLevels();
-const _graphData = generateGraphData(centralAutId, proximityLevels);
-
 function InteractionMap({ parentRef: containerRef, isActive }) {
   const fgRef = useRef<ForceGraphMethods>();
   const [anchorPos, setAnchorPos] = useState({ x: 0, y: 0 });
@@ -59,13 +61,26 @@ function InteractionMap({ parentRef: containerRef, isActive }) {
   const [showPopover, setShowPopover] = useState(false);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [highlightedPl, setHighlightedPl] = useState(null);
+  const [pLevels, setProximityLevels] = useState([]);
+  const [initialGraphData, setInitialGraphData] = useState<
+    GraphData<MapNode, LinkObject<MapNode, MapLink>>
+  >({
+    nodes: [],
+    links: []
+  });
   const [graphData, setGraphData] = useState<
     GraphData<MapNode, LinkObject<MapNode, MapLink>>
-  >(cloneGraphData(_graphData));
+  >({
+    nodes: [],
+    links: []
+  });
   const [isDragging, setIsDragging] = useState(false);
+  const { address } = useAccount();
 
   const dispatch = useAppDispatch();
   const { openInteractions } = useSelector((state: any) => state.ui);
+  const addedInteractions = useSelector(AdddInteractions);
+  const isConnected = useSelector(IsConnected);
 
   const handleClose = () => {
     dispatch(setOpenInteractions(false));
@@ -77,7 +92,7 @@ function InteractionMap({ parentRef: containerRef, isActive }) {
 
   const onRenderFramePre = useCallback(
     (ctx: CanvasRenderingContext2D) => {
-      const circleData = calculatePLCircleCentersAndRadii(_graphData.nodes);
+      const circleData = calculatePLCircleCentersAndRadii(graphData.nodes);
 
       Object.values(circleData).forEach((circle: any) => {
         ctx.beginPath();
@@ -106,6 +121,39 @@ function InteractionMap({ parentRef: containerRef, isActive }) {
       updateSize();
     }
   }, [containerRef]);
+
+  useEffect(() => {
+    if (addedInteractions?.length) {
+      const newuser = {
+        owner: "ownerE",
+        username: "jabyl",
+        avatar: jabyl,
+        commitment: 10,
+        role: 2,
+        interactions: JSON.parse(JSON.stringify(interactionsMock))
+      };
+      const isNewCentralId =
+        isConnected && address !== "0x09Ed23BB6F9Ccc3Fd9b3BC4C859D049bf4AB4D43";
+      addedInteractions.forEach((_, index) => {
+        newuser.interactions[index].status = "Complete";
+      });
+
+      const { proximityLevels, centralAutId } = getProximityLevels(
+        newuser,
+        isNewCentralId
+      );
+      const _graphData = generateGraphData(centralAutId, proximityLevels);
+      setInitialGraphData(_graphData);
+      setProximityLevels(proximityLevels);
+      setGraphData(cloneGraphData(_graphData));
+    } else {
+      const { proximityLevels, centralAutId } = getProximityLevels(null, false);
+      const _graphData = generateGraphData(centralAutId, proximityLevels);
+      setInitialGraphData(_graphData);
+      setGraphData(cloneGraphData(_graphData));
+      setProximityLevels(proximityLevels);
+    }
+  }, [addedInteractions, address, isConnected]);
 
   const handleNodeHover = useCallback(
     (node: NodeObject<MapNode>) => {
@@ -191,9 +239,7 @@ function InteractionMap({ parentRef: containerRef, isActive }) {
   );
 
   const getNovaInfoByPl = (level: number): any => {
-    return (
-      proximityLevels.find((pl) => pl.level === level)?.members[0].nova || {}
-    );
+    return pLevels.find((pl) => pl.level === level)?.members[0].nova || {};
   };
 
   return (
@@ -214,7 +260,7 @@ function InteractionMap({ parentRef: containerRef, isActive }) {
         onNodeDrag={handleNodeDrag}
         onNodeDragEnd={() => {
           handleNodeDragEnd();
-          setGraphData(cloneGraphData(_graphData));
+          setGraphData(cloneGraphData(initialGraphData));
         }}
         linkWidth={linkWidth}
         nodeCanvasObject={drawNode}
@@ -254,7 +300,7 @@ function InteractionMap({ parentRef: containerRef, isActive }) {
             py: 0
           }}
         >
-          {proximityLevels.map(({ level, name, description, members }) => {
+          {pLevels.map(({ level, name, description, members }) => {
             const novaInfo = getNovaInfoByPl(level);
             return (
               <ListItem

@@ -8,7 +8,7 @@ import iulia from "@assets/aut-team-avatars/iulia.jpg";
 import unknown from "@assets/aut-team-avatars/unknown.png";
 import { AutId, AutIdInteractions, Nova } from "@api/map.model";
 
-const interactionsMock: AutIdInteractions[] = [
+export const interactionsMock: AutIdInteractions[] = [
   {
     type: "Tech & Infra",
     name: "Ethereum",
@@ -244,7 +244,7 @@ function assignRandomStatus(interactions) {
   });
 }
 
-function generateMembersWithInteractions(members) {
+export function generateMembersWithInteractions(members) {
   return members.map((member) => {
     return {
       ...member,
@@ -294,13 +294,6 @@ const mockNovas = [
         username: "JL",
         avatar: jl,
         commitment: 5,
-        role: 2
-      },
-      {
-        owner: "ownerE",
-        username: "jabyl",
-        avatar: jabyl,
-        commitment: 10,
         role: 2
       },
       {
@@ -461,7 +454,7 @@ const mockNovas = [
   // }
 ];
 
-export const generateNovas = () => {
+export const generateNovas = (newuser: any) => {
   return mockNovas.map((nova) => {
     const members = [];
     const newNova = new Nova(
@@ -485,6 +478,21 @@ export const generateNovas = () => {
       );
       members.push(newMember);
     });
+
+    if (newuser) {
+      const newMember = new AutId(
+        newuser.owner,
+        newuser.username,
+        newuser.commitment,
+        newuser.role,
+        newuser.interactions,
+        newuser.avatar,
+        newNova
+      );
+      members.push(newMember);
+    }
+
+    debugger;
 
     newNova.members = members;
 

@@ -13,8 +13,10 @@ import { memo, useMemo, useState } from "react";
 import { ReactComponent as KeyIcon } from "@assets/autos/lock-keyhole.svg";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import {
+  AdddInteractions,
   InteractionForAction,
   InteractionStatus,
+  addInteraction,
   updateInteractionState
 } from "@store/interactions/interactions.reducer";
 import { ResultState } from "@store/result-status";
@@ -23,6 +25,7 @@ import { useSelector } from "react-redux";
 
 const InteractionListItem = memo(
   ({ interaction, verify }: { interaction: any; verify: any }) => {
+    const addedInteractions = useSelector(AdddInteractions);
     const theme = useTheme();
     const status = useSelector(InteractionStatus);
     const chosenInteractionForACtion = useSelector(InteractionForAction);
@@ -39,8 +42,12 @@ const InteractionListItem = memo(
     }, [status, isSameInteraction]);
 
     const isActive = useMemo(() => {
-      return status === ResultState.Success && isSameInteraction;
-    }, [status, isSameInteraction]);
+      return addedInteractions.some(({ interaction: int }) => {
+        const _id = `${int?.protocol}_${int?.description}`;
+        const id = `${interaction?.protocol}_${interaction?.description}`;
+        return _id === id;
+      });
+    }, [interaction, addedInteractions]);
 
     const isIdle = useMemo(() => {
       return !isLoading && !isActive;
@@ -144,27 +151,40 @@ const InteractionListItem = memo(
             <AutOsButton
               type="button"
               onClick={verify}
-              // disabled={holderXp < plugin.xp}
-              disabled={false}
-              color="primary"
+              disabled={isLoading || isActive}
+              sx={{
+                "&.MuiButton-root": {
+                  background: isActive ? "#4caf50" : "#576176",
+                  "&.Mui-disabled": {
+                    color: isActive ? "white" : "#818CA2",
+                    opacity: "1"
+                  }
+                }
+              }}
               variant="outlined"
             >
-              {isIdle && (
+              {isActive ? (
                 <Typography fontWeight="700" fontSize="16px" lineHeight="26px">
-                  Verify
+                  Verified
                 </Typography>
-              )}
-              {isLoading && (
-                <CircularProgress
-                  size={23}
-                  color="secondary"
-                ></CircularProgress>
-              )}
-
-              {isActive && (
-                <Typography fontWeight="700" fontSize="16px" lineHeight="26px">
-                  Verified!✅
-                </Typography>
+              ) : (
+                <>
+                  {isIdle && (
+                    <Typography
+                      fontWeight="700"
+                      fontSize="16px"
+                      lineHeight="26px"
+                    >
+                      Verify
+                    </Typography>
+                  )}
+                  {isLoading && (
+                    <CircularProgress
+                      size={23}
+                      color="secondary"
+                    ></CircularProgress>
+                  )}
+                </>
               )}
             </AutOsButton>
           </Box>
@@ -187,27 +207,33 @@ const InteractionList = ({ isLoading = false, interactions = [] }: any) => {
       })
     );
     setTimeout(() => {
-      if (interaction?.protocol === "Ethereum") {
-        setVerifySuccess(true);
-        dispatch(
-          updateInteractionState({
-            status: ResultState.Success,
-            interaction,
-            hasCommonInteractions: true
-          })
-        );
-      } else {
-        if (interaction?.protocol === "Ethereum") {
-          setVerifySuccess(false);
-          dispatch(
-            updateInteractionState({
-              status: ResultState.Failed,
-              errorMessage:
-                "Sorry, it seems like you have not completed this interaction yet!"
-            })
-          );
-        }
-      }
+      setVerifySuccess(true);
+      dispatch(
+        updateInteractionState({
+          status: ResultState.Idle,
+          interaction: null
+        })
+      );
+      dispatch(
+        addInteraction({
+          interaction
+        })
+      );
+      // if (interaction?.protocol === "Ethereum") {
+
+      // } else {
+      //   if (interaction?.protocol === "Ethereum") {
+      //     setVerifySuccess(false);
+      //     dispatch(
+      //       updateInteractionState({
+      //         interaction: null,
+      //         status: ResultState.Failed,
+      //         errorMessage:
+      //           "Sorry, it seems like you have not completed this interaction yet!"
+      //       })
+      //     );
+      //   }
+      // }
     }, 2000);
   };
 

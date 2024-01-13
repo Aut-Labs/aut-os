@@ -30,14 +30,19 @@ export interface PLConfig {
   radius: number;
 }
 
-export const getProximityLevels = (): {
+export const getProximityLevels = (
+  newuser: any,
+  isNewCentralId: boolean
+): {
   proximityLevels: PLConfig[];
   centralAutId: AutId;
 } => {
-  const novas = generateNovas();
+  const novas = generateNovas(newuser);
 
   const autIds: AutId[] = novas.flatMap((nova) => nova.members);
-  const centralAutId: AutId = autIds[0];
+  const centralAutId: AutId = isNewCentralId
+    ? autIds.find((v) => v.username == newuser.username)
+    : autIds[0];
   const accountedUsernames = new Set([centralAutId.username]);
 
   const filterNonAccountedAutIds = (levelAutIds: AutId[], test: string) => {

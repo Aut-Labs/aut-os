@@ -7,19 +7,12 @@ import { useRef } from "react";
 import { AutOsButton } from "@components/AutButton";
 import { useAppDispatch } from "@store/store.model";
 import { setOpenInteractions } from "@store/ui-reducer";
-import { AutInteractionsDialog } from "@components/AutInteractionsDialog";
-import {
-  CommonInteractions,
-  setHasCommonInteractions
-} from "@store/interactions/interactions.reducer";
+import { AdddInteractions } from "@store/interactions/interactions.reducer";
 
 const AutMap = ({ communities = [] }) => {
-  const canUpdateProfile = useSelector(CanUpdateProfile);
-
   const ref = useRef();
   const dispatch = useAppDispatch();
-  const { openInteractions } = useSelector((state: any) => state.ui);
-  const hasCommonInteractions = useSelector(CommonInteractions);
+  const addedInteractions = useSelector(AdddInteractions);
 
   const handleClose = () => {
     dispatch(setOpenInteractions(false));
@@ -30,7 +23,7 @@ const AutMap = ({ communities = [] }) => {
   };
   return (
     <>
-      {!hasCommonInteractions && (
+      {!addedInteractions?.length && (
         <Box
           sx={{
             display: "flex",
@@ -102,7 +95,7 @@ const AutMap = ({ communities = [] }) => {
           width: "100%",
           height: "100%",
           // overflow: "hidden",
-          ...(!hasCommonInteractions && {
+          ...(!addedInteractions?.length && {
             // borderBottomRightRadius: "72px",
             // borderBottomLeftRadius: "72px",
             mixBlendMode: "plus-lighter",
@@ -112,7 +105,7 @@ const AutMap = ({ communities = [] }) => {
           })
         }}
       >
-        <InteractionMap isActive={hasCommonInteractions} parentRef={ref} />
+        <InteractionMap isActive={!!addedInteractions.length} parentRef={ref} />
       </Box>
     </>
   );
