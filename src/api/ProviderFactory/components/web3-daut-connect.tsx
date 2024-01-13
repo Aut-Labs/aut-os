@@ -144,7 +144,7 @@ function Web3DautConnect({
       await dispatch(updateWalletProviderState(itemsToUpdate));
 
       navigate({
-        pathname: `/${autID.name}.aut`
+        pathname: `/${autID.name}`
         // search: `?${params.toString()}`
       });
       await dispatch(

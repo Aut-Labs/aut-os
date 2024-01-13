@@ -5,6 +5,7 @@ import holderReducer from "./holder/holder.reducer";
 import searchReducer from "./search/search.reducer";
 import walletProvideReducer from "./WalletProvider/WalletProvider";
 import pluginsReducer from "./plugins/plugins.reducer";
+import interactionsReducer from "./interactions/interactions.reducer";
 
 export const reducers = combineReducers({
   auth: authSliceReducer,
@@ -12,6 +13,7 @@ export const reducers = combineReducers({
   holder: holderReducer,
   plugin: pluginsReducer,
   search: searchReducer,
+  interaction: interactionsReducer,
   walletProvider: walletProvideReducer
 });
 

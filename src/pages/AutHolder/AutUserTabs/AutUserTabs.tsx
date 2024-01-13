@@ -78,10 +78,11 @@ const AutUserTabs = ({ communities }) => {
     },
 
     {
-      label: "Plugins ✨",
+      label: "Plugins 🔒",
       props: {
         plugins
       },
+      disabled: true,
       component: PluginList
     }
   ];

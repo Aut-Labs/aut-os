@@ -227,7 +227,7 @@ const AutSearch = () => {
   function selectProfile(profile: AutID) {
     const params = new URLSearchParams(location.search);
     navigate({
-      pathname: `/${profile.name}.aut`
+      pathname: `/${profile.name}`
     });
     dispatch(
       fetchHolder({

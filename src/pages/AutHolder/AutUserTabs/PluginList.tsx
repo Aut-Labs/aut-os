@@ -198,7 +198,6 @@ const PluginList = ({ isLoading = false, plugins = [] }: TableParamsParams) => {
   };
 
   const openDialog = (plugin) => {
-    debugger;
     dispatch(
       updatePluginState({
         status: ResultState.Loading

@@ -8,6 +8,7 @@ import PerfectScrollbar from "react-perfect-scrollbar";
 interface AutOsTabParams {
   label: string;
   component: any;
+  disabled?: boolean;
   props: {
     [key: string]: any;
   };
@@ -123,12 +124,16 @@ function AutOsTabs(props: AutOsTabsParams) {
               "&.Mui-selected": {
                 bgcolor: "offWhite.main",
                 color: "nightBlack.main"
+              },
+              "&.Mui-disabled": {
+                color: "offWhite.dark",
+                opacity: "0.8"
               }
             }
           }}
         >
-          {props.tabs.map(({ label }) => (
-            <Tab key={label} label={label} />
+          {props.tabs.map(({ label, disabled }) => (
+            <Tab key={label} label={label} disabled={disabled} />
           ))}
         </Tabs>
       </Box>

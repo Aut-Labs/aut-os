@@ -34,10 +34,7 @@ export const fetchHolderData = async (
 ): Promise<HolderData> => {
   return axios
     .get<HolderData>(
-      `${environment.apiUrl}/autID/${holderName.replace(
-        ".aut",
-        ""
-      )}?network=${network}`,
+      `${environment.apiUrl}/autID/${holderName}?network=${network}`,
       { cancelToken: source.token }
     )
     .then((res) => res.data)

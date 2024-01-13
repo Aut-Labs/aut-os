@@ -6,120 +6,210 @@ import {
   SvgIcon,
   Box,
   useTheme,
-  Paper
+  Paper,
+  CircularProgress
 } from "@mui/material";
-import { memo } from "react";
+import { memo, useMemo, useState } from "react";
 import { ReactComponent as KeyIcon } from "@assets/autos/lock-keyhole.svg";
 import PerfectScrollbar from "react-perfect-scrollbar";
+import {
+  InteractionForAction,
+  InteractionStatus,
+  updateInteractionState
+} from "@store/interactions/interactions.reducer";
+import { ResultState } from "@store/result-status";
+import { useAppDispatch } from "@store/store.model";
+import { useSelector } from "react-redux";
 
-const InteractionListItem = memo(({ interaction }: { interaction: any }) => {
-  const theme = useTheme();
-  return (
-    <Box
-      sx={{
-        display: "flex",
-        border: "1px solid",
-        borderColor: "#576176",
-        minWidth: "170px",
-        padding: theme.spacing(3)
-      }}
-    >
+const InteractionListItem = memo(
+  ({ interaction, verify }: { interaction: any; verify: any }) => {
+    const theme = useTheme();
+    const status = useSelector(InteractionStatus);
+    const chosenInteractionForACtion = useSelector(InteractionForAction);
+
+    const isSameInteraction = useMemo(() => {
+      const _id = `${chosenInteractionForACtion?.protocol}_${chosenInteractionForACtion?.description}`;
+      const id = `${interaction?.protocol}_${interaction?.description}`;
+
+      return _id === id;
+    }, [chosenInteractionForACtion, interaction]);
+
+    const isLoading = useMemo(() => {
+      return status === ResultState.Loading && isSameInteraction;
+    }, [status, isSameInteraction]);
+
+    const isActive = useMemo(() => {
+      return status === ResultState.Success && isSameInteraction;
+    }, [status, isSameInteraction]);
+
+    const isIdle = useMemo(() => {
+      return !isLoading && !isActive;
+    }, [status, isLoading, isActive]);
+
+    console.log(
+      isLoading,
+      isActive,
+      isIdle,
+      chosenInteractionForACtion,
+      interaction
+    );
+
+    return (
       <Box
         sx={{
-          height: "100%",
-          width: "100%",
           display: "flex",
-          justifyContent: "space-between",
-          flexDirection: "column"
+          border: "1px solid",
+          borderColor: "#576176",
+          minWidth: "170px",
+          padding: theme.spacing(3)
         }}
       >
         <Box
           sx={{
+            height: "100%",
+            width: "100%",
             display: "flex",
-            flexDirection: {
-              xs: "row"
-            },
-            justifyContent: {
-              xs: "flex-start"
-            },
-            alignItems: "center"
+            justifyContent: "space-between",
+            flexDirection: "column"
           }}
         >
-          <Avatar
-            sx={{
-              bgcolor: "transparent",
-              width: {
-                xs: "40px",
-                md: "50px"
-              },
-              height: {
-                xs: "40px",
-                md: "50px"
-              },
-              borderRadius: "0"
-            }}
-            aria-label="nova-avatar"
-            src={interaction.image}
-          />
           <Box
             sx={{
-              marginLeft: {
-                xs: theme.spacing(3),
-                sm: theme.spacing(1),
-                md: theme.spacing(2),
-                xxl: theme.spacing(3)
-              },
               display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-between"
+              flexDirection: {
+                xs: "row"
+              },
+              justifyContent: {
+                xs: "flex-start"
+              },
+              alignItems: "center"
             }}
           >
-            <Typography variant="subtitle2" color="offWhite.main">
-              {interaction.protocol}
+            <Avatar
+              sx={{
+                bgcolor: "transparent",
+                width: {
+                  xs: "40px",
+                  md: "50px"
+                },
+                height: {
+                  xs: "40px",
+                  md: "50px"
+                },
+                borderRadius: "0"
+              }}
+              aria-label="nova-avatar"
+              src={interaction.image}
+            />
+            <Box
+              sx={{
+                marginLeft: {
+                  xs: theme.spacing(3),
+                  sm: theme.spacing(1),
+                  md: theme.spacing(2),
+                  xxl: theme.spacing(3)
+                },
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between"
+              }}
+            >
+              <Typography variant="subtitle2" color="offWhite.main">
+                {interaction.protocol}
+              </Typography>
+            </Box>
+          </Box>
+          <Box
+            sx={{
+              marginTop: theme.spacing(3),
+              justifyContent: "center",
+              display: "flex"
+            }}
+          >
+            <Typography
+              variant="caption"
+              color="offWhite.main"
+              textAlign="center"
+            >
+              {interaction.description}
             </Typography>
           </Box>
-        </Box>
-        <Box
-          sx={{
-            marginTop: theme.spacing(3),
-            justifyContent: "center",
-            display: "flex"
-          }}
-        >
-          <Typography
-            variant="caption"
-            color="offWhite.main"
-            textAlign="center"
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              marginTop: theme.spacing(3)
+            }}
           >
-            {interaction.description}
-          </Typography>
-        </Box>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            marginTop: theme.spacing(3)
-          }}
-        >
-          <AutOsButton
-            type="button"
-            // disabled={holderXp < plugin.xp}
-            disabled={false}
-            color="primary"
-            variant="outlined"
-          >
-            <Typography fontWeight="700" fontSize="16px" lineHeight="26px">
-              Verify
-            </Typography>
-          </AutOsButton>
+            <AutOsButton
+              type="button"
+              onClick={verify}
+              // disabled={holderXp < plugin.xp}
+              disabled={false}
+              color="primary"
+              variant="outlined"
+            >
+              {isIdle && (
+                <Typography fontWeight="700" fontSize="16px" lineHeight="26px">
+                  Verify
+                </Typography>
+              )}
+              {isLoading && (
+                <CircularProgress
+                  size={23}
+                  color="secondary"
+                ></CircularProgress>
+              )}
+
+              {isActive && (
+                <Typography fontWeight="700" fontSize="16px" lineHeight="26px">
+                  Verified!✅
+                </Typography>
+              )}
+            </AutOsButton>
+          </Box>
         </Box>
       </Box>
-    </Box>
-  );
-});
+    );
+  }
+);
 
 const InteractionList = ({ isLoading = false, interactions = [] }: any) => {
   const theme = useTheme();
+  const dispatch = useAppDispatch();
+  const [verifySuccess, setVerifySuccess] = useState(null);
+
+  const verifyInteraction = (interaction) => {
+    dispatch(
+      updateInteractionState({
+        interaction,
+        status: ResultState.Loading
+      })
+    );
+    setTimeout(() => {
+      if (interaction?.protocol === "Ethereum") {
+        setVerifySuccess(true);
+        dispatch(
+          updateInteractionState({
+            status: ResultState.Success,
+            interaction,
+            hasCommonInteractions: true
+          })
+        );
+      } else {
+        if (interaction?.protocol === "Ethereum") {
+          setVerifySuccess(false);
+          dispatch(
+            updateInteractionState({
+              status: ResultState.Failed,
+              errorMessage:
+                "Sorry, it seems like you have not completed this interaction yet!"
+            })
+          );
+        }
+      }
+    }, 2000);
+  };
 
   return (
     <PerfectScrollbar
@@ -182,6 +272,7 @@ const InteractionList = ({ isLoading = false, interactions = [] }: any) => {
             <InteractionListItem
               key={`nova-row-${index}`}
               interaction={interaction}
+              verify={() => verifyInteraction(interaction)}
             />
           ))}
         </Box>

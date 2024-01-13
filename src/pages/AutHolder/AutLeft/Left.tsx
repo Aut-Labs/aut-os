@@ -45,7 +45,7 @@ const AutLeft = () => {
     const params = new URLSearchParams(location.search);
     // params.set("network", profile.properties.network?.toLowerCase());
     navigate({
-      pathname: `/${profile.name}.aut`
+      pathname: `/${profile.name}`
       // search: `?${params.toString()}`
     });
     await dispatch(

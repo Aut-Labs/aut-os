@@ -8,13 +8,29 @@ import { AutOsButton } from "@components/AutButton";
 import { useAppDispatch } from "@store/store.model";
 import { setOpenInteractions } from "@store/ui-reducer";
 import { AutInteractionsDialog } from "@components/AutInteractionsDialog";
+import {
+  CommonInteractions,
+  setHasCommonInteractions
+} from "@store/interactions/interactions.reducer";
 
 const AutMap = ({ communities = [] }) => {
   const canUpdateProfile = useSelector(CanUpdateProfile);
+
   const ref = useRef();
+  const dispatch = useAppDispatch();
+  const { openInteractions } = useSelector((state: any) => state.ui);
+  const hasCommonInteractions = useSelector(CommonInteractions);
+
+  const handleClose = () => {
+    dispatch(setOpenInteractions(false));
+  };
+
+  const openInteractionsModal = () => {
+    dispatch(setOpenInteractions(true));
+  };
   return (
     <>
-      {!canUpdateProfile && (
+      {!hasCommonInteractions && (
         <Box
           sx={{
             display: "flex",
@@ -64,6 +80,7 @@ const AutMap = ({ communities = [] }) => {
             Connect with this user to see their <br /> map of connections
           </Typography>
           <AutOsButton
+            onClick={openInteractionsModal}
             type="button"
             color="primary"
             size="small"
@@ -85,7 +102,7 @@ const AutMap = ({ communities = [] }) => {
           width: "100%",
           height: "100%",
           // overflow: "hidden",
-          ...(!canUpdateProfile && {
+          ...(!hasCommonInteractions && {
             // borderBottomRightRadius: "72px",
             // borderBottomLeftRadius: "72px",
             mixBlendMode: "plus-lighter",
@@ -95,7 +112,7 @@ const AutMap = ({ communities = [] }) => {
           })
         }}
       >
-        <InteractionMap isActive={canUpdateProfile} parentRef={ref} />
+        <InteractionMap isActive={hasCommonInteractions} parentRef={ref} />
       </Box>
     </>
   );
