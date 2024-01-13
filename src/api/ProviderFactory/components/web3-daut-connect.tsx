@@ -243,8 +243,10 @@ function Web3DautConnect({
         }}
         use-dev={environment.env == EnvMode.Development}
         id="d-aut"
+        allowed-role-id={1}
         menu-items='[{"name":"Profile","actionType":"event_emit","eventName":"aut_profile"}]'
-        flow-config='{"mode" : "dashboard", "customCongratsMessage": ""}'
+        flow-config='{"mode" : "tryAut", "customCongratsMessage": ""}'
+        nova-address="0x2D26a34D4DcaCb7A6C50Bd8b4C52EAB8537eb6d6"
         ipfs-gateway="https://ipfs.nftstorage.link/ipfs"
       />
     </>
