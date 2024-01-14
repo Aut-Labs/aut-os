@@ -263,7 +263,7 @@ const mockNovas = [
     members: generateMembersWithInteractions([
       {
         owner: "ownerC",
-        username: "Tao",
+        username: "mr_meeseeks",
         avatar: tao,
         commitment: 7,
         role: 1

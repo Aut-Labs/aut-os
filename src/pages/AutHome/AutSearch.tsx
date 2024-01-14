@@ -269,7 +269,7 @@ const AutSearch = () => {
             // Simulated results (mocked data)
             const results = [
               {
-                name: "Tao",
+                name: "Mr_meeseeks",
                 network: "mumbai"
               },
               {

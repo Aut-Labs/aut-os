@@ -133,7 +133,7 @@ function InteractionMap({ parentRef: containerRef, isActive }) {
         interactions: JSON.parse(JSON.stringify(interactionsMock))
       };
       const isNewCentralId =
-        isConnected && address !== "0x09Ed23BB6F9Ccc3Fd9b3BC4C859D049bf4AB4D43";
+        isConnected && address !== "0xa082eA7C6583517F4094C8FbbB71035c9C27C919";
       addedInteractions.forEach((_, index) => {
         newuser.interactions[index].status = "Complete";
       });
