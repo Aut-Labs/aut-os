@@ -247,7 +247,7 @@ function Web3DautConnect({
         menu-items='[{"name":"Profile","actionType":"event_emit","eventName":"aut_profile"}]'
         flow-config='{"mode" : "dashboard", "customCongratsMessage": ""}'
         // nova-address="0xEDc857c2ca6603651A8157B023B9C1ea7237c305"
-        ipfs-gateway="https://ipfs.nftstorage.link/ipfs"
+        ipfs-gateway="https://aut.mypinata.cloud/ipfs"
       />
     </>
   );
