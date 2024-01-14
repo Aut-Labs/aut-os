@@ -41,7 +41,7 @@ import { useAppDispatch } from "@store/store.model";
 import { setOpenInteractions } from "@store/ui-reducer";
 import { useSelector } from "react-redux";
 import { AdddInteractions } from "@store/interactions/interactions.reducer";
-import jabyl from "@assets/aut-team-avatars/jabyl.png";
+import jabyl from "@assets/aut-team-avatars/jabyl.jpg";
 import { interactionsMock } from "./misc/mock";
 import { useAccount } from "wagmi";
 import { IsConnected } from "@auth/auth.reducer";
@@ -126,7 +126,7 @@ function InteractionMap({ parentRef: containerRef, isActive }) {
     if (addedInteractions?.length) {
       const newuser = {
         owner: "ownerE",
-        username: "jabyl",
+        username: "alex",
         avatar: jabyl,
         commitment: 10,
         role: 2,

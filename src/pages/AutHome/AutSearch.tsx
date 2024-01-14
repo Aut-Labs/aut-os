@@ -277,7 +277,7 @@ const AutSearch = () => {
                 network: "mumbai"
               },
               {
-                name: "jabyl",
+                name: "alex",
                 network: "mumbai"
               },
               {

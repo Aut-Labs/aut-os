@@ -2,7 +2,7 @@ import tao from "@assets/aut-team-avatars/tao.jpeg";
 import antonio from "@assets/aut-team-avatars/antonio.jpg";
 import libby from "@assets/aut-team-avatars/libby.png";
 import jl from "@assets/aut-team-avatars/jl.jpg";
-import jabyl from "@assets/aut-team-avatars/jabyl.png";
+import jabyl from "@assets/aut-team-avatars/jabyl.jpg";
 import barbaros from "@assets/aut-team-avatars/barbaros.jpeg";
 import iulia from "@assets/aut-team-avatars/iulia.jpg";
 import unknown from "@assets/aut-team-avatars/unknown.png";
