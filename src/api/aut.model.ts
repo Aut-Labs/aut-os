@@ -1,10 +1,10 @@
 import { Community } from "./community.model";
 import { BaseNFTModel } from "@aut-labs/sdk/dist/models/baseNFTModel";
 import { httpUrlToIpfsCID } from "./storage.api";
-import { Role } from "@aut-labs/sdk/dist/models/dao";
 import { CommitmentMessages } from "@utils/misc";
 import { AutSocial } from "./social.model";
 import { HolderData } from "@aut-labs/sdk";
+import { Role } from "@aut-labs/sdk/dist/models/nova";
 
 export const socialUrls = {
   discord: {
@@ -56,6 +56,8 @@ export const DefaultSocials: AutSocial[] = [
 export class AutIDProperties {
   avatar: string;
 
+  thumbnailAvatar: string;
+
   communities: Community[];
 
   timestamp: string;
@@ -76,8 +78,6 @@ export class AutIDProperties {
 
   holderData?: HolderData;
 
-  isAdmin?: boolean;
-
   constructor(data: AutIDProperties) {
     if (!data) {
       this.communities = [];
@@ -95,7 +95,7 @@ export class AutIDProperties {
       this.socials = this.socials.filter((s) => s.type !== "eth");
       this.network = data.network;
       this.holderData = data.holderData;
-      this.isAdmin = data.isAdmin;
+      this.thumbnailAvatar = data.thumbnailAvatar;
     }
   }
 }

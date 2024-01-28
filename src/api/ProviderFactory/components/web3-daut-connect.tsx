@@ -109,11 +109,12 @@ function Web3DautConnect({
 
     const profile = JSON.parse(JSON.stringify(detail));
     const autID = new AutID(profile);
-    autID.properties.communities = autID.properties.communities.filter((c) => {
-      return c.properties.userData?.isActive;
-    });
-    autID.properties.address = profile.address;
-    autID.properties.network = profile.network?.network?.toLowerCase();
+    // autID.properties.communities = autID.properties.communities.filter((c) => {
+    //   return c.properties.userData?.isActive;
+    // });
+    // autID.properties.address = profile.address;
+    autID.properties.network =
+      profile.properties.network?.network?.toLowerCase();
 
     const ethDomain = await fetchHolderEthEns(autID.properties.address);
     autID.properties.ethDomain = ethDomain;

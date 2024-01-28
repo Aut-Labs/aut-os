@@ -51,7 +51,7 @@ export const fetchHolderCommunities = async (
         const communityMetadataUri = ipfsCIDToHttpUrl(curr.metadata);
         return fetchMetadata<Community>(
           communityMetadataUri,
-          environment.nftStorageUrl
+          environment.ipfsGatewayUrl
         ).then((metadata) => {
           return new Community({
             ...metadata,
@@ -77,7 +77,7 @@ export const fetchAutID = async (
   const userMetadataUri = ipfsCIDToHttpUrl(holderData.metadataUri);
   const userMetadata: AutID = await fetchMetadata<AutID>(
     userMetadataUri,
-    environment.nftStorageUrl
+    environment.ipfsGatewayUrl
   );
   const ethDomain = await fetchHolderEthEns(userMetadata.properties.address);
   const autID = new AutID({
@@ -256,12 +256,12 @@ export const updateProfile = createAsyncThunk(
       !isValidUrl(user.properties.avatar as string)
     ) {
       const file = base64toFile(user.properties.avatar as string, "image");
-      user.properties.avatar = await sdk.client.storeImageAsBlob(file as File);
+      user.properties.avatar = await sdk.client.sendFileToIPFS(file as File);
       console.log("New image: ->", ipfsCIDToHttpUrl(user.properties.avatar));
     }
 
     const updatedUser = AutID.updateAutID(user);
-    const uri = await sdk.client.storeAsBlob(updatedUser);
+    const uri = await sdk.client.sendJSONToIPFS(updatedUser as any);
     console.log("New metadata: ->", ipfsCIDToHttpUrl(uri));
     console.log("avatar: ->", ipfsCIDToHttpUrl(updatedUser.properties.avatar));
     console.log("badge: ->", ipfsCIDToHttpUrl(updatedUser.image));

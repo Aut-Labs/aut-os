@@ -30,9 +30,9 @@
     ]
   },
   "dependencies": {
-    "@aut-labs/abi-types": "^0.0.61-dev",
-    "@aut-labs/d-aut": "^1.0.105-dev",
-    "@aut-labs/sdk": "^0.0.103-dev",
+    "@aut-labs/abi-types": "^0.0.69-dev",
+    "@aut-labs/d-aut": "^1.0.106-dev",
+    "@aut-labs/sdk": "^0.0.141-dev",
     "@aut-labs/sdk-biconomy": "^0.0.2",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",

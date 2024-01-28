@@ -33,7 +33,11 @@ function App() {
         const [network] = res.filter((d) => !d.disabled);
         setConfig(generateNetworkConfig(network));
         const sdk = new AutSDK({
-          nftStorageApiKey: environment.nftStorageKey
+          ipfs: {
+            apiKey: environment.ipfsApiKey,
+            secretApiKey: environment.ipfsApiSecret,
+            gatewayUrl: environment.ipfsGatewayUrl
+          }
         });
       })
       .finally(() => setAppLoading(false));
