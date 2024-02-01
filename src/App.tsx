@@ -17,7 +17,7 @@ import { CanUpdateProfile } from "@auth/auth.reducer";
 import AutCommunityEdit from "./pages/AutCommunity/AutNova";
 import AutProfileEdit from "./pages/AutHolder/AutLeft/AutProfileEdit";
 import { WagmiConfig } from "wagmi";
-import { generateNetworkConfig } from "@api/ProviderFactory/setup.config";
+// import { generateNetworkConfig } from "@api/ProviderFactory/setup.config";
 
 function App() {
   const dispatch = useAppDispatch();
@@ -31,7 +31,7 @@ function App() {
       .then(async (res) => {
         dispatch(setNetworks(res));
         const [network] = res.filter((d) => !d.disabled);
-        setConfig(generateNetworkConfig(network));
+        // setConfig(generateNetworkConfig(network));
         const sdk = new AutSDK({
           ipfs: {
             apiKey: environment.ipfsApiKey,
@@ -48,7 +48,7 @@ function App() {
       {appLoading ? (
         <AutLoading />
       ) : (
-        <WagmiConfig config={config}>
+        <>
           <Web3DautConnect config={config} setLoading={setLoading} />
           <SWSnackbar />
           <Box
@@ -76,7 +76,7 @@ function App() {
               </Suspense>
             )}
           </Box>
-        </WagmiConfig>
+        </>
       )}
     </>
   );

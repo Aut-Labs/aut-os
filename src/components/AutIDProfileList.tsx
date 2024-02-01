@@ -54,7 +54,9 @@ export const AutIDProfileList = ({
                 borderRadius: 0
               }}
               aria-label="avatar"
-              src={ipfsCIDToHttpUrl(user?.properties?.avatar as string)}
+              src={ipfsCIDToHttpUrl(
+                user?.properties?.thumbnailAvatar as string
+              )}
             />
             <div style={{ display: "flex", flex: "1" }}>
               <div

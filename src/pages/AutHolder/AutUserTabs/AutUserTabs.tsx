@@ -60,19 +60,19 @@ const plugins = [
   }
 ];
 
-const AutUserTabs = ({ communities }) => {
+const AutUserTabs = ({ nova }) => {
   const tabs = [
     {
       label: "Map",
       props: {
-        communities
+        nova
       },
       component: AutMap
     },
     {
       label: "Novae",
       props: {
-        communities: communities
+        communities: [nova]
       },
       component: NovaeList
     },

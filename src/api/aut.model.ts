@@ -4,7 +4,6 @@ import { httpUrlToIpfsCID } from "./storage.api";
 import { CommitmentMessages } from "@utils/misc";
 import { AutSocial } from "./social.model";
 import { HolderData } from "@aut-labs/sdk";
-import { Role } from "@aut-labs/sdk/dist/models/nova";
 
 export const socialUrls = {
   discord: {
@@ -53,6 +52,14 @@ export const DefaultSocials: AutSocial[] = [
   }
 ];
 
+export interface AutIdInteractions {
+  type: string;
+  name: string;
+  description: string;
+  weight: string;
+  status: "Complete" | "Incomplete";
+}
+
 export class AutIDProperties {
   avatar: string;
 
@@ -74,9 +81,13 @@ export class AutIDProperties {
 
   bio?: string;
 
+  role: number;
+
   email?: string;
 
   holderData?: HolderData;
+
+  interactions?: AutIdInteractions[];
 
   constructor(data: AutIDProperties) {
     if (!data) {
@@ -96,6 +107,8 @@ export class AutIDProperties {
       this.network = data.network;
       this.holderData = data.holderData;
       this.thumbnailAvatar = data.thumbnailAvatar;
+      this.interactions = data.interactions || [];
+      this.role = data.role;
     }
   }
 }
@@ -125,7 +138,7 @@ export class AutID extends BaseNFTModel<AutIDProperties> {
 }
 
 export interface DAOMemberProperties extends AutIDProperties {
-  role: Role;
+  // role: Role;
   commitmentDescription: string;
   commitment: string;
 }

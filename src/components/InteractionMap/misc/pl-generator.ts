@@ -1,7 +1,4 @@
-import { AutId } from "@api/map.model";
-import { generateNovas } from "./mock";
-import { NodeObject } from "react-force-graph-2d";
-import { MapNode } from "../node.model";
+import { MapAutID, MapNova } from "@api/map.model";
 
 const PROXIMITY_LEVEL_DETAILS = [
   {
@@ -23,7 +20,7 @@ const PROXIMITY_LEVEL_DETAILS = [
 ];
 
 export interface PLConfig {
-  members: AutId[];
+  members: MapAutID[];
   name: string;
   description: string;
   level: number;
@@ -31,30 +28,27 @@ export interface PLConfig {
 }
 
 export const getProximityLevels = (
-  newuser: any,
-  isNewCentralId: boolean
+  mapData: MapNova
 ): {
   proximityLevels: PLConfig[];
-  centralAutId: AutId;
+  centralAutId: MapAutID;
 } => {
-  const novas = generateNovas(newuser);
+  const novas: MapNova[] = [mapData];
+  const centralAutId: MapAutID = mapData.centralNode;
+  const autIds: MapAutID[] = novas.flatMap((nova: MapNova) => nova.members);
 
-  const autIds: AutId[] = novas.flatMap((nova) => nova.members);
-  const centralAutId: AutId = isNewCentralId
-    ? autIds.find((v) => v.username == newuser.username)
-    : autIds[0];
-  const accountedUsernames = new Set([centralAutId.username]);
+  const accountedUsernames = new Set([centralAutId.name]);
 
-  const filterNonAccountedAutIds = (levelAutIds: AutId[], test: string) => {
+  const filterNonAccountedAutIds = (levelAutIds, test: string) => {
     if (!Array.isArray(levelAutIds)) {
       console.error("Expected an array, received:", levelAutIds, test);
       return [];
     }
 
-    return levelAutIds.filter((autId) => {
-      const isAlreadyAccounted = accountedUsernames.has(autId.username);
+    return levelAutIds.filter((autId: MapAutID) => {
+      const isAlreadyAccounted = accountedUsernames.has(autId.name);
       if (!isAlreadyAccounted) {
-        accountedUsernames.add(autId.username);
+        accountedUsernames.add(autId.name);
       }
       return !isAlreadyAccounted;
     });
@@ -62,9 +56,10 @@ export const getProximityLevels = (
 
   const sameRoleAutIds = filterNonAccountedAutIds(
     autIds.filter(
-      (autId) =>
-        autId.nova.id === centralAutId.nova.id &&
-        autId.role === centralAutId.role
+      (autId: MapAutID) =>
+        autId.nova.properties.address ===
+          centralAutId.nova.properties.address &&
+        autId.properties.role === centralAutId.properties.role
     ),
     "sameRoleAutIds"
   );
@@ -75,12 +70,18 @@ export const getProximityLevels = (
   );
 
   const sameMarketAutIds = filterNonAccountedAutIds(
-    autIds.filter((autId) => autId.nova.market === centralAutId.nova.market),
+    autIds.filter(
+      (autId) =>
+        autId.nova.properties.market === centralAutId.nova.properties.market
+    ),
     "sameMarketAutIds"
   );
 
   const differentNovaAutIds = filterNonAccountedAutIds(
-    autIds.filter((autId) => autId.nova.market !== centralAutId.nova.id),
+    autIds.filter(
+      (autId) =>
+        autId.nova.properties.market !== centralAutId.nova.properties.market
+    ),
     "differentNovaAutIds"
   );
 

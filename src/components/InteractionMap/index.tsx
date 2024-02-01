@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ForceGraph2D, {
   NodeObject,
   ForceGraphMethods,
@@ -36,15 +36,9 @@ import {
 import { generateGraphData, cloneGraphData, linkWidth } from "./misc/map-utils";
 import { MapLink, MapNode } from "./node.model";
 import { AutOsButton } from "@components/AutButton";
-import { AutInteractionsDialog } from "@components/AutInteractionsDialog";
 import { useAppDispatch } from "@store/store.model";
 import { setOpenInteractions } from "@store/ui-reducer";
-import { useSelector } from "react-redux";
-import { AdddInteractions } from "@store/interactions/interactions.reducer";
-import jabyl from "@assets/aut-team-avatars/jabyl.jpg";
-import { interactionsMock } from "./misc/mock";
-import { useAccount } from "wagmi";
-import { IsConnected } from "@auth/auth.reducer";
+import { MapNova } from "@api/map.model";
 
 const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -54,7 +48,15 @@ const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
   }
 }));
 
-function InteractionMap({ parentRef: containerRef, isActive }) {
+function InteractionMap({
+  parentRef: containerRef,
+  isActive,
+  mapData
+}: {
+  parentRef: any;
+  isActive: boolean;
+  mapData: MapNova;
+}) {
   const fgRef = useRef<ForceGraphMethods>();
   const [anchorPos, setAnchorPos] = useState({ x: 0, y: 0 });
   const [hoveredNode, setHoveredNode] = useState(null);
@@ -75,12 +77,8 @@ function InteractionMap({ parentRef: containerRef, isActive }) {
     links: []
   });
   const [isDragging, setIsDragging] = useState(false);
-  const { address } = useAccount();
 
   const dispatch = useAppDispatch();
-  const { openInteractions } = useSelector((state: any) => state.ui);
-  const addedInteractions = useSelector(AdddInteractions);
-  const isConnected = useSelector(IsConnected);
 
   const handleClose = () => {
     dispatch(setOpenInteractions(false));
@@ -122,38 +120,21 @@ function InteractionMap({ parentRef: containerRef, isActive }) {
     }
   }, [containerRef]);
 
-  useEffect(() => {
-    if (addedInteractions?.length) {
-      const newuser = {
-        owner: "ownerE",
-        username: "alex",
-        avatar: jabyl,
-        commitment: 10,
-        role: 2,
-        interactions: JSON.parse(JSON.stringify(interactionsMock))
-      };
-      const isNewCentralId =
-        isConnected && address !== "0xa082eA7C6583517F4094C8FbbB71035c9C27C919";
-      addedInteractions.forEach((_, index) => {
-        newuser.interactions[index].status = "Complete";
-      });
+  const graphDataAndPL = useMemo(() => {
+    const { proximityLevels, centralAutId } = getProximityLevels(mapData);
+    const _graphData = generateGraphData(centralAutId, proximityLevels);
+    return {
+      graphData: _graphData,
+      proximityLevels
+    };
+  }, [mapData]);
 
-      const { proximityLevels, centralAutId } = getProximityLevels(
-        newuser,
-        isNewCentralId
-      );
-      const _graphData = generateGraphData(centralAutId, proximityLevels);
-      setInitialGraphData(_graphData);
-      setProximityLevels(proximityLevels);
-      setGraphData(cloneGraphData(_graphData));
-    } else {
-      const { proximityLevels, centralAutId } = getProximityLevels(null, false);
-      const _graphData = generateGraphData(centralAutId, proximityLevels);
-      setInitialGraphData(_graphData);
-      setGraphData(cloneGraphData(_graphData));
-      setProximityLevels(proximityLevels);
-    }
-  }, [addedInteractions, address, isConnected]);
+  useEffect(() => {
+    if (!graphDataAndPL) return;
+    setInitialGraphData(graphDataAndPL.graphData);
+    setGraphData(cloneGraphData(graphDataAndPL.graphData));
+    setProximityLevels(graphDataAndPL.proximityLevels);
+  }, [graphDataAndPL]);
 
   const handleNodeHover = useCallback(
     (node: NodeObject<MapNode>) => {
@@ -238,6 +219,8 @@ function InteractionMap({ parentRef: containerRef, isActive }) {
     []
   );
 
+  console.log(mapData, "mapData");
+
   const getNovaInfoByPl = (level: number): any => {
     return pLevels.find((pl) => pl.level === level)?.members[0].nova || {};
   };
@@ -250,7 +233,11 @@ function InteractionMap({ parentRef: containerRef, isActive }) {
         height={dimensions.height}
         graphData={graphData}
         onRenderFramePre={onRenderFramePre}
-        onEngineStop={() => fgRef.current.zoomToFit(300)}
+        onEngineStop={() => {
+          if (mapData?.members?.length > 1) {
+            fgRef.current.zoomToFit(300);
+          }
+        }}
         nodeVal={(node: NodeObject<MapNode>) =>
           node.size + NODE_BORDER_WIDTH * 2
         }
@@ -270,144 +257,144 @@ function InteractionMap({ parentRef: containerRef, isActive }) {
         cooldownTicks={0}
         // enableZoomInteraction={false}
       />
-      <AutInteractionsDialog
+      {/* <AutInteractionsDialog
         open={openInteractions}
         title="Interactions"
         onClose={handleClose}
-      />
+      /> */}
       <FollowPopover
         type="custom"
         anchorPos={anchorPos}
         data={hoveredNode}
         open={showPopover && !isDragging && isActive}
       />
-      <Box
-        sx={{
-          borderRadius: "8px",
-          overflow: "hidden",
-          position: "absolute",
-          minWidth: "200px",
-          top: "0",
-          right: "0",
-          boxShadow: 2,
-          background: "rgba(240, 245, 255, 0.05)",
-          backdropFilter: "blur(12px)",
-          zIndex: 10
-        }}
-      >
-        <List
-          sx={{
-            py: 0
-          }}
-        >
-          {pLevels.map(({ level, name, description, members }) => {
-            const novaInfo = getNovaInfoByPl(level);
-            return (
-              <ListItem
-                key={`pl-${level}`}
-                disablePadding
-                onMouseEnter={() => setHighlightedPl(level)}
-                onMouseLeave={() => setHighlightedPl(null)}
-              >
-                <ListItemButton
-                  sx={{
-                    pt: 0
-                  }}
-                >
-                  <ListItemText
-                    primaryTypographyProps={{
-                      sx: {
-                        display: "flex"
-                      }
-                    }}
-                    primary={
-                      <>
-                        <StyledBadge
-                          badgeContent={
-                            <Tooltip title={description}>
-                              <HelpOutlineIcon
-                                color="primary"
-                                sx={{ width: "12px", ml: 1 }}
-                              />
-                            </Tooltip>
-                          }
-                        >
-                          <Typography
-                            color="white"
-                            textAlign="center"
-                            variant="subtitle2"
-                          >
-                            {name}
-                          </Typography>
-                        </StyledBadge>
-                      </>
-                    }
-                    secondary={
-                      <>
-                        <Typography
-                          sx={{
-                            display: "flex",
-                            alignItems: "center"
-                          }}
-                          variant="caption"
-                          display="block"
-                          color="white"
-                        >
-                          <PublicIcon
-                            sx={{
-                              fontSize: "12px",
-                              mr: 0.5
-                            }}
-                          />
-                          Market: {novaInfo?.market || "N/A"}
-                        </Typography>
-                        <Typography
-                          sx={{
-                            display: "flex",
-                            alignItems: "center"
-                          }}
-                          variant="caption"
-                          display="block"
-                          color="white"
-                        >
-                          <PeopleIcon
-                            sx={{
-                              fontSize: "12px",
-                              mr: 0.5
-                            }}
-                          />
-                          Members: {members?.length || 0}
-                        </Typography>
-                        {/* <Typography variant="caption" display="block">
-                            <BadgeIcon fontSize="small" color="secondary" />
-                            Roles: {novaInfo?.roles.join(", ") || "None"}
-                          </Typography> */}
-                      </>
-                    }
-                  />
-                </ListItemButton>
-              </ListItem>
-            );
-          })}
-        </List>
+      <Box>
         <Box
           sx={{
-            display: "flex",
-            justifyContent: "flex-end",
-            pb: 1
+            borderRadius: "8px",
+            overflow: "hidden",
+            position: "absolute",
+            // minWidth: "200px",
+            top: "0",
+            right: "0",
+            boxShadow: 2,
+            background: "rgba(240, 245, 255, 0.05)",
+            backdropFilter: "blur(12px)",
+            zIndex: 10
           }}
         >
-          <AutOsButton
-            onClick={openInteractionsModal}
-            type="button"
-            color="primary"
-            size="small"
-            variant="outlined"
+          <List
+            sx={{
+              py: 0
+            }}
           >
-            <Typography fontWeight="700" fontSize="16px" lineHeight="26px">
-              View Interactions
-            </Typography>
-          </AutOsButton>
+            {pLevels.map(({ level, name, description, members }) => {
+              const novaInfo = getNovaInfoByPl(level);
+              return (
+                <ListItem
+                  key={`pl-${level}`}
+                  disablePadding
+                  onMouseEnter={() =>
+                    mapData?.members?.length > 2 && setHighlightedPl(level)
+                  }
+                  onMouseLeave={() => setHighlightedPl(null)}
+                >
+                  <ListItemButton
+                    sx={{
+                      pt: 0
+                    }}
+                  >
+                    <ListItemText
+                      primaryTypographyProps={{
+                        sx: {
+                          display: "flex"
+                        }
+                      }}
+                      primary={
+                        <>
+                          <StyledBadge
+                            badgeContent={
+                              <Tooltip title={description}>
+                                <HelpOutlineIcon
+                                  color="primary"
+                                  sx={{ width: "12px", ml: 1 }}
+                                />
+                              </Tooltip>
+                            }
+                          >
+                            <Typography
+                              color="white"
+                              textAlign="center"
+                              variant="subtitle2"
+                            >
+                              {name}
+                            </Typography>
+                          </StyledBadge>
+                        </>
+                      }
+                      secondary={
+                        <>
+                          <Typography
+                            sx={{
+                              display: "flex",
+                              alignItems: "center"
+                            }}
+                            variant="caption"
+                            display="block"
+                            color="white"
+                          >
+                            <PublicIcon
+                              sx={{
+                                fontSize: "12px",
+                                mr: 0.5
+                              }}
+                            />
+                            Market: {novaInfo?.market || "N/A"}
+                          </Typography>
+                          <Typography
+                            sx={{
+                              display: "flex",
+                              alignItems: "center"
+                            }}
+                            variant="caption"
+                            display="block"
+                            color="white"
+                          >
+                            <PeopleIcon
+                              sx={{
+                                fontSize: "12px",
+                                mr: 0.5
+                              }}
+                            />
+                            Members: {members?.length || 0}
+                          </Typography>
+                        </>
+                      }
+                    />
+                  </ListItemButton>
+                </ListItem>
+              );
+            })}
+          </List>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              pb: 1
+            }}
+          >
+            <AutOsButton
+              onClick={openInteractionsModal}
+              type="button"
+              color="primary"
+              size="small"
+              variant="outlined"
+            >
+              <Typography fontWeight="700" fontSize="16px" lineHeight="26px">
+                View Interactions
+              </Typography>
+            </AutOsButton>
+          </Box>
         </Box>
       </Box>
     </>

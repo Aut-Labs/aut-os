@@ -1,6 +1,6 @@
 import { NetworkConfig } from "@api/ProviderFactory/network.config";
 import { createSelector, createSlice } from "@reduxjs/toolkit";
-import { ethers } from "ethers";
+import { JsonRpcSigner, ethers } from "ethers";
 
 export enum ConnectorTypes {
   WalletConnect = "walletConnect",
@@ -8,7 +8,7 @@ export enum ConnectorTypes {
 }
 
 export interface WalletProviderState {
-  signer: ethers.providers.JsonRpcSigner;
+  signer: JsonRpcSigner;
   selectedWalletType: "injected" | "walletConnect";
   selectedNetwork: NetworkConfig;
   networksConfig: NetworkConfig[];
@@ -87,7 +87,7 @@ export const SelectedWalletType = createSelector(
 );
 
 export const networkSigner = (state: any) =>
-  state.walletProvider.signer as ethers.providers.JsonRpcSigner;
+  state.walletProvider.signer as JsonRpcSigner;
 export const NetworkSigner = createSelector([networkSigner], (a) => a);
 
 export const networksConfig = (state: any) =>

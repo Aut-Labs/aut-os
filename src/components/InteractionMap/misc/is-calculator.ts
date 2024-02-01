@@ -2,7 +2,7 @@ import { NodeObject } from "react-force-graph-2d";
 import { MapNode } from "../node.model";
 
 const getCompletedInteractions = (node: NodeObject<MapNode>) => {
-  return node.interactions
+  return node.properties.interactions
     .filter((interaction) => interaction.status === "Complete")
     .map((interaction) => interaction.name);
 };

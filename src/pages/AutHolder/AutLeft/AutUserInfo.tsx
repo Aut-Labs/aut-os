@@ -110,12 +110,6 @@ const AutUserInfo = () => {
     month: "long",
     day: "2-digit"
   }).format(parseTimestamp(holderData?.properties?.timestamp));
-  const exampleCommunity = {
-    ...holderData?.properties.communities[0],
-    name: "Āut DAO",
-    description: `Āut is a collective building decentralized standards for self-sovereign Identity (SSID, IAM), Reputation and Communities (DAOs, Hacktivists, Network States). 
-    A Laboratory of Experimentation questioning the borders imposed by the status quo.`
-  };
 
   const { handleSubmit, watch } = useForm({
     mode: "onChange",
@@ -529,8 +523,7 @@ const AutUserInfo = () => {
               }}
             >
               {/* TODO: Revert hardcoded community name and description */}
-              {/* <AutUserTabs communities={holderData.properties.communities} /> */}
-              <AutUserTabs communities={[exampleCommunity]} />
+              <AutUserTabs nova={holderData.properties.communities[0]} />
               {/* <CommunitiesTable
               communities={holderData.properties.communities}
               isLoading={false}

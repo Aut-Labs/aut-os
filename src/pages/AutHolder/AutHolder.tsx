@@ -5,23 +5,19 @@ import { useSelector } from "react-redux";
 import {
   Box,
   Button,
-  Toolbar,
   Typography,
   styled,
   useMediaQuery,
   useTheme
 } from "@mui/material";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination } from "swiper";
+import { Swiper } from "swiper/react";
 import { AutShareDialog } from "@components/AutShare";
 import { setOpenShare } from "@store/ui-reducer";
 import AutLeft from "./AutLeft/Left";
-import AutTunnelRight from "./AutRight/Right";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
-import { DautPlaceholder } from "@api/ProviderFactory/components/web3-daut-connect";
 import { useNavigate } from "react-router-dom";
 import backgroundImage from "@assets/autos/background.png";
 

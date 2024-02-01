@@ -3,7 +3,7 @@ import { calculateIS } from "./is-calculator";
 import { GraphData, LinkObject, NodeObject } from "react-force-graph-2d";
 import { PLConfig } from "./pl-generator";
 import { MapLink, MapNode } from "../node.model";
-import { AutId } from "@api/map.model";
+import { MapAutID } from "@api/map.model";
 
 export const linkWidth = (node: LinkObject<MapNode, MapLink>) => {
   return (node.is / 100) * MAX_LINK_THICKNESS;
@@ -52,7 +52,8 @@ function generateNodes(
 
       const numberOfLevels = plValues.length;
       const decrementStep =
-        (maxPercentage - minPercentage) / (numberOfLevels - 1);
+        (maxPercentage - minPercentage) /
+        (numberOfLevels > 1 ? numberOfLevels - 1 : 1);
 
       let nodeSizePercentage: number;
       if (userLevel >= 1 && userLevel <= numberOfLevels) {
@@ -87,6 +88,8 @@ function generateLinks(
       is: calculateIS(node, centralNode, centralNode)
     }));
 
+  console.log(centralNode, nodes);
+
   const interNodeLinks: LinkObject<MapNode, MapLink>[] = [];
   for (let i = 0; i < nodes.length; i++) {
     for (let j = i + 1; j < nodes.length; j++) {
@@ -110,7 +113,7 @@ function generateLinks(
 }
 
 export const generateGraphData = (
-  centralAutId: AutId,
+  centralAutId: MapAutID,
   plValues: PLConfig[]
 ): GraphData<MapNode, LinkObject<MapNode, MapLink>> => {
   const centralNode: NodeObject<MapNode> = {

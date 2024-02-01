@@ -1,5 +1,5 @@
 import axios, { CancelTokenSource } from "axios";
-import { ethers } from "ethers";
+import { BrowserProvider } from "ethers";
 import { AutID } from "./aut.model";
 import { Community } from "./community.model";
 import { ipfsCIDToHttpUrl, isValidUrl } from "./storage.api";
@@ -11,13 +11,19 @@ import { environment } from "./environment";
 import AutSDK, {
   CommunityMembershipDetails,
   HolderData,
-  fetchMetadata
+  Nova,
+  fetchMetadata,
+  queryParamsAsString
 } from "@aut-labs/sdk";
+import { gql } from "@apollo/client";
+import { isAddress } from "viem";
+import { apolloClient } from "@store/graphql";
+import { BaseNFTModel } from "@aut-labs/sdk/dist/models/baseNFTModel";
 
 export const fetchHolderEthEns = async (address: string) => {
   if (typeof window.ethereum !== "undefined") {
     try {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const provider = new BrowserProvider(window.ethereum as any);
       return await provider.lookupAddress(address);
     } catch (error) {
       return null;
@@ -149,41 +155,175 @@ export const fetchHolder = createAsyncThunk(
           .map((n: NetworkConfig) => n.network?.toLowerCase());
     // const networks: string[] = network ? [network] : ['goerli', 'goerli'];
     const profiles = [];
-    try {
-      const source = axios.CancelToken.source();
-      if (signal) {
-        signal.addEventListener("abort", () => {
-          source.cancel();
-        });
-      }
-      for (const networkName of networks) {
-        const result: AutID = search.searchResult.find(
-          (a: AutID) =>
-            a.name === autName &&
-            a.properties.network?.toLowerCase() === networkName?.toLowerCase()
-        );
-        const holderData =
-          result?.properties?.holderData ||
-          (await fetchHolderData(autName, networkName, source));
-        if (holderData) {
-          const autID = await fetchAutID(holderData, networkName);
-          autID.properties.communities = await fetchHolderCommunities(
-            holderData.daos
-          );
-          if (autID) {
-            profiles.push(autID);
-          }
+    const sdk = AutSDK.getInstance();
+
+    const filters = [];
+
+    if (isAddress(autName)) {
+      filters.push({
+        prop: "id",
+        comparison: "equals",
+        value: autName.toLowerCase()
+      });
+    } else {
+      filters.push({
+        prop: "username",
+        comparison: "equals",
+        value: autName.toLowerCase()
+      });
+    }
+
+    const queryArgsString = queryParamsAsString({
+      skip: 0,
+      take: 1,
+      filters
+    });
+    const query = gql`
+      query AutIds {
+        autIDs(${queryArgsString}) {
+          id
+          username
+          tokenID
+          novaAddress
+          role
+          commitment
+          metadataUri
         }
       }
-      if ((signal as AbortSignal)?.aborted) {
-        throw new Error("Aborted");
+    `;
+    const response = await apolloClient.query<any>({
+      query
+    });
+
+    const {
+      autIDs: [autID]
+    } = response.data;
+
+    const novaQuery = gql`
+      query GetNovaDAO {
+        novaDAO(id: "${autID.novaAddress}") {
+          id
+          address
+          market
+          minCommitment
+          metadataUri
+        }
       }
-      return profiles;
-    } catch (error) {
-      const message =
-        error?.message === "Aborted" ? error?.message : ErrorParser(error);
-      return rejectWithValue(message);
-    }
+    `;
+    const novaResponse = await apolloClient.query<any>({
+      query: novaQuery
+    });
+
+    const { novaDAO } = novaResponse.data;
+
+    // const nova = sdk.initService<Nova>(Nova, autID.novaAddress);
+    // const isAdmin = await nova.contract.admins.isAdmin(autID.id);
+
+    const novaMetadata = await fetchMetadata<BaseNFTModel<Community>>(
+      novaDAO.metadataUri,
+      environment.ipfsGatewayUrl
+    );
+
+    const userNova = new Community({
+      ...novaMetadata,
+      properties: {
+        ...novaMetadata.properties,
+        address: autID.novaAddress,
+        market: novaDAO.market,
+        userData: {
+          role: autID.role.toString(),
+          commitment: autID.commitment.toString(),
+          isActive: true
+          // isAdmin: isAdmin.data
+        }
+      }
+    } as unknown as Community);
+
+    const autIdMetadata = await fetchMetadata<BaseNFTModel<any>>(
+      autID.metadataUri,
+      environment.ipfsGatewayUrl
+    );
+    const { avatar, thumbnailAvatar, timestamp } = autIdMetadata.properties;
+
+    const newAutId = new AutID({
+      name: autIdMetadata.name,
+      image: autIdMetadata.image,
+      description: autIdMetadata.description,
+      properties: {
+        avatar,
+        thumbnailAvatar,
+        timestamp,
+        role: autID.role,
+        socials: [],
+        address: autID.id,
+        tokenId: autID.tokenID,
+        network: walletProvider.selectedNetwork,
+        communities: [userNova]
+      }
+    });
+
+    return [newAutId];
+
+    //   const nova = sdk.initService<Nova>(Nova, autID.novaAddress);
+    //   const isAdmin = await nova.contract.admins.isAdmin(selectedAddress);
+    //   const novaMetadataUri = await nova.contract.functions.metadataUri();
+    //   const novaMarket = await nova.contract.functions.market();
+    //   const novaMetadata = await fetchMetadata<BaseNFTModel<Community>>(
+    //     novaMetadataUri,
+    //     customIpfsGateway
+    //   );
+
+    //   const { avatar, thumbnailAvatar, timestamp } = autIdMetadata.properties;
+
+    //   const userNova = new Community({
+    //     ...novaMetadata,
+    //     properties: {
+    //       ...novaMetadata.properties,
+    //       address: autID.novaAddress,
+    //       market: novaMarket,
+    //       userData: {
+    //         role: autID.role.toString(),
+    //         commitment: autID.commitment.toString(),
+    //         isActive: true,
+    //         isAdmin: isAdmin.data
+    //       }
+    //     }
+    //   } as unknown as Community);
+    //   try {
+    //     const source = axios.CancelToken.source();
+    //     if (signal) {
+    //       signal.addEventListener("abort", () => {
+    //         source.cancel();
+    //       });
+    //     }
+    //     for (const networkName of networks) {
+    //       const result: AutID = search.searchResult.find(
+    //         (a: AutID) =>
+    //           a.name === autName &&
+    //           a.properties.network?.toLowerCase() === networkName?.toLowerCase()
+    //       );
+    //       const holderData =
+    //         result?.properties?.holderData ||
+    //         (await fetchHolderData(autName, networkName, source));
+    //       if (holderData) {
+    //         const autID = await fetchAutID(holderData, networkName);
+    //         autID.properties.communities = await fetchHolderCommunities(
+    //           holderData.daos
+    //         );
+    //         if (autID) {
+    //           profiles.push(autID);
+    //         }
+    //       }
+    //     }
+    //     if ((signal as AbortSignal)?.aborted) {
+    //       throw new Error("Aborted");
+    //     }
+    //     return profiles;
+    //   } catch (error) {
+    //     const message =
+    //       error?.message === "Aborted" ? error?.message : ErrorParser(error);
+    //     return rejectWithValue(message);
+    //   }
   }
 );
 
@@ -199,7 +339,7 @@ export const editCommitment = createAsyncThunk(
       requestBody.commitment
     );
     try {
-      const autIdData = JSON.parse(window.sessionStorage.getItem("aut-data"));
+      const autIdData = JSON.parse(window.localStorage.getItem("aut-data"));
       autIdData.properties.communities = autIdData.properties.communities.map(
         (c) => {
           if (c.properties.address === requestBody.communityAddress) {
@@ -209,7 +349,7 @@ export const editCommitment = createAsyncThunk(
           return c;
         }
       );
-      window.sessionStorage.setItem("aut-data", JSON.stringify(autIdData));
+      window.localStorage.setItem("aut-data", JSON.stringify(autIdData));
     } catch (err) {
       console.log(err);
     }
@@ -227,7 +367,7 @@ export const withdraw = createAsyncThunk(
     const response = await sdk.autID.contract.withdraw(communityAddress);
 
     try {
-      const autIdData = JSON.parse(window.sessionStorage.getItem("aut-data"));
+      const autIdData = JSON.parse(window.localStorage.getItem("aut-data"));
       autIdData.properties.communities = autIdData.properties.communities.map(
         (c) => {
           if (c.properties.address === communityAddress) {
@@ -236,7 +376,7 @@ export const withdraw = createAsyncThunk(
           return c;
         }
       );
-      window.sessionStorage.setItem("aut-data", JSON.stringify(autIdData));
+      window.localStorage.setItem("aut-data", JSON.stringify(autIdData));
     } catch (err) {
       console.log(err);
     }
@@ -268,12 +408,12 @@ export const updateProfile = createAsyncThunk(
     const response = await sdk.autID.contract.setMetadataUri(uri);
 
     try {
-      const autIdData = JSON.parse(window.sessionStorage.getItem("aut-data"));
+      const autIdData = JSON.parse(window.localStorage.getItem("aut-data"));
       autIdData.name = updatedUser.name;
       autIdData.description = updatedUser.description;
       autIdData.properties.avatar = updatedUser.properties.avatar;
       autIdData.properties.socials = updatedUser.properties.socials;
-      window.sessionStorage.setItem("aut-data", JSON.stringify(autIdData));
+      window.localStorage.setItem("aut-data", JSON.stringify(autIdData));
     } catch (err) {
       console.log(err);
     }

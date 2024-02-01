@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { AutId } from "@api/map.model";
+import { MapAutID } from "@api/map.model";
 import { Box, Button, Popover, PopoverProps, Typography } from "@mui/material";
 
 interface FollowPopoverProps {
   type: "anchor" | "custom";
   anchorEl?: HTMLElement | null;
   anchorPos?: { x: number; y: number };
-  data: AutId;
+  data: MapAutID;
   open: boolean;
   handleClose?: any;
   onMouseEnter?: any;
@@ -96,7 +96,7 @@ export const FollowPopover = ({
           variant="subtitle1"
           color="white"
         >
-          {data?.owner || "Name"}
+          {data?.name || "Name"}
         </Typography>
         <Typography
           fontWeight="400"
@@ -111,7 +111,7 @@ export const FollowPopover = ({
             display: "block"
           }}
         >
-          @{data?.username || "Unknown"}
+          @{data?.name || "Unknown"}
         </Typography>
       </Box>
       <Box>

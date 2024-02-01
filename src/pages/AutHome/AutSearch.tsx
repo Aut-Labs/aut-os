@@ -378,7 +378,7 @@ const AutSearch = () => {
                         open={true}
                         includeInputInList
                         filterSelectedOptions
-                        value={value}
+                        value={value as any}
                         onChange={(
                           event: any,
                           newValue: UserProfile | null
@@ -523,7 +523,6 @@ const AutSearch = () => {
                         />
                       )}
                       renderOption={(props, option) => {
-                        debugger;
                         const matches =
                           option.structured_formatting
                             .main_text_matched_substrings || [];

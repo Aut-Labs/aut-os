@@ -1,18 +1,160 @@
 /* eslint-disable max-len */
-import { CanUpdateProfile } from "@auth/auth.reducer";
-import { Box, Typography, useTheme } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { useSelector } from "react-redux";
 import InteractionMap from "@components/InteractionMap";
-import { useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AutOsButton } from "@components/AutButton";
 import { useAppDispatch } from "@store/store.model";
 import { setOpenInteractions } from "@store/ui-reducer";
 import { AdddInteractions } from "@store/interactions/interactions.reducer";
+import { useAccount } from "wagmi";
+import { SelectedProfileAddress } from "@store/holder/holder.reducer";
+import { gql, useQuery } from "@apollo/client";
+import { fetchMetadata, queryParamsAsString } from "@aut-labs/sdk";
+import { Community } from "@api/community.model";
+import { environment } from "@api/environment";
+import { BaseNFTModel } from "@aut-labs/sdk/dist/models/baseNFTModel";
+import { MapAutID, MapNova } from "@api/map.model";
+import { AutID } from "@api/aut.model";
 
-const AutMap = ({ communities = [] }) => {
+const fetchAutIDsQuery = (nova: Community) => {
+  const queryArgsString = queryParamsAsString({
+    skip: 0,
+    take: 100,
+    filters: [
+      {
+        prop: "novaAddress",
+        comparison: "equals",
+        value: nova.properties.address.toLowerCase()
+      }
+    ]
+  });
+  return gql`
+      query AutIds {
+        autIDs(${queryArgsString}) {
+          id
+          username
+          tokenID
+          novaAddress
+          role
+          commitment
+          metadataUri
+        }
+      }
+    `;
+};
+
+const AutMap = ({ nova }) => {
   const ref = useRef();
   const dispatch = useAppDispatch();
   const addedInteractions = useSelector(AdddInteractions);
+  const { loading, error, data } = useQuery(fetchAutIDsQuery(nova), {
+    fetchPolicy: "cache-and-network" // Doesn't check cache before making a network request
+  });
+
+  const { address } = useAccount();
+  const selectedAddress = useSelector(SelectedProfileAddress);
+
+  const isUserConnected = useMemo(() => {
+    return selectedAddress?.toLowerCase() === address?.toLowerCase();
+  }, [address, selectedAddress]);
+
+  const [mapData, setMapData] = useState<MapNova>();
+
+  const isWalletAddressPartOfMembers = useMemo(() => {
+    return (mapData?.members || []).some(
+      (v) => v.properties.address?.toLowerCase() === address?.toLowerCase()
+    );
+  }, [mapData, address]);
+
+  const showInteractionLayer = useMemo(() => {
+    return (
+      !isUserConnected &&
+      !addedInteractions.length &&
+      !isWalletAddressPartOfMembers
+    );
+  }, [isUserConnected, addedInteractions, isWalletAddressPartOfMembers]);
+
+  console.log("addedInteractions: ", addedInteractions.length);
+  console.log("address: ", address);
+  console.log("isUserConnected: ", isUserConnected);
+  console.log("showInteractionLayer: ", showInteractionLayer);
+  console.log("isWalletAddressPartOfMembers: ", isWalletAddressPartOfMembers);
+
+  const fetchAutId = async (autID) => {
+    try {
+      const metadata = await fetchMetadata<BaseNFTModel<any>>(
+        autID.metadataUri,
+        environment.ipfsGatewayUrl
+      );
+      const { avatar, thumbnailAvatar, timestamp } = metadata.properties;
+
+      const newAutId = new MapAutID({
+        id: autID.tokenID,
+        name: metadata.name,
+        image: metadata.image,
+        description: metadata.description,
+        nova,
+        properties: {
+          avatar,
+          thumbnailAvatar,
+          timestamp,
+          role: autID.role,
+          socials: [],
+          address: autID.id,
+          tokenId: autID.tokenID,
+          network: "Net",
+          communities: [nova],
+          interactions: []
+        }
+      });
+      return newAutId;
+    } catch (error) {
+      console.error("Error fetching metadata for autID:", autID.tokenID, error);
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    if (data?.autIDs && data.autIDs.length > 0) {
+      const enrichAllAutIDs = async () => {
+        const enrichedAutIDs: AutID[] = await Promise.all(
+          data.autIDs.map(fetchAutId)
+        );
+
+        const { central, otherMembers } = enrichedAutIDs.reduce(
+          (prev, curr) => {
+            if (
+              selectedAddress?.toLowerCase() ===
+              curr?.properties?.address?.toLowerCase()
+            ) {
+              prev.central = curr;
+              prev.otherMembers.push(curr);
+            } else {
+              prev.otherMembers.push(curr);
+            }
+
+            return prev;
+          },
+          {
+            central: null,
+            otherMembers: []
+          }
+        );
+
+        const mapNova: MapNova = {
+          ...nova,
+          centralNode: central,
+          members: otherMembers
+        };
+
+        central.nova.members = mapNova.members;
+        setMapData(mapNova);
+      };
+
+      enrichAllAutIDs();
+    }
+  }, [data, selectedAddress, nova]);
 
   const handleClose = () => {
     dispatch(setOpenInteractions(false));
@@ -23,7 +165,7 @@ const AutMap = ({ communities = [] }) => {
   };
   return (
     <>
-      {!addedInteractions?.length && (
+      {showInteractionLayer && (
         <Box
           sx={{
             display: "flex",
@@ -87,6 +229,7 @@ const AutMap = ({ communities = [] }) => {
       )}
       <Box
         ref={ref}
+        className="map-wrapper"
         sx={{
           display: "flex",
           justifyContent: "center",
@@ -94,18 +237,23 @@ const AutMap = ({ communities = [] }) => {
           position: "relative",
           width: "100%",
           height: "100%",
-          // overflow: "hidden",
-          ...(!addedInteractions?.length && {
-            // borderBottomRightRadius: "72px",
-            // borderBottomLeftRadius: "72px",
+          "& > DIV": {
+            width: "100%"
+          },
+          ...(showInteractionLayer && {
             mixBlendMode: "plus-lighter",
-            // background: "lightgray 0% / cover no-repeat",
             opacity: 0.6,
             filter: "blur(20px)"
           })
         }}
       >
-        <InteractionMap isActive={!!addedInteractions.length} parentRef={ref} />
+        {mapData?.centralNode && (
+          <InteractionMap
+            mapData={mapData}
+            isActive={!showInteractionLayer}
+            parentRef={ref}
+          />
+        )}
       </Box>
     </>
   );
