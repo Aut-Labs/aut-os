@@ -48,7 +48,7 @@ export const holderSlice = createSlice({
         if (state.profiles.length === 1) {
           state.selectedProfileAddress = state.profiles[0].properties.address;
           state.selectedProfileNetwork =
-            state.profiles[0].properties.network?.toLowerCase();
+            state.profiles[0].properties?.network?.toLowerCase();
         }
         state.fetchStatus = ResultState.Success;
       })

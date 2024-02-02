@@ -40,7 +40,7 @@ const container = document.getElementById("root");
 const root = createRoot(container);
 
 root.render(
-  <WagmiProvider config={config}>
+  <WagmiProvider config={config} reconnectOnMount>
     <QueryClientProvider client={queryClient}>
       <ApolloProvider client={apolloClient}>
         <StyledEngineProvider injectFirst>

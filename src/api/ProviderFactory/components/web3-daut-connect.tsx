@@ -17,7 +17,7 @@ import AutSDK from "@aut-labs/sdk";
 import { useLocation, useNavigate } from "react-router-dom";
 import { EnvMode, environment } from "@api/environment";
 import { MultiSigner } from "@aut-labs/sdk/dist/models/models";
-import { useAccount, useConfig, useConnect } from "wagmi";
+import { useAccount, useConnect } from "wagmi";
 import { Config } from "prettier";
 import { useEthersSigner, walletClientToSigner } from "../ethers";
 
@@ -257,8 +257,7 @@ function Web3DautConnect({
         id="d-aut"
         // allowed-role-id={3}
         menu-items='[{"name":"Profile","actionType":"event_emit","eventName":"aut_profile"}]'
-        flow-config='{"mode" : "tryAut", "customCongratsMessage": ""}'
-        nova-address="0x72433f4c27309c1b39e11eae81dd864fcba8ba45"
+        flow-config='{"mode" : "dashboard", "customCongratsMessage": ""}'
         ipfs-gateway={environment.ipfsGatewayUrl}
       />
     </>

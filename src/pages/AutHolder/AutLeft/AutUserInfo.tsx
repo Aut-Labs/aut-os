@@ -17,12 +17,9 @@ import {
   styled,
   SvgIcon,
   Tooltip,
-  Typography,
-  useTheme
+  Typography
 } from "@mui/material";
-import { useState } from "react";
-import PencilEdit from "@assets/PencilEditicon";
-import { useLocation, useNavigate } from "react-router-dom";
+import { memo, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import {
   HolderData,
@@ -31,37 +28,26 @@ import {
   updateHolderState,
   UpdateStatus
 } from "@store/holder/holder.reducer";
-import { CanUpdateProfile, IsConnected } from "@auth/auth.reducer";
+import { CanUpdateProfile } from "@auth/auth.reducer";
 import { ResultState } from "@store/result-status";
 import { ipfsCIDToHttpUrl } from "@api/storage.api";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import {
   BlockExplorerUrl,
-  SelectedNetworkConfig,
-  setProviderIsOpen
+  SelectedNetworkConfig
 } from "@store/WalletProvider/WalletProvider";
 import { EditContentElements } from "@components/EditContentElements";
-import CommunitiesTable from "./CommunitiesTable";
 import CopyAddress from "@components/CopyAddress";
 import { socialUrls } from "@api/social.model";
-import { base64toFile, toBase64 } from "@utils/to-base-64";
-import AFileUpload from "@components/Fields/AutFileUpload";
 import ErrorDialog from "@components/Dialog/ErrorPopup";
 import LoadingDialog from "@components/Dialog/LoadingPopup";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useAppDispatch } from "@store/store.model";
-import { updateProfile } from "@api/holder.api";
-import {
-  AutButton,
-  AutButtonVariant,
-  AutOsButton
-} from "@components/AutButton";
-import { AutTextField } from "@theme/field-text-styles";
+import { AutOsButton } from "@components/AutButton";
 import { parseTimestamp } from "@utils/date-format";
-import AutTabs from "@components/AutTabs";
 import AutUserTabs from "../AutUserTabs/AutUserTabs";
 import { SubtitleWithInfo } from "@components/SubtitleWithInfoIcon";
-import { setOpenEditProfile } from "@store/ui-reducer";
+import { IsEditingProfile, setOpenEditProfile } from "@store/ui-reducer";
 import { AutEditProfileDialog } from "@components/AutEditProfileDialog";
 
 export const IconContainer = styled("div")(({ theme }) => ({
@@ -96,20 +82,22 @@ const AutUserInfo = () => {
   const holderData = useSelector(HolderData);
   const holderStatus = useSelector(HolderStatus);
   const blockExplorer = useSelector(BlockExplorerUrl);
-  // const selectedNetwork = useSelector(SelectedNetworkConfig);
-  const selectedNetwork = "mumbai";
+  const selectedNetwork = useSelector(SelectedNetworkConfig);
   const canUpdateProfile = useSelector(CanUpdateProfile);
-  const [isActiveIndex, setIsActiveIndex] = useState(null);
   const [inlineEditing, setInlineEditing] = useState(false);
   const [editInitiated, setEditInitiated] = useState(false);
   const dispatch = useAppDispatch();
   const status = useSelector(UpdateStatus);
   const errorMessage = useSelector(UpdateErrorMessage);
-  const parsedTimeStamp = new Intl.DateTimeFormat("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "2-digit"
-  }).format(parseTimestamp(holderData?.properties?.timestamp));
+  const isEditingProfile = useSelector(IsEditingProfile);
+  const selectedNetworkConfig = useSelector(SelectedNetworkConfig);
+  const parsedTimeStamp = useMemo(() => {
+    return new Intl.DateTimeFormat("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "2-digit"
+    }).format(parseTimestamp(holderData?.properties?.timestamp));
+  }, [holderData]);
 
   const { handleSubmit, watch } = useForm({
     mode: "onChange",
@@ -120,12 +108,7 @@ const AutUserInfo = () => {
     }
   });
 
-  const values = watch();
-  console.log("holder data", holderData);
-
-  const navigate = useNavigate();
-  const location = useLocation();
-  const theme = useTheme();
+  // const theme = useTheme();
 
   const onEditInfo = () => {
     setInlineEditing(!inlineEditing);
@@ -147,8 +130,6 @@ const AutUserInfo = () => {
     );
   };
 
-  const { openEditProfile } = useSelector((state: any) => state.ui);
-
   const handleClose = () => {
     dispatch(setOpenEditProfile(false));
   };
@@ -157,12 +138,10 @@ const AutUserInfo = () => {
     dispatch(setOpenEditProfile(true));
   };
 
-  const selectedNetworkConfig = useSelector(SelectedNetworkConfig);
-
   return (
     <>
       <AutEditProfileDialog
-        open={openEditProfile}
+        open={isEditingProfile}
         hideCloseBtn={false}
         title="Edit Profile"
         onClose={handleClose}
@@ -233,7 +212,7 @@ const AutUserInfo = () => {
                   />
                   <Stack
                     sx={{
-                      marginTop: theme.spacing(3)
+                      marginTop: 3
                     }}
                   >
                     <div>
@@ -255,7 +234,7 @@ const AutUserInfo = () => {
 
                       <Stack
                         sx={{
-                          marginTop: theme.spacing(3)
+                          marginTop: 3
                         }}
                         direction="row"
                         alignItems="center"
@@ -286,7 +265,7 @@ const AutUserInfo = () => {
                             color="primary"
                             variant="outlined"
                             sx={{
-                              ml: theme.spacing(3)
+                              ml: 3
                             }}
                           >
                             <Typography
@@ -308,7 +287,7 @@ const AutUserInfo = () => {
                       flexDirection: "row",
                       alignItems: "flex-start",
                       alignContent: "flex-start",
-                      marginTop: theme.spacing(3)
+                      marginTop: 3
                     }}
                   >
                     <FollowWrapper>
@@ -346,7 +325,7 @@ const AutUserInfo = () => {
 
                   <Box
                     sx={{
-                      marginTop: theme.spacing(2)
+                      marginTop: 2
                     }}
                   >
                     <Box sx={{ padding: "16.5px 0px" }}>
@@ -362,7 +341,7 @@ const AutUserInfo = () => {
 
                   <Box
                     sx={{
-                      marginTop: theme.spacing(2)
+                      marginTop: 2
                     }}
                   >
                     <IconContainer>
@@ -379,7 +358,7 @@ const AutUserInfo = () => {
                               target: "_blank",
                               sx: {
                                 svg: {
-                                  color: theme.palette.offWhite.main
+                                  color: (theme) => theme.palette.offWhite.main
                                 }
                               }
                             })}
@@ -389,7 +368,7 @@ const AutUserInfo = () => {
                               sx: {
                                 // display: "none",
                                 svg: {
-                                  color: theme.palette.divider
+                                  color: (theme) => theme.palette.divider
                                 }
                               },
                               component: "button",
@@ -421,7 +400,7 @@ const AutUserInfo = () => {
                   </Box>
                   <Box
                     sx={{
-                      marginTop: theme.spacing(2),
+                      marginTop: 2,
                       display: "flex"
                     }}
                   >
@@ -572,4 +551,4 @@ const AutUserInfo = () => {
   );
 };
 
-export default AutUserInfo;
+export default memo(AutUserInfo);

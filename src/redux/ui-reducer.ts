@@ -74,4 +74,6 @@ export const {
   updateTransactionState
 } = uiSlice.actions;
 
+export const IsEditingProfile = (state) => state.ui.openEditProfile as boolean;
+
 export default uiSlice.reducer;

@@ -2,7 +2,7 @@
 import { Box, Typography } from "@mui/material";
 import { useSelector } from "react-redux";
 import InteractionMap from "@components/InteractionMap";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
 import { AutOsButton } from "@components/AutButton";
 import { useAppDispatch } from "@store/store.model";
 import { setOpenInteractions } from "@store/ui-reducer";
@@ -16,6 +16,7 @@ import { environment } from "@api/environment";
 import { BaseNFTModel } from "@aut-labs/sdk/dist/models/baseNFTModel";
 import { MapAutID, MapNova } from "@api/map.model";
 import { AutID } from "@api/aut.model";
+import AutLoading from "@components/AutLoading";
 
 const fetchAutIDsQuery = (nova: Community) => {
   const queryArgsString = queryParamsAsString({
@@ -25,23 +26,24 @@ const fetchAutIDsQuery = (nova: Community) => {
       {
         prop: "novaAddress",
         comparison: "equals",
-        value: nova.properties.address.toLowerCase()
+        value: nova.properties?.address?.toLowerCase()
       }
     ]
   });
+
   return gql`
-      query AutIds {
-        autIDs(${queryArgsString}) {
-          id
-          username
-          tokenID
-          novaAddress
-          role
-          commitment
-          metadataUri
-        }
+    query AutIds {
+      autIDs(${queryArgsString}) {
+        id
+        username
+        tokenID
+        novaAddress
+        role
+        commitment
+        metadataUri
       }
-    `;
+    }
+  `;
 };
 
 const AutMap = ({ nova }) => {
@@ -49,7 +51,7 @@ const AutMap = ({ nova }) => {
   const dispatch = useAppDispatch();
   const addedInteractions = useSelector(AdddInteractions);
   const { loading, error, data } = useQuery(fetchAutIDsQuery(nova), {
-    fetchPolicy: "cache-and-network" // Doesn't check cache before making a network request
+    fetchPolicy: "cache-first"
   });
 
   const { address } = useAccount();
@@ -63,7 +65,7 @@ const AutMap = ({ nova }) => {
 
   const isWalletAddressPartOfMembers = useMemo(() => {
     return (mapData?.members || []).some(
-      (v) => v.properties.address?.toLowerCase() === address?.toLowerCase()
+      (v) => v.properties?.address?.toLowerCase() === address?.toLowerCase()
     );
   }, [mapData, address]);
 
@@ -74,12 +76,6 @@ const AutMap = ({ nova }) => {
       !isWalletAddressPartOfMembers
     );
   }, [isUserConnected, addedInteractions, isWalletAddressPartOfMembers]);
-
-  console.log("addedInteractions: ", addedInteractions.length);
-  console.log("address: ", address);
-  console.log("isUserConnected: ", isUserConnected);
-  console.log("showInteractionLayer: ", showInteractionLayer);
-  console.log("isWalletAddressPartOfMembers: ", isWalletAddressPartOfMembers);
 
   const fetchAutId = async (autID) => {
     try {
@@ -165,98 +161,104 @@ const AutMap = ({ nova }) => {
   };
   return (
     <>
-      {showInteractionLayer && (
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            gridGap: "12px",
-            textAlign: "center",
-            position: "absolute",
-            top: 10,
-            left: 10,
-            right: 10,
-            bottom: 10,
-            zIndex: 99,
-            background: "rgba(87, 97, 118, 0.3)",
-            borderRadius: "42px"
-          }}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="64"
-            height="64"
-            viewBox="0 0 64 64"
-            fill="none"
+      {loading ? (
+        <AutLoading width="100px" height="100px" />
+      ) : (
+        <>
+          {showInteractionLayer && (
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                gridGap: "12px",
+                textAlign: "center",
+                position: "absolute",
+                top: 10,
+                left: 10,
+                right: 10,
+                bottom: 10,
+                zIndex: 99,
+                background: "rgba(87, 97, 118, 0.3)",
+                borderRadius: "42px"
+              }}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="64"
+                height="64"
+                viewBox="0 0 64 64"
+                fill="none"
+              >
+                <path
+                  d="M32.0013 34.6667C39.3651 34.6667 45.3346 28.6971 45.3346 21.3333C45.3346 13.9695 39.3651 8 32.0013 8C24.6375 8 18.668 13.9695 18.668 21.3333C18.668 28.6971 24.6375 34.6667 32.0013 34.6667Z"
+                  stroke="#717BBC"
+                  strokeWidth="4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M53.3346 56C53.3346 50.342 51.087 44.9158 47.0862 40.915C43.0855 36.9142 37.6593 34.6666 32.0013 34.6666C26.3434 34.6666 20.9171 36.9142 16.9164 40.915C12.9156 44.9158 10.668 50.342 10.668 56"
+                  stroke="#717BBC"
+                  strokeWidth="4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              <Typography
+                color="white"
+                fontWeight="700"
+                fontSize="16px"
+                lineHeight="26px"
+              >
+                Connect with this user to see their <br /> map of connections
+              </Typography>
+              <AutOsButton
+                onClick={openInteractionsModal}
+                type="button"
+                color="primary"
+                size="small"
+                variant="outlined"
+              >
+                <Typography fontWeight="700" fontSize="16px" lineHeight="26px">
+                  Create a Link
+                </Typography>
+              </AutOsButton>
+            </Box>
+          )}
+          <Box
+            ref={ref}
+            className="map-wrapper"
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              position: "relative",
+              width: "100%",
+              height: "100%",
+              "& > DIV": {
+                width: "100%"
+              },
+              ...(showInteractionLayer && {
+                mixBlendMode: "plus-lighter",
+                opacity: 0.6,
+                filter: "blur(20px)"
+              })
+            }}
           >
-            <path
-              d="M32.0013 34.6667C39.3651 34.6667 45.3346 28.6971 45.3346 21.3333C45.3346 13.9695 39.3651 8 32.0013 8C24.6375 8 18.668 13.9695 18.668 21.3333C18.668 28.6971 24.6375 34.6667 32.0013 34.6667Z"
-              stroke="#717BBC"
-              stroke-width="4"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-            <path
-              d="M53.3346 56C53.3346 50.342 51.087 44.9158 47.0862 40.915C43.0855 36.9142 37.6593 34.6666 32.0013 34.6666C26.3434 34.6666 20.9171 36.9142 16.9164 40.915C12.9156 44.9158 10.668 50.342 10.668 56"
-              stroke="#717BBC"
-              stroke-width="4"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-          <Typography
-            color="white"
-            fontWeight="700"
-            fontSize="16px"
-            lineHeight="26px"
-          >
-            Connect with this user to see their <br /> map of connections
-          </Typography>
-          <AutOsButton
-            onClick={openInteractionsModal}
-            type="button"
-            color="primary"
-            size="small"
-            variant="outlined"
-          >
-            <Typography fontWeight="700" fontSize="16px" lineHeight="26px">
-              Create a Link
-            </Typography>
-          </AutOsButton>
-        </Box>
+            {mapData?.centralNode && (
+              <InteractionMap
+                mapData={mapData}
+                isActive={!showInteractionLayer}
+                parentRef={ref}
+              />
+            )}
+          </Box>
+        </>
       )}
-      <Box
-        ref={ref}
-        className="map-wrapper"
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          position: "relative",
-          width: "100%",
-          height: "100%",
-          "& > DIV": {
-            width: "100%"
-          },
-          ...(showInteractionLayer && {
-            mixBlendMode: "plus-lighter",
-            opacity: 0.6,
-            filter: "blur(20px)"
-          })
-        }}
-      >
-        {mapData?.centralNode && (
-          <InteractionMap
-            mapData={mapData}
-            isActive={!showInteractionLayer}
-            parentRef={ref}
-          />
-        )}
-      </Box>
     </>
   );
 };
 
-export default AutMap;
+export default memo(AutMap);
