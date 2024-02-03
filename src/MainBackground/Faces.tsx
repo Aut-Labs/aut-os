@@ -1,15 +1,4 @@
-/* eslint-disable max-len */
-/* eslint-disable prefer-const */
-import { FollowPopover } from "@components/FollowPopover";
 import { Bubble } from "@components/UserBubbles";
-import {
-  motion,
-  transform,
-  useMotionValue,
-  useScroll,
-  useTransform
-} from "framer-motion";
-import { useEffect, useState } from "react";
 
 const users = [
   {
@@ -59,14 +48,7 @@ const users = [
   }
 ];
 
-const AvatarCircle = ({
-  user,
-  x,
-  y,
-  circleDimension,
-  key,
-  setPopoverEl
-}: any) => {
+const AvatarCircle = ({ user, x, y, circleDimension }: any) => {
   return (
     <foreignObject
       x={x - circleDimension / 2}
@@ -78,7 +60,7 @@ const AvatarCircle = ({
         cursor: "pointer"
       }}
     >
-      <Bubble user={user} key={key} />
+      <Bubble user={user} />
     </foreignObject>
   );
 };
@@ -90,15 +72,15 @@ const Faces = ({ dimensions, setPopoverEl }: any) => {
   const circleDimension = 64;
 
   // Calculate scale factors
-  let scaleX = dimensions.width / designWidth;
-  let scaleY = dimensions.height / designHeight;
+  const scaleX = dimensions.width / designWidth;
+  const scaleY = dimensions.height / designHeight;
 
   // Use the smaller scale factor to keep the aspect ratio
-  let scale = Math.min(scaleX, scaleY);
+  const scale = Math.min(scaleX, scaleY);
 
   // Centre the design if the aspect ratios don't match
-  let translateX = (dimensions.width - designWidth * scale) / 2;
-  let translateY = (dimensions.height - designHeight * scale) / 2;
+  const translateX = (dimensions.width - designWidth * scale) / 2;
+  const translateY = (dimensions.height - designHeight * scale) / 2;
   return (
     <g
       transform={`translate(${translateX}, ${translateY}) scale(${scale},${scale})`}
@@ -118,7 +100,6 @@ const Faces = ({ dimensions, setPopoverEl }: any) => {
         y={359}
         circleDimension={circleDimension}
         user={users[0]}
-        key="bubble1"
       />
 
       {/* <circle
@@ -147,7 +128,6 @@ const Faces = ({ dimensions, setPopoverEl }: any) => {
         y={451}
         circleDimension={circleDimension}
         user={users[1]}
-        key="bubble2"
       />
 
       {/* 
@@ -177,7 +157,6 @@ const Faces = ({ dimensions, setPopoverEl }: any) => {
         y={200}
         circleDimension={circleDimension}
         user={users[2]}
-        key="bubble3"
       />
 
       <circle
@@ -196,7 +175,6 @@ const Faces = ({ dimensions, setPopoverEl }: any) => {
         y={592.167}
         circleDimension={circleDimension}
         user={users[3]}
-        key="bubble4"
       />
 
       <circle
@@ -214,7 +192,6 @@ const Faces = ({ dimensions, setPopoverEl }: any) => {
         y={182}
         circleDimension={circleDimension}
         user={users[4]}
-        key="bubble5"
       />
       <circle
         cx={946}
@@ -232,7 +209,6 @@ const Faces = ({ dimensions, setPopoverEl }: any) => {
         y={626}
         circleDimension={circleDimension}
         user={users[5]}
-        key="bubble6"
       />
 
       <circle
@@ -251,7 +227,6 @@ const Faces = ({ dimensions, setPopoverEl }: any) => {
         y={454}
         circleDimension={circleDimension}
         user={users[6]}
-        key="bubble7"
       />
       <circle
         id="face-to-zoom"
@@ -269,7 +244,6 @@ const Faces = ({ dimensions, setPopoverEl }: any) => {
         y={92}
         circleDimension={circleDimension}
         user={users[7]}
-        key="bubble8"
       />
       <circle
         cx={873}
@@ -286,7 +260,6 @@ const Faces = ({ dimensions, setPopoverEl }: any) => {
         y={88}
         circleDimension={circleDimension}
         user={users[8]}
-        key="bubble9"
       />
     </g>
   );

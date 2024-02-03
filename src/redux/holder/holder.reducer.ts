@@ -152,8 +152,8 @@ export const UpdateErrorMessage = (state) =>
   state.holder.errorMessage as string;
 export const SelectedCommunity = (communityAddress) =>
   createSelector(HolderData, (autId) => {
-    return autId.properties.communities.find(
-      (item) => item.properties.address === communityAddress
+    return autId?.properties?.communities.find(
+      (item) => item?.properties?.address === communityAddress
     );
   });
 

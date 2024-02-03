@@ -31,10 +31,9 @@ const CommitmentSliderWrapper = styled("div")(({ theme }) => ({
   width: "100%",
   maxWidth: "600px",
   marginTop: theme.spacing(6),
-  marginBottom: theme.spacing(6),
+  marginBottom: theme.spacing(3),
   [theme.breakpoints.down("lg")]: {
-    marginTop: "32px",
-    marginBottom: "32px"
+    marginTop: "32px"
   }
 }));
 
@@ -42,7 +41,7 @@ const AutStyledDialog = styled(Dialog)(({ theme }) => ({
   ".MuiPaper-root": {
     margin: "0",
     width: "420px",
-    height: "280px",
+    height: "320px",
     border: "none",
     backgroundColor: "#1E2430",
     borderRadius: "30px",
@@ -165,6 +164,18 @@ export function AutChangeCommitmentDialog(props: CommitmentDialogProps) {
             />
           </CommitmentSliderWrapper>
         </Box>
+        <Box
+          sx={{
+            bgcolor: (theme) => theme.palette.warning.light,
+            borderRadius: "8px",
+            padding: "8px 6px"
+          }}
+        >
+          <Typography variant="caption" color="white">
+            You'll be able to Withdraw from this Nova from the starting of the
+            2nd period ahead
+          </Typography>
+        </Box>
       </DialogContent>
       <DialogActions
         sx={{
@@ -194,6 +205,7 @@ export function AutChangeCommitmentDialog(props: CommitmentDialogProps) {
           type="button"
           color="primary"
           variant="outlined"
+          disabled
           sx={{
             width: "100px"
           }}

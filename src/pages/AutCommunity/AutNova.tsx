@@ -1,6 +1,7 @@
 /* eslint-disable max-len */
 import {
   Avatar,
+  Badge,
   Box,
   Card,
   IconButton,
@@ -32,6 +33,7 @@ import ErrorDialog from "@components/Dialog/ErrorPopup";
 import LoadingDialog from "@components/Dialog/LoadingPopup";
 import { ipfsCIDToHttpUrl } from "@api/storage.api";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import {
   BlockExplorerUrl,
   IsConnected,
@@ -493,30 +495,43 @@ const AutCommunityEdit = () => {
                           Change Commitment
                         </Typography>
                       </AutOsButton>
-                      <AutOsButton
-                        onClick={openWithdrawConfirmation}
-                        type="button"
-                        color="primary"
-                        variant="outlined"
-                        sx={{
-                          width: "230px",
-                          "&.MuiButton-root": {
-                            background: "transparent",
-                            border: "1px solid #D92D20",
-                            ":hover": {
-                              background: "#D92D20"
-                            }
+
+                      <Box>
+                        <Badge
+                          badgeContent={
+                            <Tooltip title="You've just joined friend. You'll be able to Withdraw from this Nova from the starting of the 2nd period ahead">
+                              {/* @ts-ignore */}
+                              <HelpOutlineIcon color="offWhite" />
+                            </Tooltip>
                           }
-                        }}
-                      >
-                        <Typography
-                          fontWeight="700"
-                          fontSize="16px"
-                          lineHeight="26px"
                         >
-                          Withdraw from Nova
-                        </Typography>
-                      </AutOsButton>
+                          <AutOsButton
+                            onClick={openWithdrawConfirmation}
+                            type="button"
+                            color="primary"
+                            variant="outlined"
+                            disabled
+                            sx={{
+                              width: "230px",
+                              "&.MuiButton-root": {
+                                background: "transparent",
+                                border: "1px solid #D92D20",
+                                ":hover": {
+                                  background: "#D92D20"
+                                }
+                              }
+                            }}
+                          >
+                            <Typography
+                              fontWeight="700"
+                              fontSize="16px"
+                              lineHeight="26px"
+                            >
+                              Withdraw from Nova
+                            </Typography>
+                          </AutOsButton>
+                        </Badge>
+                      </Box>
                     </Stack>
                   )}
                 </LeftWrapper>

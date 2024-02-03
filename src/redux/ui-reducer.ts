@@ -75,5 +75,7 @@ export const {
 } = uiSlice.actions;
 
 export const IsEditingProfile = (state) => state.ui.openEditProfile as boolean;
+export const IsInteractionDialogOpen = (state) =>
+  state.ui.openInteractions as boolean;
 
 export default uiSlice.reducer;

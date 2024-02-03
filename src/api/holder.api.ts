@@ -254,7 +254,7 @@ export const fetchHolder = createAsyncThunk(
         thumbnailAvatar,
         timestamp,
         role: autID.role,
-        socials: [],
+        socials: autIdMetadata?.properties?.socials,
         address: autID.id,
         tokenId: autID.tokenID,
         network: walletProvider.selectedNetwork,

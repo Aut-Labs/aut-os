@@ -6,8 +6,8 @@ import ForceGraph2D, {
   LinkObject
 } from "react-force-graph-2d";
 import * as d3 from "d3-force";
-import PublicIcon from "@mui/icons-material/Public"; // Example icon for market indication
-import PeopleIcon from "@mui/icons-material/People"; // Example icon for member count
+import PublicIcon from "@mui/icons-material/Public";
+import PeopleIcon from "@mui/icons-material/People";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import {
   NODE_PADDING,
@@ -36,9 +36,14 @@ import {
 import { generateGraphData, cloneGraphData, linkWidth } from "./misc/map-utils";
 import { MapLink, MapNode } from "./node.model";
 import { AutOsButton } from "@components/AutButton";
-import { useAppDispatch } from "@store/store.model";
-import { setOpenInteractions } from "@store/ui-reducer";
 import { MapNova } from "@api/map.model";
+import { AutInteractionsDialog } from "@components/AutInteractionsDialog";
+import {
+  IsInteractionDialogOpen,
+  setOpenInteractions
+} from "@store/ui-reducer";
+import { useAppDispatch } from "@store/store.model";
+import { useSelector } from "react-redux";
 
 const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -64,6 +69,7 @@ function InteractionMap({
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [highlightedPl, setHighlightedPl] = useState(null);
   const [pLevels, setProximityLevels] = useState([]);
+  // const [isInteractionModelOpen, setOpenInteractions] = useState(false);
   const [initialGraphData, setInitialGraphData] = useState<
     GraphData<MapNode, LinkObject<MapNode, MapLink>>
   >({
@@ -77,8 +83,8 @@ function InteractionMap({
     links: []
   });
   const [isDragging, setIsDragging] = useState(false);
-
   const dispatch = useAppDispatch();
+  const isInteractionDialogOpen = useSelector(IsInteractionDialogOpen);
 
   const handleClose = () => {
     dispatch(setOpenInteractions(false));
@@ -219,8 +225,6 @@ function InteractionMap({
     []
   );
 
-  console.log(mapData, "mapData");
-
   const getNovaInfoByPl = (level: number): any => {
     return pLevels.find((pl) => pl.level === level)?.members[0].nova || {};
   };
@@ -257,11 +261,11 @@ function InteractionMap({
         cooldownTicks={0}
         // enableZoomInteraction={false}
       />
-      {/* <AutInteractionsDialog
-        open={openInteractions}
+      <AutInteractionsDialog
+        open={isInteractionDialogOpen}
         title="Interactions"
         onClose={handleClose}
-      /> */}
+      />
       <FollowPopover
         type="custom"
         anchorPos={anchorPos}

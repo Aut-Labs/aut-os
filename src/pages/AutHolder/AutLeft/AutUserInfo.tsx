@@ -130,6 +130,8 @@ const AutUserInfo = () => {
     );
   };
 
+  console.log(canUpdateProfile);
+
   const handleClose = () => {
     dispatch(setOpenEditProfile(false));
   };

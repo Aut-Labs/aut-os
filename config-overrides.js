@@ -14,7 +14,13 @@ module.exports = {
       util: path.resolve(__dirname, "node_modules/util"),
       os: false,
       url: false,
-      http: false
+      http: false,
+      tls: false,
+      net: false,
+      zlib: false,
+      path: false,
+      fs: false,
+      crypto: false
     });
     config.plugins = (config.plugins || []).concat([
       new webpack.ProvidePlugin({

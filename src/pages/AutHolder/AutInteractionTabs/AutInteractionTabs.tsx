@@ -12,13 +12,6 @@ const AutInteractionTabs = () => {
   const { tech, defi, art, governance, reputation } = AutOsInteractionTypes;
   const tabs = [
     {
-      label: "Tech & Infra",
-      props: {
-        interactions: tech
-      },
-      component: InteractionList
-    },
-    {
       label: "DeFi",
       props: {
         interactions: defi
@@ -34,14 +27,34 @@ const AutInteractionTabs = () => {
       component: InteractionList
     },
     {
-      label: "Art, Gaming & NFTs",
+      label: (
+        <>
+          Tech <br /> & Infra
+        </>
+      ),
+      props: {
+        interactions: tech
+      },
+      component: InteractionList
+    },
+
+    {
+      label: (
+        <>
+          Art, Gaming <br />& NFTs
+        </>
+      ),
       props: {
         interactions: art
       },
       component: InteractionList
     },
     {
-      label: "Reputation & ID",
+      label: (
+        <>
+          Reputation <br />& ID
+        </>
+      ),
       props: {
         interactions: reputation
       },

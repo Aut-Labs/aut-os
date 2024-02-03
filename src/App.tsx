@@ -12,19 +12,13 @@ import { environment } from "@api/environment";
 import { getAppConfig } from "@api/aut.api";
 import AutSDK from "@aut-labs/sdk";
 import "./App.scss";
-import { useSelector } from "react-redux";
-import { CanUpdateProfile } from "@auth/auth.reducer";
 import AutCommunityEdit from "./pages/AutCommunity/AutNova";
 import AutProfileEdit from "./pages/AutHolder/AutLeft/AutProfileEdit";
-import { WagmiConfig } from "wagmi";
-// import { generateNetworkConfig } from "@api/ProviderFactory/setup.config";
 
 function App() {
   const dispatch = useAppDispatch();
   const [appLoading, setAppLoading] = useState(true);
   const [isLoading, setLoading] = useState(false);
-  const [config, setConfig] = useState(null);
-  const canUpdateProfile = useSelector(CanUpdateProfile);
 
   useEffect(() => {
     getAppConfig()
@@ -49,7 +43,7 @@ function App() {
         <AutLoading />
       ) : (
         <>
-          <Web3DautConnect config={config} setLoading={setLoading} />
+          <Web3DautConnect setLoading={setLoading} />
           <SWSnackbar />
           <Box
             sx={{
