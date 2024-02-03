@@ -172,8 +172,8 @@ export function AutChangeCommitmentDialog(props: CommitmentDialogProps) {
           }}
         >
           <Typography variant="caption" color="white">
-            You'll be able to Withdraw from this Nova from the starting of the
-            2nd period ahead
+            You'll be able to change your commitment on this Nova from the start
+            of the 2nd period ahead
           </Typography>
         </Box>
       </DialogContent>

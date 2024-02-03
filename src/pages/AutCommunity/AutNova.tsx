@@ -499,7 +499,7 @@ const AutCommunityEdit = () => {
                       <Box>
                         <Badge
                           badgeContent={
-                            <Tooltip title="You've just joined friend. You'll be able to Withdraw from this Nova from the starting of the 2nd period ahead">
+                            <Tooltip title="You've just joined friend. You'll be able to Withdraw from this Nova from the start of the 2nd period ahead">
                               {/* @ts-ignore */}
                               <HelpOutlineIcon color="offWhite" />
                             </Tooltip>
