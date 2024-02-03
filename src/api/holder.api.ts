@@ -257,7 +257,7 @@ export const fetchHolder = createAsyncThunk(
         socials: autIdMetadata?.properties?.socials,
         address: autID.id,
         tokenId: autID.tokenID,
-        network: walletProvider.selectedNetwork,
+        network: walletProvider.selectedNetwork || networks[0],
         communities: [userNova]
       }
     });
