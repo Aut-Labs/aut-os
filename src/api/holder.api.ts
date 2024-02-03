@@ -152,7 +152,7 @@ export const fetchHolder = createAsyncThunk(
       ? [network]
       : walletProvider.networksConfig
           .filter((n: NetworkConfig) => !n.disabled)
-          .map((n: NetworkConfig) => n.network?.toLowerCase());
+          .map((n: NetworkConfig) => n.network?.toString().toLowerCase());
     // const networks: string[] = network ? [network] : ['goerli', 'goerli'];
     const profiles = [];
     const sdk = AutSDK.getInstance();

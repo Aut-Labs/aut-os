@@ -47,8 +47,9 @@ export const holderSlice = createSlice({
         state.profiles = action.payload;
         if (state.profiles.length === 1) {
           state.selectedProfileAddress = state.profiles[0].properties.address;
-          state.selectedProfileNetwork =
-            state.profiles[0].properties?.network?.toLowerCase();
+          state.selectedProfileNetwork = state.profiles[0].properties?.network
+            ?.toString()
+            .toLowerCase();
         }
         state.fetchStatus = ResultState.Success;
       })
@@ -140,7 +141,8 @@ export const HolderData = createSelector(
     return profiles.find(
       (item) =>
         item.properties.address === address &&
-        item.properties.network?.toLowerCase() === network?.toLowerCase()
+        item.properties.network?.toString().toLowerCase() ===
+          network?.toString().toLowerCase()
     );
   }
 );

@@ -43,6 +43,9 @@ import React from "react";
 import MainBackground from "../../MainBackground";
 import AutToolBar from "../AutHolder/AutLeft/AutToolBar";
 import { FollowPopover } from "@components/FollowPopover";
+import { apolloClient } from "@store/graphql";
+import { queryParamsAsString } from "@aut-labs/sdk/dist/utils/graphql.misc";
+import { gql } from "@apollo/client";
 interface UserProfile {
   name: string;
 }
@@ -224,15 +227,15 @@ const AutSearch = () => {
     };
   }, []); // Empty array ensures effect is only run on mount and unmount
 
-  function selectProfile(profile: AutID) {
+  function selectProfile(profile: any) {
     const params = new URLSearchParams(location.search);
     navigate({
-      pathname: `/${profile.name}`
+      pathname: `/${profile.username}`
     });
     dispatch(
       fetchHolder({
-        autName: profile.name,
-        network: "mumbai"
+        autName: profile.username
+        // network: "mumbai"
       })
     );
   }
@@ -260,52 +263,37 @@ const AutSearch = () => {
   const fetch = React.useMemo(
     () =>
       debounce(
-        (
+        async (
           request: { input: string },
           callback: (results?: readonly UserProfile[]) => void
         ) => {
-          // Simulate network request
-          setTimeout(() => {
-            // Simulated results (mocked data)
-            const results = [
-              {
-                name: "Mr_meeseeks",
-                network: "mumbai"
-              },
-              {
-                name: "Barbaros",
-                network: "mumbai"
-              },
-              {
-                name: "alex",
-                network: "mumbai"
-              },
-              {
-                name: "JL",
-                network: "mumbai"
-              },
-              {
-                name: "ProudLemon",
-                network: "mumbai"
-              },
-              {
-                name: "Eulalie",
-                network: "mumbai"
-              },
-              {
-                name: "Mihanix",
-                network: "mumbai"
-              },
-              {
-                name: "AntAnt",
-                network: "mumbai"
-              }
-            ].filter((user) =>
-              user.name.toLowerCase().includes(request.input.toLowerCase())
-            );
+          const filters = [
+            {
+              prop: "username",
+              comparison: "contains",
+              value: request.input.toLowerCase()
+            }
+          ];
 
-            callback(results as unknown as UserProfile[]);
-          }, 400);
+          const queryArgsString = queryParamsAsString({
+            skip: 0,
+            take: 5,
+            filters
+          });
+          const query = gql`
+      query AutIds {
+        autIDs(${queryArgsString}) {
+          id
+          username
+        }
+      }
+    `;
+          const response = await apolloClient.query<any>({
+            query
+          });
+
+          const { autIDs } = response.data;
+          callback(autIDs as unknown as UserProfile[]);
         },
         400 // debounce delay
       ),
@@ -453,7 +441,7 @@ const AutSearch = () => {
                           return (
                             <UserRow
                               onClick={() => selectProfile(option)}
-                              key={option.name}
+                              key={option.username}
                             >
                               <div
                                 style={{
@@ -486,7 +474,7 @@ const AutSearch = () => {
                                     variant="h6"
                                     fontFamily="FractulRegular"
                                   >
-                                    {option?.name}
+                                    {option?.username}
                                   </Typography>
                                 </div>
                               </div>
