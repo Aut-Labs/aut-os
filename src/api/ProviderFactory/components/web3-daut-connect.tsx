@@ -17,15 +17,18 @@ import AutSDK from "@aut-labs/sdk";
 import { useLocation, useNavigate } from "react-router-dom";
 import { EnvMode, environment } from "@api/environment";
 import { MultiSigner } from "@aut-labs/sdk/dist/models/models";
-import { useAccount, useConnect } from "wagmi";
-import { Config } from "prettier";
-import { useEthersSigner, walletClientToSigner } from "../ethers";
+import {
+  Connector,
+  ConnectorAlreadyConnectedError,
+  useAccount,
+  useConnect
+} from "wagmi";
+import { walletClientToSigner } from "../ethers";
 
 function Web3DautConnect({
   setLoading
 }: {
   setLoading: (loading: boolean) => void;
-  config: Config;
 }) {
   const dispatch = useAppDispatch();
   const abort = useRef<AbortController>();
@@ -33,9 +36,8 @@ function Web3DautConnect({
   const location = useLocation();
 
   const networks = useSelector(NetworksConfig);
-  const { connector, isConnected } = useAccount();
+  const { isConnected, connector } = useAccount();
   const { connectAsync, connectors } = useConnect();
-  const multiSigner = useEthersSigner();
 
   const initialiseSDK = async (
     network: NetworkConfig,
@@ -50,20 +52,24 @@ function Web3DautConnect({
   };
 
   useEffect(() => {
-    if (isConnected && multiSigner) {
+    if (isConnected && connector?.getProvider) {
       const start = async () => {
+        const provider = (await connector.getProvider()) as any;
+        const multiSigner: MultiSigner = {
+          signer: provider,
+          readOnlySigner: provider
+        };
         const [network] = networks.filter((d) => !d.disabled);
         const itemsToUpdate = {
           sdkInitialized: true,
           selectedNetwork: network
-          // signer: multiSigner
         };
-        await initialiseSDK(network, await multiSigner);
+        await initialiseSDK(network, multiSigner);
         await dispatch(updateWalletProviderState(itemsToUpdate));
       };
       start();
     }
-  }, [isConnected, multiSigner]);
+  }, [isConnected, connector?.getProvider]);
 
   const onAutInit = async () => {
     const [, username] = location.pathname.split("/");
@@ -125,18 +131,45 @@ function Web3DautConnect({
     const autID = await _parseAutId(profile);
 
     if (autID.properties.network) {
-      const walletName = localStorage.getItem("wagmi.wallet").replace(/"/g, "");
-      const [network] = networks.filter((d) => !d.disabled);
-      if (walletName) {
-        const c = connectors.find((c) => c.id === walletName);
-        if (c && !isConnected) {
-          const client = await connectAsync({
-            connector: c
-          });
+      let chainId = null;
 
-          client["transport"] = client["provider"];
-          const temp_signer = walletClientToSigner(client);
-          await initialiseSDK(network, temp_signer as any);
+      try {
+        chainId = JSON.parse(localStorage.getItem("wagmi.store")).state.chainId;
+      } catch (error) {
+        // no chain id
+      }
+
+      const [network] = networks.filter((d) => !d.disabled);
+      if (chainId) {
+        let selectedConnector: Connector = null;
+
+        for (const c of connectors) {
+          const cChainId = await c.getChainId();
+          if (cChainId === chainId) {
+            selectedConnector = c;
+            break;
+          }
+        }
+
+        if (selectedConnector && !isConnected) {
+          try {
+            const client = await connectAsync({
+              connector: selectedConnector
+            });
+
+            client["transport"] = client["provider"];
+            const temp_signer = walletClientToSigner(client);
+            await initialiseSDK(network, temp_signer as any);
+          } catch (err) {
+            if (err instanceof ConnectorAlreadyConnectedError) {
+              const provider = (await selectedConnector.getProvider()) as any;
+              const multiSigner: MultiSigner = {
+                signer: provider,
+                readOnlySigner: provider
+              };
+              await initialiseSDK(network, multiSigner);
+            }
+          }
         }
       }
 
@@ -258,6 +291,7 @@ function Web3DautConnect({
         // allowed-role-id={3}
         menu-items='[{"name":"Profile","actionType":"event_emit","eventName":"aut_profile"}]'
         flow-config='{"mode" : "dashboard", "customCongratsMessage": ""}'
+        // nova-address="0x532e0f05aa02e36622c2fd39471360b494f3f361"
         ipfs-gateway={environment.ipfsGatewayUrl}
       />
     </>

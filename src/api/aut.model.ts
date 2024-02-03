@@ -102,7 +102,7 @@ export class AutIDProperties {
         (community) => new Community(community)
       );
       this.ethDomain = data.ethDomain;
-      this.socials = data.socials || DefaultSocials;
+      this.socials = data.socials?.length ? data.socials : DefaultSocials;
       this.socials = this.socials.filter((s) => s.type !== "eth");
       this.network = data.network;
       this.holderData = data.holderData;

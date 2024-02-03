@@ -3,10 +3,9 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import { SxProps, useTheme } from "@mui/material";
-import PerfectScrollbar from "react-perfect-scrollbar";
 
 interface AutOsTabParams {
-  label: string;
+  label: string | any;
   component: any;
   disabled?: boolean;
   props: {
@@ -96,10 +95,10 @@ function AutOsTabs(props: AutOsTabsParams) {
               alignItems: "center",
               gap: "10px",
               borderRadius: "72px",
-              width: {
-                xs: "100%",
-                md: "50%"
-              },
+              // width: {
+              //   xs: "100%",
+              //   md: "50%"
+              // },
               background: "rgba(240, 245, 255, 0.01)",
               backdropFilter: "blur(12px)"
             },
@@ -117,7 +116,9 @@ function AutOsTabs(props: AutOsTabsParams) {
               backgroundColor: "transparent",
               textTransform: "inherit",
               color: "offWhite.main",
-              borderBottom: 0,
+              border: `1px solid ${theme.palette.divider}`,
+              transition: theme.transitions.create(["border-color"]),
+              // borderBottom: 0,
               ":hover": {
                 border: `1px solid ${theme.palette.offWhite.main}`
               },

@@ -82,6 +82,7 @@ const NovaListItem = memo(
         sx={{
           border: "1px solid",
           borderColor: "#576176",
+          transition: theme.transitions.create(["border-color"]),
           ":hover": {
             borderColor: "#14ECEC"
           }

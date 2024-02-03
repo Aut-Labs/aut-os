@@ -2,7 +2,7 @@
 import GridLines from "./GridLines";
 import Dots from "./Dots";
 import Faces from "./Faces";
-import { MainBG } from "./MainBG";
+import map from "@assets/autos/background.png";
 
 const MainBackground = ({ dimensions, setPopoverEl }: any) => {
   return (
@@ -49,10 +49,18 @@ const MainBackground = ({ dimensions, setPopoverEl }: any) => {
           fill="url(#paint1_linear_529_70621)"
         />
       </g>
+      <image
+        x="0"
+        y="0"
+        width="100%"
+        height="100%"
+        preserveAspectRatio="none"
+        xlinkHref={map}
+      />
       <GridLines dimensions={dimensions} />
       <Dots dimensions={dimensions} />
       <Faces setPopoverEl={setPopoverEl} dimensions={dimensions} />
-      {<MainBG dimensions={dimensions} />}
+      {/* {<MainBG dimensions={dimensions} />} */}
     </svg>
   );
 };

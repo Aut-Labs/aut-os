@@ -68,6 +68,8 @@ const InteractionListItem = memo(
           border: "1px solid",
           borderColor: "#576176",
           minWidth: "170px",
+          boxShadow: 3,
+          borderRadius: "8.5px",
           padding: theme.spacing(3)
         }}
       >
