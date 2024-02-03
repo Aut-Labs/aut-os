@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import { Box, Typography } from "@mui/material";
+import { Box, IconButton, Tooltip, Typography } from "@mui/material";
 import { useSelector } from "react-redux";
 import InteractionMap from "@components/InteractionMap";
 import { memo, useEffect, useMemo, useRef, useState } from "react";
@@ -17,6 +17,8 @@ import { BaseNFTModel } from "@aut-labs/sdk/dist/models/baseNFTModel";
 import { MapAutID, MapNova } from "@api/map.model";
 import { AutID } from "@api/aut.model";
 import AutLoading from "@components/AutLoading";
+import AutSearchDialog from "src/pages/AutHome/AutSearchDialog";
+import ManageSearchIcon from "@mui/icons-material/ManageSearch";
 
 const fetchAutIDsQuery = (nova: Community) => {
   const queryArgsString = queryParamsAsString({
@@ -49,6 +51,7 @@ const fetchAutIDsQuery = (nova: Community) => {
 const AutMap = ({ nova }) => {
   const ref = useRef();
   const dispatch = useAppDispatch();
+  const [searchOpen, setIsSearchOpen] = useState(false);
   const addedInteractions = useSelector(AdddInteractions);
   const { loading, error, data } = useQuery(fetchAutIDsQuery(nova), {
     fetchPolicy: "cache-first"
@@ -161,6 +164,10 @@ const AutMap = ({ nova }) => {
   };
   return (
     <>
+      <AutSearchDialog
+        open={searchOpen}
+        onClose={() => setIsSearchOpen(false)}
+      />
       {loading ? (
         <AutLoading width="100px" height="100px" />
       ) : (
@@ -247,6 +254,33 @@ const AutMap = ({ nova }) => {
               })
             }}
           >
+            {!showInteractionLayer && (
+              <Tooltip title={`Search for AutId's`}>
+                <IconButton
+                  color="offWhite"
+                  onClick={() => setIsSearchOpen(true)}
+                  sx={{
+                    width: "60px",
+                    height: "60px",
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    zIndex: 10,
+                    "&.MuiButton-root": {
+                      background: "transparent",
+                      border: "1px solid #A7B1C4"
+                    }
+                  }}
+                >
+                  <ManageSearchIcon
+                    sx={{
+                      fontSize: "40px"
+                    }}
+                  />
+                </IconButton>
+              </Tooltip>
+            )}
+
             {mapData?.centralNode && (
               <InteractionMap
                 mapData={mapData}

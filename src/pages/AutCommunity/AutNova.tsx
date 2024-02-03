@@ -3,6 +3,7 @@ import {
   Avatar,
   Badge,
   Box,
+  Button,
   Card,
   IconButton,
   LinearProgress,
@@ -19,6 +20,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import {
+  HolderData,
   SelectedCommunity,
   UpdateErrorMessage,
   updateHolderState,
@@ -34,6 +36,7 @@ import LoadingDialog from "@components/Dialog/LoadingPopup";
 import { ipfsCIDToHttpUrl } from "@api/storage.api";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import {
   BlockExplorerUrl,
   IsConnected,
@@ -132,8 +135,8 @@ const NovaWrapper = styled(Box)(({ theme }) => ({
 
 const AutCommunityEdit = () => {
   const dispatch = useAppDispatch();
-  const desktop = useMediaQuery("(min-width:1024px)");
-  const xs = useMediaQuery("(max-width:360px)");
+  // const desktop = useMediaQuery("(min-width:1024px)");
+  // const xs = useMediaQuery("(max-width:360px)");
   const theme = useTheme();
   const params = useParams<{
     network: string;
@@ -144,12 +147,6 @@ const AutCommunityEdit = () => {
     SelectedCommunity(params.communityAddress)
   );
 
-  const exampleCommunity = {
-    ...selectedCommunity,
-    name: "Āut DAO",
-    description: `Āut is a collective building decentralized standards for self-sovereign Identity (SSID, IAM), Reputation and Communities (DAOs, Hacktivists, Network States). 
-    A Laboratory of Experimentation questioning the borders imposed by the status quo.`
-  };
   const navigate = useNavigate();
   const status = useSelector(UpdateStatus);
   const errorMessage = useSelector(UpdateErrorMessage);
@@ -159,8 +156,8 @@ const AutCommunityEdit = () => {
   const isNovaMember = true;
   const [editInitiated, setEditInitiated] = useState(false);
   const [withdrawInitiated, setWithdrawInitiated] = useState(false);
-  // const { active: isActive } = useEthers();
   const selectedNetworkConfig = useSelector(SelectedNetworkConfig);
+  const holderData = useSelector(HolderData);
 
   const {
     control,
@@ -174,7 +171,7 @@ const AutCommunityEdit = () => {
     }
   });
 
-  const values = watch();
+  // const values = watch();
 
   const beforeEdit = () => {
     setEditInitiated(true);
@@ -236,6 +233,13 @@ const AutCommunityEdit = () => {
       search: `?${params.toString()}`
     });
     dispatch(resetSearchState());
+  }
+
+  function goToProfile() {
+    navigate({
+      pathname: `/${holderData.name}`,
+      search: ``
+    });
   }
 
   const handleClose = () => {
@@ -300,7 +304,11 @@ const AutCommunityEdit = () => {
             {selectedCommunity && (
               <>
                 <LeftWrapper>
-                  <Stack>
+                  <Stack
+                    sx={{
+                      position: "relative"
+                    }}
+                  >
                     <Avatar
                       sx={{
                         height: {
@@ -319,9 +327,36 @@ const AutCommunityEdit = () => {
                       aria-label="avatar"
                       src={ipfsCIDToHttpUrl(selectedCommunity?.image as string)}
                     />
+                    <AutOsButton
+                      startIcon={<ArrowBackIcon />}
+                      color="offWhite"
+                      variant="outlined"
+                      size="small"
+                      onClick={() => goToProfile()}
+                      sx={{
+                        position: {
+                          sm: "absolute"
+                        },
+                        right: {
+                          sm: "0"
+                        },
+                        "&.MuiButton-root": {
+                          background: "transparent",
+                          border: "1px solid #A7B1C4"
+                        }
+                      }}
+                    >
+                      <Typography
+                        fontWeight="700"
+                        fontSize="16px"
+                        lineHeight="26px"
+                      >
+                        Profile
+                      </Typography>
+                    </AutOsButton>
                     <Stack
                       sx={{
-                        marginTop: theme.spacing(2)
+                        mt: 2
                       }}
                     >
                       <div>
@@ -337,15 +372,13 @@ const AutCommunityEdit = () => {
                             lineHeight={1}
                             variant="h2"
                           >
-                            {/* TODO: Revert */}
-                            {/* {selectedCommunity.name} */}
-                            {exampleCommunity?.name}
+                            {selectedCommunity.name}
                           </Typography>
                         </div>
 
                         <Stack
                           sx={{
-                            marginTop: theme.spacing(2)
+                            mt: 2
                           }}
                           direction="row"
                           alignItems="center"
@@ -373,19 +406,9 @@ const AutCommunityEdit = () => {
                       </div>
                     </Stack>
 
-                    <Stack
-                      sx={{
-                        display: "flex",
-                        flexDirection: "row",
-                        alignItems: "flex-start",
-                        alignContent: "flex-start",
-                        marginTop: theme.spacing(2)
-                      }}
-                    ></Stack>
-
                     <Box
                       sx={{
-                        marginTop: theme.spacing(2)
+                        mt: 2
                       }}
                     >
                       <Box sx={{ padding: "16.5px 0px" }}>
@@ -394,18 +417,14 @@ const AutCommunityEdit = () => {
                           textAlign="left"
                           variant="body"
                         >
-                          {/* TODO: Revert */}
-                          {/* {selectedCommunity?.description ||
-                            "No description yet..."} */}
-                          {exampleCommunity?.description ||
-                            "No description yet..."}
+                          {selectedCommunity?.description || "N/A"}
                         </Typography>
                       </Box>
                     </Box>
 
                     <Box
                       sx={{
-                        marginTop: theme.spacing(2)
+                        mt: 2
                       }}
                     >
                       <IconContainer>
@@ -471,7 +490,7 @@ const AutCommunityEdit = () => {
                         display: "flex",
                         flexDirection: "column",
                         gap: theme.spacing(3),
-                        marginTop: theme.spacing(2)
+                        mt: 2
                       }}
                     >
                       <AutOsButton

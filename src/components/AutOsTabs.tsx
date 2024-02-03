@@ -117,8 +117,11 @@ function AutOsTabs(props: AutOsTabsParams) {
               textTransform: "inherit",
               color: "offWhite.main",
               border: `1px solid ${theme.palette.divider}`,
-              transition: theme.transitions.create(["border-color"]),
-              // borderBottom: 0,
+              transition: theme.transitions.create([
+                "border-color",
+                "background-color",
+                "color"
+              ]),
               ":hover": {
                 border: `1px solid ${theme.palette.offWhite.main}`
               },

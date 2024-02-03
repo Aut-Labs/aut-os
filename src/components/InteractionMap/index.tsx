@@ -393,6 +393,13 @@ function InteractionMap({
               color="primary"
               size="small"
               variant="outlined"
+              sx={{
+                width: "180px",
+                "&.MuiButton-root": {
+                  background: "transparent",
+                  border: "1px solid #A7B1C4"
+                }
+              }}
             >
               <Typography fontWeight="700" fontSize="16px" lineHeight="26px">
                 View Interactions

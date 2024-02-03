@@ -61,7 +61,7 @@ export const IconContainer = styled("div")(({ theme }) => ({
   }
 }));
 
-const FollowWrapper = styled("div")(({ theme }) => ({
+const FollowWrapper = styled("div")(() => ({
   display: "flex",
   flexDirection: "column",
   alignItems: "flex-start",
@@ -84,7 +84,6 @@ const AutUserInfo = () => {
   const blockExplorer = useSelector(BlockExplorerUrl);
   const selectedNetwork = useSelector(SelectedNetworkConfig);
   const canUpdateProfile = useSelector(CanUpdateProfile);
-  const [inlineEditing, setInlineEditing] = useState(false);
   const [editInitiated, setEditInitiated] = useState(false);
   const dispatch = useAppDispatch();
   const status = useSelector(UpdateStatus);
@@ -99,7 +98,7 @@ const AutUserInfo = () => {
     }).format(parseTimestamp(holderData?.properties?.timestamp));
   }, [holderData]);
 
-  const { handleSubmit, watch } = useForm({
+  const { handleSubmit } = useForm({
     mode: "onChange",
     defaultValues: {
       avatar: holderData?.properties?.avatar,
@@ -109,11 +108,6 @@ const AutUserInfo = () => {
   });
 
   // const theme = useTheme();
-
-  const onEditInfo = () => {
-    setInlineEditing(!inlineEditing);
-    return null;
-  };
 
   const beforeEdit = () => {
     setEditInitiated(true);
@@ -129,8 +123,6 @@ const AutUserInfo = () => {
       })
     );
   };
-
-  console.log(canUpdateProfile);
 
   const handleClose = () => {
     dispatch(setOpenEditProfile(false));

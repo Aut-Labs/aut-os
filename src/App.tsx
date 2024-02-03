@@ -5,7 +5,6 @@ import { useAppDispatch } from "@store/store.model";
 import { setNetworks } from "@store/WalletProvider/WalletProvider";
 import AutLoading from "@components/AutLoading";
 import Web3DautConnect from "@api/ProviderFactory/components/web3-daut-connect";
-import AutSearch from "./pages/AutHome/AutSearch";
 import AutHolder from "./pages/AutHolder/AutHolder";
 import SWSnackbar from "./components/snackbar";
 import { environment } from "@api/environment";
@@ -14,6 +13,7 @@ import AutSDK from "@aut-labs/sdk";
 import "./App.scss";
 import AutCommunityEdit from "./pages/AutCommunity/AutNova";
 import AutProfileEdit from "./pages/AutHolder/AutLeft/AutProfileEdit";
+import AutHome from "./pages/AutHome";
 
 function App() {
   const dispatch = useAppDispatch();
@@ -55,7 +55,7 @@ function App() {
             ) : (
               <Suspense fallback={<AutLoading />}>
                 <Routes>
-                  <Route path="/" element={<AutSearch />} />
+                  <Route path="/" element={<AutHome />} />
                   <Route path="/:holderAddress/*" element={<AutHolder />} />
                   <Route
                     path="/:holderAddress/edit-community/:communityAddress"
