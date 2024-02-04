@@ -49,6 +49,8 @@ import AutUserTabs from "../AutUserTabs/AutUserTabs";
 import { SubtitleWithInfo } from "@components/SubtitleWithInfoIcon";
 import { IsEditingProfile, setOpenEditProfile } from "@store/ui-reducer";
 import { AutEditProfileDialog } from "@components/AutEditProfileDialog";
+import AutBadge3DSceneDialog from "./3DBadge";
+import ViewInArIcon from "@mui/icons-material/ViewInAr";
 // import VisibilityIcon from "@mui/icons-material/Visibility";
 
 export const IconContainer = styled("div")(({ theme }) => ({
@@ -86,6 +88,7 @@ const AutUserInfo = () => {
   const selectedNetwork = useSelector(SelectedNetworkConfig);
   const canUpdateProfile = useSelector(CanUpdateProfile);
   const [editInitiated, setEditInitiated] = useState(false);
+  const [view3DModel, setView3DModel] = useState(false);
   const dispatch = useAppDispatch();
   const status = useSelector(UpdateStatus);
   const errorMessage = useSelector(UpdateErrorMessage);
@@ -141,6 +144,13 @@ const AutUserInfo = () => {
         title="Edit Profile"
         onClose={handleClose}
       />
+
+      <AutBadge3DSceneDialog
+        open={view3DModel}
+        onClose={() => setView3DModel(false)}
+        url="https://aut.mypinata.cloud/ipfs/QmeQhdYy4gyfqjooAt3e4CmKg2hSMaUxJdmRcEVxG5Zu4M"
+      />
+
       <FormWrapper autoComplete="off" onSubmit={handleSubmit(beforeEdit)}>
         <ErrorDialog
           handleClose={handleDialogClose}
@@ -223,7 +233,19 @@ const AutUserInfo = () => {
                           lineHeight={1}
                           variant="h2"
                         >
-                          {holderData.name}
+                          {holderData.name}{" "}
+                          <Tooltip title="View you 3D NFT Badge">
+                            <IconButton
+                              sx={{ p: 0, ml: 1 }}
+                              color="primary"
+                              type="button"
+                              onClick={() => setView3DModel(true)}
+                            >
+                              <ViewInArIcon
+                                sx={{ cursor: "pointer", fontSize: "30px" }}
+                              />
+                            </IconButton>
+                          </Tooltip>
                         </Typography>
                       </div>
 

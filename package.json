@@ -46,6 +46,7 @@
     "@mui/icons-material": "^5.15.7",
     "@mui/lab": "^5.0.0-alpha.163",
     "@mui/material": "^5.15.7",
+    "@react-three/fiber": "^8.15.16",
     "@reduxjs/toolkit": "^2.1.0",
     "axios": "^1.6.7",
     "buffer": "^6.0.3",
@@ -73,6 +74,7 @@
     "react-step-wizard": "^5.3.11",
     "sass": "^1.70.0",
     "swiper": "^11.0.5",
+    "three": "^0.161.0",
     "util": "^0.12.5",
     "viem": "^2.7.1",
     "wagmi": "^2.5.5"

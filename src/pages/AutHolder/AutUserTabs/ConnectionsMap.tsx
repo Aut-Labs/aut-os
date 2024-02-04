@@ -19,6 +19,7 @@ import { AutID } from "@api/aut.model";
 import AutLoading from "@components/AutLoading";
 import AutSearchDialog from "src/pages/AutHome/AutSearchDialog";
 import ManageSearchIcon from "@mui/icons-material/ManageSearch";
+import Scene from "../AutLeft/3DBadge";
 
 const fetchAutIDsQuery = (nova: Community) => {
   const queryArgsString = queryParamsAsString({
