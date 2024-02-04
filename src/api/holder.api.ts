@@ -158,7 +158,6 @@ export const fetchHolder = createAsyncThunk(
     const networkName =
       walletProvider?.selectedNetwork?.network?.toString().toLowerCase() ||
       networks[0];
-    debugger;
 
     const filters = [];
 
@@ -403,6 +402,7 @@ export const updateProfile = createAsyncThunk(
       console.log("New image: ->", ipfsCIDToHttpUrl(user.properties.avatar));
     }
 
+    debugger;
     const updatedUser = AutID.updateAutID(user);
     const uri = await sdk.client.sendJSONToIPFS(updatedUser as any);
     console.log("New metadata: ->", ipfsCIDToHttpUrl(uri));

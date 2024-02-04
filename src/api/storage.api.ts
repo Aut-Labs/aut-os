@@ -41,6 +41,7 @@ export function httpUrlToIpfsCID(url: string) {
   if (!url) {
     return url;
   }
+  debugger;
   if (url.includes("https://")) {
     const notHttpsUrl = `${replaceAll(url, "https://", "")}`;
     const [_, __, cid, name] = notHttpsUrl.split("/");

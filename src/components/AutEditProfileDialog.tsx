@@ -171,8 +171,7 @@ export function AutEditProfileDialog(props: EditDialogProps) {
   const {
     control,
     handleSubmit,
-    watch,
-    formState: { isDirty, isValid, errors }
+    formState: { isDirty }
   } = useForm({
     mode: "onChange",
     defaultValues: {
@@ -180,22 +179,7 @@ export function AutEditProfileDialog(props: EditDialogProps) {
       email: holderData.properties.email,
       bio: holderData.properties.bio,
       avatar: holderData?.properties?.avatar,
-      socials: (holderData?.properties?.socials || []).map((social, index) => {
-        if (index > 2) {
-          return {
-            ...social,
-            link: (social.link as string).replace(
-              socialUrls[social.type].prefix,
-              ""
-            )
-          };
-        }
-
-        return {
-          ...social,
-          link: "username"
-        };
-      })
+      socials: holderData?.properties?.socials
     }
   });
 
@@ -203,8 +187,6 @@ export function AutEditProfileDialog(props: EditDialogProps) {
     control,
     name: "socials"
   });
-
-  const values = watch();
 
   const beforeEdit = () => {
     setEditInitiated(true);
@@ -220,6 +202,8 @@ export function AutEditProfileDialog(props: EditDialogProps) {
         properties: {
           ...holderData.properties,
           socials: data.socials,
+          bio: data.bio,
+          email: data.email,
           avatar: data.avatar
         }
       } as AutID)
@@ -322,15 +306,16 @@ export function AutEditProfileDialog(props: EditDialogProps) {
                   Name
                 </Typography>
                 <Controller
-                  key={`name`}
-                  name={`name`}
+                  name="name"
                   control={control}
                   render={({ field: { name, value, onChange } }) => {
                     return (
                       <>
                         <StyledTextField
                           color="offWhite"
+                          name={name}
                           value={value}
+                          onChange={onChange}
                           disabled
                           sx={{
                             height: "48px"
@@ -350,15 +335,16 @@ export function AutEditProfileDialog(props: EditDialogProps) {
                   E-mail address
                 </Typography>
                 <Controller
-                  key={`email`}
-                  name={`email`}
+                  name="email"
                   control={control}
                   render={({ field: { name, value, onChange } }) => {
                     return (
                       <>
                         <StyledTextField
                           color="offWhite"
+                          name={name}
                           value={value}
+                          onChange={onChange}
                           sx={{
                             height: "48px"
                           }}
@@ -377,8 +363,7 @@ export function AutEditProfileDialog(props: EditDialogProps) {
                   Bio
                 </Typography>
                 <Controller
-                  key={`bio`}
-                  name={`bio`}
+                  name="bio"
                   control={control}
                   render={({ field: { name, value, onChange } }) => {
                     return (
@@ -387,7 +372,9 @@ export function AutEditProfileDialog(props: EditDialogProps) {
                           color="offWhite"
                           rows="3"
                           multiline
+                          name={name}
                           value={value}
+                          onChange={onChange}
                         />
                       </>
                     );
@@ -418,7 +405,6 @@ export function AutEditProfileDialog(props: EditDialogProps) {
                         name={`socials.${index}.link`}
                         control={control}
                         render={({ field: { name, value, onChange } }) => {
-                          console.log(field, value, "VALUEEEEE");
                           return (
                             <SocialFieldWrapper
                               sx={{ cursor: value ? "unset" : "pointer" }}

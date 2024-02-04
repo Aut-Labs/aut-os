@@ -109,12 +109,15 @@ export class AutIDProperties {
       this.thumbnailAvatar = data.thumbnailAvatar;
       this.interactions = data.interactions || [];
       this.role = data.role;
+      this.bio = data.bio;
+      this.email = data.email;
     }
   }
 }
 
 export class AutID extends BaseNFTModel<AutIDProperties> {
   static updateAutID(updatedUser: AutID): Partial<AutID> {
+    debugger;
     const autID = new AutID(updatedUser);
     return {
       name: autID.name,
@@ -122,6 +125,11 @@ export class AutID extends BaseNFTModel<AutIDProperties> {
       image: httpUrlToIpfsCID(autID.image as string),
       properties: {
         avatar: httpUrlToIpfsCID(autID.properties.avatar as string),
+        thumbnailAvatar: httpUrlToIpfsCID(
+          autID.properties.thumbnailAvatar as string
+        ),
+        email: autID.properties.email,
+        bio: autID.properties.bio,
         timestamp: autID.properties.timestamp,
         socials: autID.properties.socials.map((social) => {
           social.link = `${socialUrls[social.type].prefix}${social.link}`;

@@ -547,7 +547,8 @@ const AutUserInfo = () => {
               top: "50%"
             }}
           >
-            Oops, it looks like we don't support this network yet.
+            Oops, something went wrong getting this AutID. Refresh the page to
+            try again.
           </Typography>
         ) : (
           <Typography
