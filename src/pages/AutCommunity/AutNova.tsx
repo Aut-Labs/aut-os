@@ -328,7 +328,7 @@ const AutCommunityEdit = () => {
                       aria-label="avatar"
                       src={ipfsCIDToHttpUrl(selectedCommunity?.image as string)}
                     />
-                    <AutOsButton
+                    {/* <AutOsButton
                       startIcon={<ArrowBackIcon />}
                       color="offWhite"
                       variant="outlined"
@@ -354,7 +354,7 @@ const AutCommunityEdit = () => {
                       >
                         Profile
                       </Typography>
-                    </AutOsButton>
+                    </AutOsButton> */}
                     <Stack
                       sx={{
                         mt: 2
@@ -556,6 +556,36 @@ const AutCommunityEdit = () => {
                   )}
                 </LeftWrapper>
                 <RightWrapper>
+                  <Box>
+                    <AutOsButton
+                      startIcon={<ArrowBackIcon />}
+                      color="offWhite"
+                      variant="outlined"
+                      size="small"
+                      onClick={() => goToProfile()}
+                      sx={{
+                        // position: {
+                        //   sm: "absolute"
+                        // },
+                        // right: {
+                        //   sm: "0"
+                        // },
+                        mb: 2,
+                        "&.MuiButton-root": {
+                          background: "transparent",
+                          border: "1px solid #A7B1C4"
+                        }
+                      }}
+                    >
+                      <Typography
+                        fontWeight="700"
+                        fontSize="16px"
+                        lineHeight="26px"
+                      >
+                        Profile
+                      </Typography>
+                    </AutOsButton>
+                  </Box>
                   {canUpdateProfile && isNovaMember && (
                     <Box
                       sx={{
