@@ -96,7 +96,7 @@ export const FollowPopover = ({
           variant="subtitle1"
           color="white"
         >
-          {data?.name || "Name"}
+          {data?.name || data?.username || "Name"}
         </Typography>
         <Typography
           fontWeight="400"
@@ -111,7 +111,7 @@ export const FollowPopover = ({
             display: "block"
           }}
         >
-          @{data?.name || "Unknown"}
+          @{data?.name || data?.username || "Unknown"}
         </Typography>
       </Box>
       <Box>

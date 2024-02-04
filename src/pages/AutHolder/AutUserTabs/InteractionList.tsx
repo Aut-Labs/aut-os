@@ -96,7 +96,6 @@ const InteractionListItem = memo(
           >
             <Avatar
               sx={{
-                bgcolor: "transparent",
                 width: {
                   xs: "40px",
                   md: "50px"

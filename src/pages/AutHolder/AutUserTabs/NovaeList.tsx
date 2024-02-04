@@ -100,7 +100,6 @@ const NovaListItem = memo(
           >
             <Avatar
               sx={{
-                bgcolor: "purple",
                 width: {
                   xs: "80px",
                   xxl: "80px"

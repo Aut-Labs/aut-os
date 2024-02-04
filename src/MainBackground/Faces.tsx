@@ -1,53 +1,5 @@
 import { Bubble } from "@components/UserBubbles";
 
-const users = [
-  {
-    owner: "Luke",
-    username: "skywalker1",
-    avatar: "https://picsum.photos/200/300"
-  },
-  {
-    owner: "Morty",
-    username: "mortysmith",
-    avatar: "https://picsum.photos/300/300"
-  },
-  {
-    owner: "Angie",
-    username: "angiekins",
-    avatar: "https://picsum.photos/200/200"
-  },
-  {
-    owner: "Denis",
-    username: "menaceboy9",
-    avatar: "https://picsum.photos/200/400"
-  },
-  {
-    owner: "Jaskier",
-    username: "dandelion",
-    avatar: "https://picsum.photos/200/250"
-  },
-  {
-    owner: "Peter",
-    username: "spidey",
-    avatar: "https://picsum.photos/250/250"
-  },
-  {
-    owner: "Carly",
-    username: "traveler3645",
-    avatar: "https://picsum.photos/250/260"
-  },
-  {
-    owner: "Ted",
-    username: "mosbiusdesigns",
-    avatar: "https://picsum.photos/250/280"
-  },
-  {
-    owner: "Marshall",
-    username: "judgefudge",
-    avatar: "https://picsum.photos/250/270"
-  }
-];
-
 const AvatarCircle = ({ user, x, y, circleDimension }: any) => {
   return (
     <foreignObject
@@ -65,7 +17,7 @@ const AvatarCircle = ({ user, x, y, circleDimension }: any) => {
   );
 };
 
-const Faces = ({ dimensions, setPopoverEl }: any) => {
+const Faces = ({ dimensions, users, setPopoverEl }: any) => {
   const designWidth = 1440;
   const designHeight = 800;
 
