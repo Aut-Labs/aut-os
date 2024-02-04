@@ -4,7 +4,7 @@ import Dots from "./Dots";
 import Faces from "./Faces";
 import map from "@assets/autos/background.png";
 
-const MainBackground = ({ dimensions, setPopoverEl }: any) => {
+const MainBackground = ({ dimensions, faces, setPopoverEl }: any) => {
   return (
     <svg
       style={{
@@ -59,7 +59,13 @@ const MainBackground = ({ dimensions, setPopoverEl }: any) => {
       />
       <GridLines dimensions={dimensions} />
       <Dots dimensions={dimensions} />
-      <Faces setPopoverEl={setPopoverEl} dimensions={dimensions} />
+      {faces?.length && (
+        <Faces
+          setPopoverEl={setPopoverEl}
+          dimensions={dimensions}
+          users={faces}
+        />
+      )}
       {/* {<MainBG dimensions={dimensions} />} */}
     </svg>
   );

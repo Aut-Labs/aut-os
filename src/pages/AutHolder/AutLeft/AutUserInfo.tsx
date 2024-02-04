@@ -197,8 +197,7 @@ const AutUserInfo = () => {
                         md: "160px",
                         xxl: "160px"
                       },
-                      borderRadius: "50%",
-                      bgcolor: "purple"
+                      borderRadius: "50%"
                     }}
                     aria-label="avatar"
                     src={ipfsCIDToHttpUrl(

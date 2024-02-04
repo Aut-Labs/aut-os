@@ -323,8 +323,7 @@ const AutCommunityEdit = () => {
                           xs: "150px",
                           md: "160px",
                           xxl: "160px"
-                        },
-                        bgcolor: "purple"
+                        }
                       }}
                       aria-label="avatar"
                       src={ipfsCIDToHttpUrl(selectedCommunity?.image as string)}

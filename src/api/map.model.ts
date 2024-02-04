@@ -13,11 +13,13 @@ export interface AutIdInteractions {
 export class MapAutID extends AutID {
   id: string;
   nova: MapNova;
+  username?: string;
   img?: HTMLImageElement;
 
   constructor(data: MapAutID) {
     super(data);
     this.nova = data.nova;
+    this.username = data.username;
     this.id = data.id;
     const img = new Image();
     img.src = ipfsCIDToHttpUrl(data.properties.thumbnailAvatar);
