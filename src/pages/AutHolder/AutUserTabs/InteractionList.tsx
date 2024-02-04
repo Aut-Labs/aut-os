@@ -245,7 +245,8 @@ const InteractionList = ({ isLoading = false, interactions = [] }: any) => {
         height: "calc(100%)",
         display: "flex",
         flexDirection: "column",
-        paddingBottom: theme.spacing(4)
+        paddingBottom: theme.spacing(4),
+        width: "100%"
       }}
     >
       <Box

@@ -146,16 +146,19 @@ export const fetchSearchResults = createAsyncThunk(
 export const fetchHolder = createAsyncThunk(
   "fetch-holder",
   async (data: any, { getState, rejectWithValue }) => {
-    const { autName, network, signal } = data;
-    const { search, walletProvider } = getState() as any;
+    const { autName, network } = data;
+    const { walletProvider } = getState() as any;
     const networks: string[] = network
-      ? [network]
+      ? [network?.network?.toString().toLowerCase() || network]
       : walletProvider.networksConfig
           .filter((n: NetworkConfig) => !n.disabled)
           .map((n: NetworkConfig) => n.network?.toString().toLowerCase());
     // const networks: string[] = network ? [network] : ['goerli', 'goerli'];
-    const profiles = [];
-    const sdk = AutSDK.getInstance();
+
+    const networkName =
+      walletProvider?.selectedNetwork?.network?.toString().toLowerCase() ||
+      networks[0];
+    debugger;
 
     const filters = [];
 
@@ -257,7 +260,7 @@ export const fetchHolder = createAsyncThunk(
         socials: autIdMetadata?.properties?.socials,
         address: autID.id,
         tokenId: autID.tokenID,
-        network: walletProvider.selectedNetwork || networks[0],
+        network: networkName,
         communities: [userNova]
       }
     });

@@ -244,7 +244,8 @@ export function AutEditProfileDialog(props: EditDialogProps) {
           style={{
             height: "calc(100%)",
             display: "flex",
-            flexDirection: "column"
+            flexDirection: "column",
+            width: "100%"
           }}
         >
           <FormWrapper autoComplete="off" onSubmit={handleSubmit(beforeEdit)}>

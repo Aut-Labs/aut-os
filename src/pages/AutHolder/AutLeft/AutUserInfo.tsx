@@ -49,6 +49,7 @@ import AutUserTabs from "../AutUserTabs/AutUserTabs";
 import { SubtitleWithInfo } from "@components/SubtitleWithInfoIcon";
 import { IsEditingProfile, setOpenEditProfile } from "@store/ui-reducer";
 import { AutEditProfileDialog } from "@components/AutEditProfileDialog";
+// import VisibilityIcon from "@mui/icons-material/Visibility";
 
 export const IconContainer = styled("div")(({ theme }) => ({
   display: "flex",
@@ -315,6 +316,33 @@ const AutUserInfo = () => {
                         description={null}
                       ></SubtitleWithInfo>
                     </FollowWrapper>
+                    {/* <FollowWrapper>
+                      <Typography
+                        variant="subtitle1"
+                        fontSize="24px"
+                        color="offWhite.main"
+                        fontWeight="bold"
+                        position="relative"
+                      >
+                        200
+                        <Tooltip title="View Interactions">
+                          <IconButton
+                            sx={{
+                              ml: 1,
+                              position: "absolute"
+                            }}
+                            color="offWhite"
+                            size="small"
+                          >
+                            <VisibilityIcon />
+                          </IconButton>
+                        </Tooltip>
+                      </Typography>
+                      <SubtitleWithInfo
+                        title="interactions"
+                        description=""
+                      ></SubtitleWithInfo>
+                    </FollowWrapper> */}
                   </Stack>
 
                   <Box

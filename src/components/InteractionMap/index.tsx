@@ -69,7 +69,6 @@ function InteractionMap({
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [highlightedPl, setHighlightedPl] = useState(null);
   const [pLevels, setProximityLevels] = useState([]);
-  // const [isInteractionModelOpen, setOpenInteractions] = useState(false);
   const [initialGraphData, setInitialGraphData] = useState<
     GraphData<MapNode, LinkObject<MapNode, MapLink>>
   >({

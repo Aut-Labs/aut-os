@@ -97,7 +97,8 @@ const RightWrapper = styled(Box)(({ theme }) => ({
   marginLeft: "50px",
   height: "100%",
   position: "relative",
-  width: "70%",
+  // width: "70%",
+  flex: 1,
   [theme.breakpoints.down("md")]: {
     width: "100%",
     marginLeft: "0",
@@ -287,7 +288,8 @@ const AutCommunityEdit = () => {
             top: "84px",
             height: "calc(100% - 84px)",
             display: "flex",
-            flexDirection: "column"
+            flexDirection: "column",
+            width: "100%"
           }}
         >
           <NovaWrapper>
