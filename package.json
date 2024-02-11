@@ -30,12 +30,15 @@
     ]
   },
   "resolutions": {
-    "react-query": "4.0.0-beta.23"
+    "react-query": "4.0.0-beta.23",
+    "**/react": "18.2.0",
+    "**/react-dom": "18.2.0"
   },
   "dependencies": {
     "@apollo/client": "^3.9.1",
     "@aut-labs/abi-types": "^0.0.74-dev",
-    "@aut-labs/d-aut": "^1.0.116-dev",
+    "@aut-labs/connector": "^0.0.47",
+    "@aut-labs/d-aut": "^1.0.118-dev",
     "@aut-labs/sdk": "^0.0.151-dev",
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",

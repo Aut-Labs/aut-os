@@ -2,24 +2,13 @@ import { HolderStatus, HolderData } from "@store/holder/holder.reducer";
 import { ResultState } from "@store/result-status";
 import { useAppDispatch } from "@store/store.model";
 import { useSelector } from "react-redux";
-import {
-  Box,
-  Button,
-  Typography,
-  styled,
-  useMediaQuery,
-  useTheme
-} from "@mui/material";
-import { Swiper } from "swiper/react";
+import { Box, Button, Typography, styled } from "@mui/material";
 import { AutShareDialog } from "@components/AutShare";
 import { setOpenShare } from "@store/ui-reducer";
 import AutLeft from "./AutLeft/Left";
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
-import "swiper/css/scrollbar";
 import { useNavigate } from "react-router-dom";
 import backgroundImage from "@assets/autos/background.png";
+import { autUrls } from "@utils/aut-urls";
 
 const AutContainer = styled("div")(() => ({
   display: "flex",
@@ -29,23 +18,11 @@ const AutContainer = styled("div")(() => ({
   backgroundSize: "cover",
   backgroundRepeat: "repeat-y"
 }));
-const AutSwiper = styled(Swiper)(({ theme }) => ({
-  height: "100%",
-  backgroundImage: `url(${backgroundImage})`,
-  backgroundBlendMode: "hard-light",
-  backgroundSize: "cover",
-  backgroundRepeat: "repeat-y",
-  ".swiper-pagination-bullet": {
-    backgroundColor: theme.palette.background.paper
-  }
-}));
 
 const AutHolder = (props) => {
   const dispatch = useAppDispatch();
   const { openShare } = useSelector((state: any) => state.ui);
   const status = useSelector(HolderStatus);
-  const theme = useTheme();
-  const desktop = useMediaQuery(theme.breakpoints.up("md"));
   const holderData = useSelector(HolderData);
   const navigate = useNavigate();
 
@@ -53,13 +30,11 @@ const AutHolder = (props) => {
     dispatch(setOpenShare(false));
   };
 
-  const url = `https://my.aut.id/${holderData?.name}`;
-
   return (
     <>
       <AutShareDialog
         open={openShare}
-        url={url}
+        url={`${autUrls.myAut}/${holderData?.name}`}
         hideCloseBtn={false}
         title="Show off your ĀutID  🙌"
         description={
@@ -75,7 +50,7 @@ const AutHolder = (props) => {
             <br />
             Follow my journey - and see you on the āuter space 🪐
             <br />
-            {url}
+            {`${autUrls.myAut}/${holderData?.name}`}
           </>
         }
         twitterProps={{

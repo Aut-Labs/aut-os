@@ -1,37 +1,21 @@
 import { Community } from "@api/community.model";
 import { ipfsCIDToHttpUrl } from "@api/storage.api";
 import CopyAddress from "@components/CopyAddress";
-import OverflowTooltip from "@components/OverflowTooltip";
 
 import {
   Box,
   Link as BtnLink,
   Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   Tooltip,
   styled,
-  tableCellClasses,
   Avatar,
   Typography,
-  IconButton,
-  Stack,
   useTheme,
   SvgIcon
 } from "@mui/material";
 import { memo } from "react";
 import { Link } from "react-router-dom";
-import OpenInNewIcon from "@mui/icons-material/OpenInNew";
-import {
-  BlockExplorerUrl,
-  SelectedNetworkConfig
-} from "@store/WalletProvider/WalletProvider";
 import { useSelector } from "react-redux";
-import { HolderData } from "@store/holder/holder.reducer";
 import { CanUpdateProfile } from "@auth/auth.reducer";
 import { IconContainer, socialIcons } from "../AutLeft/AutUserInfo";
 import { socialUrls } from "@api/social.model";

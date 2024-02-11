@@ -33,20 +33,6 @@ export const fetchHolderEthEns = async (address: string) => {
   }
 };
 
-export const fetchHolderData = async (
-  holderName: string,
-  network: string,
-  source: CancelTokenSource
-): Promise<HolderData> => {
-  return axios
-    .get<HolderData>(
-      `${environment.apiUrl}/autID/${holderName}?network=${network}`,
-      { cancelToken: source.token }
-    )
-    .then((res) => res.data)
-    .catch(() => null);
-};
-
 export const fetchHolderCommunities = async (
   communities: CommunityMembershipDetails[]
 ): Promise<Community[]> => {
@@ -99,49 +85,6 @@ export const fetchAutID = async (
   });
   return autID;
 };
-
-export const fetchSearchResults = createAsyncThunk(
-  "fetch-search-results",
-  async (data: any, thunkAPI) => {
-    const { username, signal } = data;
-    try {
-      const source = axios.CancelToken.source();
-      signal.addEventListener("abort", () => {
-        source.cancel();
-      });
-      const result = [];
-      const state = thunkAPI.getState() as any;
-      const networks: NetworkConfig[] =
-        state.walletProvider.networksConfig.filter(
-          (n: NetworkConfig) => !n.disabled
-        );
-
-      for (const network of networks) {
-        const holderData = await fetchHolderData(
-          username,
-          network.network?.toLowerCase(),
-          source
-        );
-        if (holderData) {
-          const member = await fetchAutID(
-            holderData,
-            network.network?.toLowerCase()
-          );
-          if (member) {
-            result.push(member);
-          }
-        }
-      }
-      if ((signal as AbortSignal).aborted) {
-        throw new Error("Aborted");
-      }
-      return result;
-    } catch (error) {
-      const message = ErrorParser(error);
-      throw new Error(message);
-    }
-  }
-);
 
 export const fetchHolder = createAsyncThunk(
   "fetch-holder",
@@ -265,67 +208,6 @@ export const fetchHolder = createAsyncThunk(
     });
 
     return [newAutId];
-
-    //   const nova = sdk.initService<Nova>(Nova, autID.novaAddress);
-    //   const isAdmin = await nova.contract.admins.isAdmin(selectedAddress);
-    //   const novaMetadataUri = await nova.contract.functions.metadataUri();
-    //   const novaMarket = await nova.contract.functions.market();
-    //   const novaMetadata = await fetchMetadata<BaseNFTModel<Community>>(
-    //     novaMetadataUri,
-    //     customIpfsGateway
-    //   );
-
-    //   const { avatar, thumbnailAvatar, timestamp } = autIdMetadata.properties;
-
-    //   const userNova = new Community({
-    //     ...novaMetadata,
-    //     properties: {
-    //       ...novaMetadata.properties,
-    //       address: autID.novaAddress,
-    //       market: novaMarket,
-    //       userData: {
-    //         role: autID.role.toString(),
-    //         commitment: autID.commitment.toString(),
-    //         isActive: true,
-    //         isAdmin: isAdmin.data
-    //       }
-    //     }
-    //   } as unknown as Community);
-    //   try {
-    //     const source = axios.CancelToken.source();
-    //     if (signal) {
-    //       signal.addEventListener("abort", () => {
-    //         source.cancel();
-    //       });
-    //     }
-    //     for (const networkName of networks) {
-    //       const result: AutID = search.searchResult.find(
-    //         (a: AutID) =>
-    //           a.name === autName &&
-    //           a.properties.network?.toLowerCase() === networkName?.toLowerCase()
-    //       );
-    //       const holderData =
-    //         result?.properties?.holderData ||
-    //         (await fetchHolderData(autName, networkName, source));
-    //       if (holderData) {
-    //         const autID = await fetchAutID(holderData, networkName);
-    //         autID.properties.communities = await fetchHolderCommunities(
-    //           holderData.daos
-    //         );
-    //         if (autID) {
-    //           profiles.push(autID);
-    //         }
-    //       }
-    //     }
-    //     if ((signal as AbortSignal)?.aborted) {
-    //       throw new Error("Aborted");
-    //     }
-    //     return profiles;
-    //   } catch (error) {
-    //     const message =
-    //       error?.message === "Aborted" ? error?.message : ErrorParser(error);
-    //     return rejectWithValue(message);
-    //   }
   }
 );
 
@@ -402,7 +284,6 @@ export const updateProfile = createAsyncThunk(
       console.log("New image: ->", ipfsCIDToHttpUrl(user.properties.avatar));
     }
 
-    debugger;
     const updatedUser = AutID.updateAutID(user);
     const uri = await sdk.client.sendJSONToIPFS(updatedUser as any);
     console.log("New metadata: ->", ipfsCIDToHttpUrl(uri));

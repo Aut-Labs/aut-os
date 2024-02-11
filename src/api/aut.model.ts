@@ -117,7 +117,6 @@ export class AutIDProperties {
 
 export class AutID extends BaseNFTModel<AutIDProperties> {
   static updateAutID(updatedUser: AutID): Partial<AutID> {
-    debugger;
     const autID = new AutID(updatedUser);
     return {
       name: autID.name,

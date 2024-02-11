@@ -3,7 +3,6 @@ import { ReactComponent as GitHubIcon } from "@assets/SocialIcons/GitHubIcon.svg
 import { ReactComponent as LensfrensIcon } from "@assets/SocialIcons/LensfrensIcon.svg";
 import { ReactComponent as TelegramIcon } from "@assets/SocialIcons/TelegramIcon.svg";
 import { ReactComponent as TwitterIcon } from "@assets/SocialIcons/TwitterIcon.svg";
-import AFileUpload from "@components/Fields/AutFileUpload";
 import { ReactComponent as MyAutIDLogo } from "@assets/MyAutIdLogoToolbarPath.svg";
 import {
   Box,
@@ -14,8 +13,6 @@ import {
   InputAdornment,
   useTheme,
   Button,
-  CardHeader,
-  CardContent,
   Card,
   Toolbar
 } from "@mui/material";
@@ -29,24 +26,14 @@ import {
   UpdateStatus
 } from "@store/holder/holder.reducer";
 import { useAppDispatch } from "@store/store.model";
-import { updateProfile } from "@api/holder.api";
-import { AutID } from "@api/aut.model";
 import ErrorDialog from "@components/Dialog/ErrorPopup";
 import LoadingDialog from "@components/Dialog/LoadingPopup";
 import { ResultState } from "@store/result-status";
-import { ipfsCIDToHttpUrl } from "@api/storage.api";
-import { base64toFile, toBase64 } from "@utils/to-base-64";
-import {
-  IsConnected,
-  setProviderIsOpen
-} from "@store/WalletProvider/WalletProvider";
-import { useEffect, useState } from "react";
 import { EditContentElements } from "@components/EditContentElements";
 import { AutTextField } from "@theme/field-text-styles";
 import { socialUrls } from "@api/social.model";
 import { useNavigate } from "react-router-dom";
-import { resetSearchState } from "@store/search/search.reducer";
-import { DautPlaceholder } from "@api/ProviderFactory/components/web3-daut-connect";
+import { DautPlaceholder } from "@api/ProviderFactory/web3-daut-connect";
 import { AutButtonVariant } from "@components/AutButton";
 
 const socialIcons = {
@@ -58,20 +45,7 @@ const socialIcons = {
   lensfrens: LensfrensIcon
 };
 
-const AutCard = styled(Card)(() => ({
-  "&.MuiCard-root": {
-    display: "flex"
-  },
-  ".MuiCardHeader-root": {
-    padding: "0"
-  },
-
-  ".MuiCardContent-root:last-child": {
-    padding: "0"
-  }
-}));
-
-const MiddleWrapper = styled(Box)(({ theme }) => ({
+const MiddleWrapper = styled(Box)(() => ({
   display: "flex",
   flex: "1",
   justifyContent: "flex-start",
@@ -80,7 +54,7 @@ const MiddleWrapper = styled(Box)(({ theme }) => ({
   alignItems: "flex-start"
 }));
 
-const LeftWrapper = styled("div")(({ theme }) => ({
+const LeftWrapper = styled("div")(() => ({
   display: "flex",
   width: "100%",
   flexDirection: "column",
@@ -89,38 +63,16 @@ const LeftWrapper = styled("div")(({ theme }) => ({
   alignItems: "center"
 }));
 
-const ImageUpload = styled("div")(({ theme }) => ({
-  width: "150px",
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "flex-start",
-  justifyContent: "center",
-  textAlign: "center",
-  [theme.breakpoints.down("md")]: {
-    width: "100px"
-  }
-}));
-
-const { FieldWrapper, FormWrapper, BottomWrapper, TopWrapper } =
-  EditContentElements;
+const { FieldWrapper, FormWrapper } = EditContentElements;
 
 const AutProfileEdit = () => {
-  const theme = useTheme();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const desktop = useMediaQuery(theme.breakpoints.up("md"));
   const holderData = useSelector(HolderData);
   const status = useSelector(UpdateStatus);
   const errorMessage = useSelector(UpdateErrorMessage);
-  const isConnected = useSelector(IsConnected);
-  const [editInitiated, setEditInitiated] = useState(false);
 
-  const {
-    control,
-    handleSubmit,
-    watch,
-    formState: { isDirty, isValid, errors }
-  } = useForm({
+  const { control, handleSubmit, watch } = useForm({
     mode: "onChange",
     defaultValues: {
       avatar: holderData?.properties?.avatar,
@@ -144,24 +96,9 @@ const AutProfileEdit = () => {
   const values = watch();
 
   const beforeEdit = () => {
-    setEditInitiated(true);
     // if (!isActive || !isConnected) {
     //   dispatch(setProviderIsOpen(true));
     // }
-  };
-
-  const onEditProfile = async (data: typeof values) => {
-    await dispatch(
-      updateProfile({
-        ...holderData,
-        properties: {
-          ...holderData.properties,
-          socials: data.socials,
-          avatar: data.avatar
-        }
-      } as AutID)
-    );
-    setEditInitiated(false);
   };
 
   const handleDialogClose = () => {
@@ -178,7 +115,6 @@ const AutProfileEdit = () => {
       pathname: `/`,
       search: `?${params.toString()}`
     });
-    dispatch(resetSearchState());
   }
 
   // useEffect(() => {

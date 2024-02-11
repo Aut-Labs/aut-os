@@ -39,12 +39,9 @@ import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import {
   BlockExplorerUrl,
-  IsConnected,
-  SelectedNetworkConfig
+  SelectedNetwork
 } from "@store/WalletProvider/WalletProvider";
-import { EditContentElements } from "@components/EditContentElements";
 import CopyAddress from "@components/CopyAddress";
-import { resetSearchState } from "@store/search/search.reducer";
 import { AutOsButton } from "@components/AutButton";
 import AutToolBar from "../AutHolder/AutLeft/AutToolBar";
 import backgroundImage from "@assets/autos/background.png";
@@ -153,11 +150,9 @@ const AutCommunityEdit = () => {
   const errorMessage = useSelector(UpdateErrorMessage);
   const blockExplorer = useSelector(BlockExplorerUrl);
   const canUpdateProfile = useSelector(CanUpdateProfile);
-  const isConnected = useSelector(IsConnected);
   const isNovaMember = true;
-  const [editInitiated, setEditInitiated] = useState(false);
   const [withdrawInitiated, setWithdrawInitiated] = useState(false);
-  const selectedNetworkConfig = useSelector(SelectedNetworkConfig);
+  const selectedNetwork = useSelector(SelectedNetwork);
   const holderData = useSelector(HolderData);
 
   const {
@@ -175,7 +170,6 @@ const AutCommunityEdit = () => {
   // const values = watch();
 
   const beforeEdit = () => {
-    setEditInitiated(true);
     // if (!isActive || !isConnected) {
     //   dispatch(setProviderIsOpen(true));
     // }
@@ -233,7 +227,6 @@ const AutCommunityEdit = () => {
       pathname: `/`,
       search: `?${params.toString()}`
     });
-    dispatch(resetSearchState());
   }
 
   function goToProfile() {
@@ -387,9 +380,9 @@ const AutCommunityEdit = () => {
                           <CopyAddress
                             address={selectedCommunity?.properties?.address}
                           />
-                          {selectedNetworkConfig?.name && (
+                          {selectedNetwork?.name && (
                             <Tooltip
-                              title={`Explore in ${selectedNetworkConfig?.name}`}
+                              title={`Explore in ${selectedNetwork?.name}`}
                             >
                               <IconButton
                                 sx={{ p: 0, ml: 1 }}

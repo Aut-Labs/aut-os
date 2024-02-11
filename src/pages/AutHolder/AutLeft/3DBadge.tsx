@@ -60,15 +60,18 @@ function AutBadge3D({ url }) {
       onPointerUp={onPointerUp}
       onPointerMove={onPointerMove}
     >
-      <planeGeometry args={[5, 5]} />
+      <planeGeometry args={[5, 7]} />
       <meshBasicMaterial map={texture} transparent={true} side={DoubleSide} />
     </mesh>
   );
 }
 
-function AutBadge3DScene({ url }) {
+function AutBadge3DScene({ url, onClose }) {
   return (
-    <Canvas camera={{ position: [0, 0, 10], fov: 50 }}>
+    <Canvas
+      onPointerMissed={onClose}
+      camera={{ position: [0, 0, 10], fov: 60 }}
+    >
       {/* @ts-ignore */}
       <ambientLight intensity={0.5} />
       <AutBadge3D url={url} />
@@ -96,7 +99,7 @@ const AutBadge3DSceneDialog = ({ open, onClose, url }) => {
         style: { backgroundColor: "transparent", boxShadow: "none" }
       }}
     >
-      <AutBadge3DScene url={url} />
+      <AutBadge3DScene onClose={onClose} url={url} />
     </StyledDialog>
   );
 };

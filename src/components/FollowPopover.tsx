@@ -1,6 +1,9 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
+import { fetchHolder } from "@api/holder.api";
 import { MapAutID } from "@api/map.model";
 import { Box, Button, Popover, PopoverProps, Typography } from "@mui/material";
+import { useAppDispatch } from "@store/store.model";
+import { useNavigate } from "react-router-dom";
 
 interface FollowPopoverProps {
   type: "anchor" | "custom";
@@ -22,9 +25,10 @@ export const FollowPopover = ({
   open,
   handleClose = null,
   onMouseEnter = null,
-  onMouseLeave = null,
-  onView = null
+  onMouseLeave = null
 }: FollowPopoverProps) => {
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const anchorProps: Partial<PopoverProps> =
     type == "anchor"
       ? {
@@ -116,7 +120,19 @@ export const FollowPopover = ({
       </Box>
       <Box>
         <Button
-          onClick={onView}
+          onClick={() => {
+            navigate({
+              pathname: `/${data?.name || data?.username}`
+            });
+            navigate({
+              pathname: `/${data?.name || data?.username}`
+            });
+            dispatch(
+              fetchHolder({
+                autName: data?.name || data?.username
+              })
+            );
+          }}
           sx={{
             mx: 0.5,
             mb: 0.5,

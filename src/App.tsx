@@ -2,9 +2,9 @@ import { Suspense, useEffect, useState } from "react";
 import { Route, Routes, Navigate } from "react-router-dom";
 import { Box } from "@mui/material";
 import { useAppDispatch } from "@store/store.model";
-import { setNetworks } from "@store/WalletProvider/WalletProvider";
+import { updateWalletProviderState } from "@store/WalletProvider/WalletProvider";
 import AutLoading from "@components/AutLoading";
-import Web3DautConnect from "@api/ProviderFactory/components/web3-daut-connect";
+import Web3DautConnect from "@api/ProviderFactory/web3-daut-connect";
 import AutHolder from "./pages/AutHolder/AutHolder";
 import SWSnackbar from "./components/snackbar";
 import { environment } from "@api/environment";
@@ -22,10 +22,12 @@ function App() {
 
   useEffect(() => {
     getAppConfig()
-      .then(async (res) => {
-        dispatch(setNetworks(res));
-        const [network] = res.filter((d) => !d.disabled);
-        // setConfig(generateNetworkConfig(network));
+      .then(async (networks) => {
+        dispatch(
+          updateWalletProviderState({
+            networksConfig: networks
+          })
+        );
         const sdk = new AutSDK({
           ipfs: {
             apiKey: environment.ipfsApiKey,

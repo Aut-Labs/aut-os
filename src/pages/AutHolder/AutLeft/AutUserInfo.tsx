@@ -34,7 +34,7 @@ import { ipfsCIDToHttpUrl } from "@api/storage.api";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import {
   BlockExplorerUrl,
-  SelectedNetworkConfig
+  SelectedNetwork
 } from "@store/WalletProvider/WalletProvider";
 import { EditContentElements } from "@components/EditContentElements";
 import CopyAddress from "@components/CopyAddress";
@@ -85,15 +85,13 @@ const AutUserInfo = () => {
   const holderData = useSelector(HolderData);
   const holderStatus = useSelector(HolderStatus);
   const blockExplorer = useSelector(BlockExplorerUrl);
-  const selectedNetwork = useSelector(SelectedNetworkConfig);
+  const selectedNetwork = useSelector(SelectedNetwork);
   const canUpdateProfile = useSelector(CanUpdateProfile);
-  const [editInitiated, setEditInitiated] = useState(false);
   const [view3DModel, setView3DModel] = useState(false);
   const dispatch = useAppDispatch();
   const status = useSelector(UpdateStatus);
   const errorMessage = useSelector(UpdateErrorMessage);
   const isEditingProfile = useSelector(IsEditingProfile);
-  const selectedNetworkConfig = useSelector(SelectedNetworkConfig);
   const parsedTimeStamp = useMemo(() => {
     return new Intl.DateTimeFormat("en-US", {
       year: "numeric",
@@ -114,7 +112,6 @@ const AutUserInfo = () => {
   // const theme = useTheme();
 
   const beforeEdit = () => {
-    setEditInitiated(true);
     // if (!isConnected) {
     //   dispatch(setProviderIsOpen(true));
     // }
@@ -145,11 +142,13 @@ const AutUserInfo = () => {
         onClose={handleClose}
       />
 
-      <AutBadge3DSceneDialog
-        open={view3DModel}
-        onClose={() => setView3DModel(false)}
-        url="https://aut.mypinata.cloud/ipfs/QmeQhdYy4gyfqjooAt3e4CmKg2hSMaUxJdmRcEVxG5Zu4M"
-      />
+      {holderData.image && (
+        <AutBadge3DSceneDialog
+          open={view3DModel}
+          onClose={() => setView3DModel(false)}
+          url={ipfsCIDToHttpUrl(holderData.image)}
+        />
+      )}
 
       <FormWrapper autoComplete="off" onSubmit={handleSubmit(beforeEdit)}>
         <ErrorDialog
@@ -211,7 +210,7 @@ const AutUserInfo = () => {
                     }}
                     aria-label="avatar"
                     src={ipfsCIDToHttpUrl(
-                      holderData?.properties?.avatar as string
+                      holderData?.properties?.thumbnailAvatar as string
                     )}
                   />
                   <Stack
@@ -258,9 +257,9 @@ const AutUserInfo = () => {
                         <CopyAddress
                           address={holderData?.properties?.address}
                         />
-                        {selectedNetworkConfig?.name && (
+                        {selectedNetwork?.name && (
                           <Tooltip
-                            title={`Explore in ${selectedNetworkConfig?.name}`}
+                            title={`Explore in ${selectedNetwork?.name}`}
                           >
                             <IconButton
                               sx={{ p: 0, ml: 1 }}

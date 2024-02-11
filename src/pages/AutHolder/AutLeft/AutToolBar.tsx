@@ -1,12 +1,7 @@
-import { DautPlaceholder } from "@api/ProviderFactory/components/web3-daut-connect";
-import { ReactComponent as MyAutIDLogo } from "@assets/MyAutIdLogoToolbarPath.svg";
-import { CanUpdateProfile } from "@auth/auth.reducer";
+import { DautPlaceholder } from "@api/ProviderFactory/web3-daut-connect";
 import { Toolbar } from "@mui/material";
-import { HolderStatus } from "@store/holder/holder.reducer";
-import { resetSearchState } from "@store/search/search.reducer";
 import { useAppDispatch } from "@store/store.model";
 import { setOpenShare } from "@store/ui-reducer";
-import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ReactComponent as AutOsLogo } from "@assets/autos/os-logo.svg";
 
@@ -14,8 +9,6 @@ const AutToolBar = ({ isDesktop = false }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useAppDispatch();
-  const status = useSelector(HolderStatus);
-  const canUpdateProfile = useSelector(CanUpdateProfile);
 
   function goHome() {
     const params = new URLSearchParams(location.search);
@@ -24,7 +17,6 @@ const AutToolBar = ({ isDesktop = false }) => {
       pathname: `/`,
       search: `?${params.toString()}`
     });
-    dispatch(resetSearchState());
   }
 
   const handleClickOpen = () => {

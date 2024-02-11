@@ -10,7 +10,7 @@ import { useSelector } from "react-redux";
 import { HolderData } from "@store/holder/holder.reducer";
 import { useAppDispatch } from "@store/store.model";
 import { ipfsCIDToHttpUrl } from "@api/storage.api";
-import { DautPlaceholder } from "@api/ProviderFactory/components/web3-daut-connect";
+import { DautPlaceholder } from "@api/ProviderFactory/web3-daut-connect";
 import AutToolBar from "../AutLeft/AutToolBar";
 
 const CardZoom = styled<any>(CardMedia)(({ theme }) => ({

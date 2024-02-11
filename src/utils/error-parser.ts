@@ -91,7 +91,7 @@ export const METAMASK_POSSIBLE_ERRORS = {
   }
 };
 
-export const ParseSWErrorMessage = (error: any) => {
+export const ParseErrorMessage = (error: any) => {
   if (!error) {
     return error;
   }

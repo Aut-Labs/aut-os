@@ -17,7 +17,7 @@ import AutTheme from "./theme/theme";
 import CssBaseline from "@mui/material/CssBaseline";
 import { ApolloProvider } from "@apollo/client";
 import { apolloClient } from "@store/graphql";
-import { config } from "@api/ProviderFactory/setup.config";
+import { wagmiConfig } from "@aut-labs/connector";
 
 // markerSDK.loadWidget({
 //   destination: `${process.env.REACT_APP_MARKER}`,
@@ -40,7 +40,7 @@ const container = document.getElementById("root");
 const root = createRoot(container);
 
 root.render(
-  <WagmiProvider config={config} reconnectOnMount>
+  <WagmiProvider config={wagmiConfig}>
     <QueryClientProvider client={queryClient}>
       <ApolloProvider client={apolloClient}>
         <StyledEngineProvider injectFirst>

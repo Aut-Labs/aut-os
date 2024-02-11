@@ -30,6 +30,7 @@ module.exports = {
     config.resolve.fallback = fallback;
 
     const modifiedConfig = alias({
+      react: path.resolve('./node_modules/react'),
       "@assets": path.resolve(__dirname, "./src/assets"),
       "@auth": path.resolve(__dirname, "./src/auth"),
       "@api": path.resolve(__dirname, "./src/api"),

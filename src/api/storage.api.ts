@@ -23,7 +23,7 @@ function replaceAll(str, find, replace) {
 }
 
 export function ipfsCIDToHttpUrl(url: string, isJson = false) {
-  if (!url) {
+  if (!url || typeof url !== "string") {
     return url;
   }
   if (!url.includes("https://"))
@@ -41,7 +41,6 @@ export function httpUrlToIpfsCID(url: string) {
   if (!url) {
     return url;
   }
-  debugger;
   if (url.includes("https://")) {
     const notHttpsUrl = `${replaceAll(url, "https://", "")}`;
     const [_, __, cid, name] = notHttpsUrl.split("/");

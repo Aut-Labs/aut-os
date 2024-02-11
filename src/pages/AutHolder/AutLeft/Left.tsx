@@ -20,7 +20,7 @@ import SelectAutIDProfileDialog from "@components/AutIDProfileList";
 import { AutID } from "@api/aut.model";
 import { useAppDispatch } from "@store/store.model";
 import { lazy } from "react";
-import { DautPlaceholder } from "@api/ProviderFactory/components/web3-daut-connect";
+import { DautPlaceholder } from "@api/ProviderFactory/web3-daut-connect";
 
 const AutLeftContainer = styled("div")(({ theme }) => ({
   display: "flex",

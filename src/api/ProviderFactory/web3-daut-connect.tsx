@@ -12,18 +12,13 @@ import {
   updateWalletProviderState
 } from "@store/WalletProvider/WalletProvider";
 import { debounce } from "@mui/material";
-import { NetworkConfig } from "../network.config";
-import AutSDK from "@aut-labs/sdk";
 import { useLocation, useNavigate } from "react-router-dom";
 import { EnvMode, environment } from "@api/environment";
+import { useAccount, useConnect } from "wagmi";
+import AutSDK from "@aut-labs/sdk";
 import { MultiSigner } from "@aut-labs/sdk/dist/models/models";
-import {
-  Connector,
-  ConnectorAlreadyConnectedError,
-  useAccount,
-  useConnect
-} from "wagmi";
-import { walletClientToSigner } from "../ethers";
+import { NetworkConfig } from "./network.config";
+import { useAutConnector } from "@aut-labs/connector";
 
 function Web3DautConnect({
   setLoading
@@ -31,62 +26,36 @@ function Web3DautConnect({
   setLoading: (loading: boolean) => void;
 }) {
   const dispatch = useAppDispatch();
-  const abort = useRef<AbortController>();
   const navigate = useNavigate();
   const location = useLocation();
-
   const networks = useSelector(NetworksConfig);
-  const { isConnected, connector } = useAccount();
-  const { connectAsync, connectors } = useConnect();
-
-  const initialiseSDK = async (
-    network: NetworkConfig,
-    multiSigner: MultiSigner
-  ) => {
-    const sdk = AutSDK.getInstance();
-    return sdk.init(multiSigner, {
-      novaRegistryAddress: network.contracts.novaRegistryAddress,
-      autIDAddress: network.contracts.autIDAddress,
-      daoExpanderRegistryAddress: network.contracts.daoExpanderRegistryAddress
-    });
-  };
-
-  useEffect(() => {
-    if (isConnected && connector?.getProvider) {
-      const start = async () => {
-        const provider = (await connector.getProvider()) as any;
-        const multiSigner: MultiSigner = {
-          signer: provider,
-          readOnlySigner: provider
-        };
-        const [network] = networks.filter((d) => !d.disabled);
-        const itemsToUpdate = {
-          sdkInitialized: true,
-          selectedNetwork: network
-        };
-        await initialiseSDK(network, multiSigner);
-        await dispatch(updateWalletProviderState(itemsToUpdate));
-      };
-      start();
-    }
-  }, [isConnected, connector?.getProvider]);
+  const dAutInitialized = useRef<boolean>(false);
+  const { connectors } = useConnect();
+  const {
+    isConnected,
+    isConnecting,
+    connect,
+    disconnect,
+    setStateChangeCallback,
+    multiSigner,
+    multiSignerId,
+    chainId,
+    status,
+    address
+  } = useAutConnector();
 
   const onAutInit = async () => {
     const [, username] = location.pathname.split("/");
     if (username) {
       setLoading(true);
-      abort.current = new AbortController();
       const result = await dispatch(
         fetchHolder({
-          signal: abort.current.signal,
           autName: username
-          // network: params.get("network")
         })
       );
       if (result.meta.requestStatus === "fulfilled") {
         if ((result.payload as AutID[])?.length == 1) {
           const [profile] = result.payload as AutID[];
-          // params.set("network", profile.properties.network);
         }
         const connetectedAlready = localStorage.getItem("aut-data");
         if (!connetectedAlready) {
@@ -94,7 +63,6 @@ function Web3DautConnect({
         }
         navigate({
           pathname: location.pathname
-          // search: `?${params.toString()}`
         });
       }
     } else {
@@ -123,80 +91,34 @@ function Web3DautConnect({
   };
 
   const onAutLogin = async ({ detail }: any) => {
-    if (abort.current) {
-      abort.current.abort();
-    }
-
     const profile = JSON.parse(JSON.stringify(detail));
     const autID = await _parseAutId(profile);
 
     if (autID.properties.network) {
-      let chainId = null;
-
-      try {
-        chainId = JSON.parse(localStorage.getItem("wagmi.store")).state.chainId;
-      } catch (error) {
-        // no chain id
-      }
-
-      const [network] = networks.filter((d) => !d.disabled);
-      if (chainId) {
-        let selectedConnector: Connector = null;
-
-        for (const c of connectors) {
-          const cChainId = await c.getChainId();
-          if (cChainId === chainId) {
-            selectedConnector = c;
-            break;
-          }
-        }
-
-        if (selectedConnector && !isConnected) {
-          try {
-            const client = await connectAsync({
-              connector: selectedConnector
-            });
-
-            client["transport"] = client["provider"];
-            const temp_signer = walletClientToSigner(client);
-            await initialiseSDK(network, temp_signer as any);
-          } catch (err) {
-            if (err instanceof ConnectorAlreadyConnectedError) {
-              const provider = (await selectedConnector.getProvider()) as any;
-              const multiSigner: MultiSigner = {
-                signer: provider,
-                readOnlySigner: provider
-              };
-              await initialiseSDK(network, multiSigner);
-            }
-          }
-        }
-      }
-
-      const itemsToUpdate = {
-        sdkInitialized: true,
-        selectedNetwork: network
-      };
-      await dispatch(updateWalletProviderState(itemsToUpdate));
-
-      navigate({
-        pathname: `/${autID.name}`
-      });
+      // navigate({
+      //   pathname: `/${autID.name}`
+      // });
       await dispatch(
         setConnectedUserInfo({
           connectedAddress: autID.properties.address,
           connectedNetwork: autID.properties.network?.toLowerCase()
         })
       );
-      await dispatch(
-        updateHolderState({
-          profiles: [autID],
-          selectedProfileAddress: autID.properties.address,
-          selectedProfileNetwork: autID.properties.network?.toLowerCase(),
-          fetchStatus: ResultState.Success,
-          status: ResultState.Idle
-        })
-      );
+
+      const [, username] = location.pathname.split("/");
+
+      if (username === autID.name) {
+        await dispatch(
+          updateHolderState({
+            profiles: [autID],
+            selectedProfileAddress: autID.properties.address,
+            selectedProfileNetwork: autID.properties.network?.toLowerCase(),
+            fetchStatus: ResultState.Success,
+            status: ResultState.Idle
+          })
+        );
+      }
+
       setLoading(false);
     }
   };
@@ -206,14 +128,12 @@ function Web3DautConnect({
     const params = new URLSearchParams(window.location.search);
     if (username) {
       navigate({
-        pathname: `/${username}`,
-        search: `?${params.toString()}`
+        pathname: `/${username}`
       });
     } else {
       params.delete("network");
       navigate({
-        pathname: `/`,
-        search: `?${params.toString()}`
+        pathname: `/`
       });
     }
     dispatch(resetAuthState());
@@ -233,50 +153,90 @@ function Web3DautConnect({
       })
     );
 
+    console.log("autID: ", autID);
+
     navigate({
       pathname: `/${autID.name}`
     });
   };
 
-  useEffect(() => {
-    window.addEventListener("aut_profile", onAutMenuProfile);
-    window.addEventListener("aut-Init", onAutInit);
-    window.addEventListener("aut-onConnected", onAutLogin);
-    window.addEventListener("aut-onDisconnected", onDisconnected);
-
-    const config = {
-      defaultText: "Connect Wallet",
-      textAlignment: "right",
-      menuTextAlignment: "left",
-      theme: {
-        color: "offWhite",
-        // color: 'nightBlack',
-        // color: colors.amber['500'],
-        // color: '#7b1fa2',
-        type: "main"
-      },
-      // size: "default" // large & extraLarge or see below
-      size: {
-        width: 240,
-        height: 50,
-        padding: 3
-      }
+  const initialiseSDK = async (
+    network: NetworkConfig,
+    multiSigner: MultiSigner
+  ) => {
+    const sdk = AutSDK.getInstance();
+    const itemsToUpdate = {
+      selectedNetwork: network
     };
-
-    Init({
-      config
+    await dispatch(updateWalletProviderState(itemsToUpdate));
+    sdk.init(multiSigner, {
+      novaRegistryAddress: network.contracts.novaRegistryAddress,
+      autIDAddress: network.contracts.autIDAddress,
+      daoExpanderRegistryAddress: network.contracts.daoExpanderRegistryAddress
     });
+  };
+
+  useEffect(() => {
+    if (multiSignerId) {
+      let network = networks.find((d) => d.chainId === chainId);
+      if (!network) {
+        network = networks.filter((d) => !d.disabled)[0];
+      }
+      initialiseSDK(network, multiSigner);
+    }
+  }, [multiSignerId]);
+
+  useEffect(() => {
+    if (!dAutInitialized.current && multiSignerId) {
+      window.addEventListener("aut_profile", onAutMenuProfile);
+      window.addEventListener("aut-Init", onAutInit);
+      window.addEventListener("aut-onConnected", onAutLogin);
+      window.addEventListener("aut-onDisconnected", onDisconnected);
+      dAutInitialized.current = true;
+      const btnConfig = {
+        metaMask: true,
+        walletConnect: true
+      };
+      const config = {
+        defaultText: "Connect Wallet",
+        textAlignment: "right",
+        menuTextAlignment: "left",
+        theme: {
+          color: "offWhite",
+          type: "main"
+        },
+        size: {
+          width: 240,
+          height: 50,
+          padding: 3
+        }
+      };
+      Init({
+        config,
+        connector: {
+          connect,
+          disconnect,
+          setStateChangeCallback,
+          connectors: connectors.filter((c) => btnConfig[c.id]),
+          networks,
+          state: {
+            multiSigner,
+            isConnected,
+            isConnecting,
+            status,
+            address
+          }
+        }
+      });
+    }
 
     return () => {
       window.removeEventListener("aut_profile", onAutMenuProfile);
       window.removeEventListener("aut-Init", onAutInit);
       window.removeEventListener("aut-onConnected", onAutLogin);
       window.removeEventListener("aut-onDisconnected", onAutLogin);
-      if (abort.current) {
-        abort.current.abort();
-      }
     };
-  }, []);
+  }, [dAutInitialized, multiSignerId]);
 
   return (
     <>
@@ -288,10 +248,8 @@ function Web3DautConnect({
         }}
         use-dev={environment.env == EnvMode.Development}
         id="d-aut"
-        // allowed-role-id={3}
         menu-items='[{"name":"Profile","actionType":"event_emit","eventName":"aut_profile"}]'
         flow-config='{"mode" : "signin", "customCongratsMessage": ""}'
-        // nova-address="0x532e0f05aa02e36622c2fd39471360b494f3f361"
         ipfs-gateway={environment.ipfsGatewayUrl}
       />
     </>

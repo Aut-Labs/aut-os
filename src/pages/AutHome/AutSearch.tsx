@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { Controller, useForm } from "react-hook-form";
 import { useAppDispatch } from "@store/store.model";
 import { memo, useEffect, useRef } from "react";
-import { fetchHolder, fetchSearchResults } from "@api/holder.api";
+import { fetchHolder } from "@api/holder.api";
 import { AutTextField } from "@theme/field-text-styles";
 import React from "react";
 import { apolloClient } from "@store/graphql";
@@ -141,7 +141,6 @@ const AutSearch = (props: AutSearchProps) => {
   const dispatch = useAppDispatch();
   const theme = useTheme();
   const navigate = useNavigate();
-  const abort = useRef<AbortController>();
   const [value, setValue] = React.useState<UserProfile | null>(null);
   const [inputValue, setInputValue] = React.useState("");
   const [options, setOptions] = React.useState<readonly UserProfile[]>([]);
@@ -171,19 +170,7 @@ const AutSearch = (props: AutSearchProps) => {
     }
   });
 
-  const onSubmit = async (data) => {
-    abort.current = new AbortController();
-    dispatch(
-      fetchSearchResults({
-        ...data,
-        signal: abort.current?.signal
-      })
-    );
-  };
-
-  useEffect(() => {
-    return () => abort.current && abort.current.abort();
-  }, []);
+  const onSubmit = async (data) => {};
 
   const fetch = React.useMemo(
     () =>
