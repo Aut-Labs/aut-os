@@ -134,7 +134,7 @@ const AutHome = () => {
 
   return (
     <>
-      <AutToolBar></AutToolBar>
+      <AutToolBar hideSearch={true}></AutToolBar>
       <MainBackground dimensions={dimensions} faces={faces}></MainBackground>
       <AutBox
         sx={{
@@ -143,7 +143,7 @@ const AutHome = () => {
           height: "200px"
         }}
       >
-        <AutSearch />
+        <AutSearch mode="full" />
       </AutBox>
     </>
   );

@@ -45,7 +45,7 @@ const AutSearchDialog = ({ open, onClose }) => {
           height: "200px"
         }}
       >
-        <AutSearch onSelect={onClose} />
+        <AutSearch onSelect={onClose} mode="full" />
       </AutBox>
     </StyledDialog>
   );

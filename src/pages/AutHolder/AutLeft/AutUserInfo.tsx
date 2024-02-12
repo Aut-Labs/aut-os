@@ -51,6 +51,7 @@ import { IsEditingProfile, setOpenEditProfile } from "@store/ui-reducer";
 import { AutEditProfileDialog } from "@components/AutEditProfileDialog";
 import AutBadge3DSceneDialog from "./3DBadge";
 import ViewInArIcon from "@mui/icons-material/ViewInAr";
+import AutBadge2DDialog from "./2DBadge";
 // import VisibilityIcon from "@mui/icons-material/Visibility";
 
 export const IconContainer = styled("div")(({ theme }) => ({
@@ -88,6 +89,7 @@ const AutUserInfo = () => {
   const selectedNetwork = useSelector(SelectedNetwork);
   const canUpdateProfile = useSelector(CanUpdateProfile);
   const [view3DModel, setView3DModel] = useState(false);
+  const [viewCard, setViewCard] = useState(false);
   const dispatch = useAppDispatch();
   const status = useSelector(UpdateStatus);
   const errorMessage = useSelector(UpdateErrorMessage);
@@ -142,7 +144,7 @@ const AutUserInfo = () => {
         onClose={handleClose}
       />
 
-      {holderData.image && (
+      {holderData.image && typeof holderData.image == "string" && (
         <AutBadge3DSceneDialog
           open={view3DModel}
           onClose={() => setView3DModel(false)}
@@ -150,6 +152,11 @@ const AutUserInfo = () => {
         />
       )}
 
+      <AutBadge2DDialog
+        open={viewCard}
+        onClose={() => setViewCard(false)}
+        url={ipfsCIDToHttpUrl(holderData?.image as string)}
+      />
       <FormWrapper autoComplete="off" onSubmit={handleSubmit(beforeEdit)}>
         <ErrorDialog
           handleClose={handleDialogClose}
@@ -194,25 +201,59 @@ const AutUserInfo = () => {
             >
               <Box sx={{ display: "flex" }}>
                 <Stack>
-                  <Avatar
+                  <Stack
                     sx={{
-                      height: {
-                        xs: "150px",
-                        md: "160px",
-                        xxl: "160px"
-                      },
-                      width: {
-                        xs: "150px",
-                        md: "160px",
-                        xxl: "160px"
-                      },
-                      borderRadius: "50%"
+                      position: "relative"
                     }}
-                    aria-label="avatar"
-                    src={ipfsCIDToHttpUrl(
-                      holderData?.properties?.thumbnailAvatar as string
-                    )}
-                  />
+                  >
+                    <Avatar
+                      sx={{
+                        height: {
+                          xs: "150px",
+                          md: "160px",
+                          xxl: "160px"
+                        },
+                        width: {
+                          xs: "150px",
+                          md: "160px",
+                          xxl: "160px"
+                        },
+                        borderRadius: "50%"
+                      }}
+                      aria-label="avatar"
+                      src={ipfsCIDToHttpUrl(
+                        holderData?.properties?.thumbnailAvatar as string
+                      )}
+                    />
+                    {holderData?.image &&
+                      typeof holderData.image == "string" && (
+                        <Box
+                          onClick={() => setView3DModel(true)}
+                          sx={{
+                            position: "absolute",
+                            cursor: "pointer",
+                            bottom: "-20px",
+                            left: "100px",
+                            transform: "rotate(7deg)",
+                            height: {
+                              xs: "130px",
+                              md: "140px",
+                              xxl: "140px"
+                            }
+                          }}
+                        >
+                          <img
+                            style={{
+                              height: "100%",
+                              width: "100%"
+                            }}
+                            aria-label="card"
+                            src={ipfsCIDToHttpUrl(holderData?.image as string)}
+                          />
+                        </Box>
+                      )}
+                  </Stack>
+
                   <Stack
                     sx={{
                       marginTop: 3
@@ -232,7 +273,7 @@ const AutUserInfo = () => {
                           variant="h2"
                         >
                           {holderData.name}{" "}
-                          <Tooltip title="View you 3D NFT Badge">
+                          {/* <Tooltip title="View you 3D NFT Badge">
                             <IconButton
                               sx={{ p: 0, ml: 1 }}
                               color="primary"
@@ -243,7 +284,7 @@ const AutUserInfo = () => {
                                 sx={{ cursor: "pointer", fontSize: "30px" }}
                               />
                             </IconButton>
-                          </Tooltip>
+                          </Tooltip> */}
                         </Typography>
                       </div>
 

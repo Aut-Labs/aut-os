@@ -112,6 +112,14 @@ const FormWrapper = styled("form")(({ theme }) => ({
   }
 }));
 
+const SimpleFormWrapper = styled("form")(({ theme }) => ({
+  display: "flex",
+
+  [theme.breakpoints.down("sm")]: {
+    display: "none"
+  }
+}));
+
 function CustomPaper({ children }) {
   return (
     <Paper
@@ -132,9 +140,9 @@ function CustomPaper({ children }) {
     </Paper>
   );
 }
-
 interface AutSearchProps {
   onSelect?: (user: AutID) => void;
+  mode?: string;
 }
 
 const AutSearch = (props: AutSearchProps) => {
@@ -242,9 +250,230 @@ const AutSearch = (props: AutSearchProps) => {
 
   return (
     <>
-      <ContentWrapper>
-        <FormWrapper autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
-          <FieldWrapper>
+      {props?.mode === "full" && (
+        <ContentWrapper>
+          <FormWrapper autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
+            <FieldWrapper>
+              <Controller
+                key="username"
+                name="username"
+                control={control}
+                render={({ field: { value } }) => {
+                  return (
+                    <>
+                      <Autocomplete
+                        id="search-aut"
+                        sx={{
+                          width: {
+                            xs: 260,
+                            sm: 480
+                          }
+                        }}
+                        getOptionLabel={(option) =>
+                          typeof option === "string" ? option : option.name
+                        }
+                        filterOptions={(x) => x}
+                        options={options}
+                        autoComplete
+                        openOnFocus
+                        PaperComponent={CustomPaper}
+                        disableCloseOnSelect
+                        open={true}
+                        includeInputInList
+                        filterSelectedOptions
+                        value={value as any}
+                        onChange={(
+                          event: any,
+                          newValue: UserProfile | null
+                        ) => {
+                          setOptions(
+                            newValue ? [newValue, ...options] : options
+                          );
+                          setValue(newValue);
+                        }}
+                        onInputChange={(event, newInputValue) => {
+                          setInputValue(newInputValue);
+                        }}
+                        ListboxProps={{
+                          style: {
+                            border: "none",
+                            display: "flex",
+                            margin: 0,
+                            padding: 0,
+                            flexDirection: "column",
+                            background: "transparent",
+                            backdropFilter: "blur(8px)",
+                            width: "474px"
+                          }
+                        }}
+                        renderInput={(params) => (
+                          <AutTextField
+                            {...params}
+                            color="offWhite"
+                            placeholder={"Start typing to search..."}
+                            autoFocus
+                            sx={{
+                              ".MuiInputBase-input": {
+                                "&::placeholder": {
+                                  color: theme.palette.offWhite.main,
+                                  opacity: 0.5
+                                }
+                              },
+                              ".MuiInputBase-root": {
+                                caretColor: theme.palette.primary.main,
+
+                                fieldset: {
+                                  border: "1.5px solid #82FBFB !important",
+                                  borderRadius: "6px"
+                                },
+                                borderRadius: "6px",
+                                background: "rgba(0, 0, 0, 0.64)",
+                                // eslint-disable-next-line max-len
+                                boxShadow: `0px 16px 80px 0px ${theme.palette.primary.main}, 0px 0px 16px 0px rgba(20, 200, 236, 0.64), 0px 0px 16px 0px rgba(20, 200, 236, 0.32)`,
+                                backdropFilter: "blur(8px)"
+                              },
+                              ".MuiInputLabel-root": {
+                                color: "white"
+                              },
+
+                              ".MuiAutocomplete-popupIndicator": {
+                                display: "none"
+                              },
+                              ".MuiAutocomplete-clearIndicator": {
+                                background: "#818CA2",
+                                borderRadius: "50%",
+                                color: "black",
+                                marginRight: "10px",
+                                ":hover": {
+                                  background: "#A7B1C4",
+                                  color: "black"
+                                }
+                              }
+                            }}
+                          />
+                        )}
+                        renderOption={(props, option: any) => {
+                          return (
+                            <UserRow
+                              onClick={() => selectProfile(option)}
+                              key={option.username}
+                            >
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                  flex: "1",
+                                  overflow: "hidden"
+                                }}
+                              >
+                                <div
+                                  style={{
+                                    justifyContent: "start",
+                                    alignItems: "center",
+                                    height: "100%",
+                                    display: "flex",
+                                    flex: "1"
+                                  }}
+                                >
+                                  <Typography
+                                    sx={{
+                                      display: "flex",
+                                      alignSelf: "start",
+                                      justifyContent: "start",
+                                      alignItems: "start",
+                                      padding: "3px",
+                                      height: "100%",
+                                      color: theme.palette.offWhite.main,
+                                      m: "0px 10px"
+                                    }}
+                                    variant="h6"
+                                    fontFamily="FractulRegular"
+                                  >
+                                    {option?.username}
+                                  </Typography>
+                                </div>
+                              </div>
+                            </UserRow>
+                          );
+                        }}
+                      />
+                      {/* <Autocomplete
+                        sx={{ width: 500 }}
+                        getOptionLabel={(option) =>
+                          typeof option === "string" ? option : option.name
+                        }
+                        filterOptions={(x) => x}
+                        options={options}
+                        autoComplete
+                        includeInputInList
+                        filterSelectedOptions
+                        value={value}
+                        noOptionsText="No users"
+                        onChange={(event: any, newValue: UserProfile | null) => {
+                          setOptions(newValue ? [newValue, ...options] : options);
+                          setValue(newValue);
+                        }}
+                        onInputChange={(event, newInputValue) => {
+                          setInputValue(newInputValue);
+                          console.log(newInputValue, "NEW INPUT VALUE");
+                        }}
+                        renderInput={(params) => (
+                          <AutTextField
+                            {...params}
+                            variant="standard"
+                            color="offWhite"
+                            label="Search for a user..."
+                          />
+                        )}
+                        renderOption={(props, option) => {
+                          const matches =
+                            option.structured_formatting
+                              .main_text_matched_substrings || [];
+  
+                          const parts = parse(
+                            option.structured_formatting.main_text,
+                            matches.map((match: any) => [
+                              match.offset,
+                              match.offset + match.length
+                            ])
+                          );
+  
+                          return (
+                            <li {...props}>
+                              <AutIDProfileList
+                                profiles={parts}
+                                onSelect={selectProfile}
+                              />
+                            </li>
+                          );
+                        }}
+                      /> */}
+                    </>
+                  );
+                }}
+              />
+            </FieldWrapper>
+            <Typography
+              variant="subtitle2"
+              fontWeight="normal"
+              textAlign="center"
+              zIndex="10"
+              color="offWhite.main"
+              sx={{
+                width: {
+                  xs: "260px",
+                  sm: "480px"
+                }
+              }}
+            >
+              find anyone and connect with them - just type _
+            </Typography>
+          </FormWrapper>
+        </ContentWrapper>
+      )}
+      {props?.mode === "simple" && (
+        <SimpleFormWrapper autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
+          <Box>
             <Controller
               key="username"
               name="username"
@@ -255,7 +484,7 @@ const AutSearch = (props: AutSearchProps) => {
                     <Autocomplete
                       id="search-aut"
                       sx={{
-                        width: 480
+                        width: 210
                       }}
                       getOptionLabel={(option) =>
                         typeof option === "string" ? option : option.name
@@ -286,14 +515,14 @@ const AutSearch = (props: AutSearchProps) => {
                           flexDirection: "column",
                           background: "transparent",
                           backdropFilter: "blur(8px)",
-                          width: "474px"
+                          width: "204px"
                         }
                       }}
                       renderInput={(params) => (
                         <AutTextField
                           {...params}
                           color="offWhite"
-                          placeholder="Start typing to search..."
+                          placeholder={"search_"}
                           autoFocus
                           sx={{
                             ".MuiInputBase-input": {
@@ -304,16 +533,14 @@ const AutSearch = (props: AutSearchProps) => {
                             },
                             ".MuiInputBase-root": {
                               caretColor: theme.palette.primary.main,
-
+                              padding: "7px",
                               fieldset: {
                                 border: "1.5px solid #82FBFB !important",
                                 borderRadius: "6px"
                               },
                               borderRadius: "6px",
-                              background: "rgba(0, 0, 0, 0.64)",
-                              boxShadow:
-                                // eslint-disable-next-line max-len
-                                `0px 16px 80px 0px ${theme.palette.primary.main}, 0px 0px 16px 0px rgba(20, 200, 236, 0.64), 0px 0px 16px 0px rgba(20, 200, 236, 0.32)`,
+                              background: "transparent",
+                              boxShadow: "none",
                               backdropFilter: "blur(8px)"
                             },
                             ".MuiInputLabel-root": {
@@ -325,9 +552,12 @@ const AutSearch = (props: AutSearchProps) => {
                             },
                             ".MuiAutocomplete-clearIndicator": {
                               background: "#818CA2",
+                              height: "20px",
+                              width: "20px",
                               borderRadius: "50%",
                               color: "black",
-                              marginRight: "10px",
+                              marginRight: "5px",
+                              marginTop: "5px",
                               ":hover": {
                                 background: "#A7B1C4",
                                 color: "black"
@@ -381,77 +611,13 @@ const AutSearch = (props: AutSearchProps) => {
                         );
                       }}
                     />
-                    {/* <Autocomplete
-                        sx={{ width: 500 }}
-                        getOptionLabel={(option) =>
-                          typeof option === "string" ? option : option.name
-                        }
-                        filterOptions={(x) => x}
-                        options={options}
-                        autoComplete
-                        includeInputInList
-                        filterSelectedOptions
-                        value={value}
-                        noOptionsText="No users"
-                        onChange={(event: any, newValue: UserProfile | null) => {
-                          setOptions(newValue ? [newValue, ...options] : options);
-                          setValue(newValue);
-                        }}
-                        onInputChange={(event, newInputValue) => {
-                          setInputValue(newInputValue);
-                          console.log(newInputValue, "NEW INPUT VALUE");
-                        }}
-                        renderInput={(params) => (
-                          <AutTextField
-                            {...params}
-                            variant="standard"
-                            color="offWhite"
-                            label="Search for a user..."
-                          />
-                        )}
-                        renderOption={(props, option) => {
-                          const matches =
-                            option.structured_formatting
-                              .main_text_matched_substrings || [];
-  
-                          const parts = parse(
-                            option.structured_formatting.main_text,
-                            matches.map((match: any) => [
-                              match.offset,
-                              match.offset + match.length
-                            ])
-                          );
-  
-                          return (
-                            <li {...props}>
-                              <AutIDProfileList
-                                profiles={parts}
-                                onSelect={selectProfile}
-                              />
-                            </li>
-                          );
-                        }}
-                      /> */}
                   </>
                 );
               }}
             />
-          </FieldWrapper>
-          <Typography
-            variant="subtitle2"
-            fontWeight="normal"
-            zIndex="10"
-            color="offWhite.main"
-            sx={{
-              width: {
-                _: "400px"
-              }
-            }}
-          >
-            find anyone and connect with them - just type _
-          </Typography>
-        </FormWrapper>
-      </ContentWrapper>
+          </Box>
+        </SimpleFormWrapper>
+      )}
     </>
   );
 };

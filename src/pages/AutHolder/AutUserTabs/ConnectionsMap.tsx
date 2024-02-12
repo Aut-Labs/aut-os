@@ -254,7 +254,7 @@ const AutMap = ({ nova }) => {
               })
             }}
           >
-            {!showInteractionLayer && (
+            {/* {!showInteractionLayer && (
               <Tooltip title={`Search for AutId's`}>
                 <IconButton
                   color="offWhite"
@@ -279,7 +279,7 @@ const AutMap = ({ nova }) => {
                   />
                 </IconButton>
               </Tooltip>
-            )}
+            )} */}
 
             {mapData?.centralNode && (
               <InteractionMap
