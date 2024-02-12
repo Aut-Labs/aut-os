@@ -1,4 +1,4 @@
-import { memo, useEffect, useLayoutEffect, useRef } from "react";
+import { memo, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useAppDispatch } from "@store/store.model";
 import { ResultState } from "@store/result-status";
 import { updateHolderState } from "@store/holder/holder.reducer";
@@ -14,7 +14,7 @@ import {
 import { debounce } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import { EnvMode, environment } from "@api/environment";
-import { useAccount, useConnect } from "wagmi";
+import { useConnect } from "wagmi";
 import AutSDK from "@aut-labs/sdk";
 import { MultiSigner } from "@aut-labs/sdk/dist/models/models";
 import { NetworkConfig } from "./network.config";
@@ -169,7 +169,7 @@ function Web3DautConnect({
       selectedNetwork: network
     };
     await dispatch(updateWalletProviderState(itemsToUpdate));
-    sdk.init(multiSigner, {
+    await sdk.init(multiSigner, {
       novaRegistryAddress: network.contracts.novaRegistryAddress,
       autIDAddress: network.contracts.autIDAddress,
       daoExpanderRegistryAddress: network.contracts.daoExpanderRegistryAddress
@@ -220,6 +220,7 @@ function Web3DautConnect({
           connectors: connectors.filter((c) => btnConfig[c.id]),
           networks,
           state: {
+            multiSignerId,
             multiSigner,
             isConnected,
             isConnecting,

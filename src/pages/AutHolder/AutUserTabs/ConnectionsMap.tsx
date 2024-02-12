@@ -260,8 +260,6 @@ const AutMap = ({ nova }) => {
                   color="offWhite"
                   onClick={() => setIsSearchOpen(true)}
                   sx={{
-                    width: "60px",
-                    height: "60px",
                     position: "absolute",
                     top: 0,
                     left: 0,
@@ -274,7 +272,7 @@ const AutMap = ({ nova }) => {
                 >
                   <ManageSearchIcon
                     sx={{
-                      fontSize: "40px"
+                      fontSize: "30px"
                     }}
                   />
                 </IconButton>

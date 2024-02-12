@@ -523,7 +523,6 @@ const AutSearch = (props: AutSearchProps) => {
                           {...params}
                           color="offWhite"
                           placeholder={"search_"}
-                          autoFocus
                           sx={{
                             ".MuiInputBase-input": {
                               "&::placeholder": {

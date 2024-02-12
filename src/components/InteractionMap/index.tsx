@@ -84,6 +84,8 @@ function InteractionMap({
   const [isDragging, setIsDragging] = useState(false);
   const dispatch = useAppDispatch();
   const isInteractionDialogOpen = useSelector(IsInteractionDialogOpen);
+  const showPopoverTimeoutRef = useRef(null);
+  const hidePopoverTimeoutRef = useRef(null);
 
   const handleClose = () => {
     dispatch(setOpenInteractions(false));
@@ -144,7 +146,19 @@ function InteractionMap({
   const handleNodeHover = useCallback(
     (node: NodeObject<MapNode>) => {
       if (isDragging || !isActive) return;
-      setShowPopover(!!node);
+      if (!node) {
+        clearTimeout(showPopoverTimeoutRef.current);
+        hidePopoverTimeoutRef.current = setTimeout(
+          () => setShowPopover(false),
+          100
+        );
+      } else {
+        clearTimeout(hidePopoverTimeoutRef.current);
+        showPopoverTimeoutRef.current = setTimeout(() => {
+          setHoveredNode(node);
+          setShowPopover(true);
+        }, 50);
+      }
       if (!node) return;
       setHoveredNode(node);
       const bbox = fgRef.current.getGraphBbox((n) => n.id === node.id);
@@ -186,6 +200,21 @@ function InteractionMap({
     );
   }, [fgRef]);
 
+  useEffect(() => {
+    if (isDragging || !isActive) {
+      clearTimeout(hidePopoverTimeoutRef.current);
+      clearTimeout(showPopoverTimeoutRef.current);
+      setShowPopover(false);
+    }
+  }, [isDragging, isActive]);
+
+  useEffect(() => {
+    return () => {
+      clearTimeout(showPopoverTimeoutRef.current);
+      clearTimeout(hidePopoverTimeoutRef.current);
+    };
+  }, []);
+
   const drawNode = useCallback(
     (node: NodeObject<MapNode>, ctx: CanvasRenderingContext2D) => {
       const size = node.size;
@@ -226,6 +255,16 @@ function InteractionMap({
 
   const getNovaInfoByPl = (level: number): any => {
     return pLevels.find((pl) => pl.level === level)?.members[0].nova || {};
+  };
+
+  const handlePopoverClose = () => {
+    clearTimeout(hidePopoverTimeoutRef.current);
+    clearTimeout(showPopoverTimeoutRef.current);
+    setShowPopover(false);
+  };
+
+  const cancelPopoverClose = () => {
+    clearTimeout(hidePopoverTimeoutRef.current);
   };
 
   return (
@@ -270,6 +309,8 @@ function InteractionMap({
         anchorPos={anchorPos}
         data={hoveredNode}
         open={showPopover && !isDragging && isActive}
+        onMouseEnter={cancelPopoverClose}
+        onMouseLeave={handlePopoverClose}
       />
       <Box>
         <Box
