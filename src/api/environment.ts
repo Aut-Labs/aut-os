@@ -9,6 +9,7 @@ export const swEnvVariables = {
   // app config
   env: "REACT_APP_NODE_ENV",
   apiUrl: "REACT_APP_API_URL",
+  // apiDevUrl: "REACT_APP_API_URL_TESTING",
 
   // Aut networks
   networkEnv: "REACT_APP_NETWORK_ENV",

@@ -42,6 +42,7 @@ import { ipfsCIDToHttpUrl } from "@api/storage.api";
 import { base64toFile, toBase64 } from "@utils/to-base-64";
 import AFileUpload from "./Fields/AutFileUpload";
 import AutOsFileUpload from "./Fields/AutOsFileUpload";
+import { useOAuth } from "src/pages/Oauth2/oauth2";
 
 export interface EditDialogProps {
   title: string;
@@ -149,6 +150,8 @@ const FormWrapper = styled("form")(({ theme }) => ({
 }));
 
 export function AutEditProfileDialog(props: EditDialogProps) {
+  const { getAuthGithub, getAuthX, getAuthDiscord, authenticating } =
+    useOAuth();
   const holderData = useSelector(HolderData);
   const theme = useTheme();
   const desktop = useMediaQuery(theme.breakpoints.up("md"));
@@ -407,6 +410,79 @@ export function AutEditProfileDialog(props: EditDialogProps) {
                         render={({ field: { name, value, onChange } }) => {
                           return (
                             <SocialFieldWrapper
+                              onClick={() => {
+                                if (field.type === "discord") {
+                                  getAuthDiscord(
+                                    async (data) => {
+                                      const { access_token } = data;
+                                      const response = await fetch(
+                                        "https://discord.com/api/v10/users/@me",
+                                        {
+                                          headers: {
+                                            Authorization: `Bearer ${access_token}`
+                                          }
+                                        }
+                                      );
+                                      const responseData =
+                                        await response.json();
+                                      const username = responseData.username;
+                                      console.log(username);
+                                      onChange(username);
+
+                                      debugger;
+                                    },
+                                    () => {
+                                      // setLoading(false);
+                                    }
+                                  );
+                                }
+                                if (field.type === "twitter") {
+                                  getAuthX(
+                                    async (data) => {
+                                      const { access_token } = data;
+                                      const response = await fetch(
+                                        "https://api.twitter.com/1.1/account/verify_credentials.json",
+                                        {
+                                          headers: {
+                                            Authorization: `Bearer ${access_token}`
+                                          }
+                                        }
+                                      );
+                                      const responseData =
+                                        await response.json();
+                                      const username = responseData.screen_name;
+                                      console.log(username);
+                                      onChange(username);
+                                    },
+                                    () => {
+                                      // setLoading(false);
+                                    }
+                                  );
+                                }
+                                if (field.type === "github") {
+                                  getAuthGithub(
+                                    async (data) => {
+                                      const { access_token } = data;
+                                      const response = await fetch(
+                                        "https://api.github.com/user",
+                                        {
+                                          headers: {
+                                            Authorization: `Bearer ${access_token}`
+                                          }
+                                        }
+                                      );
+                                      const responseData =
+                                        await response.json();
+                                      const username = responseData.login;
+                                      console.log(username);
+                                      onChange(username);
+                                    },
+                                    () => {
+                                      // setLoading(false);
+                                    }
+                                  );
+                                }
+                              }}
                               sx={{ cursor: value ? "unset" : "pointer" }}
                             >
                               <Box

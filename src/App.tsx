@@ -14,6 +14,7 @@ import "./App.scss";
 import AutCommunityEdit from "./pages/AutCommunity/AutNova";
 import AutProfileEdit from "./pages/AutHolder/AutLeft/AutProfileEdit";
 import AutHome from "./pages/AutHome";
+import Callback from "./pages/Oauth2/Callback";
 
 function App() {
   const dispatch = useAppDispatch();
@@ -58,6 +59,7 @@ function App() {
               <Suspense fallback={<AutLoading />}>
                 <Routes>
                   <Route path="/" element={<AutHome />} />
+                  <Route path="callback" element={<Callback />} />
                   <Route path="/:holderAddress/*" element={<AutHolder />} />
                   <Route
                     path="/:holderAddress/edit-community/:communityAddress"

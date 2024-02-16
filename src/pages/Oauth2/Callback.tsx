@@ -1,0 +1,41 @@
+import AutLoading from "@components/AutLoading";
+import { useEffect, useState } from "react";
+
+const queryToObject = (query) => {
+  const parameters = new URLSearchParams(query);
+  return Object.fromEntries(parameters.entries());
+};
+
+const Callback = () => {
+  useEffect(() => {
+    debugger;
+    const payload = queryToObject(window.location.search.split("?")[1]);
+    const error = payload && payload.error;
+
+    debugger;
+    if (!window.opener) {
+      throw new Error("No window opener");
+    }
+    if (error) {
+      window.opener.postMessage({
+        type: "OAUTH_RESPONSE",
+        error: decodeURI(error) || "OAuth2 error: An error has occured."
+      });
+    } else {
+      console.log("POST MESSAGE");
+      window.opener.postMessage({
+        type: "OAUTH_RESPONSE",
+        payload
+      });
+    }
+    // window.close();
+  }, []);
+
+  return (
+    <div>
+      <AutLoading width="130px" height="130px" />
+    </div>
+  );
+};
+
+export default Callback;
