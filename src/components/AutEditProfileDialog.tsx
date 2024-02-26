@@ -19,7 +19,7 @@ import { ReactComponent as TelegramIcon } from "@assets/SocialIcons/TelegramIcon
 import { ReactComponent as TwitterIcon } from "@assets/SocialIcons/TwitterIcon.svg";
 import { AutOSCommitmentSlider } from "@theme/commitment-slider-styles";
 import PerfectScrollbar from "react-perfect-scrollbar";
-import { Controller, useFieldArray, useForm } from "react-hook-form";
+import { Controller, useFieldArray, useForm, useWatch } from "react-hook-form";
 import { AutButtonVariant, AutOsButton } from "./AutButton";
 import { AutID, socialUrls } from "@api/aut.model";
 import { useSelector } from "react-redux";
@@ -149,6 +149,12 @@ const FormWrapper = styled("form")(({ theme }) => ({
   }
 }));
 
+export enum SocialLinkPrefixes {
+  Discord = "https://discord.com/users/",
+  X = "https://twitter.com/",
+  GitHub = "https://github.com/"
+}
+
 export function AutEditProfileDialog(props: EditDialogProps) {
   const { getAuthGithub, getAuthX, getAuthDiscord, authenticating } =
     useOAuth();
@@ -166,15 +172,40 @@ export function AutEditProfileDialog(props: EditDialogProps) {
     // eth: EthIcon,
     discord: DiscordIcon,
     github: GitHubIcon,
-    twitter: TwitterIcon,
-    telegram: TelegramIcon,
-    lensfrens: LensfrensIcon
+    twitter: TwitterIcon
+    // telegram: TelegramIcon,
+    // lensfrens: LensfrensIcon
   };
+
+  const filteredSocials = holderData?.properties?.socials.filter(
+    (social) => social.type !== "telegram" && social.type !== "lensfrens"
+  );
+
+  function displaySocialUsername(value, field) {
+    let prefix = "";
+
+    switch (field.type) {
+      case "discord":
+        prefix = SocialLinkPrefixes.Discord;
+        break;
+      case "twitter":
+        prefix = SocialLinkPrefixes.X;
+        break;
+      case "github":
+        prefix = SocialLinkPrefixes.GitHub;
+        break;
+      default:
+        return "";
+    }
+
+    return value.replace(prefix, "");
+  }
 
   const {
     control,
     handleSubmit,
-    formState: { isDirty }
+    formState: { isDirty },
+    setValue
   } = useForm({
     mode: "onChange",
     defaultValues: {
@@ -182,7 +213,7 @@ export function AutEditProfileDialog(props: EditDialogProps) {
       email: holderData.properties.email,
       bio: holderData.properties.bio,
       avatar: holderData?.properties?.avatar,
-      socials: holderData?.properties?.socials
+      socials: filteredSocials
     }
   });
 
@@ -426,10 +457,12 @@ export function AutEditProfileDialog(props: EditDialogProps) {
                                       const responseData =
                                         await response.json();
                                       const username = responseData.username;
-                                      console.log(username);
                                       onChange(username);
-
-                                      debugger;
+                                      const fullLink = `${SocialLinkPrefixes.Discord}${username}`;
+                                      setValue(
+                                        `socials.${index}.link`,
+                                        fullLink
+                                      );
                                     },
                                     () => {
                                       // setLoading(false);
@@ -451,8 +484,12 @@ export function AutEditProfileDialog(props: EditDialogProps) {
                                       const responseData =
                                         await response.json();
                                       const username = responseData.screen_name;
-                                      console.log(username);
                                       onChange(username);
+                                      const fullLink = `${SocialLinkPrefixes.X}${username}`;
+                                      setValue(
+                                        `socials.${index}.link`,
+                                        fullLink
+                                      );
                                     },
                                     () => {
                                       // setLoading(false);
@@ -474,8 +511,12 @@ export function AutEditProfileDialog(props: EditDialogProps) {
                                       const responseData =
                                         await response.json();
                                       const username = responseData.login;
-                                      console.log(username);
                                       onChange(username);
+                                      const fullLink = `${SocialLinkPrefixes.GitHub}${username}`;
+                                      setValue(
+                                        `socials.${index}.link`,
+                                        fullLink
+                                      );
                                     },
                                     () => {
                                       // setLoading(false);
@@ -483,7 +524,7 @@ export function AutEditProfileDialog(props: EditDialogProps) {
                                   );
                                 }
                               }}
-                              sx={{ cursor: value ? "unset" : "pointer" }}
+                              sx={{ cursor: "pointer" }}
                             >
                               <Box
                                 sx={{ display: "flex", alignItems: "center" }}
@@ -511,7 +552,9 @@ export function AutEditProfileDialog(props: EditDialogProps) {
                                       ml: theme.spacing(1)
                                     }}
                                   >
-                                    {value ? value : "connect"}
+                                    {value
+                                      ? displaySocialUsername(value, field)
+                                      : "connect"}
                                   </Typography>
                                   {value && (
                                     <Typography

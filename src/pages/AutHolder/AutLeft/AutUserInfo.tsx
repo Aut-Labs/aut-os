@@ -85,6 +85,7 @@ const { FormWrapper } = EditContentElements;
 const AutUserInfo = () => {
   const holderData = useSelector(HolderData);
   const holderStatus = useSelector(HolderStatus);
+  const { connections } = useSelector((state: any) => state.ui);
   const blockExplorer = useSelector(BlockExplorerUrl);
   const selectedNetwork = useSelector(SelectedNetwork);
   const canUpdateProfile = useSelector(CanUpdateProfile);
@@ -354,7 +355,7 @@ const AutUserInfo = () => {
                         fontSize="24px"
                         fontWeight="bold"
                       >
-                        200
+                        100
                       </Typography>
                       <SubtitleWithInfo
                         title="reputation"
@@ -370,7 +371,7 @@ const AutUserInfo = () => {
                         color="offWhite.main"
                         fontWeight="bold"
                       >
-                        200
+                        {connections}
                       </Typography>
                       <SubtitleWithInfo
                         title="connections"
@@ -449,7 +450,7 @@ const AutUserInfo = () => {
                               social.link ===
                                 socialUrls[social.type].prefix) && {
                               sx: {
-                                // display: "none",
+                                display: "none",
                                 svg: {
                                   color: (theme) => theme.palette.divider
                                 }
