@@ -131,7 +131,6 @@ export class AutID extends BaseNFTModel<AutIDProperties> {
         bio: autID.properties.bio,
         timestamp: autID.properties.timestamp,
         socials: autID.properties.socials.map((social) => {
-          social.link = `${socialUrls[social.type].prefix}${social.link}`;
           return social;
         })
       }

@@ -5,7 +5,7 @@ import InteractionMap from "@components/InteractionMap";
 import { memo, useEffect, useMemo, useRef, useState } from "react";
 import { AutOsButton } from "@components/AutButton";
 import { useAppDispatch } from "@store/store.model";
-import { setOpenInteractions } from "@store/ui-reducer";
+import { setConnections, setOpenInteractions } from "@store/ui-reducer";
 import { AdddInteractions } from "@store/interactions/interactions.reducer";
 import { useAccount } from "wagmi";
 import { SelectedProfileAddress } from "@store/holder/holder.reducer";
@@ -18,7 +18,6 @@ import { MapAutID, MapNova } from "@api/map.model";
 import { AutID } from "@api/aut.model";
 import AutLoading from "@components/AutLoading";
 import AutSearchDialog from "src/pages/AutHome/AutSearchDialog";
-import ManageSearchIcon from "@mui/icons-material/ManageSearch";
 
 const fetchAutIDsQuery = (nova: Community) => {
   const queryArgsString = queryParamsAsString({
@@ -147,6 +146,11 @@ const AutMap = ({ nova }) => {
           members: otherMembers
         };
 
+        dispatch(
+          setConnections(
+            otherMembers?.length > 0 ? otherMembers?.length - 1 : 0
+          )
+        );
         central.nova.members = mapNova.members;
         setMapData(mapNova);
       };

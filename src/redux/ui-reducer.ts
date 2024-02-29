@@ -14,7 +14,8 @@ const initialState = {
   openInteractions: false,
   previousRoute: "/",
   transactionState: null,
-  title: ""
+  title: "",
+  connections: 0
 };
 
 export const uiSlice = createSlice({
@@ -57,6 +58,9 @@ export const uiSlice = createSlice({
     setOpenInteractions(state, action) {
       state.openInteractions = action.payload;
     },
+    setConnections(state, action) {
+      state.connections = action.payload;
+    },
     resetUIState: () => initialState
   }
 });
@@ -71,7 +75,8 @@ export const {
   setOpenWithdraw,
   setOpenEditProfile,
   setOpenInteractions,
-  updateTransactionState
+  updateTransactionState,
+  setConnections
 } = uiSlice.actions;
 
 export const IsEditingProfile = (state) => state.ui.openEditProfile as boolean;

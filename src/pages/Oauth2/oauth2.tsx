@@ -48,14 +48,12 @@ export const useOAuth = () => {
       try {
         const type = message && message.data && message.data.type;
         if (type === "OAUTH_RESPONSE") {
-          console.log("RECEIVE MESSAGE");
           const error = message && message.data && message.data.error;
           if (error) {
             onFailure(error);
           } else {
-            console.log(environment.apiDevUrl);
             const response = await axios.post(
-              `${environment.apiDevUrl}/autID/config/oauth2AccessTokenDiscord`,
+              `${environment.apiUrl}/autID/config/oauth2AccessTokenDiscord`,
               {
                 code: message.data.payload.code,
                 callbackUrl
@@ -110,13 +108,12 @@ export const useOAuth = () => {
       try {
         const type = message && message.data && message.data.type;
         if (type === "OAUTH_RESPONSE") {
-          console.log("RECEIVE MESSAGE");
           const error = message && message.data && message.data.error;
           if (error) {
             onFailure(error);
           } else {
             const response = await axios.post(
-              `${environment.apiDevUrl}/autID/config/oauth2AccessTokenX`,
+              `${environment.apiUrl}/autID/config/oauth2AccessTokenX`,
               {
                 code: message.data.payload.code,
                 callbackUrl
@@ -171,13 +168,12 @@ export const useOAuth = () => {
       try {
         const type = message && message.data && message.data.type;
         if (type === "OAUTH_RESPONSE") {
-          console.log("RECEIVE MESSAGE");
           const error = message && message.data && message.data.error;
           if (error) {
             onFailure(error);
           } else {
             const response = await axios.post(
-              `${environment.apiDevUrl}/autID/config/oauth2AccessTokenGithub`,
+              `${environment.apiUrl}/autID/config/oauth2AccessTokenGithub`,
               {
                 code: message.data.payload.code,
                 callbackUrl
