@@ -76,10 +76,12 @@ const AutHome = () => {
   });
 
   const [faces, setFaces] = useState([]);
+  const [loadedFaces, setLoadedFaces] = useState(false);
   const apolloClient = useApolloClient();
 
   React.useEffect(() => {
-    if (!faces?.length) {
+    if (!faces?.length && !loadedFaces) {
+      setLoadedFaces(true);
       const fetchData = async () => {
         const queryArgsString = queryParamsAsString({
           skip: 0,
@@ -98,14 +100,15 @@ const AutHome = () => {
           const response = await apolloClient.query({
             query
           });
-          // eslint-disable-next-line no-unsafe-optional-chaining
           const { autIDs } = response.data;
-          const itemCount = 9;
-          const autIdFaces = ensureSpecificItemCount(autIDs, itemCount);
+          if (autIDs?.length > 0) {
+            const itemCount = 9;
+            const autIdFaces = ensureSpecificItemCount(autIDs, itemCount);
 
-          enhanceItemsWithAvatars(autIdFaces).then((enhancedItems) => {
-            setFaces(enhancedItems);
-          });
+            enhanceItemsWithAvatars(autIdFaces).then((enhancedItems) => {
+              setFaces(enhancedItems);
+            });
+          }
         } catch (error) {
           console.error("Error fetching the data:", error);
         }
@@ -113,7 +116,7 @@ const AutHome = () => {
 
       fetchData();
     }
-  }, []);
+  }, [faces, loadedFaces]);
 
   React.useEffect(() => {
     const handleResize = () => {
