@@ -191,13 +191,13 @@ const AutUserInfo = () => {
               sx={{
                 width: {
                   xs: "100%",
-                  md: "30%",
-                  padding: "24px",
-                  borderRadius: "72px",
-                  background: "rgba(240, 245, 255, 0.01)",
-                  backdropFilter: "blur(12px)",
-                  height: "fit-content"
-                }
+                  md: "30%"
+                },
+                padding: "24px",
+                borderRadius: "72px",
+                background: "rgba(240, 245, 255, 0.01)",
+                backdropFilter: "blur(12px)",
+                height: "fit-content"
               }}
             >
               <Box sx={{ display: "flex" }}>
