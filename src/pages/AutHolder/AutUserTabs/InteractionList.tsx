@@ -22,6 +22,7 @@ import {
 import { ResultState } from "@store/result-status";
 import { useAppDispatch } from "@store/store.model";
 import { useSelector } from "react-redux";
+import { useAuthenticatedApi } from "@api/aut.api";
 
 const InteractionListItem = memo(
   ({ interaction, verify }: { interaction: any; verify: any }) => {
@@ -199,43 +200,47 @@ const InteractionList = ({ isLoading = false, interactions = [] }: any) => {
   const theme = useTheme();
   const dispatch = useAppDispatch();
   const [verifySuccess, setVerifySuccess] = useState(null);
+  const { useAuthenticatedAction } = useAuthenticatedApi();
 
-  const verifyInteraction = (interaction) => {
+  const verifyInteraction = async (interaction) => {
     dispatch(
       updateInteractionState({
         interaction,
         status: ResultState.Loading
       })
     );
-    setTimeout(() => {
-      setVerifySuccess(true);
-      dispatch(
-        updateInteractionState({
-          status: ResultState.Idle,
-          interaction: null
-        })
-      );
-      dispatch(
-        addInteraction({
-          interaction
-        })
-      );
-      // if (interaction?.protocol === "Ethereum") {
+    await useAuthenticatedAction(async (jwt) => {
+      console.log(jwt);
+      setTimeout(() => {
+        setVerifySuccess(true);
+        dispatch(
+          updateInteractionState({
+            status: ResultState.Idle,
+            interaction: null
+          })
+        );
+        dispatch(
+          addInteraction({
+            interaction
+          })
+        );
+        // if (interaction?.protocol === "Ethereum") {
 
-      // } else {
-      //   if (interaction?.protocol === "Ethereum") {
-      //     setVerifySuccess(false);
-      //     dispatch(
-      //       updateInteractionState({
-      //         interaction: null,
-      //         status: ResultState.Failed,
-      //         errorMessage:
-      //           "Sorry, it seems like you have not completed this interaction yet!"
-      //       })
-      //     );
-      //   }
-      // }
-    }, 2000);
+        // } else {
+        //   if (interaction?.protocol === "Ethereum") {
+        //     setVerifySuccess(false);
+        //     dispatch(
+        //       updateInteractionState({
+        //         interaction: null,
+        //         status: ResultState.Failed,
+        //         errorMessage:
+        //           "Sorry, it seems like you have not completed this interaction yet!"
+        //       })
+        //     );
+        //   }
+        // }
+      }, 2000);
+    });
   };
 
   return (

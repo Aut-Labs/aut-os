@@ -19,6 +19,8 @@ import AutSDK from "@aut-labs/sdk";
 import { MultiSigner } from "@aut-labs/sdk/dist/models/models";
 import { NetworkConfig } from "./network.config";
 import { useAutConnector } from "@aut-labs/connector";
+import axios from "axios";
+import { extractDomain } from "@utils/helpers";
 
 function Web3DautConnect({
   setLoading
@@ -124,6 +126,7 @@ function Web3DautConnect({
   };
 
   const onDisconnected = () => {
+    localStorage.removeItem("interactions-api-jwt");
     const [, username] = window.location.pathname.split("/");
     const params = new URLSearchParams(window.location.search);
     if (username) {
@@ -186,6 +189,28 @@ function Web3DautConnect({
     }
   }, [multiSignerId]);
 
+  async function connectInterceptor(c) {
+    //@ts-ignore
+    const newState = await connect(c);
+
+    const { signer } = newState.multiSigner ?? multiSigner;
+    const message = {
+      timestamp: Math.floor(Date.now() / 1000), // Subtract one hour (3600 seconds)
+      signer: newState.address,
+      domain: extractDomain(environment.interactionsApiUrl)
+    };
+    const signature = await signer.signMessage(JSON.stringify(message));
+
+    const response = await axios.post(
+      `${environment.interactionsApiUrl}/auth/token`,
+      { message, signature }
+    );
+    const data = await response.data;
+    localStorage.setItem("interactions-api-jwt", data.token);
+
+    return newState;
+  }
+
   useEffect(() => {
     if (!dAutInitialized.current && multiSignerId) {
       window.addEventListener("aut_profile", onAutMenuProfile);
@@ -221,7 +246,7 @@ function Web3DautConnect({
           REACT_APP_IPFS_GATEWAY_URL: environment.ipfsGatewayUrl
         },
         connector: {
-          connect,
+          connect: connectInterceptor,
           disconnect,
           setStateChangeCallback,
           connectors: connectors.filter((c) => btnConfig[c.id]),

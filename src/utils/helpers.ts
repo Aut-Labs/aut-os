@@ -78,3 +78,10 @@ export const toHex = (num) => {
   const val = Number(num);
   return `0x${val.toString(16)}`;
 };
+
+export const extractDomain = (url) => {
+  const domainRegex = /https?:\/\/([^/]+)\//;
+  const domainMatch = url.match(domainRegex);
+  const domain = domainMatch ? domainMatch[1] : "";
+  return domain;
+};
