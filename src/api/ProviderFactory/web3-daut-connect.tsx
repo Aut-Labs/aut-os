@@ -193,6 +193,10 @@ function Web3DautConnect({
     //@ts-ignore
     const newState = await connect(c);
 
+    if (environment.interactionsApiUrl == "NOT_SET") {
+      return newState;
+    }
+
     const { signer } = newState.multiSigner ?? multiSigner;
     const message = {
       timestamp: Math.floor(Date.now() / 1000), // Subtract one hour (3600 seconds)
