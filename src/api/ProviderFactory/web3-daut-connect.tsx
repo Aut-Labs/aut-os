@@ -195,8 +195,15 @@ function Web3DautConnect({
       dAutInitialized.current = true;
       const btnConfig = {
         metaMask: true,
-        walletConnect: true
+        walletConnect: true,
+        coinbaseWalletSDK: true,
+        web3auth: true
       };
+
+      const allowedConnectors = Object.keys(btnConfig)
+        .filter((connector) => btnConfig[connector])
+        .map((connector) => connectors.find((c) => c.id === connector));
+
       const config = {
         defaultText: "Connect Wallet",
         textAlignment: "right",
@@ -224,7 +231,7 @@ function Web3DautConnect({
           connect,
           disconnect,
           setStateChangeCallback,
-          connectors: connectors.filter((c) => btnConfig[c.id]),
+          connectors: allowedConnectors,
           networks,
           state: {
             multiSignerId,
