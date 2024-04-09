@@ -18,6 +18,9 @@ import { editCommitment } from "@api/holder.api";
 import { setOpenCommitment } from "@store/ui-reducer";
 import AutOsTabs from "./AutOsTabs";
 import AutInteractionTabs from "src/pages/AutHolder/AutInteractionTabs/AutInteractionTabs";
+import { useAutConnector } from "@aut-labs/connector";
+import axios from "axios";
+import { environment } from "@api/environment";
 
 export interface InteractionsDialogProps {
   title: string;
@@ -49,6 +52,86 @@ const AutStyledDialog = styled(Dialog)(({ theme }) => ({
     }
   }
 }));
+
+export function useBackendJwt() {
+  // const [jwt, setJwt] = useState(() => {
+  //   const lsValue = window.localStorage.getItem("interactions-api-jwt");
+  //   return lsValue;
+  // });
+  // useEffect(() => {
+  //   const handleStorageChange = (e) => {
+  //     if (e.key === "interactions-api-jwt") {
+  //       setJwt(e.newValue);
+  //     }
+  //   };
+  //   window.addEventListener("storage", handleStorageChange);
+
+  //   // Cleanup function to remove the event listener when the component unmounts
+  //   return () => {
+  //     window.removeEventListener("storage", handleStorageChange);
+  //   };
+  // }, []);
+
+  // useEffect(() => {
+  //   const getJwt = async () => {
+  //     const message = {
+  //       timestamp: Math.floor(Date.now() / 1000) - 7200, // Subtract one hour (3600 seconds)
+  //       signer: "0x7660aa261d27A2A32d4e7e605C1bc2BA515E5f81",
+  //       domain: "localhost:5001"
+  //     };
+  //     const response = await axios.post(
+  //       `${environment.interactionsApiUrl}/api/auth/jwt`,
+  //       message
+  //     );
+  //     const data = await response.data;
+  //   };
+
+  //   if (!jwt) {
+  //     getJwt();
+  //   }
+  // }, []);
+
+  const {
+    isConnected,
+    isConnecting,
+    connect,
+    disconnect,
+    setStateChangeCallback,
+    multiSigner,
+    multiSignerId,
+    chainId,
+    status,
+    address
+  } = useAutConnector();
+
+  async function doAuthenticatedAction(action) {
+    const jwt = window.localStorage.getItem("interactions-api-jwt");
+    if (jwt) {
+      action(jwt);
+    } else {
+      const { signer } = multiSigner;
+      const message = {
+        timestamp: Math.floor(Date.now() / 1000), // Subtract one hour (3600 seconds)
+        signer: address,
+        domain: "localhost:5001"
+      };
+      const signature = await signer.signMessage(JSON.stringify(message));
+      console.log("signature: ", signature);
+      console.log(JSON.stringify(message));
+
+      const response = await axios.post(
+        `${environment.interactionsApiUrl}/auth/token`,
+        { message, signature }
+      );
+      const data = await response.data;
+      localStorage.setItem("interactions-api-jwt", data.token);
+
+      await action(data.token);
+    }
+  }
+
+  return { doAuthenticatedAction };
+}
 
 export function AutInteractionsDialog(props: InteractionsDialogProps) {
   const dispatch = useAppDispatch();

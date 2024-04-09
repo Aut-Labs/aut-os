@@ -1,12 +1,12 @@
 import { ResultState } from "@store/result-status";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
-export const activatePlugin = createAsyncThunk(
-  "plugin/activate",
-  async (pluginName, { dispatch, getState, rejectWithValue }) => {
+export const createPlugin = createAsyncThunk(
+  "plugin/create",
+  async (plugin, { dispatch, getState, rejectWithValue }) => {
     try {
       await new Promise((resolve) => setTimeout(resolve, 5000));
-      return { status: "Success!", pluginName };
+      return { status: "Success!", plugin };
     } catch (error) {
       return rejectWithValue({ status: "Error!", error: error.message });
     }
@@ -14,17 +14,17 @@ export const activatePlugin = createAsyncThunk(
 );
 
 export interface PluginState {
-  plugins: any[];
   status: ResultState;
-  fetchStatus: ResultState;
   errorMessage: string;
+  plugin: any;
+  plugins: any[];
 }
 
 const initialState: PluginState = {
-  plugins: [],
   status: ResultState.Idle,
-  fetchStatus: ResultState.Idle,
-  errorMessage: ""
+  errorMessage: "",
+  plugin: null,
+  plugins: []
 };
 
 export const pluginSlice = createSlice({
@@ -36,24 +36,28 @@ export const pluginSlice = createSlice({
       Object.keys(action.payload).forEach((key) => {
         state[key] = action.payload[key];
       });
+    },
+    addPlugin(state, action) {
+      state.plugins.push(action.payload);
     }
   },
   extraReducers: (builder) => {
     builder
-      .addCase(activatePlugin.fulfilled, (state, action) => {
+      .addCase(createPlugin.fulfilled, (state, action) => {
         state.status = ResultState.Idle;
       })
-      .addCase(activatePlugin.rejected, (state, action) => {
+      .addCase(createPlugin.rejected, (state, action) => {
         state.status = ResultState.Failed;
         state.errorMessage = action.payload as string;
       });
   }
 });
 
-export const { updatePluginState } = pluginSlice.actions;
+export const { addPlugin, updatePluginState } = pluginSlice.actions;
 
-export const AutPlugins = (state) => state.plugin.plugins as any[];
 export const PluginStatus = (state) => state.plugin.status as ResultState;
+export const PluginForAction = (state) => state.plugin.plugin;
+export const AddedPlugins = (state) => state.plugin.plugins as any[];
 export const PluginErrorMessage = (state) =>
   state.plugin.errorMessage as string;
 

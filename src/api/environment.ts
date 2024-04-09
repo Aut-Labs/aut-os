@@ -9,6 +9,7 @@ export const swEnvVariables = {
   // app config
   env: "REACT_APP_NODE_ENV",
   apiUrl: "REACT_APP_API_URL",
+  interactionsApiUrl: "REACT_APP_INTERACTIONS_API",
   graphApiUrl: "REACT_APP_GRAPH_API_URL",
 
   // Aut networks
