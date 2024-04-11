@@ -190,7 +190,6 @@ function Web3DautConnect({
   }, [multiSignerId]);
 
   async function connectInterceptor(c) {
-    //@ts-ignore
     const newState = await connect(c);
 
     if (environment.interactionsApiUrl == "NOT_SET") {
@@ -295,7 +294,7 @@ function Web3DautConnect({
         menu-items='[{"name":"Profile","actionType":"event_emit","eventName":"aut_profile"}]'
         flow-config='{"mode" : "signin", "customCongratsMessage": ""}'
         // flow-config='{"mode" : "signup", "customCongratsMessage": ""}'
-        // nova-address="0xdAffe6640B4C5d8086A31536b2c694bDd3E675D7"
+        // nova-address="0xdaffe6640b4c5d8086a31536b2c694bdd3e675d7"
         ipfs-gateway={environment.ipfsGatewayUrl}
       />
     </>
