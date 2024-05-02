@@ -10,11 +10,11 @@ import SWSnackbar from "./components/snackbar";
 import { environment } from "@api/environment";
 import { getAppConfig } from "@api/aut.api";
 import AutSDK from "@aut-labs/sdk";
-import "./App.scss";
 import AutCommunityEdit from "./pages/AutCommunity/AutNova";
 import AutProfileEdit from "./pages/AutHolder/AutLeft/AutProfileEdit";
 import AutHome from "./pages/AutHome";
 import Callback from "./pages/Oauth2/Callback";
+import "./App.scss";
 
 function App() {
   const dispatch = useAppDispatch();

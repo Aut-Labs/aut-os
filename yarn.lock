@@ -69,10 +69,15 @@
   resolved "https://registry.npmjs.org/@aut-labs/abi-types/-/abi-types-0.0.74-dev.tgz"
   integrity sha512-LZFQQSKvgfGQR66ln60eDMxAnYwcGOSsadQN0RwllbrD0i4kpescSXobZMjP+VkDzXz+1fuDb9q+EkEYl/0p4A==
 
-"@aut-labs/connector@^0.0.60":
-  version "0.0.60"
-  resolved "https://registry.yarnpkg.com/@aut-labs/connector/-/connector-0.0.60.tgz#10ecbad7c7d3a652eb4ad747f2bd068cd9f8458f"
-  integrity sha512-TFhvSOD2vUgcdY4tRPBcevTa0VvxrryHOfOi7YgYNZ7G872wlZGWDwwnGiNTi5uQYsIhEpWu8Krt69iHK3Dy0Q==
+"@aut-labs/abi-types@^0.0.75-dev":
+  version "0.0.75-dev"
+  resolved "https://registry.yarnpkg.com/@aut-labs/abi-types/-/abi-types-0.0.75-dev.tgz#6d91f8025fced39c4fff3834a0e143f5d71599f1"
+  integrity sha512-aQd6qNQKJZ5Cb/8hFOm1U+8B7JDLWVhG+m5H5ZFijCgJoknfUxN1SUNMucZCbXe3DVmJRVLpuqJxaX4CGyWkoA==
+
+"@aut-labs/connector@^0.0.67":
+  version "0.0.67"
+  resolved "https://registry.yarnpkg.com/@aut-labs/connector/-/connector-0.0.67.tgz#de149deb5bb63987d2877a69ecb59704d153d174"
+  integrity sha512-L6ibMEQxNZOS1dvAHsVLq4URrKRIxXdneuZ6y13UyJlXMCD7GCnVSIJtKBop4XR8W//Nx7AW6foAxpensZIlxw==
   dependencies:
     "@web3auth/base" "^8.0.0"
     "@web3auth/ethereum-provider" "^8.0.1"
@@ -81,17 +86,17 @@
     "@web3auth/wallet-services-plugin" "^8.0.1"
     "@web3auth/web3auth-wagmi-connector" "^6.0.0"
 
-"@aut-labs/d-aut@^1.0.137-dev":
-  version "1.0.137-dev"
-  resolved "https://registry.yarnpkg.com/@aut-labs/d-aut/-/d-aut-1.0.137-dev.tgz#f98d70824ccb0a64b7dc4501d3cfa2837a217f7b"
-  integrity sha512-05el52gZsiIS1AtBfC47tmLsb8xJ4beKbyItywU3PlJqZqLqHT/CXyqn+WHLOJZTw/gdwa0H1caXZnITr1GNdA==
+"@aut-labs/d-aut@^1.0.139-dev":
+  version "1.0.139-dev"
+  resolved "https://registry.yarnpkg.com/@aut-labs/d-aut/-/d-aut-1.0.139-dev.tgz#dc7cf5946251bed58690d1e48846412b50f528a6"
+  integrity sha512-/2iikRwU2IXAXyj9PyocErMAN2aCpT3/+VoQBFHabppL+2RgYTWWg+zHTNBCqPUCpPVyP9U9ytQOn3qSztkPaA==
   dependencies:
     "@tanstack/react-query" "^5.18.1"
 
-"@aut-labs/sdk@^0.0.154-dev":
-  version "0.0.154-dev"
-  resolved "https://registry.npmjs.org/@aut-labs/sdk/-/sdk-0.0.154-dev.tgz"
-  integrity sha512-maDaenxdXzirT/gX49Uc7LIhFRJmTbaffGpR93HNXUcYVk2ve33T4S8lAn/n8D0xMWg6TNiA/SNm8igKb8vywQ==
+"@aut-labs/sdk@^0.0.156-dev":
+  version "0.0.156-dev"
+  resolved "https://registry.yarnpkg.com/@aut-labs/sdk/-/sdk-0.0.156-dev.tgz#ec7d1929fc1955d6079290f18e6b201f899a0d38"
+  integrity sha512-uXWPybiO3pFheqAur7VMntXIaKwTIV9r0n5IcnLVKndAcUI/1OEDm5oqLCKi1uzHMNM7el9NvU/6br+L71dxCg==
   dependencies:
     "@aut-labs/abi-types" "^0.0.74-dev"
     date-fns "^2.29.3"

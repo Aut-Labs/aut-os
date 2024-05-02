@@ -294,7 +294,7 @@ function Web3DautConnect({
         menu-items='[{"name":"Profile","actionType":"event_emit","eventName":"aut_profile"}]'
         flow-config='{"mode" : "signin", "customCongratsMessage": ""}'
         // flow-config='{"mode" : "signup", "customCongratsMessage": ""}'
-        // nova-address="0xdaffe6640b4c5d8086a31536b2c694bdd3e675d7"
+        // nova-address="0xf6d380e137a7953c3ce1380de12246088db67dc0"
         ipfs-gateway={environment.ipfsGatewayUrl}
       />
     </>
