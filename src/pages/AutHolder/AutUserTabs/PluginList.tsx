@@ -176,7 +176,7 @@ const PluginListItemNew = memo(
                 fontWeight: "400",
                 letterSpacing: "0.66px"
               }}
-              maxLine={3}
+              maxLine={6}
               text={plugin?.description}
             />
           </Box>
@@ -443,7 +443,7 @@ const PluginList = ({ isLoading = false, plugins = [] }: TableParamsParams) => {
   const canUpdateProfile = useSelector(CanUpdateProfile);
   const holderData = useSelector(HolderData);
   //TODO: Replace when reputation is part of holder data;
-  const holderReputation = 100;
+  const holderReputation = 0;
   const dispatch = useAppDispatch();
   const status = useSelector(PluginStatus);
   const errorMessage = useSelector(PluginErrorMessage);
@@ -572,7 +572,8 @@ const PluginList = ({ isLoading = false, plugins = [] }: TableParamsParams) => {
           gridTemplateColumns: {
             xs: "1fr",
             sm: "1fr 1fr",
-            md: "1fr 1fr 1fr 1fr"
+            md: "1fr 1fr 1fr",
+            xxl: "1fr 1fr 1fr 1fr"
           },
           gap: theme.spacing(2)
         }}
