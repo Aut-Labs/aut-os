@@ -11,7 +11,7 @@ const defaultOptions = {
   }
 };
 
-const AutLoading = ({ width = "300px", height = "300px" }) => {
+const AutLoading = ({ width = "150px", height = "150px" }) => {
   return (
     <div
       style={{

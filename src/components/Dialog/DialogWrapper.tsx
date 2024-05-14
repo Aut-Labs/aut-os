@@ -5,10 +5,33 @@ import {
   DialogContent,
   useMediaQuery,
   useTheme,
-  IconButton
+  IconButton,
+  styled
 } from "@mui/material";
 import { pxToRem } from "@utils/text-size";
 import CloseIcon from "@mui/icons-material/Close";
+import { he } from "date-fns/locale";
+
+const AutStyledDialog = styled(Dialog)(({ theme }) => ({
+  ".MuiPaper-root": {
+    margin: "0",
+    border: "none",
+    backgroundColor: "#1E2430",
+    width: "420px",
+    height: "280px",
+    borderRadius: "30px",
+    boxShadow:
+      "0px 16px 80px 0px #2E90FA, 0px 0px 16px 0px rgba(20, 200, 236, 0.64), 0px 0px 16px 0px rgba(20, 200, 236, 0.32)"
+  },
+  [theme.breakpoints.down("md")]: {
+    ".MuiPaper-root": {
+      margin: "0",
+      height: "100%",
+      width: "100%",
+      border: "none"
+    }
+  }
+}));
 
 export const DialogWrapper = ({
   children,
@@ -16,76 +39,39 @@ export const DialogWrapper = ({
   open,
   onClose = null,
   fullScreen = false,
-  contentSx = {} as any
+  height = "280px",
+  width = "420px"
 }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const isXXL = useMediaQuery(theme.breakpoints.up("xxl"));
   return (
-    <Dialog
+    <AutStyledDialog
       open={open}
       fullScreen={isMobile || fullScreen}
       {...(onClose && {
         onClose
       })}
-      sx={{
-        ".MuiPaper-root": {
-          borderColor: "divider",
-          borderRadius: {
-            sm: "16px"
-          },
-          ...(contentSx?.maxWidth && {
-            maxWidth: contentSx.maxWidth
-          })
-        }
-      }}
     >
       <DialogContent
         sx={{
-          ...(!isMobile &&
-            !isXXL &&
-            !fullScreen && {
-              maxWidth: {
-                xs: "100%",
-                sm: "450px"
-              },
-              minWidth: {
-                xs: "100%",
-                sm: "450px"
-              },
-              maxHeight: {
-                xs: "100%",
-                sm: "450px"
-              },
-              minHeight: {
-                xs: "100%",
-                sm: "450px"
-              }
-            }),
-          ...(isXXL &&
-            !fullScreen && {
-              maxWidth: {
-                xs: "100%",
-                sm: "650px"
-              },
-              minWidth: {
-                xs: "100%",
-                sm: "650px"
-              },
-              maxHeight: {
-                xs: "100%",
-                sm: "650px"
-              },
-              minHeight: {
-                xs: "100%",
-                sm: "650px"
-              }
-            }),
+          maxWidth: {
+            xs: "100%",
+            sm: width
+          },
+          minWidth: {
+            xs: "100%",
+            sm: width
+          },
+          maxHeight: {
+            xs: "100%",
+            sm: height
+          },
+          minHeight: {
+            xs: "100%",
+            sm: height
+          },
           padding: {
-            xs: "20px",
-            sm: "28px",
-            md: "32px",
-            lg: "40px"
+            xs: "20px"
           },
           display: "flex",
           alignItems: "center",
@@ -103,8 +89,8 @@ export const DialogWrapper = ({
             sx={{
               color: "white",
               position: "absolute",
-              right: pxToRem(15),
-              top: pxToRem(15)
+              right: "15px",
+              top: "15px"
             }}
           >
             <CloseIcon fontSize="small" />
@@ -116,17 +102,17 @@ export const DialogWrapper = ({
         {actions && (
           <DialogActions
             sx={{
-              backgroundColor: "background.default",
-              py: pxToRem(30),
+              backgroundColor: "#1E2430",
+              py: "30px",
               justifyContent: "center",
-              height: pxToRem(120)
+              height: "80px"
             }}
           >
             {actions}
           </DialogActions>
         )}
       </DialogContent>
-    </Dialog>
+    </AutStyledDialog>
   );
 };
 

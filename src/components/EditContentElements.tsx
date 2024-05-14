@@ -25,14 +25,14 @@ const BottomWrapper = styled("div")(({ theme }) => ({
 
 const FormWrapper = styled("form")(({ theme }) => ({
   display: "flex",
-  flexDirection: "column",
+  flexDirection: "row",
   alignItems: "flex-start",
-  paddingTop: theme.spacing(8),
+  paddingTop: theme.spacing(4),
   paddingLeft: theme.spacing(8),
   paddingRight: theme.spacing(8),
   width: "100%",
   [theme.breakpoints.down("lg")]: {
-    paddingTop: theme.spacing(4),
+    paddingTop: theme.spacing(2),
     paddingLeft: theme.spacing(4),
     paddingRight: theme.spacing(4),
     alignItems: "center",

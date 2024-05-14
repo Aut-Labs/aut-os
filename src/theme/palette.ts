@@ -19,9 +19,9 @@ export default {
   },
   divider: "rgba(241,245,249,.12)",
   offWhite: {
-    main: "#EBEBF2",
+    main: "#F0F5FF",
     light: "#ffffff",
-    dark: "#b9b9bf",
+    dark: "#A7B1C4",
     contrastText: "#000000"
   },
   nightBlack: {

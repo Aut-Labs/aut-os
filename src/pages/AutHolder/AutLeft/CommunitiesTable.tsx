@@ -25,7 +25,7 @@ import { Link } from "react-router-dom";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import {
   BlockExplorerUrl,
-  SelectedNetworkConfig
+  SelectedNetwork
 } from "@store/WalletProvider/WalletProvider";
 import { useSelector } from "react-redux";
 import { HolderData } from "@store/holder/holder.reducer";
@@ -56,7 +56,7 @@ const CommunityListItem = memo(
     canUpdateProfile: boolean;
   }) => {
     const blockExplorer = useSelector(BlockExplorerUrl);
-    const selectedNetworkConfig = useSelector(SelectedNetworkConfig);
+    const selectedNetwork = useSelector(SelectedNetwork);
     return (
       <StyledTableRow
         sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -109,11 +109,6 @@ const CommunityListItem = memo(
                 <BtnLink
                   color="primary"
                   variant="subtitle2"
-                  sx={{
-                    "&:hover": {
-                      textDecoration: !canUpdateProfile ? "unset" : "underline"
-                    }
-                  }}
                   {...(canUpdateProfile && {
                     to: `edit-community/${row.properties.address}`,
                     component: Link
@@ -125,8 +120,8 @@ const CommunityListItem = memo(
             </Box>
             <Stack direction="row" alignItems="center">
               <CopyAddress address={row.properties.address} />
-              {selectedNetworkConfig?.name && (
-                <Tooltip title={`Explore in ${selectedNetworkConfig?.name}`}>
+              {selectedNetwork?.name && (
+                <Tooltip title={`Explore in ${selectedNetwork?.name}`}>
                   <IconButton
                     sx={{ color: "white", p: 0, ml: 1 }}
                     href={`${blockExplorer}/address/${row.properties.address}`}
@@ -179,6 +174,17 @@ const CommunityListItem = memo(
               {row?.properties.userData.commitmentDescription}
             </Typography>
           </div>
+        </TaskStyledTableCell>
+        <TaskStyledTableCell align="right">
+          <Typography
+            variant="subtitle2"
+            color="white"
+            textAlign="center"
+            fontWeight="normal"
+            sx={{ pb: "5px" }}
+          >
+            {"1.24"}
+          </Typography>
         </TaskStyledTableCell>
       </StyledTableRow>
     );
@@ -244,6 +250,11 @@ const CommunitiesTable = ({
             <TaskStyledTableCell align="center">
               <Typography variant="subtitle2" fontWeight="normal" color="white">
                 Commitment
+              </Typography>
+            </TaskStyledTableCell>
+            <TaskStyledTableCell align="center">
+              <Typography variant="subtitle2" fontWeight="normal" color="white">
+                Local Rep.
               </Typography>
             </TaskStyledTableCell>
           </TableRow>

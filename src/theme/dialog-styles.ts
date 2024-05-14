@@ -115,12 +115,12 @@ export default (theme: Theme) =>
   ({
     ...theme.components.MuiDialog,
     styleOverrides: {
-      container: {
-        backdropFilter: "blur(30px)"
-      },
+      // container: {
+      //   backdropFilter: "blur(30px)"
+      // },
       paper: {
-        backgroundColor: theme.palette.nightBlack.main,
-        borderColor: theme.palette.offWhite.main
+        // backgroundColor: "#1E2430",
+        // borderColor: theme.palette.offWhite.main
       }
       //   outlinedOffWhite: {
       //     borderColor: theme.palette.offWhite.main,
@@ -135,8 +135,8 @@ export default (theme: Theme) =>
       //     }
       //   }
     }
-  } as {
+  }) as {
     defaultProps?: ComponentsProps["MuiDialog"];
     styleOverrides?: ComponentsOverrides<Theme>["MuiDialog"];
     variants?: ComponentsVariants["MuiDialog"];
-  });
+  };

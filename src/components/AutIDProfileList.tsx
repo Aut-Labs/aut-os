@@ -5,7 +5,7 @@ import { pxToRem } from "@utils/text-size";
 import { ReactComponent as RedirectIcon } from "@assets/RedirectIcon2.svg";
 import DialogWrapper from "./Dialog/DialogWrapper";
 
-const UserRow = styled("div")(({ theme }) => ({
+export const UserRow = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "row",
   height: "80px",
@@ -54,7 +54,9 @@ export const AutIDProfileList = ({
                 borderRadius: 0
               }}
               aria-label="avatar"
-              src={ipfsCIDToHttpUrl(user?.properties?.avatar as string)}
+              src={ipfsCIDToHttpUrl(
+                user?.properties?.thumbnailAvatar as string
+              )}
             />
             <div style={{ display: "flex", flex: "1" }}>
               <div

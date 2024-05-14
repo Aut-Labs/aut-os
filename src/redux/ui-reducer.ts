@@ -8,9 +8,14 @@ const initialState = {
     duration: 2000
   },
   openShare: false,
+  openCommitment: false,
+  openWithdraw: false,
+  openEditProfile: false,
+  openInteractions: false,
   previousRoute: "/",
   transactionState: null,
-  title: ""
+  title: "",
+  connections: 0
 };
 
 export const uiSlice = createSlice({
@@ -41,6 +46,21 @@ export const uiSlice = createSlice({
     setOpenShare(state, action) {
       state.openShare = action.payload;
     },
+    setOpenCommitment(state, action) {
+      state.openCommitment = action.payload;
+    },
+    setOpenWithdraw(state, action) {
+      state.openWithdraw = action.payload;
+    },
+    setOpenEditProfile(state, action) {
+      state.openEditProfile = action.payload;
+    },
+    setOpenInteractions(state, action) {
+      state.openInteractions = action.payload;
+    },
+    setConnections(state, action) {
+      state.connections = action.payload;
+    },
     resetUIState: () => initialState
   }
 });
@@ -51,7 +71,16 @@ export const {
   setTitle,
   setPreviusRoute,
   setOpenShare,
-  updateTransactionState
+  setOpenCommitment,
+  setOpenWithdraw,
+  setOpenEditProfile,
+  setOpenInteractions,
+  updateTransactionState,
+  setConnections
 } = uiSlice.actions;
+
+export const IsEditingProfile = (state) => state.ui.openEditProfile as boolean;
+export const IsInteractionDialogOpen = (state) =>
+  state.ui.openInteractions as boolean;
 
 export default uiSlice.reducer;

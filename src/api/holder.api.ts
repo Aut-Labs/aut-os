@@ -1,5 +1,5 @@
 import axios, { CancelTokenSource } from "axios";
-import { ethers } from "ethers";
+import { BrowserProvider } from "ethers";
 import { AutID } from "./aut.model";
 import { Community } from "./community.model";
 import { ipfsCIDToHttpUrl, isValidUrl } from "./storage.api";
@@ -11,13 +11,19 @@ import { environment } from "./environment";
 import AutSDK, {
   CommunityMembershipDetails,
   HolderData,
-  fetchMetadata
+  Nova,
+  fetchMetadata,
+  queryParamsAsString
 } from "@aut-labs/sdk";
+import { gql } from "@apollo/client";
+import { isAddress } from "viem";
+import { apolloClient } from "@store/graphql";
+import { BaseNFTModel } from "@aut-labs/sdk/dist/models/baseNFTModel";
 
 export const fetchHolderEthEns = async (address: string) => {
   if (typeof window.ethereum !== "undefined") {
     try {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const provider = new BrowserProvider(window.ethereum as any);
       return await provider.lookupAddress(address);
     } catch (error) {
       return null;
@@ -25,20 +31,6 @@ export const fetchHolderEthEns = async (address: string) => {
   } else {
     return null;
   }
-};
-
-export const fetchHolderData = async (
-  holderName: string,
-  network: string,
-  source: CancelTokenSource
-): Promise<HolderData> => {
-  return axios
-    .get<HolderData>(
-      `${environment.apiUrl}/autID/${holderName}?network=${network}`,
-      { cancelToken: source.token }
-    )
-    .then((res) => res.data)
-    .catch(() => null);
 };
 
 export const fetchHolderCommunities = async (
@@ -51,7 +43,7 @@ export const fetchHolderCommunities = async (
         const communityMetadataUri = ipfsCIDToHttpUrl(curr.metadata);
         return fetchMetadata<Community>(
           communityMetadataUri,
-          environment.nftStorageUrl
+          environment.ipfsGatewayUrl
         ).then((metadata) => {
           return new Community({
             ...metadata,
@@ -77,7 +69,7 @@ export const fetchAutID = async (
   const userMetadataUri = ipfsCIDToHttpUrl(holderData.metadataUri);
   const userMetadata: AutID = await fetchMetadata<AutID>(
     userMetadataUri,
-    environment.nftStorageUrl
+    environment.ipfsGatewayUrl
   );
   const ethDomain = await fetchHolderEthEns(userMetadata.properties.address);
   const autID = new AutID({
@@ -94,96 +86,128 @@ export const fetchAutID = async (
   return autID;
 };
 
-export const fetchSearchResults = createAsyncThunk(
-  "fetch-search-results",
-  async (data: any, thunkAPI) => {
-    const { username, signal } = data;
-    try {
-      const source = axios.CancelToken.source();
-      signal.addEventListener("abort", () => {
-        source.cancel();
-      });
-      const result = [];
-      const state = thunkAPI.getState() as any;
-      const networks: NetworkConfig[] =
-        state.walletProvider.networksConfig.filter(
-          (n: NetworkConfig) => !n.disabled
-        );
-
-      for (const network of networks) {
-        const holderData = await fetchHolderData(
-          username,
-          network.network?.toLowerCase(),
-          source
-        );
-        if (holderData) {
-          const member = await fetchAutID(
-            holderData,
-            network.network?.toLowerCase()
-          );
-          if (member) {
-            result.push(member);
-          }
-        }
-      }
-      if ((signal as AbortSignal).aborted) {
-        throw new Error("Aborted");
-      }
-      return result;
-    } catch (error) {
-      const message = ErrorParser(error);
-      throw new Error(message);
-    }
-  }
-);
-
 export const fetchHolder = createAsyncThunk(
   "fetch-holder",
   async (data: any, { getState, rejectWithValue }) => {
-    const { autName, network, signal } = data;
-    const { search, walletProvider } = getState() as any;
+    const { autName, network } = data;
+    const { walletProvider } = getState() as any;
     const networks: string[] = network
-      ? [network]
+      ? [network?.network?.toString().toLowerCase() || network]
       : walletProvider.networksConfig
           .filter((n: NetworkConfig) => !n.disabled)
-          .map((n: NetworkConfig) => n.network?.toLowerCase());
+          .map((n: NetworkConfig) => n.network?.toString().toLowerCase());
     // const networks: string[] = network ? [network] : ['goerli', 'goerli'];
-    const profiles = [];
-    try {
-      const source = axios.CancelToken.source();
-      if (signal) {
-        signal.addEventListener("abort", () => {
-          source.cancel();
-        });
-      }
-      for (const networkName of networks) {
-        const result: AutID = search.searchResult.find(
-          (a: AutID) =>
-            a.name === autName &&
-            a.properties.network?.toLowerCase() === networkName?.toLowerCase()
-        );
-        const holderData =
-          result?.properties?.holderData ||
-          (await fetchHolderData(autName, networkName, source));
-        if (holderData) {
-          const autID = await fetchAutID(holderData, networkName);
-          autID.properties.communities = await fetchHolderCommunities(
-            holderData.daos
-          );
-          if (autID) {
-            profiles.push(autID);
-          }
+
+    const networkName =
+      walletProvider?.selectedNetwork?.network?.toString().toLowerCase() ||
+      networks[0];
+
+    const filters = [];
+
+    if (isAddress(autName)) {
+      filters.push({
+        prop: "id",
+        comparison: "equals",
+        value: autName.toLowerCase()
+      });
+    } else {
+      filters.push({
+        prop: "username",
+        comparison: "equals",
+        value: autName.toLowerCase()
+      });
+    }
+
+    const queryArgsString = queryParamsAsString({
+      skip: 0,
+      take: 1,
+      filters
+    });
+    const query = gql`
+      query AutIds {
+        autIDs(${queryArgsString}) {
+          id
+          username
+          tokenID
+          novaAddress
+          role
+          commitment
+          metadataUri
         }
       }
-      if ((signal as AbortSignal)?.aborted) {
-        throw new Error("Aborted");
+    `;
+    const response = await apolloClient.query<any>({
+      query
+    });
+
+    const {
+      autIDs: [autID]
+    } = response.data;
+
+    const novaQuery = gql`
+      query GetNovaDAO {
+        novaDAO(id: "${autID.novaAddress}") {
+          id
+          address
+          market
+          minCommitment
+          metadataUri
+        }
       }
-      return profiles;
-    } catch (error) {
-      const message =
-        error?.message === "Aborted" ? error?.message : ErrorParser(error);
-      return rejectWithValue(message);
-    }
+    `;
+    const novaResponse = await apolloClient.query<any>({
+      query: novaQuery
+    });
+
+    const { novaDAO } = novaResponse.data;
+
+    // const nova = sdk.initService<Nova>(Nova, autID.novaAddress);
+    // const isAdmin = await nova.contract.admins.isAdmin(autID.id);
+
+    const novaMetadata = await fetchMetadata<BaseNFTModel<Community>>(
+      novaDAO.metadataUri,
+      environment.ipfsGatewayUrl
+    );
+
+    const userNova = new Community({
+      ...novaMetadata,
+      properties: {
+        ...novaMetadata.properties,
+        address: autID.novaAddress,
+        market: novaDAO.market,
+        userData: {
+          role: autID.role.toString(),
+          commitment: autID.commitment.toString(),
+          isActive: true
+          // isAdmin: isAdmin.data
+        }
+      }
+    } as unknown as Community);
+
+    const autIdMetadata = await fetchMetadata<BaseNFTModel<any>>(
+      autID.metadataUri,
+      environment.ipfsGatewayUrl
+    );
+    const { avatar, thumbnailAvatar, timestamp } = autIdMetadata.properties;
+
+    const newAutId = new AutID({
+      name: autIdMetadata.name,
+      image: autIdMetadata.image,
+      description: autIdMetadata.description,
+      properties: {
+        avatar,
+        thumbnailAvatar,
+        timestamp,
+        role: autID.role,
+        socials: autIdMetadata?.properties?.socials,
+        address: autID.id,
+        tokenId: autID.tokenID,
+        network: networkName,
+        communities: [userNova]
+      }
+    });
+
+    return [newAutId];
   }
 );
 
@@ -193,13 +217,13 @@ export const editCommitment = createAsyncThunk(
     requestBody: { communityAddress: string; commitment: number },
     { rejectWithValue }
   ) => {
-    const sdk = AutSDK.getInstance();
+    const sdk = await AutSDK.getInstance();
     const response = await sdk.autID.contract.editCommitment(
       requestBody.communityAddress,
       requestBody.commitment
     );
     try {
-      const autIdData = JSON.parse(window.sessionStorage.getItem("aut-data"));
+      const autIdData = JSON.parse(window.localStorage.getItem("aut-data"));
       autIdData.properties.communities = autIdData.properties.communities.map(
         (c) => {
           if (c.properties.address === requestBody.communityAddress) {
@@ -209,7 +233,7 @@ export const editCommitment = createAsyncThunk(
           return c;
         }
       );
-      window.sessionStorage.setItem("aut-data", JSON.stringify(autIdData));
+      window.localStorage.setItem("aut-data", JSON.stringify(autIdData));
     } catch (err) {
       console.log(err);
     }
@@ -223,11 +247,11 @@ export const editCommitment = createAsyncThunk(
 export const withdraw = createAsyncThunk(
   "holder/withdraw",
   async (communityAddress: string, { rejectWithValue }) => {
-    const sdk = AutSDK.getInstance();
+    const sdk = await AutSDK.getInstance();
     const response = await sdk.autID.contract.withdraw(communityAddress);
 
     try {
-      const autIdData = JSON.parse(window.sessionStorage.getItem("aut-data"));
+      const autIdData = JSON.parse(window.localStorage.getItem("aut-data"));
       autIdData.properties.communities = autIdData.properties.communities.map(
         (c) => {
           if (c.properties.address === communityAddress) {
@@ -236,7 +260,7 @@ export const withdraw = createAsyncThunk(
           return c;
         }
       );
-      window.sessionStorage.setItem("aut-data", JSON.stringify(autIdData));
+      window.localStorage.setItem("aut-data", JSON.stringify(autIdData));
     } catch (err) {
       console.log(err);
     }
@@ -250,30 +274,30 @@ export const withdraw = createAsyncThunk(
 export const updateProfile = createAsyncThunk(
   "holder/update",
   async (user: AutID, { rejectWithValue }) => {
-    const sdk = AutSDK.getInstance();
+    const sdk = await AutSDK.getInstance();
     if (
       user.properties.avatar &&
       !isValidUrl(user.properties.avatar as string)
     ) {
       const file = base64toFile(user.properties.avatar as string, "image");
-      user.properties.avatar = await sdk.client.storeImageAsBlob(file as File);
+      user.properties.avatar = await sdk.client.sendFileToIPFS(file as File);
       console.log("New image: ->", ipfsCIDToHttpUrl(user.properties.avatar));
     }
 
     const updatedUser = AutID.updateAutID(user);
-    const uri = await sdk.client.storeAsBlob(updatedUser);
+    const uri = await sdk.client.sendJSONToIPFS(updatedUser as any);
     console.log("New metadata: ->", ipfsCIDToHttpUrl(uri));
     console.log("avatar: ->", ipfsCIDToHttpUrl(updatedUser.properties.avatar));
     console.log("badge: ->", ipfsCIDToHttpUrl(updatedUser.image));
     const response = await sdk.autID.contract.setMetadataUri(uri);
-
+    debugger;
     try {
-      const autIdData = JSON.parse(window.sessionStorage.getItem("aut-data"));
+      const autIdData = JSON.parse(window.localStorage.getItem("aut-data"));
       autIdData.name = updatedUser.name;
       autIdData.description = updatedUser.description;
       autIdData.properties.avatar = updatedUser.properties.avatar;
       autIdData.properties.socials = updatedUser.properties.socials;
-      window.sessionStorage.setItem("aut-data", JSON.stringify(autIdData));
+      window.localStorage.setItem("aut-data", JSON.stringify(autIdData));
     } catch (err) {
       console.log(err);
     }

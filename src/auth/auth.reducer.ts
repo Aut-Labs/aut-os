@@ -54,7 +54,7 @@ export const CanUpdateProfile = createSelector(
   ) => {
     return (
       isConnected &&
-      connectedAddress === selectedAddress &&
+      connectedAddress?.toLowerCase() === selectedAddress?.toLowerCase() &&
       connectedNetwork === selectedNetwork
     );
   }

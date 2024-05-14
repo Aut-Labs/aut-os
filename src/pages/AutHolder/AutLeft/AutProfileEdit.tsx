@@ -3,7 +3,7 @@ import { ReactComponent as GitHubIcon } from "@assets/SocialIcons/GitHubIcon.svg
 import { ReactComponent as LensfrensIcon } from "@assets/SocialIcons/LensfrensIcon.svg";
 import { ReactComponent as TelegramIcon } from "@assets/SocialIcons/TelegramIcon.svg";
 import { ReactComponent as TwitterIcon } from "@assets/SocialIcons/TwitterIcon.svg";
-import AFileUpload from "@components/Fields/AutFileUpload";
+import { ReactComponent as MyAutIDLogo } from "@assets/MyAutIdLogoToolbarPath.svg";
 import {
   Box,
   styled,
@@ -13,11 +13,11 @@ import {
   InputAdornment,
   useTheme,
   Button,
-  CardHeader,
-  CardContent,
-  Card
+  Card,
+  Toolbar
 } from "@mui/material";
 import { Controller, useForm, useFieldArray } from "react-hook-form";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useSelector } from "react-redux";
 import {
   HolderData,
@@ -26,23 +26,15 @@ import {
   UpdateStatus
 } from "@store/holder/holder.reducer";
 import { useAppDispatch } from "@store/store.model";
-import { updateProfile } from "@api/holder.api";
-import { AutID } from "@api/aut.model";
 import ErrorDialog from "@components/Dialog/ErrorPopup";
 import LoadingDialog from "@components/Dialog/LoadingPopup";
 import { ResultState } from "@store/result-status";
-import { ipfsCIDToHttpUrl } from "@api/storage.api";
-import { base64toFile, toBase64 } from "@utils/to-base-64";
-import {
-  IsConnected,
-  setProviderIsOpen
-} from "@store/WalletProvider/WalletProvider";
-import { useEffect, useState } from "react";
 import { EditContentElements } from "@components/EditContentElements";
 import { AutTextField } from "@theme/field-text-styles";
 import { socialUrls } from "@api/social.model";
 import { useNavigate } from "react-router-dom";
-import { useEthers } from "@usedapp/core";
+import { DautPlaceholder } from "@api/ProviderFactory/web3-daut-connect";
+import { AutButtonVariant } from "@components/AutButton";
 
 const socialIcons = {
   // eth: EthIcon,
@@ -53,20 +45,7 @@ const socialIcons = {
   lensfrens: LensfrensIcon
 };
 
-const AutCard = styled(Card)(() => ({
-  "&.MuiCard-root": {
-    display: "flex"
-  },
-  ".MuiCardHeader-root": {
-    padding: "0"
-  },
-
-  ".MuiCardContent-root:last-child": {
-    padding: "0"
-  }
-}));
-
-const MiddleWrapper = styled(Box)(({ theme }) => ({
+const MiddleWrapper = styled(Box)(() => ({
   display: "flex",
   flex: "1",
   justifyContent: "flex-start",
@@ -75,49 +54,25 @@ const MiddleWrapper = styled(Box)(({ theme }) => ({
   alignItems: "flex-start"
 }));
 
-const LeftWrapper = styled("div")(({ theme }) => ({
+const LeftWrapper = styled("div")(() => ({
   display: "flex",
   width: "100%",
   flexDirection: "column",
-  maxWidth: "600px",
   paddingTop: "30px",
-  justifyContent: "flex-start",
-  alignItems: "flex-start"
-}));
-
-const ImageUpload = styled("div")(({ theme }) => ({
-  width: "150px",
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "flex-start",
   justifyContent: "center",
-  textAlign: "center",
-  [theme.breakpoints.down("md")]: {
-    width: "100px"
-  }
+  alignItems: "center"
 }));
 
-const { FieldWrapper, FormWrapper, BottomWrapper, TopWrapper } =
-  EditContentElements;
+const { FieldWrapper, FormWrapper } = EditContentElements;
 
 const AutProfileEdit = () => {
-  const theme = useTheme();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const desktop = useMediaQuery(theme.breakpoints.up("md"));
   const holderData = useSelector(HolderData);
   const status = useSelector(UpdateStatus);
   const errorMessage = useSelector(UpdateErrorMessage);
-  const isConnected = useSelector(IsConnected);
-  const [editInitiated, setEditInitiated] = useState(false);
-  const { active: isActive } = useEthers();
 
-  const {
-    control,
-    handleSubmit,
-    watch,
-    formState: { isDirty, isValid, errors }
-  } = useForm({
+  const { control, handleSubmit, watch } = useForm({
     mode: "onChange",
     defaultValues: {
       avatar: holderData?.properties?.avatar,
@@ -141,24 +96,9 @@ const AutProfileEdit = () => {
   const values = watch();
 
   const beforeEdit = () => {
-    setEditInitiated(true);
-    if (!isActive || !isConnected) {
-      dispatch(setProviderIsOpen(true));
-    }
-  };
-
-  const onEditProfile = async (data: typeof values) => {
-    await dispatch(
-      updateProfile({
-        ...holderData,
-        properties: {
-          ...holderData.properties,
-          socials: data.socials,
-          avatar: data.avatar
-        }
-      } as AutID)
-    );
-    setEditInitiated(false);
+    // if (!isActive || !isConnected) {
+    //   dispatch(setProviderIsOpen(true));
+    // }
   };
 
   const handleDialogClose = () => {
@@ -168,29 +108,70 @@ const AutProfileEdit = () => {
       })
     );
   };
+  function goHome() {
+    const params = new URLSearchParams(location.search);
+    params.delete("network");
+    navigate({
+      pathname: `/`,
+      search: `?${params.toString()}`
+    });
+  }
 
-  useEffect(() => {
-    if (!editInitiated || !isActive || !isConnected) {
-      return;
-    }
-    onEditProfile(values);
-  }, [isActive, isConnected, editInitiated]);
+  // useEffect(() => {
+  //   if (!editInitiated || !isActive || !isConnected) {
+  //     return;
+  //   }
+  //   onEditProfile(values);
+  // }, [isActive, isConnected, editInitiated]);
 
   return (
-    <FormWrapper autoComplete="off" onSubmit={handleSubmit(beforeEdit)}>
-      <ErrorDialog
-        handleClose={handleDialogClose}
-        open={status === ResultState.Failed}
-        message={errorMessage}
-      />
-      <LoadingDialog
-        handleClose={handleDialogClose}
-        open={status === ResultState.Loading}
-        message="Editing profile..."
-      />
-
-      <MiddleWrapper>
-        <Box
+    <>
+      <Toolbar
+        sx={{
+          width: "100%",
+          boxShadow: 2,
+          "&.MuiToolbar-root": {
+            width: "100%",
+            paddingLeft: 6,
+            paddingRight: 6,
+            minHeight: "84px",
+            justifyContent: "space-between",
+            alignItems: "center"
+          }
+        }}
+      >
+        <MyAutIDLogo
+          height="62"
+          style={{ cursor: "pointer" }}
+          onClick={() => goHome()}
+        />
+        <DautPlaceholder />
+      </Toolbar>
+      <FormWrapper autoComplete="off" onSubmit={handleSubmit(beforeEdit)}>
+        <ErrorDialog
+          handleClose={handleDialogClose}
+          open={status === ResultState.Failed}
+          message={errorMessage}
+        />
+        <LoadingDialog
+          handleClose={handleDialogClose}
+          open={status === ResultState.Loading}
+          message="Editing profile..."
+        />
+        <Button
+          startIcon={<ArrowBackIcon />}
+          color="offWhite"
+          sx={{
+            position: "absolute",
+            top: "100px",
+            mb: 2
+          }}
+          onClick={() => navigate(-1)}
+        >
+          Back
+        </Button>
+        <MiddleWrapper>
+          {/* <Box
           sx={{
             paddingBottom: {
               xs: "30px",
@@ -208,7 +189,6 @@ const AutProfileEdit = () => {
                   <Controller
                     name="avatar"
                     rules={{
-                      required: true,
                       validate: {
                         fileSize: (v) => {
                           if (isDirty && v) {
@@ -292,13 +272,25 @@ const AutProfileEdit = () => {
               </div>
             </CardContent>
           </AutCard>
-        </Box>
+        </Box> */}
 
-        <Typography variant="h3" color="white" textAlign="left">
-          Edit your profile
-        </Typography>
-        <LeftWrapper>
-          {/* <FieldWrapper>
+          <Box
+            sx={{
+              width: "50%",
+              alignSelf: "center"
+            }}
+          >
+            <Typography variant="h3" color="white" textAlign="center">
+              Add Social Records
+            </Typography>
+            <Typography variant="subtitle2" color="white" textAlign="center">
+              words to go here words to go here words to go here words to go
+              here words to go here words to go here words to go here words to
+              go here
+            </Typography>
+          </Box>
+          <LeftWrapper>
+            {/* <FieldWrapper>
             <SvgIcon
               sx={{
                 height: pxToRem(34),
@@ -335,67 +327,80 @@ const AutProfileEdit = () => {
               </Typography>
             </div>
           </FieldWrapper> */}
-          {fields.map((_, index) => {
-            const AutIcon = socialIcons[Object.keys(socialIcons)[index]];
-            const { prefix, hidePrefix, placeholder } =
-              socialUrls[Object.keys(socialUrls)[index]];
+            <Box
+              sx={{
+                display: "grid",
+                gridGap: "20px",
+                gridTemplateColumns: "50% 50%",
+                mt: 4
+              }}
+            >
+              {fields.map((_, index) => {
+                const AutIcon = socialIcons[Object.keys(socialIcons)[index]];
+                const { prefix, hidePrefix, placeholder } =
+                  socialUrls[Object.keys(socialUrls)[index]];
 
-            console.log(prefix, placeholder, index);
-            return (
-              <FieldWrapper key={`socials.${index}`}>
-                <SvgIcon
-                  sx={{
-                    color: "offWhite.main",
-                    mt: "10px",
-                    mr: "20px"
-                  }}
-                  key={`socials.${index}.icon`}
-                  component={AutIcon}
-                />
-                <Controller
-                  key={`socials.${index}.link`}
-                  name={`socials.${index}.link`}
-                  control={control}
-                  render={({ field: { name, value, onChange } }) => {
-                    return (
-                      <>
-                        <AutTextField
-                          variant="standard"
-                          color="offWhite"
-                          placeholder={placeholder}
-                          id={name}
-                          name={name}
-                          value={value}
-                          autoFocus={index === 0}
-                          onChange={onChange}
-                          sx={{
-                            width: "calc(100% - 50px)",
-                            mb: "15px"
-                          }}
-                          InputProps={{
-                            startAdornment: !hidePrefix && (
-                              <InputAdornment position="start">
-                                <p
-                                  style={{
-                                    color: "white"
-                                  }}
-                                >
-                                  {prefix}
-                                </p>
-                              </InputAdornment>
-                            )
-                          }}
-                        />
-                      </>
-                    );
-                  }}
-                />
-              </FieldWrapper>
-            );
-          })}
-        </LeftWrapper>
-      </MiddleWrapper>
-      <BottomWrapper>
+                console.log(prefix, placeholder, index);
+                return (
+                  <FieldWrapper key={`socials.${index}`}>
+                    <SvgIcon
+                      sx={{
+                        color: "offWhite.main",
+                        mt: "10px",
+                        mr: "20px"
+                      }}
+                      key={`socials.${index}.icon`}
+                      component={AutIcon}
+                    />
+                    <Controller
+                      key={`socials.${index}.link`}
+                      name={`socials.${index}.link`}
+                      control={control}
+                      render={({ field: { name, value, onChange } }) => {
+                        return (
+                          <>
+                            <AutTextField
+                              variant="standard"
+                              color="offWhite"
+                              placeholder={placeholder}
+                              id={name}
+                              name={name}
+                              value={value}
+                              autoFocus={index === 0}
+                              onChange={onChange}
+                              sx={{
+                                width: "250px",
+                                mb: "15px",
+                                mr: "15px"
+                              }}
+                              InputProps={{
+                                startAdornment: !hidePrefix && (
+                                  <InputAdornment position="start">
+                                    <p
+                                      style={{
+                                        color: "white"
+                                      }}
+                                    >
+                                      {prefix}
+                                    </p>
+                                  </InputAdornment>
+                                )
+                              }}
+                            />
+                          </>
+                        );
+                      }}
+                    />
+                    <AutButtonVariant sx={{ minWidth: "180px" }}>
+                      Verify Account
+                    </AutButtonVariant>
+                  </FieldWrapper>
+                );
+              })}
+            </Box>
+          </LeftWrapper>
+        </MiddleWrapper>
+        {/* <BottomWrapper>
         <Button
           variant="outlined"
           size="normal"
@@ -427,8 +432,9 @@ const AutProfileEdit = () => {
         >
           Save
         </Button>
-      </BottomWrapper>
-    </FormWrapper>
+      </BottomWrapper> */}
+      </FormWrapper>
+    </>
   );
 };
 

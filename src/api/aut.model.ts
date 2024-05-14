@@ -1,7 +1,6 @@
 import { Community } from "./community.model";
 import { BaseNFTModel } from "@aut-labs/sdk/dist/models/baseNFTModel";
 import { httpUrlToIpfsCID } from "./storage.api";
-import { Role } from "@aut-labs/sdk/dist/models/dao";
 import { CommitmentMessages } from "@utils/misc";
 import { AutSocial } from "./social.model";
 import { HolderData } from "@aut-labs/sdk";
@@ -53,8 +52,18 @@ export const DefaultSocials: AutSocial[] = [
   }
 ];
 
+export interface AutIdInteractions {
+  type: string;
+  name: string;
+  description: string;
+  weight: string;
+  status: "Complete" | "Incomplete";
+}
+
 export class AutIDProperties {
   avatar: string;
+
+  thumbnailAvatar: string;
 
   communities: Community[];
 
@@ -70,9 +79,15 @@ export class AutIDProperties {
 
   network?: string;
 
+  bio?: string;
+
+  role: number;
+
+  email?: string;
+
   holderData?: HolderData;
 
-  isAdmin?: boolean;
+  interactions?: AutIdInteractions[];
 
   constructor(data: AutIDProperties) {
     if (!data) {
@@ -87,11 +102,15 @@ export class AutIDProperties {
         (community) => new Community(community)
       );
       this.ethDomain = data.ethDomain;
-      this.socials = data.socials || DefaultSocials;
+      this.socials = data.socials?.length ? data.socials : DefaultSocials;
       this.socials = this.socials.filter((s) => s.type !== "eth");
       this.network = data.network;
       this.holderData = data.holderData;
-      this.isAdmin = data.isAdmin;
+      this.thumbnailAvatar = data.thumbnailAvatar;
+      this.interactions = data.interactions || [];
+      this.role = data.role;
+      this.bio = data.bio;
+      this.email = data.email;
     }
   }
 }
@@ -105,9 +124,13 @@ export class AutID extends BaseNFTModel<AutIDProperties> {
       image: httpUrlToIpfsCID(autID.image as string),
       properties: {
         avatar: httpUrlToIpfsCID(autID.properties.avatar as string),
+        thumbnailAvatar: httpUrlToIpfsCID(
+          autID.properties.thumbnailAvatar as string
+        ),
+        email: autID.properties.email,
+        bio: autID.properties.bio,
         timestamp: autID.properties.timestamp,
         socials: autID.properties.socials.map((social) => {
-          social.link = `${socialUrls[social.type].prefix}${social.link}`;
           return social;
         })
       }
@@ -121,7 +144,7 @@ export class AutID extends BaseNFTModel<AutIDProperties> {
 }
 
 export interface DAOMemberProperties extends AutIDProperties {
-  role: Role;
+  // role: Role;
   commitmentDescription: string;
   commitment: string;
 }

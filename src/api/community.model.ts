@@ -1,8 +1,8 @@
 import { CommitmentMessages } from "@utils/misc";
 import { httpUrlToIpfsCID } from "./storage.api";
 import { BaseNFTModel } from "@aut-labs/sdk/dist/models/baseNFTModel";
-import { DAOProperties, Role, RoleSet } from "@aut-labs/sdk/dist/models/dao";
 import { AutSocial } from "./social.model";
+import { RoleSet, NovaProperties, Role } from "@aut-labs/sdk/dist/models/nova";
 
 export const MarketTemplates = [
   {
@@ -29,7 +29,7 @@ export const findRoleName = (roleId: string, rolesSets: RoleSet[]) => {
   }
 };
 
-export class CommunityProperties extends DAOProperties {
+export class CommunityProperties extends NovaProperties {
   address?: string;
 
   socials: AutSocial[];
@@ -72,8 +72,7 @@ export class CommunityProperties extends DAOProperties {
         );
       }
       this.socials = data.socials;
-      // @TODO - Tao to fix
-      this.userData.isAdmin = (data as any).isAdmin?.data;
+      this.userData.isAdmin = data.userData.isAdmin;
     }
   }
 }

@@ -23,23 +23,27 @@ function replaceAll(str, find, replace) {
 }
 
 export function ipfsCIDToHttpUrl(url: string, isJson = false) {
-  if (!url) {
+  if (!url || typeof url !== "string") {
     return url;
   }
   if (!url.includes("https://"))
     return isJson
-      ? `${environment.nftStorageUrl}/${replaceAll(
+      ? `${environment.ipfsGatewayUrl}/${replaceAll(
           url,
           "ipfs://",
           ""
         )}/metadata.json`
-      : `${environment.nftStorageUrl}/${replaceAll(url, "ipfs://", "")}`;
+      : `${environment.ipfsGatewayUrl}/${replaceAll(url, "ipfs://", "")}`;
   return url;
 }
 
 export function httpUrlToIpfsCID(url: string) {
   if (!url) {
     return url;
+  }
+
+  if (typeof url === "object") {
+    url = "";
   }
   if (url.includes("https://")) {
     const notHttpsUrl = `${replaceAll(url, "https://", "")}`;
