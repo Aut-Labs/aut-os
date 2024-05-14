@@ -217,7 +217,7 @@ export const editCommitment = createAsyncThunk(
     requestBody: { communityAddress: string; commitment: number },
     { rejectWithValue }
   ) => {
-    const sdk = AutSDK.getInstance();
+    const sdk = await AutSDK.getInstance();
     const response = await sdk.autID.contract.editCommitment(
       requestBody.communityAddress,
       requestBody.commitment
@@ -247,7 +247,7 @@ export const editCommitment = createAsyncThunk(
 export const withdraw = createAsyncThunk(
   "holder/withdraw",
   async (communityAddress: string, { rejectWithValue }) => {
-    const sdk = AutSDK.getInstance();
+    const sdk = await AutSDK.getInstance();
     const response = await sdk.autID.contract.withdraw(communityAddress);
 
     try {
@@ -274,7 +274,7 @@ export const withdraw = createAsyncThunk(
 export const updateProfile = createAsyncThunk(
   "holder/update",
   async (user: AutID, { rejectWithValue }) => {
-    const sdk = AutSDK.getInstance();
+    const sdk = await AutSDK.getInstance();
     if (
       user.properties.avatar &&
       !isValidUrl(user.properties.avatar as string)

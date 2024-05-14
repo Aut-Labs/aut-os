@@ -167,7 +167,7 @@ function Web3DautConnect({
     network: NetworkConfig,
     multiSigner: MultiSigner
   ) => {
-    const sdk = AutSDK.getInstance();
+    const sdk = await AutSDK.getInstance(false);
     const itemsToUpdate = {
       selectedNetwork: network
     };
