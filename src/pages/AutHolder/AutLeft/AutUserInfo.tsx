@@ -108,7 +108,9 @@ const AutUserInfo = () => {
     defaultValues: {
       avatar: holderData?.properties?.avatar,
       // eslint-disable-next-line max-len
-      bio: "ĀutID are a new standard for self-sovereign Identities that do not depend from the provider, therefore, they are universal. They are individual NFT IDs."
+      bio:
+        holderData?.properties?.bio ||
+        "ĀutID are a new standard for self-sovereign Identities that do not depend from the provider, therefore, they are universal. They are individual NFT IDs."
     }
   });
 
@@ -126,6 +128,7 @@ const AutUserInfo = () => {
         status: ResultState.Idle
       })
     );
+    dispatch(setOpenEditProfile(false));
   };
 
   const handleClose = () => {
@@ -359,7 +362,11 @@ const AutUserInfo = () => {
                       </Typography>
                       <SubtitleWithInfo
                         title="reputation"
-                        description="This is your reputation"
+                        description={
+                          canUpdateProfile
+                            ? "This is your reputation"
+                            : `This is ${holderData?.name}'s reputation`
+                        }
                       ></SubtitleWithInfo>
                     </FollowWrapper>
                     <FollowWrapper>
@@ -418,7 +425,7 @@ const AutUserInfo = () => {
                         textAlign="left"
                         variant="body"
                       >
-                        {holderData?.description || "No bio yet..."}
+                        {holderData?.properties?.bio || "No bio yet..."}
                       </Typography>
                     </Box>
                   </Box>

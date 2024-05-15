@@ -20,6 +20,7 @@ import { CanUpdateProfile } from "@auth/auth.reducer";
 import { IconContainer, socialIcons } from "../AutLeft/AutUserInfo";
 import { socialUrls } from "@api/social.model";
 import { SubtitleWithInfo } from "@components/SubtitleWithInfoIcon";
+import { HolderData } from "@store/holder/holder.reducer";
 
 export const NovaTopWrapper = styled(Box)(({ theme }) => ({
   display: "flex",
@@ -61,6 +62,7 @@ const NovaListItem = memo(
     canUpdateProfile: boolean;
   }) => {
     const theme = useTheme();
+    const holderData = useSelector(HolderData);
     return (
       <Box
         sx={{
@@ -153,12 +155,13 @@ const NovaListItem = memo(
                   {...((!social.link ||
                     social.link === socialUrls[social.type].prefix) && {
                     sx: {
+                      component: "a",
+                      pointerEvents: "none",
                       // display: "none",
                       svg: {
                         color: theme.palette.divider
                       }
                     },
-                    component: "button",
                     disabled: true
                   })}
                 >
@@ -211,13 +214,15 @@ const NovaListItem = memo(
               color="offWhite.main"
               fontWeight="normal"
             >
-              {/* TODO: Revert */}
-              {/* {row?.properties?.userData?.roleName} */}
-              {"Contributor"}
+              {row?.properties?.userData?.roleName || "Contributor"}
             </Typography>
             <SubtitleWithInfo
               title="role"
-              description="This is your role"
+              description={
+                canUpdateProfile
+                  ? "This is your role"
+                  : `This is ${holderData?.name}'s role`
+              }
             ></SubtitleWithInfo>
           </PropertiesWrapper>
           <PropertiesWrapper
@@ -249,7 +254,11 @@ const NovaListItem = memo(
             </Typography>
             <SubtitleWithInfo
               title="commitment"
-              description="This is your commitment"
+              description={
+                canUpdateProfile
+                  ? "This is your commitment"
+                  : `This is ${holderData?.name}'s commitment`
+              }
             ></SubtitleWithInfo>
           </PropertiesWrapper>
           <PropertiesWrapper sx={{}}>
@@ -262,7 +271,11 @@ const NovaListItem = memo(
             </Typography>
             <SubtitleWithInfo
               title="local rep"
-              description="This is your local reputation."
+              description={
+                canUpdateProfile
+                  ? "This is your local reputation"
+                  : `This is ${holderData?.name}'s local reputation`
+              }
             ></SubtitleWithInfo>
           </PropertiesWrapper>
         </NovaBottomWrapper>
@@ -289,7 +302,7 @@ const NovaeList = ({
           sm: "100%"
         },
         width: {
-          xs: "360px",
+          xs: "100%",
           sm: "unset"
         },
         backgroundColor: "transparent",
