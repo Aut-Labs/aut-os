@@ -1,13 +1,14 @@
 version: '3.7'
 
 services:
-  my_aut_id_dev:
-    container_name: my_aut_id_dev
-    build:
-      context: .
-      dockerfile: Dockerfile
-    volumes:
-      - '.:/app'
-      - '/app/node_modules'
+  aut_os_mainnet:
+    container_name: aut_os_mainnet
+    image: autlabs/aut-os:mainnet
+    ports:
+      - '4002:80'
+
+  aut_os_main:
+    container_name: aut_os_main
+    image: autlabs/aut-os:main
     ports:
       - '4001:80'
