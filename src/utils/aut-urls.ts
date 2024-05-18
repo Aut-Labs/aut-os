@@ -4,9 +4,9 @@ interface ApiUrls {
   tryAut: string;
   novaDashboard: string;
   myAut: string;
-  showcase: string;
+  hub: string;
   leaderboard: string;
-  expander: string;
+  launchpad: string;
 }
 
 const _autUrls = (): ApiUrls => {
@@ -15,9 +15,9 @@ const _autUrls = (): ApiUrls => {
       tryAut: "https://try-internal.aut.id/",
       novaDashboard: "https://nova-internal.aut.id/",
       myAut: "https://os-internal.aut.id/",
-      showcase: "https://showcase-internal.aut.id/",
+      hub: "https://showcase-internal.aut.id/",
       leaderboard: "https://leaderboard-internal.aut.id/",
-      expander: "https://expander-internal.aut.id/"
+      launchpad: "http://launch.hub.sbs/"
     };
   }
 
@@ -25,9 +25,9 @@ const _autUrls = (): ApiUrls => {
     tryAut: "https://try.aut.id/",
     novaDashboard: "https://nova.aut.id/",
     myAut: "https://my.aut.id/",
-    showcase: "https://showcase.aut.id/",
+    hub: "https://showcase.aut.id/",
     leaderboard: "https://leaderboard.aut.id/",
-    expander: "https://expander.aut.id/"
+    launchpad: "http://launch.hub.sbs/"
   };
 };
 

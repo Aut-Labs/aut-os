@@ -78,19 +78,19 @@ const plugins = [
   }
 ];
 
-const AutUserTabs = ({ nova }) => {
+const AutUserTabs = ({ novas }) => {
   const tabs = [
     {
       label: "Map",
       props: {
-        nova
+        novas
       },
       component: AutMap
     },
     {
       label: "Novae",
       props: {
-        communities: [nova]
+        communities: novas
       },
       component: NovaeList
     },

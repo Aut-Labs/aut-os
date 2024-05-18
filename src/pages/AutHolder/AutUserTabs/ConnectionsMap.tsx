@@ -19,15 +19,15 @@ import { AutID } from "@api/aut.model";
 import AutLoading from "@components/AutLoading";
 import AutSearchDialog from "src/pages/AutHome/AutSearchDialog";
 
-const fetchAutIDsQuery = (nova: Community) => {
+const fetchAutIDsQuery = (novas: Community[]) => {
   const queryArgsString = queryParamsAsString({
     skip: 0,
-    take: 100,
+    take: 10000,
     filters: [
       {
         prop: "novaAddress",
         comparison: "equals",
-        value: nova.properties?.address?.toLowerCase()
+        value: novas[0].properties?.address?.toLowerCase()
       }
     ]
   });
@@ -39,6 +39,7 @@ const fetchAutIDsQuery = (nova: Community) => {
         username
         tokenID
         novaAddress
+        joinedNovas
         role
         commitment
         metadataUri
@@ -47,12 +48,12 @@ const fetchAutIDsQuery = (nova: Community) => {
   `;
 };
 
-const AutMap = ({ nova }) => {
+const AutMap = ({ novas }) => {
   const ref = useRef();
   const dispatch = useAppDispatch();
   const [searchOpen, setIsSearchOpen] = useState(false);
   const addedInteractions = useSelector(AdddInteractions);
-  const { loading, error, data } = useQuery(fetchAutIDsQuery(nova), {
+  const { loading, error, data } = useQuery(fetchAutIDsQuery(novas), {
     fetchPolicy: "cache-first"
   });
 
@@ -92,7 +93,7 @@ const AutMap = ({ nova }) => {
         name: metadata.name,
         image: metadata.image,
         description: metadata.description,
-        nova,
+        nova: novas[0],
         properties: {
           avatar,
           thumbnailAvatar,
@@ -102,7 +103,7 @@ const AutMap = ({ nova }) => {
           address: autID.id,
           tokenId: autID.tokenID,
           network: "Net",
-          communities: [nova],
+          communities: novas,
           interactions: []
         }
       });
@@ -141,7 +142,7 @@ const AutMap = ({ nova }) => {
         );
 
         const mapNova: MapNova = {
-          ...nova,
+          ...novas[0],
           centralNode: central,
           members: otherMembers
         };
@@ -157,7 +158,7 @@ const AutMap = ({ nova }) => {
 
       enrichAllAutIDs();
     }
-  }, [data, selectedAddress, nova]);
+  }, [data, selectedAddress, novas]);
 
   const handleClose = () => {
     dispatch(setOpenInteractions(false));

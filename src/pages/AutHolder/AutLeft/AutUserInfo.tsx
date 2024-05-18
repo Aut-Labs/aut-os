@@ -552,7 +552,7 @@ const AutUserInfo = () => {
                       alignItems: "center"
                     }}
                   >
-                  
+
                   </Box>
                   <Box
                     sx={{
@@ -593,7 +593,7 @@ const AutUserInfo = () => {
               }}
             >
               {/* TODO: Revert hardcoded community name and description */}
-              <AutUserTabs nova={holderData.properties.communities[0]} />
+              <AutUserTabs novas={holderData.properties.communities} />
               {/* <CommunitiesTable
               communities={holderData.properties.communities}
               isLoading={false}

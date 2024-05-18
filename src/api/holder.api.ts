@@ -1,17 +1,14 @@
-import axios, { CancelTokenSource } from "axios";
 import { BrowserProvider } from "ethers";
 import { AutID } from "./aut.model";
 import { Community } from "./community.model";
 import { ipfsCIDToHttpUrl, isValidUrl } from "./storage.api";
 import { base64toFile } from "@utils/to-base-64";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { ErrorParser } from "@utils/error-parser";
 import { NetworkConfig } from "./ProviderFactory/network.config";
 import { environment } from "./environment";
 import AutSDK, {
   CommunityMembershipDetails,
   HolderData,
-  Nova,
   fetchMetadata,
   queryParamsAsString
 } from "@aut-labs/sdk";
@@ -129,7 +126,7 @@ export const fetchHolder = createAsyncThunk(
           id
           username
           tokenID
-          novaAddress
+          joinedNovas
           role
           commitment
           metadataUri
@@ -144,9 +141,10 @@ export const fetchHolder = createAsyncThunk(
       autIDs: [autID]
     } = response.data;
 
-    const novaQuery = gql`
+    const loadNova = async (novaAddress: string): Promise<Community> => {
+      const novaQuery = gql`
       query GetNovaDAO {
-        novaDAO(id: "${autID.novaAddress}") {
+        novaDAO(id: "${novaAddress?.toLowerCase()}") {
           id
           address
           market
@@ -155,34 +153,40 @@ export const fetchHolder = createAsyncThunk(
         }
       }
     `;
-    const novaResponse = await apolloClient.query<any>({
-      query: novaQuery
-    });
+      const novaResponse = await apolloClient.query<any>({
+        query: novaQuery
+      });
+      const { novaDAO } = novaResponse.data;
 
-    const { novaDAO } = novaResponse.data;
+      const novaMetadata = await fetchMetadata<BaseNFTModel<Community>>(
+        novaDAO.metadataUri,
+        environment.ipfsGatewayUrl
+      );
 
-    // const nova = sdk.initService<Nova>(Nova, autID.novaAddress);
-    // const isAdmin = await nova.contract.admins.isAdmin(autID.id);
+      // const nova = sdk.initService<Nova>(Nova, novaAddress);
+      // const isAdmin = await nova.contract.admins.isAdmin(autID.id);
 
-    const novaMetadata = await fetchMetadata<BaseNFTModel<Community>>(
-      novaDAO.metadataUri,
-      environment.ipfsGatewayUrl
-    );
-
-    const userNova = new Community({
-      ...novaMetadata,
-      properties: {
-        ...novaMetadata.properties,
-        address: autID.novaAddress,
-        market: novaDAO.market,
-        userData: {
-          role: autID.role.toString(),
-          commitment: autID.commitment.toString(),
-          isActive: true
-          // isAdmin: isAdmin.data
+      const userNova = new Community({
+        ...novaMetadata,
+        properties: {
+          ...novaMetadata.properties,
+          address: novaAddress,
+          market: novaDAO.market,
+          userData: {
+            role: autID.role.toString(),
+            commitment: autID.commitment.toString(),
+            isActive: true
+            // isAdmin: isAdmin.data
+          }
         }
-      }
-    } as unknown as Community);
+      } as unknown as Community);
+
+      return userNova;
+    };
+
+    const novas: Community[] = await Promise.all(
+      autID.joinedNovas.map((n: string) => loadNova(n))
+    );
 
     const autIdMetadata = await fetchMetadata<BaseNFTModel<any>>(
       autID.metadataUri,
@@ -203,7 +207,7 @@ export const fetchHolder = createAsyncThunk(
         address: autID.id,
         tokenId: autID.tokenID,
         network: networkName,
-        communities: [userNova]
+        communities: novas
       }
     });
 

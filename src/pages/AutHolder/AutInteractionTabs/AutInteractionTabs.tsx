@@ -1,9 +1,3 @@
-/* eslint-disable max-len */
-import AutTabs from "@components/AutTabs";
-import { CommunityTasksTable } from "../../AutCommunity/AutNovaTabs/NovaTaskTable";
-import PerfectScrollbar from "react-perfect-scrollbar";
-import CommunitiesTable from "../AutLeft/CommunitiesTable";
-
 import AutOsTabs from "@components/AutOsTabs";
 import InteractionList from "../AutUserTabs/InteractionList";
 import { AutOsInteractionTypes } from "./AutInteractionsData";
