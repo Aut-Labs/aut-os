@@ -40,6 +40,6 @@ jobs:
 
             echo "Pulling the new image"
             # sudo docker-compose pull aut_os_mainnet
-            docker-compose up -d --build aut_os_mainnet --remove-orphans
+            docker-compose up -d --build aut_os_mainnet
 
             exit 0;
