@@ -18,13 +18,13 @@ jobs:
       - name: SSH & Deploy
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.SSH_SERVER_IP }}
-          username: ${{ secrets.SSH_SERVER_USER }}
+          host: ${{ secrets.MAINNET_FRONTEND_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.FRONTEND_SSH_KEY }}
           script: |
             #!/usr/bin/env bash
 
-            cd aut-id
+            cd aut-os
             sudo git checkout mainnet;
             sudo git pull origin mainnet;
 

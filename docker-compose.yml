@@ -5,10 +5,10 @@ services:
     container_name: aut_os_mainnet
     image: autlabs/aut-os:mainnet
     ports:
-      - '4002:80'
+      - '5003:80'
 
   aut_os_main:
     container_name: aut_os_main
     image: autlabs/aut-os:main
     ports:
-      - '4001:80'
+      - '5003:80'
