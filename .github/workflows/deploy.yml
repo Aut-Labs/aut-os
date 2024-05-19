@@ -28,15 +28,15 @@ jobs:
             sudo git checkout main;
             sudo git pull origin main;
 
-            sudo docker build -t autlabs/aut-os:main . --build-arg ENV_FILE=.env
-            # sudo docker push autlabs/aut-os:main
-
             echo "Stopping and removing specific service: aut_os_main"
             sudo docker-compose stop aut_os_main
             sudo docker-compose rm -f aut_os_main
 
             echo "Removing dangling images"
             sudo docker rmi $(sudo docker images -f "dangling=true" -q) || true
+
+            sudo docker build -t autlabs/aut-os:main . --build-arg ENV_FILE=.env
+            # sudo docker push autlabs/aut-os:main
 
             echo "Pulling the new image"
             # sudo docker-compose pull aut_os_main
