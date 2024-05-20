@@ -581,7 +581,7 @@ const AutUserInfo = () => {
 
             {/* <Box>
             <Typography color="white" textAlign="left" variant="h3">
-              {canUpdateProfile ? "Your Novæ" : "Novæ"}
+              {canUpdateProfile ? "Your Hubs" : "Hubs"}
             </Typography>
           </Box> */}
             <Box

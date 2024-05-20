@@ -136,7 +136,7 @@ const AutNovaTabs = ({ isNovaMember }) => {
                 }
               }}
             >
-              Join Nova to see its Open Tasks, Polls and Events
+              Join Hub to see its Open Tasks, Polls and Events
             </Typography>
             <AutOsButton
               type="button"

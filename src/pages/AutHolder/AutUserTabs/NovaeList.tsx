@@ -96,7 +96,7 @@ const NovaListItem = memo(
                 },
                 borderRadius: "6px"
               }}
-              aria-label="nova-avatar"
+              aria-label="hub-avatar"
               src={ipfsCIDToHttpUrl(row.image as string)}
             />
 
@@ -115,7 +115,7 @@ const NovaListItem = memo(
             >
               <Tooltip
                 disableHoverListener={!canUpdateProfile}
-                title={canUpdateProfile ? "View Nova details" : ""}
+                title={canUpdateProfile ? "View Hub details" : ""}
               >
                 <BtnLink
                   color="offWhite.main"
@@ -312,7 +312,7 @@ const NovaeList = ({
     >
       <Box sx={{ display: "flex", my: theme.spacing(3) }}>
         <Typography color="offWhite.main" variant="h3">
-          Novæ
+          Hubs
         </Typography>
         <Typography
           color="offWhite.dark"
@@ -337,7 +337,7 @@ const NovaeList = ({
         {communities?.map((nova, index) => (
           <NovaListItem
             canUpdateProfile={canUpdateProfile}
-            key={`nova-row-${index}`}
+            key={`hub-row-${index}`}
             row={nova}
           />
         ))}

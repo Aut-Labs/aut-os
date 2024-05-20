@@ -239,7 +239,7 @@ const CommunitiesTable = ({
               }}
             >
               <Typography variant="subtitle2" fontWeight="normal" color="white">
-                Nova
+                Hub
               </Typography>
             </TaskStyledTableCell>
             <TaskStyledTableCell align="center">

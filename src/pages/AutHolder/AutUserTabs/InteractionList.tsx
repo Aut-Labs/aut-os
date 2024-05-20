@@ -107,7 +107,7 @@ const InteractionListItem = memo(
                 },
                 borderRadius: "0"
               }}
-              aria-label="nova-avatar"
+              aria-label="hub-avatar"
               src={interaction.image}
             />
             <Box
@@ -303,7 +303,7 @@ const InteractionList = ({ isLoading = false, interactions = [] }: any) => {
         >
           {interactions?.map((interaction, index) => (
             <InteractionListItem
-              key={`nova-row-${index}`}
+              key={`hub-row-${index}`}
               interaction={interaction}
               verify={() => verifyInteraction(interaction)}
             />

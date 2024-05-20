@@ -52,7 +52,7 @@ const plugins = [
     title: "Private Thread",
     id: "private-thread",
     description:
-      'Create a decentralized, Reddit-like thread with custom rules such as ["same Role"; "same Nova"; "min Reputation"; etc.]. And start a conversation with provably like-minded people.',
+      'Create a decentralized, Reddit-like thread with custom rules such as ["same Role"; "same Hub"; "min Reputation"; etc.]. And start a conversation with provably like-minded people.',
     reputation: 100,
     icon: SmsIcon
   },
@@ -88,7 +88,7 @@ const AutUserTabs = ({ novas }) => {
       component: AutMap
     },
     {
-      label: "Novae",
+      label: "Hubs",
       props: {
         communities: novas
       },

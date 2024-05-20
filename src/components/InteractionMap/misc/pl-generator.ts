@@ -6,12 +6,12 @@ const PROXIMITY_LEVEL_DETAILS = [
     description: "Members with the same role as you."
   },
   {
-    name: "Nova",
-    description: "Members within the same Nova as you."
+    name: "Hub",
+    description: "Members within the same Hub as you."
   },
   {
     name: "Market",
-    description: "Members within the same market but different Novas."
+    description: "Members within the same market but different Hubs."
   },
   {
     name: "Āut Network",

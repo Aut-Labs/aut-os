@@ -117,7 +117,7 @@ const PluginListItemNew = memo(
                 },
                 borderRadius: "0"
               }}
-              aria-label="nova-avatar"
+              aria-label="hub-avatar"
               src={plugin.icon}
             /> */}
             <SvgIcon
@@ -582,7 +582,7 @@ const PluginList = ({ isLoading = false, plugins = [] }: TableParamsParams) => {
           <PluginListItemNew
             canUpdateProfile={canUpdateProfile}
             activate={() => activatePlugin(plugin)}
-            key={`nova-row-${index}`}
+            key={`hub-row-${index}`}
             plugin={plugin}
             holderReputation={holderReputation}
           />
