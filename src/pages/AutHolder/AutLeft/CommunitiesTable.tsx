@@ -208,7 +208,7 @@ const CommunitiesTable = ({
           sm: "100%"
         },
         width: {
-          xs: "360px",
+          xs: "100%",
           sm: "unset"
         },
         borderRadius: "16px",

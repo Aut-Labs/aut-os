@@ -41,7 +41,7 @@ const AutStyledDialog = styled(Dialog)(({ theme }) => ({
   ".MuiPaper-root": {
     margin: "0",
     width: "420px",
-    height: "320px",
+    height: "420px",
     border: "none",
     backgroundColor: "#1E2430",
     borderRadius: "30px",

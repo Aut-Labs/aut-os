@@ -8,87 +8,90 @@ const mocktabs = [
   {
     label: "Open tasks",
     props: {
-      tasks: [
-        {
-          name: "Write a Blog Post",
-          description:
-            "Contribute to our blog by sharing your insights on the latest crypto trends and developments.",
-          startDate: new Date("2024-02-01"),
-          endDate: new Date("2024-02-05")
-        },
-        {
-          name: "Code Review Session",
-          description:
-            "Help review and optimize a fellow developer's smart contract. Your expertise is valuable to the community.",
-          startDate: new Date("2024-02-01"),
-          endDate: new Date("2024-02-10")
-        },
-        {
-          name: "Volunteer for Charity Drive",
-          description:
-            "Join our charity initiative by offering your time or resources to support a social cause.",
-          startDate: new Date("2024-03-01"),
-          endDate: new Date("2024-03-10")
-        }
-      ]
+      // tasks: [
+      //   {
+      //     name: "Write a Blog Post",
+      //     description:
+      //       "Contribute to our blog by sharing your insights on the latest crypto trends and developments.",
+      //     startDate: new Date("2024-02-01"),
+      //     endDate: new Date("2024-02-05")
+      //   },
+      //   {
+      //     name: "Code Review Session",
+      //     description:
+      //       "Help review and optimize a fellow developer's smart contract. Your expertise is valuable to the community.",
+      //     startDate: new Date("2024-02-01"),
+      //     endDate: new Date("2024-02-10")
+      //   },
+      //   {
+      //     name: "Volunteer for Charity Drive",
+      //     description:
+      //       "Join our charity initiative by offering your time or resources to support a social cause.",
+      //     startDate: new Date("2024-03-01"),
+      //     endDate: new Date("2024-03-10")
+      //   }
+      // ]
+      tasks: []
     },
     component: CommunityTasksTable
   },
   {
     label: "Polls",
     props: {
-      tasks: [
-        {
-          name: "Select the Next Featured Artist",
-          description:
-            "Vote for the artist whose NFT collection will be featured in our upcoming exhibition.",
-          startDate: new Date("2022-04-01"),
-          endDate: new Date("2022-04-10")
-        },
-        {
-          name: "Debate: Yield Farming Strategies",
-          description:
-            "Share your perspective on the most effective DeFi yield farming strategies in our community debate.",
-          startDate: new Date("2024-05-01"),
-          endDate: new Date("2024-05-10")
-        },
-        {
-          name: "Eco-Friendly Blockchain Solutions",
-          description:
-            "Cast your vote to prioritize eco-friendly projects that promote sustainability within the blockchain space.",
-          startDate: new Date("2024-03-01"),
-          endDate: new Date("2024-03-10")
-        }
-      ]
+      // tasks: [
+      //   {
+      //     name: "Select the Next Featured Artist",
+      //     description:
+      //       "Vote for the artist whose NFT collection will be featured in our upcoming exhibition.",
+      //     startDate: new Date("2022-04-01"),
+      //     endDate: new Date("2022-04-10")
+      //   },
+      //   {
+      //     name: "Debate: Yield Farming Strategies",
+      //     description:
+      //       "Share your perspective on the most effective DeFi yield farming strategies in our community debate.",
+      //     startDate: new Date("2024-05-01"),
+      //     endDate: new Date("2024-05-10")
+      //   },
+      //   {
+      //     name: "Eco-Friendly Blockchain Solutions",
+      //     description:
+      //       "Cast your vote to prioritize eco-friendly projects that promote sustainability within the blockchain space.",
+      //     startDate: new Date("2024-03-01"),
+      //     endDate: new Date("2024-03-10")
+      //   }
+      // ]
+      tasks: []
     },
     component: CommunityTasksTable
   },
   {
     label: "Events",
     props: {
-      tasks: [
-        {
-          name: "Digital Art Showcase",
-          description:
-            "Join us for an online exhibition of web3-inspired art created by members of our collective.",
-          startDate: new Date("2024-05-01"),
-          endDate: new Date("2024-05-10")
-        },
-        {
-          name: "Play-to-Earn Game Night",
-          description:
-            "Participate in a virtual game night where you can earn tokens by playing blockchain-based games.",
-          startDate: new Date("2024-06-01"),
-          endDate: new Date("2024-06-10")
-        },
-        {
-          name: "Tokenomics Webinar",
-          description:
-            "Attend our interactive webinar to learn about the latest trends in tokenomics and network with experts in the field.",
-          startDate: new Date("2024-07-01"),
-          endDate: new Date("2024-07-10")
-        }
-      ]
+      // tasks: [
+      //   {
+      //     name: "Digital Art Showcase",
+      //     description:
+      //       "Join us for an online exhibition of web3-inspired art created by members of our collective.",
+      //     startDate: new Date("2024-05-01"),
+      //     endDate: new Date("2024-05-10")
+      //   },
+      //   {
+      //     name: "Play-to-Earn Game Night",
+      //     description:
+      //       "Participate in a virtual game night where you can earn tokens by playing blockchain-based games.",
+      //     startDate: new Date("2024-06-01"),
+      //     endDate: new Date("2024-06-10")
+      //   },
+      //   {
+      //     name: "Tokenomics Webinar",
+      //     description:
+      //       "Attend our interactive webinar to learn about the latest trends in tokenomics and network with experts in the field.",
+      //     startDate: new Date("2024-07-01"),
+      //     endDate: new Date("2024-07-10")
+      //   }
+      // ]
+      tasks: []
     },
     component: CommunityTasksTable
   }

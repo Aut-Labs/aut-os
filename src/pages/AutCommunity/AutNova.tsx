@@ -252,11 +252,11 @@ const AutCommunityEdit = () => {
     dispatch(setOpenCommitment(true));
   };
 
-  const nextPeriod = new Date("3/31/2024");
+  const nextPeriod = new Date("6/30/2024");
   // eslint-disable-next-line @typescript-eslint/no-inferrable-types
-  const communityRep: number = 80;
+  const communityRep: number = 100;
   // eslint-disable-next-line @typescript-eslint/no-inferrable-types
-  const userRep: number = 40;
+  const userRep: number = 100;
 
   return (
     <>
@@ -449,7 +449,8 @@ const AutCommunityEdit = () => {
                                       color: theme.palette.divider
                                     }
                                   },
-                                  component: "button",
+                                  component: "a",
+                                  pointerEvents: "none",
                                   disabled: true
                                 })}
                               >
@@ -920,12 +921,8 @@ const AutCommunityEdit = () => {
                               color="offWhite.main"
                               fontWeight="normal"
                             >
-                              {/* TODO: Revert */}
-                              {/* {
-                                selectedCommunity?.properties?.userData
-                                  ?.roleName
-                              } */}
-                              {"Contributor"}
+                              {selectedCommunity?.properties?.userData
+                                ?.roleName || "N/A"}
                             </Typography>
                             <SubtitleWithInfo
                               title="role"

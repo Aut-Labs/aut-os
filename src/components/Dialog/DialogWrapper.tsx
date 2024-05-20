@@ -18,7 +18,7 @@ const AutStyledDialog = styled(Dialog)(({ theme }) => ({
     border: "none",
     backgroundColor: "#1E2430",
     width: "420px",
-    height: "280px",
+    height: "420px",
     borderRadius: "30px",
     boxShadow:
       "0px 16px 80px 0px #2E90FA, 0px 0px 16px 0px rgba(20, 200, 236, 0.64), 0px 0px 16px 0px rgba(20, 200, 236, 0.32)"

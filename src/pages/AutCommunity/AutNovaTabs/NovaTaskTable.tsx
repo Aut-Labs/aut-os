@@ -119,7 +119,7 @@ export const CommunityTasksTable = ({ header, tasks }) => {
             sm: "100%"
           },
           width: {
-            xs: "360px",
+            xs: "100%",
             sm: "unset"
           },
           margin: 0,
@@ -173,11 +173,23 @@ export const CommunityTasksTable = ({ header, tasks }) => {
               </StyledTableCell>
             </TableRow>
           </TableHead>
-          <TableBody>
-            {tasks?.map((row, index) => (
-              <TableListItem key={`table-row-${index}`} row={row} />
-            ))}
-          </TableBody>
+          {tasks?.length ? (
+            <TableBody>
+              {tasks?.map((row, index) => (
+                <TableListItem key={`table-row-${index}`} row={row} />
+              ))}
+            </TableBody>
+          ) : (
+            <Box
+              sx={{
+                padding: theme.spacing(3)
+              }}
+            >
+              <Typography variant="body" color="white">
+                No items found...
+              </Typography>
+            </Box>
+          )}
         </Table>
       </TableContainer>
     </div>
