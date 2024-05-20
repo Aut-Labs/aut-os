@@ -44,7 +44,9 @@ function Web3DautConnect({
     chainId,
     status,
     address
-  } = useAutConnector();
+  } = useAutConnector({
+    defaultChainId: +environment.defaultChainId
+  });
 
   const onAutInit = async () => {
     const [, username] = location.pathname.split("/");

@@ -14,6 +14,7 @@ export const swEnvVariables = {
 
   // Aut networks
   networkEnv: "REACT_APP_NETWORK_ENV",
+  defaultChainId: "REACT_APP_DEFAULT_CHAIN_ID",
 
   // IPFS storage
   ipfsApiKey: "REACT_APP_IPFS_API_KEY",

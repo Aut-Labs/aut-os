@@ -91,18 +91,9 @@ export function useBackendJwt() {
   //   }
   // }, []);
 
-  const {
-    isConnected,
-    isConnecting,
-    connect,
-    disconnect,
-    setStateChangeCallback,
-    multiSigner,
-    multiSignerId,
-    chainId,
-    status,
-    address
-  } = useAutConnector();
+  const { multiSigner, address } = useAutConnector({
+    defaultChainId: +environment.defaultChainId
+  });
 
   async function doAuthenticatedAction(action) {
     const jwt = window.localStorage.getItem("interactions-api-jwt");
@@ -134,9 +125,6 @@ export function useBackendJwt() {
 }
 
 export function AutInteractionsDialog(props: InteractionsDialogProps) {
-  const dispatch = useAppDispatch();
-  const [editInitiated, setEditInitiated] = useState(false);
-
   const theme = useTheme();
   const desktop = useMediaQuery(theme.breakpoints.up("md"));
   return (

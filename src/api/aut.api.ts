@@ -13,7 +13,9 @@ export const getAppConfig = (): Promise<NetworkConfig[]> => {
 };
 
 export const useAuthenticatedApi = () => {
-  const { multiSigner, address } = useAutConnector();
+  const { multiSigner, address } = useAutConnector({
+    defaultChainId: +environment.defaultChainId
+  });
   const [jwt, setjwt] = useState<string | null>(
     localStorage.getItem("interactions-api-jwt")
   );
