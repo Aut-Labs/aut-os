@@ -38,9 +38,12 @@ function TabPanel(props: any) {
           sx={{
             position: "relative",
             borderColor: "divider",
-            height: "calc(100%)",
+            height: "100%",
             minHeight: "400px",
-            marginBottom: "20px",
+            marginBottom: {
+              xs: "60px",
+              sm: "20px"
+            },
             ...(sx || {})
           }}
         >

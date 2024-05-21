@@ -248,8 +248,9 @@ const AutUserInfo = () => {
                         >
                           <img
                             style={{
+                              width: "100%",
                               height: "100%",
-                              width: "100%"
+                              objectFit: "contain"
                             }}
                             aria-label="card"
                             src={ipfsCIDToHttpUrl(holderData?.image as string)}
