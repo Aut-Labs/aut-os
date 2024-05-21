@@ -9,6 +9,7 @@ const AvatarCircle = ({ user, x, y, circleDimension }: any) => {
         width: `${circleDimension}px`,
         height: `${circleDimension}px`,
         overflow: "visible",
+        objectFit: "cover",
         cursor: "pointer"
       }}
     >
@@ -20,7 +21,6 @@ const AvatarCircle = ({ user, x, y, circleDimension }: any) => {
 const Faces = ({ dimensions, users, setPopoverEl }: any) => {
   const designWidth = 1440;
   const designHeight = 800;
-
   const circleDimension = 64;
 
   // Calculate scale factors

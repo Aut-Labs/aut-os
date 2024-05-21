@@ -41,7 +41,7 @@ function TabPanel(props: any) {
             height: "100%",
             minHeight: "400px",
             marginBottom: {
-              xs: "60px",
+              xs: "30px",
               sm: "20px"
             },
             ...(sx || {})

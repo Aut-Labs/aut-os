@@ -302,6 +302,7 @@ const AutSearch = (props: AutSearchProps) => {
                             padding: 0,
                             flexDirection: "column",
                             background: "transparent",
+                            WebkitBackdropFilter: "blur(8px)",
                             backdropFilter: "blur(8px)",
                             width: "474px"
                           }
@@ -330,6 +331,7 @@ const AutSearch = (props: AutSearchProps) => {
                                 background: "rgba(0, 0, 0, 0.64)",
                                 // eslint-disable-next-line max-len
                                 boxShadow: `0px 16px 80px 0px ${theme.palette.primary.main}, 0px 0px 16px 0px rgba(20, 200, 236, 0.64), 0px 0px 16px 0px rgba(20, 200, 236, 0.32)`,
+                                WebkitBackdropFilter: "blur(8px)",
                                 backdropFilter: "blur(8px)"
                               },
                               ".MuiInputLabel-root": {
@@ -514,6 +516,7 @@ const AutSearch = (props: AutSearchProps) => {
                           padding: 0,
                           flexDirection: "column",
                           background: "transparent",
+                          WebkitBackdropFilter: "blur(8px)",
                           backdropFilter: "blur(8px)",
                           width: "204px"
                         }
@@ -540,6 +543,7 @@ const AutSearch = (props: AutSearchProps) => {
                               borderRadius: "6px",
                               background: "transparent",
                               boxShadow: "none",
+                              WebkitBackdropFilter: "blur(8px)",
                               backdropFilter: "blur(8px)"
                             },
                             ".MuiInputLabel-root": {
