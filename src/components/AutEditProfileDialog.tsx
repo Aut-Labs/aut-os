@@ -142,10 +142,10 @@ const FormWrapper = styled("form")(({ theme }) => ({
     alignContent: "center"
   },
   [theme.breakpoints.down("md")]: {
-    width: `calc(100% - 100px)`
+    width: `100%`
   },
   [theme.breakpoints.down("sm")]: {
-    width: `calc(100% - 20px)`
+    width: `100%`
   }
 }));
 
@@ -260,7 +260,7 @@ export function AutEditProfileDialog(props: EditDialogProps) {
       >
         <PerfectScrollbar
           style={{
-            height: "calc(100%)",
+            height: "100%",
             display: "flex",
             flexDirection: "column",
             width: "100%"

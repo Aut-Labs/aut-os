@@ -2,7 +2,7 @@ import React, { memo, useState } from "react";
 import AutToolBar from "../AutHolder/AutLeft/AutToolBar";
 import MainBackground from "src/MainBackground";
 import AutSearch from "./AutSearch";
-import { Box, styled } from "@mui/material";
+import { Box, styled, useMediaQuery, useTheme } from "@mui/material";
 import gql from "graphql-tag";
 import { fetchMetadata, queryParamsAsString } from "@aut-labs/sdk";
 import { useApolloClient } from "@apollo/client";
@@ -78,9 +78,11 @@ const AutHome = () => {
   const [faces, setFaces] = useState([]);
   const [loadedFaces, setLoadedFaces] = useState(false);
   const apolloClient = useApolloClient();
+  const theme = useTheme();
+  const mobile = useMediaQuery(theme.breakpoints.down("md"));
 
   React.useEffect(() => {
-    if (!faces?.length && !loadedFaces) {
+    if (!faces?.length && !loadedFaces && !mobile) {
       setLoadedFaces(true);
       const fetchData = async () => {
         const queryArgsString = queryParamsAsString({
@@ -116,7 +118,7 @@ const AutHome = () => {
 
       fetchData();
     }
-  }, [faces, loadedFaces]);
+  }, [faces, loadedFaces, mobile]);
 
   React.useEffect(() => {
     const handleResize = () => {

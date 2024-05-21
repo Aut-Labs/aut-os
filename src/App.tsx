@@ -1,6 +1,6 @@
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { Route, Routes, Navigate } from "react-router-dom";
-import { Box } from "@mui/material";
+import { Box, useMediaQuery, useTheme } from "@mui/material";
 import { useAppDispatch } from "@store/store.model";
 import { updateWalletProviderState } from "@store/WalletProvider/WalletProvider";
 import AutLoading from "@components/AutLoading";
@@ -20,6 +20,8 @@ function App() {
   const dispatch = useAppDispatch();
   const [appLoading, setAppLoading] = useState(true);
   const [isLoading, setLoading] = useState(false);
+  const theme = useTheme();
+  const mobile = useMediaQuery(theme.breakpoints.down("md"));
 
   useEffect(() => {
     getAppConfig()
@@ -40,6 +42,13 @@ function App() {
       .finally(() => setAppLoading(false));
   }, []);
 
+  const scrollHeight = useMemo(() => {
+    if (mobile) {
+      return `${window?.innerHeight}px`;
+    }
+    return "100%";
+  }, [mobile, window?.innerHeight]);
+
   return (
     <>
       {appLoading ? (
@@ -50,7 +59,7 @@ function App() {
           <SWSnackbar />
           <Box
             sx={{
-              height: "100vh"
+              height: scrollHeight
             }}
           >
             {isLoading ? (
