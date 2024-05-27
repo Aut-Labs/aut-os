@@ -86,10 +86,10 @@
     "@web3auth/wallet-services-plugin" "^8.0.1"
     "@web3auth/web3auth-wagmi-connector" "^6.0.0"
 
-"@aut-labs/d-aut@^1.0.161-dev":
-  version "1.0.161-dev"
-  resolved "https://registry.yarnpkg.com/@aut-labs/d-aut/-/d-aut-1.0.161-dev.tgz#fe5d5182381e9c4a3b6e6ce33ad9afa62784cebc"
-  integrity sha512-rJLStfY5jQKYLjsQHLDaNzF6PsoBomZm8BPcOCI7pW+5NnXbvJ+fNOLwLll0qt1no01Aim8JWPMuhzH+ey6eUg==
+"@aut-labs/d-aut@^1.0.163-dev":
+  version "1.0.163-dev"
+  resolved "https://registry.yarnpkg.com/@aut-labs/d-aut/-/d-aut-1.0.163-dev.tgz#ea26d9f51cf8daf88594b4f09fda9a9cea422916"
+  integrity sha512-C5v/+/W/SqfJqguuWwX8uyt7Dp2SZ2sW7aZfGd2R3/+Kh14M9QRfT8NGrSuBtonFYT75vT+updNuNIK/Ie0zyQ==
 
 "@aut-labs/sdk@^0.0.160-dev":
   version "0.0.160-dev"

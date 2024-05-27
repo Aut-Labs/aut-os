@@ -54,14 +54,6 @@ const InteractionListItem = memo(
       return !isLoading && !isActive;
     }, [status, isLoading, isActive]);
 
-    console.log(
-      isLoading,
-      isActive,
-      isIdle,
-      chosenInteractionForACtion,
-      interaction
-    );
-
     return (
       <Box
         sx={{
@@ -210,7 +202,6 @@ const InteractionList = ({ isLoading = false, interactions = [] }: any) => {
       })
     );
     await useAuthenticatedAction(async (jwt) => {
-      console.log(jwt);
       setTimeout(() => {
         setVerifySuccess(true);
         dispatch(

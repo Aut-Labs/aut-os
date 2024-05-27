@@ -199,6 +199,7 @@ export const fetchHolder = createAsyncThunk(
       image: autIdMetadata.image,
       description: autIdMetadata.description,
       properties: {
+        ...autIdMetadata.properties,
         avatar,
         thumbnailAvatar,
         timestamp,
@@ -300,6 +301,7 @@ export const updateProfile = createAsyncThunk(
       autIdData.description = updatedUser.description;
       autIdData.properties.avatar = updatedUser.properties.avatar;
       autIdData.properties.socials = updatedUser.properties.socials;
+      autIdData.properties.bio = updatedUser.properties.bio;
       window.localStorage.setItem("aut-data", JSON.stringify(autIdData));
     } catch (err) {
       console.log(err);

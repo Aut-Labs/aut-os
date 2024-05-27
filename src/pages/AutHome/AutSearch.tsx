@@ -291,7 +291,6 @@ const AutSearch = (props: AutSearchProps) => {
                           event: any,
                           newValue: UserProfile | null
                         ) => {
-                          console.log(newValue, "NEW VALUE", options);
                           setOptions(
                             newValue ? [newValue, ...options] : options
                           );
@@ -423,7 +422,6 @@ const AutSearch = (props: AutSearchProps) => {
                         }}
                         onInputChange={(event, newInputValue) => {
                           setInputValue(newInputValue);
-                          console.log(newInputValue, "NEW INPUT VALUE");
                         }}
                         renderInput={(params) => (
                           <AutTextField

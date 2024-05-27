@@ -132,7 +132,6 @@ export const getProximityLevels = (
     };
   });
   const baseSpacing = nodeDiameter * 2.5;
-  console.log(baseSpacing, plValues);
   plValues.forEach((plConfig, index) => {
     if (index > 0) {
       plConfig.radius += index * baseSpacing;

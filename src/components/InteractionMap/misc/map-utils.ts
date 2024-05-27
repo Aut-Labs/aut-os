@@ -88,8 +88,6 @@ function generateLinks(
       is: calculateIS(node, centralNode, centralNode)
     }));
 
-  console.log(centralNode, nodes);
-
   const interNodeLinks: LinkObject<MapNode, MapLink>[] = [];
   for (let i = 0; i < nodes.length; i++) {
     for (let j = i + 1; j < nodes.length; j++) {

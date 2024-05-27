@@ -107,8 +107,6 @@ export function useBackendJwt() {
         domain: "localhost:5001"
       };
       const signature = await signer.signMessage(JSON.stringify(message));
-      console.log("signature: ", signature);
-      console.log(JSON.stringify(message));
 
       const response = await axios.post(
         `${environment.interactionsApiUrl}/auth/token`,
