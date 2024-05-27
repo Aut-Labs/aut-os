@@ -120,18 +120,18 @@ export const getProximityLevels = (
   );
   const nodeDiameter =
     CENTRAL_NODE_SIZE + 2 * NODE_PADDING + 2 * NODE_BORDER_WIDTH;
-  const minRadius = nodeDiameter; // Minimum radius is at least enough to fit one node
+  const minRadius = nodeDiameter;
   const plValues = plArrays.map((plConfig, index) => {
     const levelMemberCount = plConfig.members.length;
-    const inverseProportion = totalMembers / (levelMemberCount || 1); // Avoid division by zero
+    const inverseProportion = (totalMembers || 1) / (levelMemberCount || 1);
     const dynamicRadius = minRadius + inverseProportion * nodeDiameter;
     return {
       level: index + 1,
-      radius: dynamicRadius,
+      radius: Number(dynamicRadius.toFixed(0)),
       ...plConfig
     };
   });
-  const baseSpacing = nodeDiameter * 2; // Adding some extra spacing between levels
+  const baseSpacing = nodeDiameter * 2.5;
   console.log(baseSpacing, plValues);
   plValues.forEach((plConfig, index) => {
     if (index > 0) {
