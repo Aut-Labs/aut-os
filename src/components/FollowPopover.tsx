@@ -99,6 +99,13 @@ export const FollowPopover = ({
           fontWeight="900"
           variant="subtitle1"
           color="white"
+          sx={{
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+            maxWidth: "80%",
+            display: "block"
+          }}
         >
           {data?.name || data?.username || "Name"}
         </Typography>

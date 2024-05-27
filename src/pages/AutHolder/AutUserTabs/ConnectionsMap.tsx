@@ -85,12 +85,18 @@ const AutMap = ({ novas }) => {
   }, [mapData, address]);
 
   const showInteractionLayer = useMemo(() => {
+    if (mobile) return true;
     return (
       !isUserConnected &&
       !addedInteractions.length &&
       !isWalletAddressPartOfMembers
     );
-  }, [isUserConnected, addedInteractions, isWalletAddressPartOfMembers]);
+  }, [
+    isUserConnected,
+    addedInteractions,
+    isWalletAddressPartOfMembers,
+    mobile
+  ]);
 
   const fetchAutId = async (autID) => {
     try {
@@ -176,7 +182,7 @@ const AutMap = ({ novas }) => {
 
       enrichAllAutIDs();
     }
-  }, [data, selectedAddress, novas, mobile]);
+  }, [data, selectedAddress, novas]);
 
   const handleClose = () => {
     dispatch(setOpenInteractions(false));

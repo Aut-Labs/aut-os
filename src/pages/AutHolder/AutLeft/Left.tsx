@@ -79,7 +79,7 @@ const AutLeft = () => {
           <AutToolBar></AutToolBar>
           <PerfectScrollbar
             style={{
-              marginTop: "84px",
+              marginTop: mobile ? "130px" : "84px",
               display: "flex",
               height: scrollHeight,
               flexDirection: "column"

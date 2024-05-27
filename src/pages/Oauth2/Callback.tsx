@@ -8,11 +8,9 @@ const queryToObject = (query) => {
 
 const Callback = () => {
   useEffect(() => {
-    debugger;
     const payload = queryToObject(window.location.search.split("?")[1]);
     const error = payload && payload.error;
 
-    debugger;
     if (!window.opener) {
       throw new Error("No window opener");
     }

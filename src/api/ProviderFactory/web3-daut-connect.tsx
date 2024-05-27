@@ -158,8 +158,6 @@ function Web3DautConnect({
       })
     );
 
-    console.log("autID: ", autID);
-
     navigate({
       pathname: `/${autID.name}`
     });
@@ -217,11 +215,11 @@ function Web3DautConnect({
   }
 
   useEffect(() => {
+    window.addEventListener("aut_profile", onAutMenuProfile);
+    window.addEventListener("aut-onDisconnected", onDisconnected);
     if (!dAutInitialized.current && multiSignerId) {
-      window.addEventListener("aut_profile", onAutMenuProfile);
       window.addEventListener("aut-Init", onAutInit);
       window.addEventListener("aut-onConnected", onAutLogin);
-      window.addEventListener("aut-onDisconnected", onDisconnected);
       dAutInitialized.current = true;
       const btnConfig = {
         metaMask: true,
@@ -243,8 +241,8 @@ function Web3DautConnect({
           type: "main"
         },
         size: {
-          width: 240,
-          height: 50,
+          width: 220,
+          height: 45,
           padding: 3
         }
       };
@@ -289,7 +287,7 @@ function Web3DautConnect({
         style={{
           display: "none",
           position: "absolute",
-          zIndex: 99999
+          zIndex: 999
         }}
         use-dev={environment.env == EnvMode.Development}
         id="d-aut"
@@ -333,8 +331,8 @@ export const DautPlaceholder = memo(() => {
     <div
       ref={ref}
       style={{
-        width: "244px",
-        height: "55px",
+        width: "220px",
+        height: "45px",
         position: "relative",
         zIndex: -1
       }}

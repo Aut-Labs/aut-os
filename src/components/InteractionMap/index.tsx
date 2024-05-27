@@ -393,7 +393,7 @@ function InteractionMap({
                                 mr: 0.5
                               }}
                             />
-                            Market: {novaInfo?.market || "N/A"}
+                            Market: {novaInfo?.properties?.market || "N/A"}
                           </Typography>
                           <Typography
                             sx={{

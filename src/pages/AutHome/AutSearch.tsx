@@ -201,13 +201,13 @@ const AutSearch = (props: AutSearchProps) => {
             filters
           });
           const query = gql`
-        query AutIds {
-          autIDs(${queryArgsString}) {
-            id
-            username
-          }
-        }
-      `;
+            query AutIds {
+              autIDs(${queryArgsString}) {
+                id
+                username
+              }
+            }
+          `;
           const response = await apolloClient.query<any>({
             query
           });
@@ -269,10 +269,15 @@ const AutSearch = (props: AutSearchProps) => {
                             sm: 480
                           }
                         }}
-                        getOptionLabel={(option) =>
-                          typeof option === "string" ? option : option.name
-                        }
+                        getOptionLabel={(option) => {
+                          return typeof option === "string"
+                            ? option
+                            : option?.name ?? "";
+                        }}
                         filterOptions={(x) => x}
+                        // isOptionEqualToValue={(option, value) =>
+                        //   option?.name === value?.name
+                        // }
                         options={options}
                         autoComplete
                         openOnFocus
@@ -286,6 +291,7 @@ const AutSearch = (props: AutSearchProps) => {
                           event: any,
                           newValue: UserProfile | null
                         ) => {
+                          console.log(newValue, "NEW VALUE", options);
                           setOptions(
                             newValue ? [newValue, ...options] : options
                           );
@@ -431,7 +437,7 @@ const AutSearch = (props: AutSearchProps) => {
                           const matches =
                             option.structured_formatting
                               .main_text_matched_substrings || [];
-  
+
                           const parts = parse(
                             option.structured_formatting.main_text,
                             matches.map((match: any) => [
@@ -439,7 +445,7 @@ const AutSearch = (props: AutSearchProps) => {
                               match.offset + match.length
                             ])
                           );
-  
+
                           return (
                             <li {...props}>
                               <AutIDProfileList
@@ -489,8 +495,11 @@ const AutSearch = (props: AutSearchProps) => {
                         width: 210
                       }}
                       getOptionLabel={(option) =>
-                        typeof option === "string" ? option : option.name
+                        typeof option === "string" ? option : option?.name ?? ""
                       }
+                      // isOptionEqualToValue={(option, value) =>
+                      //   option?.name === value?.name
+                      // }
                       filterOptions={(x) => x}
                       options={options}
                       autoComplete

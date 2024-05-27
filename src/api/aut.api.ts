@@ -23,7 +23,6 @@ export const useAuthenticatedApi = () => {
   useEffect(() => {
     const handleStorageChange = () => {
       const jwt = localStorage.getItem("interactions-api-jwt");
-      debugger;
       setjwt(jwt);
     };
 

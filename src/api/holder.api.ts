@@ -171,7 +171,7 @@ export const fetchHolder = createAsyncThunk(
         properties: {
           ...novaMetadata.properties,
           address: novaAddress,
-          market: novaDAO.market,
+          market: +novaDAO.market - 1,
           userData: {
             role: autID.role.toString(),
             commitment: autID.commitment.toString(),
@@ -294,7 +294,6 @@ export const updateProfile = createAsyncThunk(
     console.log("avatar: ->", ipfsCIDToHttpUrl(updatedUser.properties.avatar));
     console.log("badge: ->", ipfsCIDToHttpUrl(updatedUser.image));
     const response = await sdk.autID.contract.setMetadataUri(uri);
-    debugger;
     try {
       const autIdData = JSON.parse(window.localStorage.getItem("aut-data"));
       autIdData.name = updatedUser.name;

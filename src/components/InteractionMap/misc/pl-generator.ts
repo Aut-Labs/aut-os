@@ -1,4 +1,10 @@
 import { MapAutID, MapNova } from "@api/map.model";
+import { NodeObject } from "react-force-graph-2d";
+import {
+  CENTRAL_NODE_SIZE,
+  NODE_PADDING,
+  NODE_BORDER_WIDTH
+} from "./map-constants";
 
 const PROXIMITY_LEVEL_DETAILS = [
   {
@@ -107,35 +113,35 @@ export const getProximityLevels = (
       description: PROXIMITY_LEVEL_DETAILS[3]?.description
     }
   ];
-  plArrays = plArrays.filter((plArray) => plArray.members.length > 0); // Filter out empty levels
-  const numberOfLevels = plArrays.length;
-
-  let [minRadius, maxRadius] = [80, 260];
-  switch (numberOfLevels) {
-    case 1:
-      [minRadius, maxRadius] = [120, 120];
-      break;
-    case 2:
-      [minRadius, maxRadius] = [120, 180];
-      break;
-    case 3:
-      [minRadius, maxRadius] = [80, 200];
-      break;
-  }
-
-  const incrementStep =
-    numberOfLevels > 1 ? (maxRadius - minRadius) / (numberOfLevels - 1) : 0;
-
-  const plValues = plArrays.map((plConfig, index) => ({
-    level: index + 1,
-    radius: minRadius + incrementStep * index,
-    ...plConfig
-  }));
-
+  plArrays = plArrays.filter((plArray) => plArray.members.length > 0);
+  const totalMembers = plArrays.reduce(
+    (sum, plArray) => sum + plArray.members.length,
+    0
+  );
+  const nodeDiameter =
+    CENTRAL_NODE_SIZE + 2 * NODE_PADDING + 2 * NODE_BORDER_WIDTH;
+  const minRadius = nodeDiameter; // Minimum radius is at least enough to fit one node
+  const plValues = plArrays.map((plConfig, index) => {
+    const levelMemberCount = plConfig.members.length;
+    const inverseProportion = totalMembers / (levelMemberCount || 1); // Avoid division by zero
+    const dynamicRadius = minRadius + inverseProportion * nodeDiameter;
+    return {
+      level: index + 1,
+      radius: dynamicRadius,
+      ...plConfig
+    };
+  });
+  const baseSpacing = nodeDiameter * 2; // Adding some extra spacing between levels
+  console.log(baseSpacing, plValues);
+  plValues.forEach((plConfig, index) => {
+    if (index > 0) {
+      plConfig.radius += index * baseSpacing;
+    }
+  });
   return { proximityLevels: plValues, centralAutId };
 };
 
-export function calculatePLCircleCentersAndRadii(nodes) {
+export function calculatePLCircleCentersAndRadii(nodes: NodeObject<any>[]) {
   const circles = {};
 
   nodes.forEach((node) => {
