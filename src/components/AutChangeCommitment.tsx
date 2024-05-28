@@ -86,7 +86,6 @@ export function AutChangeCommitmentDialog(props: CommitmentDialogProps) {
       })
     );
     if (result.meta.requestStatus === "fulfilled") {
-      console.log("changed", result);
       props.onClose();
     }
   };

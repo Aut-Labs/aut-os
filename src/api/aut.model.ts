@@ -98,9 +98,12 @@ export class AutIDProperties {
       this.avatar = data.avatar;
       this.address = data.address;
       this.tokenId = data.tokenId;
-      this.communities = (data.communities || []).map(
-        (community) => new Community(community)
-      );
+      this.communities = (data.communities || []).map((community) => {
+        if (community instanceof Community) {
+          return community;
+        }
+        return new Community(community);
+      });
       this.ethDomain = data.ethDomain;
       this.socials = data.socials?.length ? data.socials : DefaultSocials;
       this.socials = this.socials.filter((s) => s.type !== "eth");

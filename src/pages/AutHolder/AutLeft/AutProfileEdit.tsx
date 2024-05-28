@@ -75,6 +75,7 @@ const AutProfileEdit = () => {
   const { control, handleSubmit, watch } = useForm({
     mode: "onChange",
     defaultValues: {
+      bio: holderData?.properties?.bio,
       avatar: holderData?.properties?.avatar,
       socials: (holderData?.properties?.socials || []).map((social) => {
         return {
@@ -340,7 +341,6 @@ const AutProfileEdit = () => {
                 const { prefix, hidePrefix, placeholder } =
                   socialUrls[Object.keys(socialUrls)[index]];
 
-                console.log(prefix, placeholder, index);
                 return (
                   <FieldWrapper key={`socials.${index}`}>
                     <SvgIcon

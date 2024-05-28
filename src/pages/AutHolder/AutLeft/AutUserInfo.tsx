@@ -161,7 +161,14 @@ const AutUserInfo = () => {
         onClose={() => setViewCard(false)}
         url={ipfsCIDToHttpUrl(holderData?.image as string)}
       />
-      <FormWrapper autoComplete="off" onSubmit={handleSubmit(beforeEdit)}>
+      <FormWrapper
+        sx={{
+          flex: "1",
+          flexDirection: "column"
+        }}
+        autoComplete="off"
+        onSubmit={handleSubmit(beforeEdit)}
+      >
         <ErrorDialog
           handleClose={handleDialogClose}
           open={status === ResultState.Failed}
@@ -200,7 +207,9 @@ const AutUserInfo = () => {
                 borderRadius: "72px",
                 background: "rgba(240, 245, 255, 0.01)",
                 backdropFilter: "blur(12px)",
-                height: "fit-content"
+                height: "fit-content",
+                flex: 1
+                // margin: "auto"
               }}
             >
               <Box sx={{ display: "flex" }}>

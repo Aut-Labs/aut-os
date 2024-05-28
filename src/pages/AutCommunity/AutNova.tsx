@@ -120,7 +120,7 @@ const NovaWrapper = styled(Box)(({ theme }) => ({
     alignContent: "center"
   },
   [theme.breakpoints.down("md")]: {
-    width: `calc(100% - 20px)`,
+    width: `100%`,
     flexDirection: "column",
     alignItems: "flex-start",
     justifyContent: "flex-start",
@@ -278,8 +278,8 @@ const AutCommunityEdit = () => {
         <AutToolBar></AutToolBar>
         <PerfectScrollbar
           style={{
-            top: "84px",
-            height: "calc(100% - 84px)",
+            marginTop: "84px",
+            height: "100%",
             display: "flex",
             flexDirection: "column",
             width: "100%"

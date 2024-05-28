@@ -8,11 +8,9 @@ const queryToObject = (query) => {
 
 const Callback = () => {
   useEffect(() => {
-    debugger;
     const payload = queryToObject(window.location.search.split("?")[1]);
     const error = payload && payload.error;
 
-    debugger;
     if (!window.opener) {
       throw new Error("No window opener");
     }
@@ -22,7 +20,6 @@ const Callback = () => {
         error: decodeURI(error) || "OAuth2 error: An error has occured."
       });
     } else {
-      console.log("POST MESSAGE");
       window.opener.postMessage({
         type: "OAUTH_RESPONSE",
         payload

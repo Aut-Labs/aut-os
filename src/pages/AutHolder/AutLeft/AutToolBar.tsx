@@ -29,23 +29,36 @@ const AutToolBar = ({ isDesktop = false, hideSearch = false }) => {
       sx={{
         width: "100%",
         position: "fixed",
-        "&.MuiToolbar-root": {
-          zIndex: 5,
-          paddingLeft: {
-            _: 4,
-            md: 8
-          },
-          paddingRight: {
-            _: 4,
-            md: 8
-          },
-          minHeight: "84px",
-          justifyContent: {
-            xs: "space-between",
-            sm: "space-between"
-          },
-          alignItems: "center"
-        }
+        zIndex: 5,
+        boxShadow: {
+          xs: 4,
+          sm: 0
+        },
+        paddingLeft: {
+          xs: 4,
+          md: 8
+        },
+        paddingRight: {
+          xs: 4,
+          md: 8
+        },
+        height: {
+          xs: "130px",
+          sm: "84px"
+        },
+        minHeight: {
+          xs: "130px",
+          sm: "84px"
+        },
+        flexDirection: {
+          xs: "column",
+          sm: "row"
+        },
+        justifyContent: {
+          xs: "flex-start",
+          sm: "space-between"
+        },
+        alignItems: "center"
       }}
     >
       <AutOsLogo

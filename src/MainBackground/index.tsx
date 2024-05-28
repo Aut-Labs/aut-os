@@ -8,8 +8,8 @@ const MainBackground = ({ dimensions, faces, setPopoverEl }: any) => {
   return (
     <svg
       style={{
-        width: "100vw",
-        height: "100vh",
+        width: "100%",
+        height: "100%",
         position: "fixed"
       }}
       viewBox={`0 0 ${dimensions.width} ${dimensions.height}`}

@@ -40,13 +40,13 @@ const FormWrapper = styled("form")(({ theme }) => ({
     alignContent: "center"
   },
   [theme.breakpoints.down("md")]: {
-    width: `calc(100% - 100px)`
+    width: `100%`
   },
   [theme.breakpoints.down("sm")]: {
     paddingTop: "30px",
     paddingLeft: "10px",
     paddingRight: "10px",
-    width: `calc(100% - 20px)`
+    width: `100%`
   }
 }));
 
@@ -67,13 +67,13 @@ const ContentWrapper = styled("div")(({ theme }) => ({
     alignContent: "center"
   },
   [theme.breakpoints.down("md")]: {
-    width: `calc(100% - 100px)`
+    width: `100%`
   },
   [theme.breakpoints.down("sm")]: {
     paddingTop: "30px",
     paddingLeft: "10px",
     paddingRight: "10px",
-    width: `calc(100% - 20px)`
+    width: `100%`
   }
 }));
 

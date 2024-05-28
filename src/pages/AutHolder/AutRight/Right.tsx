@@ -34,8 +34,8 @@ const CardZoom = styled<any>(CardMedia)(({ theme }) => ({
   animationDelay: "6s",
 
   [theme.breakpoints.down("md")]: {
-    // width: "calc(100% - 20px)",
-    // height: "calc(100% - 20px)",
+    // width: "100%",
+    // height: "100%",
     // margin: "10px"
   }
 }));
@@ -54,8 +54,8 @@ const CardBack = styled("div")(({ theme }) => ({
   // backgroundColor: '#141414',
 
   [theme.breakpoints.down("md")]: {
-    width: "calc(100% - 20px)",
-    height: "calc(100% - 20px)"
+    width: "100%",
+    height: "100%"
   }
 }));
 

@@ -1,7 +1,7 @@
 /* eslint-disable react/button-has-type */
 import { CanUpdateProfile } from "@auth/auth.reducer";
 import AutLoading from "@components/AutLoading";
-import { Toolbar, styled, useMediaQuery, useTheme } from "@mui/material";
+import { styled, useMediaQuery, useTheme } from "@mui/material";
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import {
   AutIDProfiles,
@@ -13,22 +13,17 @@ import PerfectScrollbar from "react-perfect-scrollbar";
 import { ResultState } from "@store/result-status";
 import { useSelector } from "react-redux";
 import AutToolBar from "./AutToolBar";
-import { ReactComponent as AutOsLogo } from "@assets/autos/os-logo.svg";
 
 import AutUserInfo from "./AutUserInfo";
 import SelectAutIDProfileDialog from "@components/AutIDProfileList";
 import { AutID } from "@api/aut.model";
 import { useAppDispatch } from "@store/store.model";
-import { lazy } from "react";
-import { DautPlaceholder } from "@api/ProviderFactory/web3-daut-connect";
+import { useMemo } from "react";
 
 const AutLeftContainer = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column"
 }));
-
-const AutCommunityEdit = lazy(() => import("../../AutCommunity/AutNova"));
-const AutProfileEdit = lazy(() => import("./AutProfileEdit"));
 
 const AutLeft = () => {
   const dispatch = useAppDispatch();
@@ -40,6 +35,7 @@ const AutLeft = () => {
   const canUpdateProfile = useSelector(CanUpdateProfile);
   const theme = useTheme();
   const desktop = useMediaQuery(theme.breakpoints.up("md"));
+  const mobile = useMediaQuery(theme.breakpoints.down("md"));
 
   const onSelect = async (profile: AutID) => {
     const params = new URLSearchParams(location.search);
@@ -56,11 +52,18 @@ const AutLeft = () => {
     );
   };
 
+  const scrollHeight = useMemo(() => {
+    if (mobile) {
+      return `${window?.innerHeight}px`;
+    }
+    return "100%";
+  }, [mobile, window?.innerHeight]);
+
   return (
     <AutLeftContainer
       style={{
-        width: desktop && status === ResultState.Success ? "100%" : "100%",
-        height: "100vh"
+        width: "100%",
+        height: "100%"
       }}
     >
       <SelectAutIDProfileDialog
@@ -76,9 +79,9 @@ const AutLeft = () => {
           <AutToolBar></AutToolBar>
           <PerfectScrollbar
             style={{
-              top: "84px",
-              height: "calc(100% - 84px)",
+              marginTop: mobile ? "130px" : "84px",
               display: "flex",
+              height: scrollHeight,
               flexDirection: "column"
             }}
           >

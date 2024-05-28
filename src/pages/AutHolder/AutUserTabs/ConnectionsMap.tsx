@@ -5,7 +5,9 @@ import {
   Link,
   Stack,
   Tooltip,
-  Typography
+  Typography,
+  useMediaQuery,
+  useTheme
 } from "@mui/material";
 import { useSelector } from "react-redux";
 import InteractionMap from "@components/InteractionMap";
@@ -16,7 +18,7 @@ import { setConnections, setOpenInteractions } from "@store/ui-reducer";
 import { AdddInteractions } from "@store/interactions/interactions.reducer";
 import { useAccount } from "wagmi";
 import { SelectedProfileAddress } from "@store/holder/holder.reducer";
-import { gql, useQuery } from "@apollo/client";
+import { gql, useLazyQuery, useQuery } from "@apollo/client";
 import { fetchMetadata, queryParamsAsString } from "@aut-labs/sdk";
 import { Community } from "@api/community.model";
 import { environment } from "@api/environment";
@@ -61,9 +63,14 @@ const AutMap = ({ novas }) => {
   const dispatch = useAppDispatch();
   const [searchOpen, setIsSearchOpen] = useState(false);
   const addedInteractions = useSelector(AdddInteractions);
-  const { loading, error, data } = useQuery(fetchAutIDsQuery(novas), {
-    fetchPolicy: "cache-first"
-  });
+  const theme = useTheme();
+  const mobile = useMediaQuery(theme.breakpoints.down("md"));
+  const [fetch, { loading, error, data }] = useLazyQuery(
+    fetchAutIDsQuery(novas),
+    {
+      fetchPolicy: "cache-first"
+    }
+  );
 
   const { address } = useAccount();
   const selectedAddress = useSelector(SelectedProfileAddress);
@@ -81,12 +88,18 @@ const AutMap = ({ novas }) => {
   }, [mapData, address]);
 
   const showInteractionLayer = useMemo(() => {
+    if (mobile) return true;
     return (
       !isUserConnected &&
       !addedInteractions.length &&
       !isWalletAddressPartOfMembers
     );
-  }, [isUserConnected, addedInteractions, isWalletAddressPartOfMembers]);
+  }, [
+    isUserConnected,
+    addedInteractions,
+    isWalletAddressPartOfMembers,
+    mobile
+  ]);
 
   const fetchAutId = async (autID) => {
     try {
@@ -121,6 +134,12 @@ const AutMap = ({ novas }) => {
       return null;
     }
   };
+
+  useEffect(() => {
+    if (novas?.length > 0 && !loading && !mobile) {
+      fetch();
+    }
+  }, [mobile]);
 
   useEffect(() => {
     if (data?.autIDs && data.autIDs.length > 0) {
@@ -204,96 +223,113 @@ const AutMap = ({ novas }) => {
                 borderRadius: "42px"
               }}
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="64"
-                height="64"
-                viewBox="0 0 64 64"
-                fill="none"
-              >
-                <path
-                  d="M32.0013 34.6667C39.3651 34.6667 45.3346 28.6971 45.3346 21.3333C45.3346 13.9695 39.3651 8 32.0013 8C24.6375 8 18.668 13.9695 18.668 21.3333C18.668 28.6971 24.6375 34.6667 32.0013 34.6667Z"
-                  stroke="#717BBC"
-                  strokeWidth="4"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M53.3346 56C53.3346 50.342 51.087 44.9158 47.0862 40.915C43.0855 36.9142 37.6593 34.6666 32.0013 34.6666C26.3434 34.6666 20.9171 36.9142 16.9164 40.915C12.9156 44.9158 10.668 50.342 10.668 56"
-                  stroke="#717BBC"
-                  strokeWidth="4"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-              <Typography
-                color="white"
-                fontWeight="700"
-                fontSize="16px"
-                lineHeight="26px"
-              >
-                Connect with this user to see their <br /> map of connections
-              </Typography>
-              <Stack
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  gap: "8px",
-                  justifyContent: "center",
-                  alignItems: "center"
-                }}
-              >
-                <AutOsButton
-                  onClick={openInteractionsModal}
-                  type="button"
-                  color="primary"
-                  size="small"
-                  variant="outlined"
-                >
-                  <Typography
-                    fontWeight="700"
-                    fontSize="16px"
-                    lineHeight="26px"
-                  >
-                    Create a Link
-                  </Typography>
-                </AutOsButton>
+              {mobile ? (
                 <Typography
                   color="white"
                   fontWeight="700"
                   fontSize="16px"
                   lineHeight="26px"
                 >
-                  or
-                </Typography>
-                <AutOsButton
-                  // onClick={() => {
-                  //   navigate({
-                  //     pathname: `${autUrls.hub}project/${mapData?.centralNode?.nova.name}`
-                  //   });
-                  // }}
-                  type="button"
-                  color="primary"
-                  size="small"
-                  variant="outlined"
-                >
-                  <Link
-                    href={`${autUrls.hub}project/${mapData?.centralNode?.nova?.name}`}
-                    target="_blank"
-                    key={"hub-link"}
-                    underline="none"
-                    color="inherit"
+                  Open in desktop to see <br />
+                  <Typography
+                    color="white"
+                    fontWeight="900"
+                    fontSize="18px"
+                    lineHeight="26px"
                   >
+                    Interaction Map
+                  </Typography>
+                </Typography>
+              ) : (
+                <>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="64"
+                    height="64"
+                    viewBox="0 0 64 64"
+                    fill="none"
+                  >
+                    <path
+                      d="M32.0013 34.6667C39.3651 34.6667 45.3346 28.6971 45.3346 21.3333C45.3346 13.9695 39.3651 8 32.0013 8C24.6375 8 18.668 13.9695 18.668 21.3333C18.668 28.6971 24.6375 34.6667 32.0013 34.6667Z"
+                      stroke="#717BBC"
+                      strokeWidth="4"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M53.3346 56C53.3346 50.342 51.087 44.9158 47.0862 40.915C43.0855 36.9142 37.6593 34.6666 32.0013 34.6666C26.3434 34.6666 20.9171 36.9142 16.9164 40.915C12.9156 44.9158 10.668 50.342 10.668 56"
+                      stroke="#717BBC"
+                      strokeWidth="4"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                  <Typography
+                    color="white"
+                    fontWeight="700"
+                    fontSize="16px"
+                    lineHeight="26px"
+                  >
+                    Connect with this user to see their <br /> map of
+                    connections
+                  </Typography>
+                  <Stack
+                    sx={{
+                      display: "flex",
+                      flexDirection: "row",
+                      gap: "8px",
+                      justifyContent: "center",
+                      alignItems: "center"
+                    }}
+                  >
+                    <AutOsButton
+                      onClick={openInteractionsModal}
+                      type="button"
+                      color="primary"
+                      size="small"
+                      variant="outlined"
+                    >
+                      <Typography
+                        fontWeight="700"
+                        fontSize="16px"
+                        lineHeight="26px"
+                      >
+                        Create a Link
+                      </Typography>
+                    </AutOsButton>
                     <Typography
+                      color="white"
                       fontWeight="700"
                       fontSize="16px"
                       lineHeight="26px"
                     >
-                      Join their Hub
+                      or
                     </Typography>
-                  </Link>
-                </AutOsButton>
-              </Stack>
+                    <AutOsButton
+                      type="button"
+                      color="primary"
+                      size="small"
+                      variant="outlined"
+                    >
+                      <Link
+                        href={`${autUrls.hub}project/${mapData?.centralNode?.nova?.name}`}
+                        target="_blank"
+                        key={"hub-link"}
+                        underline="none"
+                        color="inherit"
+                      >
+                        <Typography
+                          fontWeight="700"
+                          fontSize="16px"
+                          lineHeight="26px"
+                        >
+                          Join their Hub
+                        </Typography>
+                      </Link>
+                    </AutOsButton>
+                  </Stack>
+                </>
+              )}
             </Box>
           )}
           <Box

@@ -171,7 +171,7 @@ export const fetchHolder = createAsyncThunk(
         properties: {
           ...novaMetadata.properties,
           address: novaAddress,
-          market: novaDAO.market,
+          market: +novaDAO.market - 1,
           userData: {
             role: autID.role.toString(),
             commitment: autID.commitment.toString(),
@@ -199,6 +199,7 @@ export const fetchHolder = createAsyncThunk(
       image: autIdMetadata.image,
       description: autIdMetadata.description,
       properties: {
+        ...autIdMetadata.properties,
         avatar,
         thumbnailAvatar,
         timestamp,
@@ -294,13 +295,13 @@ export const updateProfile = createAsyncThunk(
     console.log("avatar: ->", ipfsCIDToHttpUrl(updatedUser.properties.avatar));
     console.log("badge: ->", ipfsCIDToHttpUrl(updatedUser.image));
     const response = await sdk.autID.contract.setMetadataUri(uri);
-    debugger;
     try {
       const autIdData = JSON.parse(window.localStorage.getItem("aut-data"));
       autIdData.name = updatedUser.name;
       autIdData.description = updatedUser.description;
       autIdData.properties.avatar = updatedUser.properties.avatar;
       autIdData.properties.socials = updatedUser.properties.socials;
+      autIdData.properties.bio = updatedUser.properties.bio;
       window.localStorage.setItem("aut-data", JSON.stringify(autIdData));
     } catch (err) {
       console.log(err);
