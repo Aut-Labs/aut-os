@@ -7,7 +7,8 @@ import {
   Box,
   useTheme,
   Paper,
-  CircularProgress
+  CircularProgress,
+  Tooltip
 } from "@mui/material";
 import { memo, useMemo, useState } from "react";
 import { ReactComponent as KeyIcon } from "@assets/autos/lock-keyhole.svg";
@@ -70,6 +71,7 @@ const InteractionListItem = memo(
           borderColor: "#576176",
           minWidth: "170px",
           boxShadow: 3,
+          opacity: "0.7",
           borderRadius: "8.5px",
           padding: theme.spacing(3)
         }}
@@ -150,7 +152,34 @@ const InteractionListItem = memo(
               marginTop: theme.spacing(3)
             }}
           >
-            <AutOsButton
+            <Tooltip title="Coming soon!">
+              <AutOsButton
+                type="button"
+                disabled={true}
+                sx={{
+                  "&.MuiButton-root": {
+                    background: "#576176",
+                    ":hover": {
+                      background: "#576176",
+                      color: "#818CA2",
+                      opacity: "1"
+                    },
+                    "&.Mui-disabled": {
+                      color: "#818CA2",
+                      pointerEvents: "auto",
+                      opacity: "1"
+                    }
+                  }
+                }}
+                variant="outlined"
+              >
+                <Typography fontWeight="700" fontSize="16px" lineHeight="26px">
+                  Verify
+                </Typography>
+              </AutOsButton>
+            </Tooltip>
+
+            {/* <AutOsButton
               type="button"
               onClick={verify}
               disabled={isLoading || isActive}
@@ -188,7 +217,7 @@ const InteractionListItem = memo(
                   )}
                 </>
               )}
-            </AutOsButton>
+            </AutOsButton> */}
           </Box>
         </Box>
       </Box>

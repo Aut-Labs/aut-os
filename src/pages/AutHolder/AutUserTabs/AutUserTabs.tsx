@@ -82,22 +82,35 @@ const AutUserTabs = ({ novas }) => {
   const tabs = [
     {
       label: "Map",
+      key: "map-tab",
       props: {
         novas
       },
       component: AutMap
     },
     {
-      label: "Hubs",
+      label: "Hubs 🔒",
+      // label: (
+      //   <>
+      //     <Tooltip title="Coming soon!" key="hub-label-tooltip">
+      //       <Typography key="hub-label-typography">Hubs 🔒</Typography>
+      //     </Tooltip>
+      //   </>
+      // ),
+      disabled: true,
       props: {
         communities: novas
       },
       component: NovaeList
     },
-
     {
-      // label: "Plugins 🔒",
-      label: "Plugins",
+      label: "Plugins 🔒",
+      // label: (
+      //   <Tooltip title="Coming soon!">
+      //     <Typography>Plugins 🔒</Typography>
+      //   </Tooltip>
+      // ),
+      disabled: true,
       props: {
         plugins
       },

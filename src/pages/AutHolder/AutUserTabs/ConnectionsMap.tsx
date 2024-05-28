@@ -1,5 +1,12 @@
 /* eslint-disable max-len */
-import { Box, IconButton, Tooltip, Typography } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  Link,
+  Stack,
+  Tooltip,
+  Typography
+} from "@mui/material";
 import { useSelector } from "react-redux";
 import InteractionMap from "@components/InteractionMap";
 import { memo, useEffect, useMemo, useRef, useState } from "react";
@@ -18,6 +25,7 @@ import { MapAutID, MapNova } from "@api/map.model";
 import { AutID } from "@api/aut.model";
 import AutLoading from "@components/AutLoading";
 import AutSearchDialog from "src/pages/AutHome/AutSearchDialog";
+import { autUrls } from "@utils/aut-urls";
 
 const fetchAutIDsQuery = (novas: Community[]) => {
   const queryArgsString = queryParamsAsString({
@@ -226,17 +234,66 @@ const AutMap = ({ novas }) => {
               >
                 Connect with this user to see their <br /> map of connections
               </Typography>
-              <AutOsButton
-                onClick={openInteractionsModal}
-                type="button"
-                color="primary"
-                size="small"
-                variant="outlined"
+              <Stack
+                sx={{
+                  display: "flex",
+                  flexDirection: "row",
+                  gap: "8px",
+                  justifyContent: "center",
+                  alignItems: "center"
+                }}
               >
-                <Typography fontWeight="700" fontSize="16px" lineHeight="26px">
-                  Create a Link
+                <AutOsButton
+                  onClick={openInteractionsModal}
+                  type="button"
+                  color="primary"
+                  size="small"
+                  variant="outlined"
+                >
+                  <Typography
+                    fontWeight="700"
+                    fontSize="16px"
+                    lineHeight="26px"
+                  >
+                    Create a Link
+                  </Typography>
+                </AutOsButton>
+                <Typography
+                  color="white"
+                  fontWeight="700"
+                  fontSize="16px"
+                  lineHeight="26px"
+                >
+                  or
                 </Typography>
-              </AutOsButton>
+                <AutOsButton
+                  // onClick={() => {
+                  //   navigate({
+                  //     pathname: `${autUrls.hub}project/${mapData?.centralNode?.nova.name}`
+                  //   });
+                  // }}
+                  type="button"
+                  color="primary"
+                  size="small"
+                  variant="outlined"
+                >
+                  <Link
+                    href={`${autUrls.hub}project/${mapData?.centralNode?.nova?.name}`}
+                    target="_blank"
+                    key={"hub-link"}
+                    underline="none"
+                    color="inherit"
+                  >
+                    <Typography
+                      fontWeight="700"
+                      fontSize="16px"
+                      lineHeight="26px"
+                    >
+                      Join their Hub
+                    </Typography>
+                  </Link>
+                </AutOsButton>
+              </Stack>
             </Box>
           )}
           <Box
