@@ -14,15 +14,15 @@ const PROXIMITY_LEVEL_DETAILS = [
   {
     name: "Hub",
     description: "Members within the same Hub as you."
-  },
-  {
-    name: "Market",
-    description: "Members within the same market but different Hubs."
-  },
-  {
-    name: "Āut Network",
-    description: "Members from different Novas across various markets."
   }
+  // {
+  //   name: "Market",
+  //   description: "Members within the same market but different Hubs."
+  // },
+  // {
+  //   name: "Āut Network",
+  //   description: "Members from different Novas across various markets."
+  // }
 ];
 
 export interface PLConfig {
@@ -39,18 +39,11 @@ export const getProximityLevels = (
   proximityLevels: PLConfig[];
   centralAutId: MapAutID;
 } => {
-  const novas: MapNova[] = [mapData];
   const centralAutId: MapAutID = mapData.centralNode;
-  const autIds: MapAutID[] = novas.flatMap((nova: MapNova) => nova.members);
-
+  const autIds: MapAutID[] = mapData.members;
   const accountedUsernames = new Set([centralAutId.name]);
 
-  const filterNonAccountedAutIds = (levelAutIds, test: string) => {
-    if (!Array.isArray(levelAutIds)) {
-      console.error("Expected an array, received:", levelAutIds, test);
-      return [];
-    }
-
+  const filterNonAccountedAutIds = (levelAutIds) => {
     return levelAutIds.filter((autId: MapAutID) => {
       const isAlreadyAccounted = accountedUsernames.has(autId.name);
       if (!isAlreadyAccounted) {
@@ -60,83 +53,44 @@ export const getProximityLevels = (
     });
   };
 
-  const sameRoleAutIds = filterNonAccountedAutIds(
+  const sameHubAndRoleAutIds = filterNonAccountedAutIds(
     autIds.filter(
       (autId: MapAutID) =>
         autId.nova.properties.address ===
           centralAutId.nova.properties.address &&
         autId.properties.role === centralAutId.properties.role
-    ),
-    "sameRoleAutIds"
+    )
   );
 
-  const sameNovaAutIds = filterNonAccountedAutIds(
-    centralAutId.nova.members,
-    "sameNovaAutIds"
-  );
-
-  const sameMarketAutIds = filterNonAccountedAutIds(
+  const sameHubDifferentRoleAutIds = filterNonAccountedAutIds(
     autIds.filter(
-      (autId) =>
-        autId.nova.properties.market === centralAutId.nova.properties.market
-    ),
-    "sameMarketAutIds"
+      (autId: MapAutID) =>
+        autId.nova.properties.address ===
+          centralAutId.nova.properties.address &&
+        autId.properties.role !== centralAutId.properties.role
+    )
   );
 
-  const differentNovaAutIds = filterNonAccountedAutIds(
-    autIds.filter(
-      (autId) =>
-        autId.nova.properties.market !== centralAutId.nova.properties.market
-    ),
-    "differentNovaAutIds"
-  );
-
-  let plArrays = [
+  // Assign proximity levels
+  const plArrays = [
     {
-      members: sameRoleAutIds,
+      members: sameHubAndRoleAutIds,
       name: PROXIMITY_LEVEL_DETAILS[0]?.name,
       description: PROXIMITY_LEVEL_DETAILS[0]?.description
     },
     {
-      members: sameNovaAutIds,
+      members: sameHubDifferentRoleAutIds,
       name: PROXIMITY_LEVEL_DETAILS[1]?.name,
       description: PROXIMITY_LEVEL_DETAILS[1]?.description
-    },
-    {
-      members: sameMarketAutIds,
-      name: PROXIMITY_LEVEL_DETAILS[2]?.name,
-      description: PROXIMITY_LEVEL_DETAILS[2]?.description
-    },
-    {
-      members: differentNovaAutIds,
-      name: PROXIMITY_LEVEL_DETAILS[3]?.name,
-      description: PROXIMITY_LEVEL_DETAILS[3]?.description
     }
   ];
-  plArrays = plArrays.filter((plArray) => plArray.members.length > 0);
-  const totalMembers = plArrays.reduce(
-    (sum, plArray) => sum + plArray.members.length,
-    0
-  );
-  const nodeDiameter =
-    CENTRAL_NODE_SIZE + 2 * NODE_PADDING + 2 * NODE_BORDER_WIDTH;
-  const minRadius = nodeDiameter;
-  const plValues = plArrays.map((plConfig, index) => {
-    const levelMemberCount = plConfig.members.length;
-    const inverseProportion = (totalMembers || 1) / (levelMemberCount || 1);
-    const dynamicRadius = minRadius + inverseProportion * nodeDiameter;
-    return {
-      level: index + 1,
-      radius: Number(dynamicRadius.toFixed(0)),
-      ...plConfig
-    };
-  });
-  const baseSpacing = nodeDiameter * 2.5;
-  plValues.forEach((plConfig, index) => {
-    if (index > 0) {
-      plConfig.radius += index * baseSpacing;
-    }
-  });
+
+  const plValues = plArrays.map((plConfig, index) => ({
+    level: index + 1,
+    radius: (index + 1) * 100, // Adjust radius calculation as per the new levels
+    ...plConfig
+  }));
+
   return { proximityLevels: plValues, centralAutId };
 };
 

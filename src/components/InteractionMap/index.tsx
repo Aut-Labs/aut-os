@@ -33,7 +33,12 @@ import {
   calculatePLCircleCentersAndRadii,
   getProximityLevels
 } from "./misc/pl-generator";
-import { generateGraphData, cloneGraphData, linkWidth } from "./misc/map-utils";
+import {
+  generateGraphData,
+  cloneGraphData,
+  linkWidth,
+  getParticleColor
+} from "./misc/map-utils";
 import { MapLink, MapNode } from "./node.model";
 import { AutOsButton } from "@components/AutButton";
 import { MapNova } from "@api/map.model";
@@ -44,6 +49,7 @@ import {
 } from "@store/ui-reducer";
 import { useAppDispatch } from "@store/store.model";
 import { useSelector } from "react-redux";
+import LinkStatsPopover from "@components/LinkStatsPopover";
 
 const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -64,10 +70,18 @@ function InteractionMap({
 }) {
   const fgRef = useRef<ForceGraphMethods>();
   const [anchorPos, setAnchorPos] = useState({ x: 0, y: 0 });
+  const [centralNode, setCentralNode] = useState<NodeObject<MapNode>>(null);
   const [hoveredNode, setHoveredNode] = useState(null);
   const [showPopover, setShowPopover] = useState(false);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [highlightedPl, setHighlightedPl] = useState(null);
+  const [showLinkPopover, setShowLinkPopover] = useState(false);
+  const [hoveredLink, setHoveredLink] = useState(null);
+  const [linkStats, setLinkStats] = useState<{
+    x: number;
+    y: number;
+    data: any;
+  } | null>(null);
   const [pLevels, setProximityLevels] = useState([]);
   const [initialGraphData, setInitialGraphData] = useState<
     GraphData<MapNode, LinkObject<MapNode, MapLink>>
@@ -86,6 +100,10 @@ function InteractionMap({
   const isInteractionDialogOpen = useSelector(IsInteractionDialogOpen);
   const showPopoverTimeoutRef = useRef(null);
   const hidePopoverTimeoutRef = useRef(null);
+  const showLinkPopoverTimeoutRef = useRef<number | null>(null);
+  const hideLinkPopoverTimeoutRef = useRef<number | null>(null);
+
+  console.log(centralNode, "this");
 
   const handleClose = () => {
     dispatch(setOpenInteractions(false));
@@ -129,10 +147,13 @@ function InteractionMap({
 
   const graphDataAndPL = useMemo(() => {
     const { proximityLevels, centralAutId } = getProximityLevels(mapData);
-    const _graphData = generateGraphData(centralAutId, proximityLevels);
+    const { graphData: _graphData, centralNode: _centralNode } =
+      generateGraphData(centralAutId, proximityLevels);
+
     return {
       graphData: _graphData,
-      proximityLevels
+      proximityLevels,
+      centralNode: _centralNode
     };
   }, [mapData]);
 
@@ -141,6 +162,8 @@ function InteractionMap({
     setInitialGraphData(graphDataAndPL.graphData);
     setGraphData(cloneGraphData(graphDataAndPL.graphData));
     setProximityLevels(graphDataAndPL.proximityLevels);
+    console.log("graphDataAndPL", graphDataAndPL);
+    setCentralNode(graphDataAndPL.centralNode);
   }, [graphDataAndPL]);
 
   const handleNodeHover = useCallback(
@@ -200,20 +223,29 @@ function InteractionMap({
     );
   }, [fgRef]);
 
-  useEffect(() => {
-    if (isDragging || !isActive) {
-      clearTimeout(hidePopoverTimeoutRef.current);
-      clearTimeout(showPopoverTimeoutRef.current);
-      setShowPopover(false);
-    }
-  }, [isDragging, isActive]);
+  // Handle link popover close
+  const handleLinkPopoverClose = () => {
+    console.log("handleLinkPopoverClose");
+    clearTimeout(hideLinkPopoverTimeoutRef.current as number);
+    clearTimeout(showLinkPopoverTimeoutRef.current as number);
+    setShowLinkPopover(false);
+  };
+
+  // Cancel link popover close
+  const cancelLinkPopoverClose = () => {
+    clearTimeout(hideLinkPopoverTimeoutRef.current as number);
+  };
 
   useEffect(() => {
-    return () => {
-      clearTimeout(showPopoverTimeoutRef.current);
-      clearTimeout(hidePopoverTimeoutRef.current);
-    };
-  }, []);
+    if (isDragging || !isActive) {
+      clearTimeout(hidePopoverTimeoutRef.current as number);
+      clearTimeout(showPopoverTimeoutRef.current as number);
+      setShowPopover(false);
+      clearTimeout(hideLinkPopoverTimeoutRef.current as number);
+      clearTimeout(showLinkPopoverTimeoutRef.current as number);
+      setShowLinkPopover(false);
+    }
+  }, [isDragging, isActive]);
 
   const drawNode = useCallback(
     (node: NodeObject<MapNode>, ctx: CanvasRenderingContext2D) => {
@@ -253,8 +285,65 @@ function InteractionMap({
     []
   );
 
+  const handleLinkHover = useCallback(
+    (link, prevLink) => {
+      console.log("handleLinkHover", link, prevLink);
+      if (isDragging || !isActive) return;
+      if (!link) {
+        clearTimeout(showLinkPopoverTimeoutRef.current as number);
+        hideLinkPopoverTimeoutRef.current = window.setTimeout(
+          () => setShowLinkPopover(false),
+          100
+        );
+      } else {
+        clearTimeout(hideLinkPopoverTimeoutRef.current as number);
+        showLinkPopoverTimeoutRef.current = window.setTimeout(() => {
+          setHoveredLink(link);
+          setShowLinkPopover(true);
+        }, 50);
+      }
+      if (!link) return;
+      const bbox = fgRef.current?.getGraphBbox(
+        (n) => n.id === link.source.id || n.id === link.target.id
+      );
+      const graphCenter = {
+        x: (bbox.x[0] + bbox.x[1]) / 2,
+        y: (bbox.y[0] + bbox.y[1]) / 2
+      };
+      const centerScreen = fgRef.current?.graph2ScreenCoords(
+        graphCenter.x,
+        graphCenter.y
+      );
+      const containerRect = containerRef.current?.getBoundingClientRect();
+
+      if (centerScreen && containerRect) {
+        const stats = {
+          x: centerScreen.x + containerRect.left,
+          y: centerScreen.y + containerRect.top,
+          data: {
+            link,
+            centralNode
+          }
+        };
+        setLinkStats(stats);
+      }
+    },
+    [fgRef, containerRef, isDragging, isActive]
+  );
+
   const getNovaInfoByPl = (level: number): any => {
-    return pLevels.find((pl) => pl.level === level)?.members[0].nova || {};
+    let novaInfo = {};
+
+    for (const pl of pLevels) {
+      if (pl.level === level) {
+        if (pl.members.length === 0) {
+          return {};
+        }
+        novaInfo = pl.members[0].nova;
+        break;
+      }
+    }
+    return novaInfo;
   };
 
   const handlePopoverClose = () => {
@@ -267,6 +356,15 @@ function InteractionMap({
     clearTimeout(hidePopoverTimeoutRef.current);
   };
 
+  useEffect(() => {
+    return () => {
+      clearTimeout(showPopoverTimeoutRef.current as number);
+      clearTimeout(hidePopoverTimeoutRef.current as number);
+      clearTimeout(showLinkPopoverTimeoutRef.current as number);
+      clearTimeout(hideLinkPopoverTimeoutRef.current as number);
+    };
+  }, []);
+
   return (
     <>
       <ForceGraph2D
@@ -276,7 +374,7 @@ function InteractionMap({
         graphData={graphData}
         onRenderFramePre={onRenderFramePre}
         onEngineStop={() => {
-          if (mapData?.members?.length > 1) {
+          if (mapData?.members?.length > 1 && fgRef.current) {
             fgRef.current.zoomToFit(300);
           }
         }}
@@ -291,10 +389,14 @@ function InteractionMap({
           handleNodeDragEnd();
           setGraphData(cloneGraphData(initialGraphData));
         }}
-        linkWidth={linkWidth}
         nodeCanvasObject={drawNode}
-        linkDirectionalParticles={0.5}
-        linkDirectionalParticleWidth={3}
+        linkWidth={(node) => node.is}
+        // linkDirectionalParticleWidth={3}
+        linkDirectionalParticles={2}
+        linkDirectionalParticleSpeed={(link) => link.speed}
+        linkDirectionalParticleColor={getParticleColor}
+        // onLinkHover={handleLinkHover}
+        linkHoverPrecision={8}
         d3VelocityDecay={1}
         cooldownTicks={0}
         // enableZoomInteraction={false}
@@ -312,6 +414,15 @@ function InteractionMap({
         onMouseEnter={cancelPopoverClose}
         onMouseLeave={handlePopoverClose}
       />
+      {/* <LinkStatsPopover
+        type="custom"
+        anchorPos={{ x: linkStats?.x, y: linkStats?.y }}
+        data={linkStats?.data || {}}
+        open={showLinkPopover && !isDragging && isActive}
+        handleClose={handleLinkPopoverClose}
+        onMouseEnter={cancelLinkPopoverClose}
+        onMouseLeave={handleLinkPopoverClose}
+      /> */}
       <Box>
         <Box
           sx={{

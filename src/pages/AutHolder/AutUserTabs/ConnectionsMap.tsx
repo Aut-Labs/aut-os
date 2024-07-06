@@ -24,7 +24,7 @@ import { Community } from "@api/community.model";
 import { environment } from "@api/environment";
 import { BaseNFTModel } from "@aut-labs/sdk/dist/models/baseNFTModel";
 import { MapAutID, MapNova } from "@api/map.model";
-import { AutID } from "@api/aut.model";
+import { AutID, AutIdInteractions } from "@api/aut.model";
 import AutLoading from "@components/AutLoading";
 import AutSearchDialog from "src/pages/AutHome/AutSearchDialog";
 import { autUrls } from "@utils/aut-urls";
@@ -173,6 +173,65 @@ const AutMap = ({ novas }) => {
           centralNode: central,
           members: otherMembers
         };
+
+        const mockInteractions: AutIdInteractions[] = [
+          {
+            name: "interactionA",
+            status: "Complete",
+            weight: "1",
+            type: "typeA",
+            description: "descriptionA"
+          },
+          {
+            name: "interactionB",
+            status: "Complete",
+            weight: "1",
+            type: "typeB",
+            description: "descriptionB"
+          },
+          {
+            name: "interactionC",
+            status: "Complete",
+            weight: "1",
+            type: "typeC",
+            description: "descriptionC"
+          },
+          {
+            name: "interactionD",
+            status: "Complete",
+            weight: "1",
+            type: "typeD",
+            description: "descriptionD"
+          },
+          {
+            name: "interactionE",
+            status: "Complete",
+            weight: "1",
+            type: "typeE",
+            description: "descriptionE"
+          }
+        ];
+
+        // mapNova.centralNode.properties.interactions = [
+        //   mockInteractions[0],
+        //   mockInteractions[1]
+        // ];
+
+        // const randomIndexes = [];
+        // if (otherMembers?.length > 0) {
+        //   for (let i = 0; i < 3; i++) {
+        //     randomIndexes.push(Math.floor(Math.random() * otherMembers.length));
+        //   }
+        // }
+        // mapNova.members.forEach((member, index) => {
+        //   if (randomIndexes.includes(index) && member?.id != central?.id) {
+        //     member.properties.interactions = [
+        //       mockInteractions[0],
+        //       mockInteractions[1],
+        //       mockInteractions[2]
+        //     ];
+        //   }
+        // });
 
         dispatch(
           setConnections(

@@ -143,23 +143,24 @@ export const fetchHolder = createAsyncThunk(
 
     const loadNova = async (novaAddress: string): Promise<Community> => {
       const novaQuery = gql`
-      query GetNovaDAO {
-        novaDAO(id: "${novaAddress?.toLowerCase()}") {
+      query GetHub {
+        hub(id: "${novaAddress?.toLowerCase()}") {
           id
           address
           market
           minCommitment
           metadataUri
+          domain
         }
       }
     `;
       const novaResponse = await apolloClient.query<any>({
         query: novaQuery
       });
-      const { novaDAO } = novaResponse.data;
+      const { hub } = novaResponse.data;
 
       const novaMetadata = await fetchMetadata<BaseNFTModel<Community>>(
-        novaDAO.metadataUri,
+        hub.metadataUri,
         environment.ipfsGatewayUrl
       );
 
@@ -171,7 +172,7 @@ export const fetchHolder = createAsyncThunk(
         properties: {
           ...novaMetadata.properties,
           address: novaAddress,
-          market: +novaDAO.market - 1,
+          market: +hub.market - 1,
           userData: {
             role: autID.role.toString(),
             commitment: autID.commitment.toString(),

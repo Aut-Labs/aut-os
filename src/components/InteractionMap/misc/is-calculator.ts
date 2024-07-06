@@ -1,41 +1,45 @@
 import { NodeObject } from "react-force-graph-2d";
 import { MapNode } from "../node.model";
 
-const getCompletedInteractions = (node: NodeObject<MapNode>) => {
+interface Interaction {
+  name: string;
+  status: string;
+}
+
+const getCompletedInteractions = (node: NodeObject<MapNode>): string[] => {
   return node.properties.interactions
-    .filter((interaction) => interaction.status === "Complete")
-    .map((interaction) => interaction.name);
+    .filter((interaction: Interaction) => interaction.status === "Complete")
+    .map((interaction: Interaction) => interaction.name);
 };
 
 const getSharedInteractions = (
   sourceInteractions: string[],
-  targeInteractions: string[]
-) => {
+  targetInteractions: string[]
+): string[] => {
   return sourceInteractions.filter((interaction) =>
-    targeInteractions.includes(interaction)
+    targetInteractions.includes(interaction)
   );
 };
-
 export const calculateIS = (
   source: NodeObject<MapNode>,
   target: NodeObject<MapNode>,
   centralNode: NodeObject<MapNode>
-) => {
+): number => {
   const centralNodeInteractions = getCompletedInteractions(centralNode);
-  if (centralNodeInteractions.length === 0) {
-    return 0;
-  }
+  // if (centralNodeInteractions.length === 0) {
+  //   return 0;
+  // }
 
   const sourceInteractions = getCompletedInteractions(source);
   const targetInteractions = getCompletedInteractions(target);
 
-  // get only same name/type interactions that both source and target have completed
+  // Get only same name/type interactions that both source and target have completed
   const sharedInteractions = getSharedInteractions(
     sourceInteractions,
     targetInteractions
   );
 
-  // now get only interactions that are shared with central node
+  // Get only interactions that are shared with central node
   const sharedWithCentralNodeInteractions = getSharedInteractions(
     sharedInteractions,
     centralNodeInteractions
