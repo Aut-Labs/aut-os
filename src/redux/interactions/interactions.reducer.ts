@@ -59,7 +59,7 @@ export const { addInteraction, updateInteractionState } =
 export const InteractionStatus = (state) =>
   state.interaction.status as ResultState;
 export const InteractionForAction = (state) => state.interaction.interaction;
-export const AdddInteractions = (state) =>
+export const AddedInteractions = (state) =>
   state.interaction.interactions as any[];
 export const InteractionErrorMessage = (state) =>
   state.interaction.errorMessage as string;

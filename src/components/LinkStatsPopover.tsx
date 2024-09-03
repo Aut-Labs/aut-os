@@ -23,7 +23,6 @@ const LinkStatsPopover: React.FC<LinkStatsPopoverProps> = ({
   onMouseEnter = null,
   onMouseLeave = null
 }: LinkStatsPopoverProps) => {
-  console.log(data, "data");
   const anchorProps: Partial<PopoverProps> =
     type === "anchor"
       ? {
@@ -119,7 +118,6 @@ const LinkStatsPopover: React.FC<LinkStatsPopoverProps> = ({
         >
           {link?.source?.name || link?.source?.username || "Name"}
         </Typography>
-        {/* arrow rotated 90deg */}
         <Box
           sx={{
             transform: "rotate(90deg)",

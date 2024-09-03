@@ -2,8 +2,14 @@ import { Box } from "@mui/material";
 import theme from "@theme/theme";
 import { FollowPopover } from "./FollowPopover";
 import { useState } from "react";
+import { ipfsCIDToHttpUrl } from "@utils/ipfs";
+import { AutOSAutID } from "@api/models/aut.model";
 
-export const Bubble = ({ user }) => {
+interface BubbleProps {
+  user: AutOSAutID;
+}
+
+export const Bubble = ({ user }: BubbleProps) => {
   const [anchorEl, setAnchorEl] = useState(null);
   let leaveTimeout = null;
 
@@ -33,7 +39,7 @@ export const Bubble = ({ user }) => {
       }}
     >
       <img
-        src={user?.avatar}
+        src={ipfsCIDToHttpUrl(user?.properties?.thumbnailAvatar)}
         onMouseEnter={handlePopoverOpen}
         style={{
           borderRadius: "50%",

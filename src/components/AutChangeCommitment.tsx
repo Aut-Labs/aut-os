@@ -1,4 +1,3 @@
-import { Community } from "@api/community.model";
 import {
   Box,
   Dialog,
@@ -14,14 +13,17 @@ import { Controller, useForm } from "react-hook-form";
 import { AutOsButton } from "./AutButton";
 import { useAppDispatch } from "@store/store.model";
 import { useState } from "react";
-import { editCommitment } from "@api/holder.api";
+import { editCommitment } from "@api/data.api";
 import { setOpenCommitment } from "@store/ui-reducer";
 
 export interface CommitmentDialogProps {
   title: string;
   description?: JSX.Element;
   open?: boolean;
-  nova: Community;
+  commitment: string;
+  minCommitment: number;
+  hubAddress: string;
+  autIDAddress: string;
   onClose?: () => void;
   onSubmit?: () => void;
   hideCloseBtn?: boolean;
@@ -70,7 +72,7 @@ export function AutChangeCommitmentDialog(props: CommitmentDialogProps) {
   } = useForm({
     mode: "onChange",
     defaultValues: {
-      commitment: props.nova?.properties?.userData?.commitment
+      commitment: props.commitment
     }
   });
   const dispatch = useAppDispatch();
@@ -81,8 +83,9 @@ export function AutChangeCommitmentDialog(props: CommitmentDialogProps) {
     dispatch(setOpenCommitment(false));
     const result = await dispatch(
       editCommitment({
-        communityAddress: props.nova.properties.address,
-        commitment: data.commitment
+        hubAddress: props.hubAddress,
+        commitment: data.commitment,
+        autIDAddress: props.autIDAddress
       })
     );
     if (result.meta.requestStatus === "fulfilled") {
@@ -138,7 +141,7 @@ export function AutChangeCommitmentDialog(props: CommitmentDialogProps) {
               key="commitment"
               control={control}
               rules={{
-                min: props.nova?.properties?.commitment,
+                min: props.minCommitment,
                 required: true
               }}
               render={({ field: { name, value, onChange } }) => {

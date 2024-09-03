@@ -1,5 +1,5 @@
-import { NetworkConfig } from "@api/ProviderFactory/network.config";
-import { createSelector, createSlice } from "@reduxjs/toolkit";
+import { NetworkConfig } from "@api/models/network.config";
+import { createSlice } from "@reduxjs/toolkit";
 
 export interface WalletProviderState {
   selectedNetwork: NetworkConfig;
@@ -26,18 +26,10 @@ export const walletProviderSlice = createSlice({
 
 export const { updateWalletProviderState } = walletProviderSlice.actions;
 
-export const networksConfig = (state: any) =>
+export const NetworksConfig = (state: any) =>
   state.walletProvider.networksConfig as NetworkConfig[];
-export const NetworksConfig = createSelector([networksConfig], (a) => a);
 
-export const selectedNetwork = (state: any) =>
+export const SelectedNetwork = (state: any) =>
   state.walletProvider.selectedNetwork as NetworkConfig;
-export const SelectedNetwork = createSelector([selectedNetwork], (a) => a);
-
-export const BlockExplorerUrl = createSelector(SelectedNetwork, (config) => {
-  if (config) {
-    return config.explorerUrls[0];
-  }
-});
 
 export default walletProviderSlice.reducer;

@@ -1,18 +1,13 @@
-import { MapAutID, MapNova } from "@api/map.model";
+import { MapAutID, MapData } from "@api/models/map.model";
 import { NodeObject } from "react-force-graph-2d";
-import {
-  CENTRAL_NODE_SIZE,
-  NODE_PADDING,
-  NODE_BORDER_WIDTH
-} from "./map-constants";
 
 const PROXIMITY_LEVEL_DETAILS = [
   {
-    name: "Role",
+    name: "Same Roles",
     description: "Members with the same role as you."
   },
   {
-    name: "Hub",
+    name: "Same Hubs",
     description: "Members within the same Hub as you."
   }
   // {
@@ -21,7 +16,7 @@ const PROXIMITY_LEVEL_DETAILS = [
   // },
   // {
   //   name: "Āut Network",
-  //   description: "Members from different Novas across various markets."
+  //   description: "Members from different Hubs across various markets."
   // }
 ];
 
@@ -34,60 +29,97 @@ export interface PLConfig {
 }
 
 export const getProximityLevels = (
-  mapData: MapNova
+  mapData: MapData
 ): {
   proximityLevels: PLConfig[];
   centralAutId: MapAutID;
 } => {
   const centralAutId: MapAutID = mapData.centralNode;
-  const autIds: MapAutID[] = mapData.members;
-  const accountedUsernames = new Set([centralAutId.name]);
+  const autIds: MapAutID[] = mapData.members.filter(
+    (member) => member.properties.address !== centralAutId.properties.address
+  );
+  const rolesMap = new Map<string, MapAutID[]>();
+  const hubsMap = new Map<string, MapAutID[]>();
+  const processedMembers = new Set<MapAutID>();
 
-  const filterNonAccountedAutIds = (levelAutIds) => {
-    return levelAutIds.filter((autId: MapAutID) => {
-      const isAlreadyAccounted = accountedUsernames.has(autId.name);
-      if (!isAlreadyAccounted) {
-        accountedUsernames.add(autId.name);
+  centralAutId.properties.hubs.forEach((hub) => {
+    if (!hubsMap.has(hub.name)) {
+      hubsMap.set(hub.name, []);
+    }
+    const autIdHubState = centralAutId.joinedHub(hub.properties.address);
+    const roleName = hub.roleName(autIdHubState.role as number);
+    if (!rolesMap.has(roleName)) {
+      rolesMap.set(roleName, []);
+    }
+  });
+
+  const { sameRolesMembers, sameHubsDifferentRoles } = autIds.reduce(
+    (acc, autId) => {
+      if (
+        centralAutId.properties.address === autId.properties.address ||
+        processedMembers.has(autId)
+      ) {
+        return acc;
       }
-      return !isAlreadyAccounted;
-    });
-  };
 
-  const sameHubAndRoleAutIds = filterNonAccountedAutIds(
-    autIds.filter(
-      (autId: MapAutID) =>
-        autId.nova.properties.address ===
-          centralAutId.nova.properties.address &&
-        autId.properties.role === centralAutId.properties.role
-    )
+      const existsInAnyOfItsHubsRoles = autId.properties.hubs.some((hub) => {
+        const autIdHubState = centralAutId.joinedHub(hub.properties.address);
+        if (!autIdHubState) return false;
+        const roleName = hub.roleName(autIdHubState.role as number);
+        if (rolesMap.has(roleName)) {
+          rolesMap.get(roleName).push(autId);
+          processedMembers.add(autId);
+        }
+        return rolesMap.has(roleName);
+      });
+
+      if (existsInAnyOfItsHubsRoles) {
+        acc.sameRolesMembers.push(autId);
+      } else {
+        const existsInAnyOfItsHubs = autId.properties.hubs.some((hub) => {
+          if (hubsMap.has(hub.name)) {
+            hubsMap.get(hub.name).push(autId);
+          }
+          return hubsMap.has(hub.name);
+        });
+        if (existsInAnyOfItsHubs) {
+          acc.sameHubsDifferentRoles.push(autId);
+          processedMembers.add(autId);
+        }
+      }
+      return acc;
+    },
+    {
+      sameRolesMembers: [],
+      sameHubsDifferentRoles: []
+    }
   );
 
-  const sameHubDifferentRoleAutIds = filterNonAccountedAutIds(
-    autIds.filter(
-      (autId: MapAutID) =>
-        autId.nova.properties.address ===
-          centralAutId.nova.properties.address &&
-        autId.properties.role !== centralAutId.properties.role
-    )
+  const rolesNames = Array.from(rolesMap.keys()).filter(
+    (key) => rolesMap.get(key).length > 0
   );
+  const sameRolesDescription = `Members with the same roles as you: ${rolesNames.join(", ")}`;
+  const hubNames = Array.from(hubsMap.keys()).filter(
+    (key) => hubsMap.get(key).length > 0
+  );
+  const sameHubsDescription = `Members within the same Hubs as you: ${hubNames.join(", ")}`;
 
   // Assign proximity levels
   const plArrays = [
     {
-      members: sameHubAndRoleAutIds,
+      members: sameRolesMembers,
       name: PROXIMITY_LEVEL_DETAILS[0]?.name,
-      description: PROXIMITY_LEVEL_DETAILS[0]?.description
+      description: sameRolesDescription
     },
     {
-      members: sameHubDifferentRoleAutIds,
+      members: sameHubsDifferentRoles,
       name: PROXIMITY_LEVEL_DETAILS[1]?.name,
-      description: PROXIMITY_LEVEL_DETAILS[1]?.description
+      description: sameHubsDescription
     }
   ];
-
-  const plValues = plArrays.map((plConfig, index) => ({
+  const plValues: PLConfig[] = plArrays.map((plConfig, index) => ({
     level: index + 1,
-    radius: (index + 1) * 100, // Adjust radius calculation as per the new levels
+    radius: (index + 1) * 100,
     ...plConfig
   }));
 

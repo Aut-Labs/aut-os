@@ -3,8 +3,19 @@ import GridLines from "./GridLines";
 import Dots from "./Dots";
 import Faces from "./Faces";
 import map from "@assets/autos/background.png";
+import { AutOSAutID } from "@api/models/aut.model";
 
-const MainBackground = ({ dimensions, faces, setPopoverEl }: any) => {
+interface MainBackgroundProps {
+  dimensions: { width: number; height: number };
+  faces: AutOSAutID[];
+  setPopoverEl?: any;
+}
+
+const MainBackground = ({
+  dimensions,
+  faces,
+  setPopoverEl = () => {}
+}: MainBackgroundProps) => {
   return (
     <svg
       style={{

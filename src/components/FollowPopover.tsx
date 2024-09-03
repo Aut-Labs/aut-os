@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-import { fetchHolder } from "@api/holder.api";
-import { MapAutID } from "@api/map.model";
+import { AutOSAutID } from "@api/models/aut.model";
 import { Box, Button, Popover, PopoverProps, Typography } from "@mui/material";
+import { updateAutState } from "@store/aut/aut.reducer";
 import { useAppDispatch } from "@store/store.model";
 import { useNavigate } from "react-router-dom";
 
@@ -9,7 +8,7 @@ interface FollowPopoverProps {
   type: "anchor" | "custom";
   anchorEl?: HTMLElement | null;
   anchorPos?: { x: number; y: number };
-  data: MapAutID;
+  data: AutOSAutID;
   open: boolean;
   handleClose?: any;
   onMouseEnter?: any;
@@ -107,7 +106,7 @@ export const FollowPopover = ({
             display: "block"
           }}
         >
-          {data?.name || data?.username || "Name"}
+          {data?.name || "Name"}
         </Typography>
         <Typography
           fontWeight="400"
@@ -122,23 +121,16 @@ export const FollowPopover = ({
             display: "block"
           }}
         >
-          @{data?.name || data?.username || "Unknown"}
+          @{data?.name || "Unknown"}
         </Typography>
       </Box>
       <Box>
         <Button
-          onClick={() => {
+          onClick={async () => {
+            await dispatch(updateAutState({ autID: data }));
             navigate({
-              pathname: `/${data?.name || data?.username}`
+              pathname: `/${data?.name}`
             });
-            navigate({
-              pathname: `/${data?.name || data?.username}`
-            });
-            dispatch(
-              fetchHolder({
-                autName: data?.name || data?.username
-              })
-            );
           }}
           sx={{
             mx: 0.5,

@@ -1,6 +1,14 @@
+import { AutOSAutID } from "@api/models/aut.model";
 import { Bubble } from "@components/UserBubbles";
 
-const AvatarCircle = ({ user, x, y, circleDimension }: any) => {
+interface AvatarCircleProps {
+  user: AutOSAutID;
+  x: number;
+  y: number;
+  circleDimension: number;
+}
+
+const AvatarCircle = ({ user, x, y, circleDimension }: AvatarCircleProps) => {
   return (
     <foreignObject
       x={x - circleDimension / 2}
@@ -18,7 +26,13 @@ const AvatarCircle = ({ user, x, y, circleDimension }: any) => {
   );
 };
 
-const Faces = ({ dimensions, users, setPopoverEl }: any) => {
+interface FacesProps {
+  dimensions: { width: number; height: number };
+  users: AutOSAutID[];
+  setPopoverEl: any;
+}
+
+const Faces = ({ dimensions, users, setPopoverEl }: FacesProps) => {
   const designWidth = 1440;
   const designHeight = 800;
   const circleDimension = 64;
@@ -47,7 +61,7 @@ const Faces = ({ dimensions, users, setPopoverEl }: any) => {
         strokeWidth={1.33}
       /> */}
       <AvatarCircle
-        setPopoverEl={setPopoverEl}
+        // setPopoverEl={setPopoverEl}
         x={331.5}
         y={359}
         circleDimension={circleDimension}
@@ -75,14 +89,14 @@ const Faces = ({ dimensions, users, setPopoverEl }: any) => {
       />
 
       <AvatarCircle
-        setPopoverEl={setPopoverEl}
+        // setPopoverEl={setPopoverEl}
         x={90}
         y={451}
         circleDimension={circleDimension}
         user={users[1]}
       />
 
-      {/* 
+      {/*
       bottom empty circle, removed
       <circle
         cx={179}
@@ -104,7 +118,7 @@ const Faces = ({ dimensions, users, setPopoverEl }: any) => {
       />
 
       <AvatarCircle
-        setPopoverEl={setPopoverEl}
+        // setPopoverEl={setPopoverEl}
         x={160}
         y={200}
         circleDimension={circleDimension}
@@ -122,7 +136,7 @@ const Faces = ({ dimensions, users, setPopoverEl }: any) => {
       />
 
       <AvatarCircle
-        setPopoverEl={setPopoverEl}
+        // setPopoverEl={setPopoverEl}
         x={301}
         y={592.167}
         circleDimension={circleDimension}
@@ -139,7 +153,7 @@ const Faces = ({ dimensions, users, setPopoverEl }: any) => {
         strokeWidth={1.33}
       />
       <AvatarCircle
-        setPopoverEl={setPopoverEl}
+        // setPopoverEl={setPopoverEl}
         x={510}
         y={182}
         circleDimension={circleDimension}
@@ -156,7 +170,7 @@ const Faces = ({ dimensions, users, setPopoverEl }: any) => {
         strokeWidth={1.33}
       />
       <AvatarCircle
-        setPopoverEl={setPopoverEl}
+        // setPopoverEl={setPopoverEl}
         x={946}
         y={626}
         circleDimension={circleDimension}
@@ -174,7 +188,7 @@ const Faces = ({ dimensions, users, setPopoverEl }: any) => {
         strokeWidth={1.33}
       />
       <AvatarCircle
-        setPopoverEl={setPopoverEl}
+        // setPopoverEl={setPopoverEl}
         x={1232}
         y={454}
         circleDimension={circleDimension}
@@ -191,7 +205,7 @@ const Faces = ({ dimensions, users, setPopoverEl }: any) => {
         strokeWidth={1.33}
       />
       <AvatarCircle
-        setPopoverEl={setPopoverEl}
+        // setPopoverEl={setPopoverEl}
         x={1357}
         y={92}
         circleDimension={circleDimension}
@@ -207,7 +221,7 @@ const Faces = ({ dimensions, users, setPopoverEl }: any) => {
         strokeWidth={1.33}
       />
       <AvatarCircle
-        setPopoverEl={setPopoverEl}
+        // setPopoverEl={setPopoverEl}
         x={873}
         y={88}
         circleDimension={circleDimension}

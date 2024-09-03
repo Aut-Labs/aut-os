@@ -1,4 +1,3 @@
-import { Community } from "@api/community.model";
 import {
   Box,
   Dialog,
@@ -13,7 +12,7 @@ import { AutOSCommitmentSlider } from "@theme/commitment-slider-styles";
 import { Controller, useForm } from "react-hook-form";
 import { useAppDispatch } from "@store/store.model";
 import { useState } from "react";
-import { editCommitment } from "@api/holder.api";
+import { editCommitment } from "@api/data.api";
 import { setOpenCommitment } from "@store/ui-reducer";
 import { AutOsButton } from "@components/AutButton";
 

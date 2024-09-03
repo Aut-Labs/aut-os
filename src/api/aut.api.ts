@@ -1,7 +1,6 @@
-/* eslint-disable max-len */
 import axios from "axios";
 import { environment } from "./environment";
-import { NetworkConfig } from "./ProviderFactory/network.config";
+import { NetworkConfig } from "./models/network.config";
 import { extractDomain } from "@utils/helpers";
 import { useAutConnector } from "@aut-labs/connector";
 import { useEffect, useState } from "react";

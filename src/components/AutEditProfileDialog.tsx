@@ -1,11 +1,8 @@
-import { Community } from "@api/community.model";
 import {
   Box,
-  Button,
   Dialog,
   DialogActions,
   DialogContent,
-  InputAdornment,
   SvgIcon,
   Typography,
   styled,
@@ -14,35 +11,23 @@ import {
 } from "@mui/material";
 import { ReactComponent as DiscordIcon } from "@assets/SocialIcons/DiscordIcon.svg";
 import { ReactComponent as GitHubIcon } from "@assets/SocialIcons/GitHubIcon.svg";
-import { ReactComponent as LensfrensIcon } from "@assets/SocialIcons/LensfrensIcon.svg";
-import { ReactComponent as TelegramIcon } from "@assets/SocialIcons/TelegramIcon.svg";
 import { ReactComponent as TwitterIcon } from "@assets/SocialIcons/TwitterIcon.svg";
-import { AutOSCommitmentSlider } from "@theme/commitment-slider-styles";
 import PerfectScrollbar from "react-perfect-scrollbar";
-import { Controller, useFieldArray, useForm, useWatch } from "react-hook-form";
-import { AutButtonVariant, AutOsButton } from "./AutButton";
-import { AutID, socialUrls } from "@api/aut.model";
-import { useSelector } from "react-redux";
-import {
-  HolderData,
-  UpdateErrorMessage,
-  UpdateStatus
-} from "@store/holder/holder.reducer";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
+import { AutOsButton } from "./AutButton";
 import { ReactComponent as CloseIcon } from "@assets/autos/close-icon.svg";
 import { ReactComponent as SocialCheckIcon } from "@assets/autos/social-check.svg";
 
-import { IsConnected } from "@auth/auth.reducer";
 import { useAppDispatch } from "@store/store.model";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { updateProfile } from "@api/holder.api";
-import { EditContentElements } from "./EditContentElements";
+import { updateProfile } from "@api/data.api";
 import { AutTextField } from "@theme/field-text-styles";
-import { ipfsCIDToHttpUrl } from "@api/storage.api";
+import { ipfsCIDToHttpUrl } from "@utils/ipfs";
 import { base64toFile, toBase64 } from "@utils/to-base-64";
-import AFileUpload from "./Fields/AutFileUpload";
 import AutOsFileUpload from "./Fields/AutOsFileUpload";
 import { useOAuth } from "src/pages/Oauth2/oauth2";
+import { SelectedAutID } from "@store/aut/aut.reducer";
+import { useSelector } from "react-redux";
+import { AutOSAutID } from "@api/models/aut.model";
 
 export interface EditDialogProps {
   title: string;
@@ -97,6 +82,7 @@ const SocialFieldWrapper = styled("div")(({ theme }) => ({
   justifyContent: "space-between",
   alignItems: "center"
 }));
+
 const TextFieldWrapper = styled(Box)(({ theme }) => ({
   display: "flex",
   flexDirection: "column"
@@ -155,29 +141,21 @@ export enum SocialLinkPrefixes {
   GitHub = "https://github.com/"
 }
 
-export function AutEditProfileDialog(props: EditDialogProps) {
+function AutEditProfileDialog(props: EditDialogProps) {
   const { getAuthGithub, getAuthX, getAuthDiscord, authenticating } =
     useOAuth();
-  const holderData = useSelector(HolderData);
   const theme = useTheme();
   const desktop = useMediaQuery(theme.breakpoints.up("md"));
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
-  const status = useSelector(UpdateStatus);
-  const errorMessage = useSelector(UpdateErrorMessage);
-  const isConnected = useSelector(IsConnected);
-  const [editInitiated, setEditInitiated] = useState(false);
+  const autID = useSelector(SelectedAutID);
 
   const socialIcons = {
-    // eth: EthIcon,
     discord: DiscordIcon,
     github: GitHubIcon,
     twitter: TwitterIcon
-    // telegram: TelegramIcon,
-    // lensfrens: LensfrensIcon
   };
 
-  const filteredSocials = holderData?.properties?.socials.filter(
+  const filteredSocials = autID?.properties?.socials.filter(
     (social) => social.type !== "telegram" && social.type !== "lensfrens"
   );
 
@@ -209,10 +187,10 @@ export function AutEditProfileDialog(props: EditDialogProps) {
   } = useForm({
     mode: "onChange",
     defaultValues: {
-      name: holderData.name,
-      email: holderData.properties.email,
-      bio: holderData.properties.bio,
-      avatar: holderData?.properties?.avatar,
+      name: autID.name,
+      email: autID.properties.email,
+      bio: autID.properties.bio,
+      avatar: autID?.properties?.avatar,
       socials: filteredSocials
     }
   });
@@ -223,7 +201,6 @@ export function AutEditProfileDialog(props: EditDialogProps) {
   });
 
   const beforeEdit = () => {
-    setEditInitiated(true);
     // if (!isActive || !isConnected) {
     //   dispatch(setProviderIsOpen(true));
     // }
@@ -232,17 +209,16 @@ export function AutEditProfileDialog(props: EditDialogProps) {
   const onEditProfile = async (data: any) => {
     await dispatch(
       updateProfile({
-        ...holderData,
+        ...autID,
         properties: {
-          ...holderData.properties,
+          ...autID.properties,
           socials: data.socials,
           bio: data.bio,
           email: data.email,
           avatar: data.avatar
         }
-      } as AutID)
+      } as AutOSAutID)
     );
-    setEditInitiated(false);
   };
 
   return (
@@ -307,7 +283,7 @@ export function AutEditProfileDialog(props: EditDialogProps) {
                       <AutOsFileUpload
                         color="offWhite"
                         initialPreviewUrl={ipfsCIDToHttpUrl(
-                          holderData?.properties?.avatar as string
+                          autID?.properties?.avatar as string
                         )}
                         fileChange={async (file) => {
                           if (file) {
@@ -672,3 +648,5 @@ export function AutEditProfileDialog(props: EditDialogProps) {
     </AutStyledDialog>
   );
 }
+
+export default AutEditProfileDialog;

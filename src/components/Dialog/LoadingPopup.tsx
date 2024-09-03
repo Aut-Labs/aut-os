@@ -34,7 +34,7 @@ const LoadingDialog = ({ open, message = null, fullScreen = false }: any) => {
             position: "relative"
           }}
         >
-          <AutLoading width="150px" height="150px" />
+          <AutLoading />
         </div>
       </div>
     </DialogWrapper>

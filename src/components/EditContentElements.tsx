@@ -96,10 +96,31 @@ const FieldWrapper = styled("div")(({ theme }) => ({
   // }
 }));
 
+const IconContainer = styled("div")(({ theme }) => ({
+  display: "flex",
+  minHeight: "25px",
+  height: "40px",
+
+  [theme.breakpoints.down("md")]: {
+    height: "35px",
+    minHeight: "20px"
+  }
+}));
+
+const FollowWrapper = styled("div")(() => ({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "flex-start",
+  width: "150px",
+  justifyContent: "center"
+}));
+
 export const EditContentElements = {
   FieldWrapper,
   FormWrapper,
   BottomWrapper,
   TopWrapper,
-  ContentWrapper
+  ContentWrapper,
+  FollowWrapper,
+  IconContainer
 };

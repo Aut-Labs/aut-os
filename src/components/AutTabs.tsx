@@ -2,11 +2,12 @@ import * as React from "react";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
-import { SxProps } from "@mui/material";
+import { SxProps, useTheme } from "@mui/material";
 
 interface AutTabParams {
-  label: string;
+  label: string | any;
   component: any;
+  disabled?: boolean;
   props: {
     [key: string]: any;
   };
@@ -37,7 +38,15 @@ function TabPanel(props: any) {
           sx={{
             position: "relative",
             borderColor: "divider",
-            height: "calc(100%)",
+            height: {
+              xs: "calc(100% - 30px)",
+              sm: "calc(100% - 20px)"
+            },
+            minHeight: "400px",
+            marginBottom: {
+              xs: "30px",
+              sm: "20px"
+            },
             ...(sx || {})
           }}
         >
@@ -50,6 +59,7 @@ function TabPanel(props: any) {
 
 function AutTabs(props: AutTabsParams) {
   const [value, setSelectedIndex] = React.useState(props.selectedTabIndex || 0);
+  const theme = useTheme();
 
   const handleChange = (event: React.SyntheticEvent, index: number) => {
     setSelectedIndex(index);
@@ -66,8 +76,10 @@ function AutTabs(props: AutTabsParams) {
       className="aut-tabs"
       sx={{
         width: "100%",
+        height: "100%",
         display: "flex",
         flexDirection: "column",
+        // marginBottom: theme.spacing(4),
         ...props.tabStyles
       }}
     >
@@ -80,39 +92,60 @@ function AutTabs(props: AutTabsParams) {
             ".MuiTabs-indicator": {
               display: "none"
             },
+            ".MuiTabs-scroller": {
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center"
+            },
+            ".MuiTabs-flexContainer": {
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: "10px",
+              borderRadius: "72px",
+              // width: {
+              //   xs: "100%",
+              //   md: "50%"
+              // },
+              background: "rgba(240, 245, 255, 0.01)",
+              backdropFilter: "blur(12px)"
+            },
             ".MuiButtonBase-root": {
-              boxShadow: 3,
               height: {
-                xs: "45px",
-                xxl: "70px"
+                xs: "45px"
               },
               width: {
-                xs: "180px",
-                lg: "200px",
-                xxl: "240px"
+                xs: "unset",
+                md: "120px",
+                xxl: "180px"
               },
-              borderColor: "divider",
-              backgroundColor: "nightBlack.main",
+              display: "flex",
+              borderRadius: "99px",
+              backgroundColor: "transparent",
               textTransform: "inherit",
-              borderStyle: "solid",
-              borderWidth: "2px",
-              color: "white",
-              borderBottom: 0,
+              color: "offWhite.main",
+              border: `1px solid ${theme.palette.divider}`,
+              transition: theme.transitions.create([
+                "border-color",
+                "background-color",
+                "color"
+              ]),
+              ":hover": {
+                border: `1px solid ${theme.palette.offWhite.main}`
+              },
               "&.Mui-selected": {
                 bgcolor: "offWhite.main",
                 color: "nightBlack.main"
               },
-              "&:first-of-type": {
-                borderTopLeftRadius: "16px"
-              },
-              "&:last-child": {
-                borderTopRightRadius: "16px"
+              "&.Mui-disabled": {
+                color: "offWhite.dark",
+                opacity: "0.8"
               }
             }
           }}
         >
-          {props.tabs.map(({ label }) => (
-            <Tab key={label} label={label} />
+          {props.tabs.map(({ label, disabled }) => (
+            <Tab key={label} label={label} disabled={disabled} />
           ))}
         </Tabs>
       </Box>

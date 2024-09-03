@@ -40,9 +40,9 @@ const container = document.getElementById("root");
 const root = createRoot(container);
 
 root.render(
-  <WagmiProvider config={wagmiConfig}>
+  <ApolloProvider client={apolloClient}>
     <QueryClientProvider client={queryClient}>
-      <ApolloProvider client={apolloClient}>
+      <WagmiProvider config={wagmiConfig}>
         <StyledEngineProvider injectFirst>
           <ThemeProvider theme={AutTheme}>
             <CssBaseline />
@@ -53,9 +53,9 @@ root.render(
             </Provider>
           </ThemeProvider>
         </StyledEngineProvider>
-      </ApolloProvider>
+      </WagmiProvider>
     </QueryClientProvider>
-  </WagmiProvider>
+  </ApolloProvider>
 );
 
 ensureVariablesExist(environment, swEnvVariables);

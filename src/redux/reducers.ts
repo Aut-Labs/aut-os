@@ -1,15 +1,13 @@
 import { combineReducers } from "redux";
-import authSliceReducer from "../auth/auth.reducer";
 import uiSliceReducer from "./ui-reducer";
-import holderReducer from "./holder/holder.reducer";
+import autReducer from "./aut/aut.reducer";
 import walletProvideReducer from "./WalletProvider/WalletProvider";
 import pluginsReducer from "./plugins/plugins.reducer";
 import interactionsReducer from "./interactions/interactions.reducer";
 
 export const reducers = combineReducers({
-  auth: authSliceReducer,
   ui: uiSliceReducer,
-  holder: holderReducer,
+  aut: autReducer,
   plugin: pluginsReducer,
   interaction: interactionsReducer,
   walletProvider: walletProvideReducer

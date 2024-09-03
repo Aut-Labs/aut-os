@@ -1,4 +1,3 @@
-import { Community } from "@api/community.model";
 import {
   Box,
   Dialog,
@@ -14,10 +13,10 @@ import { Controller, useForm } from "react-hook-form";
 import { AutOsButton } from "./AutButton";
 import { useAppDispatch } from "@store/store.model";
 import { useState } from "react";
-import { editCommitment } from "@api/holder.api";
+import { editCommitment } from "@api/data.api";
 import { setOpenCommitment } from "@store/ui-reducer";
-import AutOsTabs from "./AutOsTabs";
-import AutInteractionTabs from "src/pages/AutHolder/AutInteractionTabs/AutInteractionTabs";
+import AutTabs from "./AutTabs";
+import AutInteractionTabs from "@components/AutInteractionTabs/AutInteractionTabs";
 import { useAutConnector } from "@aut-labs/connector";
 import axios from "axios";
 import { environment } from "@api/environment";

@@ -116,16 +116,16 @@ interface AutSliderProps {
   name: string;
   errors: FieldErrors<any>;
   minCommitment?: number;
-  communityName: string;
+  hubName: string;
 }
 
 interface CustomSliderProps {
   mincommitment: number;
 }
 
-const errorTypes = (minCommitment, communityName) => {
+const errorTypes = (minCommitment, hubName) => {
   return {
-    min: `Whoops - The min level to join ${communityName} is ${minCommitment}`
+    min: `Whoops - The min level to join ${hubName} is ${minCommitment}`
   };
 };
 
@@ -156,7 +156,7 @@ export const AutSlider = (props: AutSliderProps) => {
         }}
       >
         <FormHelperText
-          errorTypes={errorTypes(props.minCommitment, props.communityName)}
+          errorTypes={errorTypes(props.minCommitment, props.hubName)}
           value={props.value}
           name={props.name}
           errors={props.errors}

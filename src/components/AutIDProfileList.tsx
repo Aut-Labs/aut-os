@@ -1,9 +1,9 @@
-import { AutID } from "@api/aut.model";
-import { ipfsCIDToHttpUrl } from "@api/storage.api";
+import { ipfsCIDToHttpUrl } from "@utils/ipfs";
 import { Avatar, Typography, SvgIcon, styled, Dialog } from "@mui/material";
 import { pxToRem } from "@utils/text-size";
 import { ReactComponent as RedirectIcon } from "@assets/RedirectIcon2.svg";
 import DialogWrapper from "./Dialog/DialogWrapper";
+import { AutOSAutID } from "@api/models/aut.model";
 
 export const UserRow = styled("div")(({ theme }) => ({
   display: "flex",
@@ -38,12 +38,12 @@ export const AutIDProfileList = ({
   profiles,
   onSelect
 }: {
-  profiles: AutID[];
-  onSelect: (profile: AutID) => void;
+  profiles: AutOSAutID[];
+  onSelect: (profile: AutOSAutID) => void;
 }) => {
   return (
     <>
-      {profiles.map((user: AutID, index) => {
+      {profiles.map((user: AutOSAutID, index) => {
         return (
           <UserRow key={`result-${index}`} onClick={() => onSelect(user)}>
             <Avatar
@@ -105,7 +105,7 @@ export const AutIDProfileList = ({
                   }}
                   variant="h6"
                 >
-                  {user?.properties?.network}
+                  {user?.properties?.network?.name}
                 </Typography>
               </div>
               <div

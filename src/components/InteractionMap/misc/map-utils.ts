@@ -3,7 +3,7 @@ import { calculateIS } from "./is-calculator";
 import { GraphData, LinkObject, NodeObject } from "react-force-graph-2d";
 import { PLConfig } from "./pl-generator";
 import { MapLink, MapNode } from "../node.model";
-import { MapAutID } from "@api/map.model";
+import { MapAutID } from "@api/models/map.model";
 
 export const linkWidth = (node: LinkObject<MapNode, MapLink>) => {
   return (node.is / 100) * MAX_LINK_THICKNESS;
@@ -25,12 +25,18 @@ const polarToCartesian = (
 export function cloneGraphData(
   data: GraphData<MapNode, LinkObject<MapNode, MapLink>>
 ): GraphData<MapNode, LinkObject<MapNode, MapLink>> {
-  const nodesCopy = data.nodes.map((node: NodeObject<MapNode>) => ({
-    ...node,
-    img: node.img instanceof Image ? node.img : undefined
-  }));
+  const nodesCopy = data.nodes.map(
+    (node: NodeObject<MapNode>) =>
+      new MapNode({
+        ...node,
+        img: node.img instanceof Image ? node.img : undefined
+      } as MapNode)
+  );
   const linksCopy = data.links.map((link) => ({ ...link }));
-  return { nodes: nodesCopy, links: linksCopy };
+  return { nodes: nodesCopy, links: linksCopy } as GraphData<
+    MapNode,
+    LinkObject<MapNode, MapLink>
+  >;
 }
 
 function generateNodes(
@@ -43,7 +49,7 @@ function generateNodes(
     const usersInLevel = pl.members;
     const angleIncrement = 360 / Math.max(1, usersInLevel.length);
 
-    usersInLevel.forEach((user, index) => {
+    usersInLevel.forEach((user: MapNode, index) => {
       const userLevel = pl.level;
       const angle = angleIncrement * index;
       const { x, y } = polarToCartesian(0, 0, pl.radius, angle);
@@ -61,14 +67,14 @@ function generateNodes(
       } else {
         nodeSizePercentage = 1;
       }
-      const node: NodeObject<MapNode> = {
+      const node = new MapNode({
         ...user,
         x,
         y,
         pl: userLevel,
         size: CENTRAL_NODE_SIZE * nodeSizePercentage,
         color: `hsl(${(pl.level - 1) * 120}, 100%, 70%)`
-      };
+      } as MapNode);
       nodes.push(node);
     });
   });
@@ -101,8 +107,6 @@ function generateLinks(
           centralNode
         );
         if (interactionStrength > 0) {
-          console.log("interactionStrength", interactionStrength);
-          console.log("nodes", nodes[i], nodes[j]);
           interNodeLinks.push({
             is: (interactionStrength / 100) * MAX_LINK_THICKNESS,
             source: nodes[i].id,
@@ -204,14 +208,14 @@ export const generateGraphData = (
   graphData: GraphData<MapNode, LinkObject<MapNode, MapLink>>;
   centralNode: NodeObject<MapNode>;
 } => {
-  const centralNode: NodeObject<MapNode> = {
+  const centralNode = new MapNode({
     ...centralAutId,
     size: CENTRAL_NODE_SIZE,
     color: "red",
     pl: 0,
     x: 0,
     y: 0
-  };
+  } as MapNode);
 
   const nodes = generateNodes(plValues, centralNode);
   const links = generateLinks(centralNode, nodes);
