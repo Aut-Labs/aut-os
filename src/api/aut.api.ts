@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 
 export const getAppConfig = (): Promise<NetworkConfig[]> => {
   return axios
-    .get(`${environment.apiUrl}/autid/config/network/${environment.networkEnv}`)
+    .get(`${environment.apiUrl}/aut/config/network/${environment.networkEnv}`)
     .then((r) => r.data);
 };
 
