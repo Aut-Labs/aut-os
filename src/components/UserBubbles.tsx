@@ -48,7 +48,7 @@ export const Bubble = ({ user }: BubbleProps) => {
           background:
             "linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.00) 100%)",
           boxShadow:
-            // eslint-disable-next-line max-len
+             
             `0px 16px 80px 0px ${theme.palette.primary.main}, 0px 0px 16px 0px rgba(20, 200, 236, 0.64), 0px 0px 16px 0px rgba(20, 200, 236, 0.32)`,
           backdropFilter: "blur(8px)"
         }}

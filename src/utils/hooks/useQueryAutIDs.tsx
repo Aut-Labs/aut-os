@@ -1,11 +1,10 @@
-import { fetchMetadata, Hub } from "@aut-labs/sdk";
+import { AutIDNFT, fetchMetadata, Hub } from "@aut-labs/sdk";
 import {
   gql,
   QueryFunctionOptions,
   QueryResult,
   useQuery
 } from "@apollo/client";
-import { AutIDNFT } from "@aut-labs/sdk/dist/models/aut.model";
 import { AutIdJoinedHubState } from "@aut-labs/d-aut";
 import { useEffect, useState } from "react";
 import { environment } from "@api/environment";
@@ -42,10 +41,11 @@ const useGetAutIDs = (props: QueryFunctionOptions<any, any> = {}) => {
     if (data?.autIDs?.length) {
       const fetchAutIDsMetadata = () => {
         return data.autIDs.map(async ({ id, metadataUri, joinedHubs }) => {
-          const metadata = await fetchMetadata<AutIDNFT>(
+          let metadata = await fetchMetadata<AutIDNFT>(
             metadataUri,
             environment.ipfsGatewayUrl
           );
+          metadata = metadata || ({ properties: {} } as AutIDNFT);
           joinedHubs = [...joinedHubs].map((hub: AutIdJoinedHubState) => ({
             id: hub.id,
             role: hub.role,

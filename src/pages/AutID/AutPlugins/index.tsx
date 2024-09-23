@@ -1,5 +1,5 @@
-/* eslint-disable max-len */
-import { ReactComponent as KeyIcon } from "@assets/autos/lock-keyhole.svg";
+ 
+import KeyIcon from "@assets/autos/lock-keyhole.svg?react";
 
 import {
   Box,

@@ -1,4 +1,4 @@
-import { fetchMetadata, HubNFT } from "@aut-labs/sdk";
+import { AutIDNFT, fetchMetadata, HubNFT } from "@aut-labs/sdk";
 import {
   gql,
   NetworkStatus,
@@ -6,7 +6,6 @@ import {
   QueryResult,
   useQuery
 } from "@apollo/client";
-import { AutIDNFT } from "@aut-labs/sdk/dist/models/aut.model";
 import { AutIdJoinedHubState } from "@aut-labs/d-aut";
 import { useEffect, useMemo, useState } from "react";
 import useGetAutIdFilter from "@utils/hooks/useAutIdFilter";
@@ -21,7 +20,7 @@ const fetchAutIDsMetadata = async ({
   metadataUri,
   joinedHubs
 }: any): Promise<AutOSAutID> => {
-  const metadata = await fetchMetadata<AutIDNFT>(
+  let metadata = await fetchMetadata<AutIDNFT>(
     metadataUri,
     environment.ipfsGatewayUrl
   );
@@ -32,6 +31,7 @@ const fetchAutIDsMetadata = async ({
     hubAddress: hub.hubAddress.toLowerCase(),
     isAdmin: false
   }));
+  metadata = metadata || ({ properties: {} } as AutIDNFT);
   return new AutOSAutID({
     ...metadata,
     properties: {
@@ -50,10 +50,11 @@ const fetchHubsAndAutIdsMetadata = async (hubs: any[], autIds: any[]) => {
   return Promise.all([
     ...hubs.map(
       async ({ address, domain, metadataUri, deployer, minCommitment }) => {
-        const metadata = await fetchMetadata<HubNFT>(
+        let metadata = await fetchMetadata<HubNFT>(
           metadataUri,
           environment.ipfsGatewayUrl
         );
+        metadata = metadata || ({ properties: {} } as HubNFT);
         return new AutOSHub({
           ...metadata,
           properties: {
@@ -255,17 +256,6 @@ const useQueryGetFullAutID = (props: QueryFunctionOptions<any, any> = {}) => {
             hubsAndMembersData.hubs,
             hubsAndMembersData.autIDs
           );
-
-          if (fullDataResult.autID.properties.hubs.length === 0) {
-            debugger;
-          }
-
-          fullDataResult.autIDs.forEach((autID) => {
-            if (autID.properties.hubs.length === 0) {
-              debugger;
-            }
-          });
-
           dispatch(updateAutState(fullDataResult));
           setFullData(fullDataResult);
         } catch (e) {

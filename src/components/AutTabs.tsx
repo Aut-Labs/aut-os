@@ -1,8 +1,8 @@
-import * as React from "react";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import { SxProps, useTheme } from "@mui/material";
+import { CSSProperties, memo, SyntheticEvent, useState } from "react";
 
 interface AutTabParams {
   label: string | any;
@@ -16,8 +16,8 @@ interface AutTabParams {
 interface AutTabsParams {
   tabs: AutTabParams[];
   selectedTabIndex?: number;
-  selectedTab?: (value: any, event: React.SyntheticEvent) => void;
-  tabStyles?: React.CSSProperties | SxProps<any>;
+  selectedTab?: (value: any, event: SyntheticEvent) => void;
+  tabStyles?: CSSProperties | SxProps<any>;
 }
 
 function TabPanel(props: any) {
@@ -58,10 +58,10 @@ function TabPanel(props: any) {
 }
 
 function AutTabs(props: AutTabsParams) {
-  const [value, setSelectedIndex] = React.useState(props.selectedTabIndex || 0);
+  const [value, setSelectedIndex] = useState(props.selectedTabIndex || 0);
   const theme = useTheme();
 
-  const handleChange = (event: React.SyntheticEvent, index: number) => {
+  const handleChange = (event: SyntheticEvent, index: number) => {
     setSelectedIndex(index);
     props.selectedTab && props.selectedTab(index, event);
   };
@@ -161,4 +161,4 @@ function AutTabs(props: AutTabsParams) {
   );
 }
 
-export default React.memo(AutTabs);
+export default memo(AutTabs);

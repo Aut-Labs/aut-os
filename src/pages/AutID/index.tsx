@@ -16,7 +16,7 @@ import { autUrls } from "@utils/aut-urls";
 import { lazy, memo, Suspense, useMemo } from "react";
 import useQueryGetFullAutID from "@utils/hooks/useQueryGetFullAutID";
 import PerfectScrollbar from "react-perfect-scrollbar";
-import AutToolBar from "../../components/AutToolBar";
+import AutToolBar from "@components/AutToolBar";
 import AutLoading from "@components/AutLoading";
 import { useAccount } from "wagmi";
 
@@ -78,17 +78,17 @@ const AutID = () => {
           </>
         }
         twitterProps={{
-          // eslint-disable-next-line max-len
+
           title: `Hello, friend 🖖 This is my ĀutID - and it’s the first identity I can truly own. I will shape it, and it will grow with me & the Communities I commit to. Follow my journey - and see you on the āuter space 🪐`,
           hashtags: ["Aut", "DAO", "Blockchain"]
         }}
         linkedinProps={{
-          // eslint-disable-next-line max-len
+
           summary: `Hello, friend 🖖 This is my ĀutID - and it’s the first identity I can truly own. I will shape it, and it will grow with me & the Communities I commit to. Follow my journey - and see you on the āuter space 🪐`,
           title: "My ĀutID"
         }}
         telegramProps={{
-          // eslint-disable-next-line max-len
+
           title: `Hello, friend 🖖 This is my ĀutID - and it’s the first identity I can truly own. I will shape it, and it will grow with me & the Communities I commit to. Follow my journey - and see you on the āuter space 🪐`
         }}
         onClose={handleClose}

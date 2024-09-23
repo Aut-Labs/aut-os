@@ -9,10 +9,8 @@ import {
 import { debounce } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import { EnvMode, environment } from "@api/environment";
-import { useConnect } from "wagmi";
-import AutSDK from "@aut-labs/sdk";
-import { MultiSigner } from "@aut-labs/sdk/dist/models/models";
-import { NetworkConfig } from "../api/models/network.config";
+import AutSDK, { MultiSigner } from "@aut-labs/sdk";
+import { NetworkConfig } from "@api/models/network.config";
 import { useAutConnector } from "@aut-labs/connector";
 import axios from "axios";
 import { extractDomain } from "@utils/helpers";
@@ -28,7 +26,6 @@ function DAutConnect({
   const location = useLocation();
   const networks = useSelector(NetworksConfig);
   const dAutInitialized = useRef<boolean>(false);
-  const { connectors } = useConnect();
   const {
     isConnected,
     isConnecting,
@@ -36,13 +33,12 @@ function DAutConnect({
     disconnect,
     setStateChangeCallback,
     multiSigner,
+    connectors,
     multiSignerId,
     chainId,
     status,
     address
-  } = useAutConnector({
-    defaultChainId: +environment.defaultChainId
-  });
+  } = useAutConnector();
 
   const onAutInit = async () => {
     setLoading(false);
@@ -137,9 +133,8 @@ function DAutConnect({
     };
     await dispatch(updateWalletProviderState(itemsToUpdate));
     await sdk.init(multiSigner, {
-      hubRegistryAddress: network.contracts.novaRegistryAddress,
-      autIDAddress: network.contracts.autIDAddress,
-      daoExpanderRegistryAddress: network.contracts.daoExpanderRegistryAddress
+      hubRegistryAddress: network.contracts.hubRegistryAddress,
+      autIDAddress: network.contracts.autIDAddress
     });
   };
 
@@ -185,16 +180,6 @@ function DAutConnect({
       window.addEventListener("aut-Init", onAutInit);
       window.addEventListener("aut-onConnected", onAutLogin);
       dAutInitialized.current = true;
-      const btnConfig = {
-        metaMask: true,
-        walletConnect: true,
-        coinbaseWalletSDK: true,
-        web3auth: true
-      };
-
-      const allowedConnectors = Object.keys(btnConfig)
-        .filter((connector) => btnConfig[connector])
-        .map((connector) => connectors.find((c) => c.id === connector));
 
       const config: any = {
         defaultText: "Connect Wallet",
@@ -213,18 +198,18 @@ function DAutConnect({
       Init({
         config,
         envConfig: {
-          REACT_APP_API_URL: environment.apiUrl,
-          REACT_APP_GRAPH_API_URL: environment.graphApiUrl,
-          REACT_APP_IPFS_API_KEY: environment.ipfsApiKey,
-          REACT_APP_IPFS_API_SECRET: environment.ipfsApiSecret,
-          REACT_APP_IPFS_GATEWAY_URL: environment.ipfsGatewayUrl,
-          REACT_APP_ENV: environment.env as EnvMode
+          API_URL: environment.apiUrl,
+          GRAPH_API_URL: environment.graphApiUrl,
+          IPFS_API_KEY: environment.ipfsApiKey,
+          IPFS_API_SECRET: environment.ipfsApiSecret,
+          IPFS_GATEWAY_URL: environment.ipfsGatewayUrl,
+          ENV: environment.env as EnvMode
         },
         connector: {
           connect: connectInterceptor,
           disconnect,
           setStateChangeCallback,
-          connectors: allowedConnectors,
+          connectors,
           networks,
           state: {
             chainId,

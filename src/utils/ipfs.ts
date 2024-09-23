@@ -1,4 +1,4 @@
-import { environment } from "../api/environment";
+import { environment } from "@api/environment";
 
 export const isValidUrl = (uri: string) => {
   let url = null as any;

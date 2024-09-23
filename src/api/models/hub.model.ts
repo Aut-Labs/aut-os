@@ -1,4 +1,4 @@
-import { Role } from "@aut-labs/sdk/dist/models/role";
+import { Role } from "@aut-labs/sdk";
 import { AutOSAutID } from "./aut.model";
 import { DAutHub, HubProperties as BaseHubProperties } from "@aut-labs/d-aut";
 
