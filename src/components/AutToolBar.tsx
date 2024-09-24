@@ -1,9 +1,9 @@
 import { DautPlaceholder } from "@components/DAutConnect";
 import { Box, Toolbar } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ReactComponent as AutOsLogo } from "@assets/autos/os-logo.svg";
-import AutSearch from "src/pages/AutHome/AutSearch";
+import AutOsLogo from "@assets/autos/os-logo.svg?react";
 import { memo } from "react";
+import AutSearch from "./AutSearch";
 
 const AutToolBar = ({ hideSearch = false }) => {
   const navigate = useNavigate();

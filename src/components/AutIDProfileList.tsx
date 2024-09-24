@@ -1,7 +1,7 @@
 import { ipfsCIDToHttpUrl } from "@utils/ipfs";
 import { Avatar, Typography, SvgIcon, styled, Dialog } from "@mui/material";
 import { pxToRem } from "@utils/text-size";
-import { ReactComponent as RedirectIcon } from "@assets/RedirectIcon2.svg";
+import RedirectIcon from "@assets/RedirectIcon2.svg?react";
 import DialogWrapper from "./Dialog/DialogWrapper";
 import { AutOSAutID } from "@api/models/aut.model";
 

@@ -2,7 +2,7 @@ import axios from "axios";
 import { environment } from "./environment";
 import { NetworkConfig } from "./models/network.config";
 import { extractDomain } from "@utils/helpers";
-import { useAutConnector } from "@aut-labs/connector";
+import { useAutConnector, useWalletConnector } from "@aut-labs/connector";
 import { useEffect, useState } from "react";
 
 export const getAppConfig = (): Promise<NetworkConfig[]> => {
@@ -12,9 +12,9 @@ export const getAppConfig = (): Promise<NetworkConfig[]> => {
 };
 
 export const useAuthenticatedApi = () => {
-  const { multiSigner, address } = useAutConnector({
-    defaultChainId: +environment.defaultChainId
-  });
+  const {
+    state: { multiSigner, address }
+  } = useWalletConnector();
   const [jwt, setjwt] = useState<string | null>(
     localStorage.getItem("interactions-api-jwt")
   );
@@ -32,7 +32,7 @@ export const useAuthenticatedApi = () => {
     };
   }, []);
 
-  const useAuthenticatedAction = async (action) => {
+  const authenticatedAction = async (action) => {
     if (jwt) {
       return action(jwt);
     }
@@ -55,5 +55,5 @@ export const useAuthenticatedApi = () => {
     return action(data.token);
   };
 
-  return { jwt, useAuthenticatedAction };
+  return { jwt, authenticatedAction };
 };

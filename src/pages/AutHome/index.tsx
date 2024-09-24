@@ -1,12 +1,12 @@
 import { memo, useMemo } from "react";
-import AutToolBar from "../../components/AutToolBar";
-import MainBackground from "src/MainBackground";
+import AutToolBar from "@components/AutToolBar";
 import { Box, styled, useMediaQuery, useTheme } from "@mui/material";
 import useGetAutIDs from "@utils/hooks/useQueryAutIDs";
 import { randomAutIDs } from "@utils/random-autids";
 import useWindowDimensions from "@utils/hooks/useWindowDimensions";
-import AutSearch from "./AutSearch";
+import AutSearch from "@components/AutSearch";
 import { AutOSAutID } from "@api/models/aut.model";
+import MainBackground from "@components/MainBackground";
 
 const AutBox = styled(Box)(({ theme }) => ({
   display: "flex",

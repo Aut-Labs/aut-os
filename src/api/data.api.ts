@@ -30,15 +30,16 @@ export const editCommitment = createAsyncThunk(
     },
     { rejectWithValue }
   ) => {
-    const sdk = await AutSDK.getInstance();
-    const response = await sdk.autID.contract.editCommitment(
-      requestBody.hubAddress,
-      requestBody.commitment
-    );
-    if (response?.isSuccess) {
-      return requestBody;
-    }
-    return rejectWithValue(response?.errorMessage);
+    return requestBody;
+    // const sdk = await AutSDK.getInstance();
+    // const response = await sdk.autID.contract.editCommitment(
+    //   requestBody.hubAddress,
+    //   requestBody.commitment
+    // );
+    // if (response?.isSuccess) {
+    //   return requestBody;
+    // }
+    // return rejectWithValue(response?.errorMessage);
   }
 );
 

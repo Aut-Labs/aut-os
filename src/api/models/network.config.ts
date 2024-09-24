@@ -5,13 +5,7 @@ export enum NetworkConfigEnv {
 
 export interface NetworkContracts {
   autIDAddress: string;
-  daoExpanderRegistryAddress: string;
-  daoExpanderFactoryAddress: string;
-  novaRegistryAddress: string;
-  allowListAddress: string;
-  novaFactoryAddress: string;
-  hackerDaoAddress: string;
-  daoTypesAddress: string;
+  hubRegistryAddress: string;
 }
 
 export interface NetworkConfig {

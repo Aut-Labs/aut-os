@@ -1,6 +1,5 @@
-/* eslint-disable max-len */
 import { AutTextField } from "@theme/field-text-styles";
-import React, { useState } from "react";
+import { ChangeEvent, useState, VFC } from "react";
 import omit from "lodash-es/omit";
 import {
   AutocompleteRenderInputParams,
@@ -262,7 +261,7 @@ export const RenderAutIDOption = ({
   );
 };
 
-export const SearchTextField: React.VFC<
+export const SearchTextField: VFC<
   TextFieldProps & {
     params: AutocompleteRenderInputParams;
   }
@@ -271,28 +270,28 @@ export const SearchTextField: React.VFC<
     (params.inputProps as { value: string }).value
   );
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     (
       params.inputProps as {
-        onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+        onChange: (event: ChangeEvent<HTMLInputElement>) => void;
       }
     ).onChange(event);
 
     setValue(event.target.value);
   };
 
-  const handleInputFocus = (event: React.FocusEvent<HTMLInputElement>) => {
+  const handleInputFocus = (event) => {
     (
       params.inputProps as {
-        onFocus: (event: React.FocusEvent<HTMLInputElement>) => void;
+        onFocus: (event) => void;
       }
     ).onFocus(event);
   };
 
-  const handleInputBlur = (event: React.FocusEvent<HTMLInputElement>) => {
+  const handleInputBlur = (event) => {
     (
       params.inputProps as {
-        onBlur: (event: React.FocusEvent<HTMLInputElement>) => void;
+        onBlur: (event) => void;
       }
     ).onBlur(event);
   };

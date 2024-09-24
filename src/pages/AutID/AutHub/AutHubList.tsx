@@ -23,9 +23,9 @@ import {
   SelectedAutID
 } from "@store/aut/aut.reducer";
 import { useSelector } from "react-redux";
-import { SocialUrls } from "@aut-labs/sdk/dist/models/aut.model";
 import { EditContentElements } from "@components/EditContentElements";
 import { socialsWithIcons } from "@utils/social-icons";
+import { SocialUrls } from "@aut-labs/sdk";
 
 export const HubTopWrapper = styled(Box)(({ theme }) => ({
   display: "flex",

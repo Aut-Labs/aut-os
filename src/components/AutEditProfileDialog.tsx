@@ -9,14 +9,14 @@ import {
   useMediaQuery,
   useTheme
 } from "@mui/material";
-import { ReactComponent as DiscordIcon } from "@assets/SocialIcons/DiscordIcon.svg";
-import { ReactComponent as GitHubIcon } from "@assets/SocialIcons/GitHubIcon.svg";
-import { ReactComponent as TwitterIcon } from "@assets/SocialIcons/TwitterIcon.svg";
+import DiscordIcon from "@assets/SocialIcons/DiscordIcon.svg?react";
+import GitHubIcon from "@assets/SocialIcons/GitHubIcon.svg?react";
+import TwitterIcon from "@assets/SocialIcons/TwitterIcon.svg?react";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { AutOsButton } from "./AutButton";
-import { ReactComponent as CloseIcon } from "@assets/autos/close-icon.svg";
-import { ReactComponent as SocialCheckIcon } from "@assets/autos/social-check.svg";
+import CloseIcon from "@assets/autos/close-icon.svg?react";
+import SocialCheckIcon from "@assets/autos/social-check.svg?react";
 
 import { useAppDispatch } from "@store/store.model";
 import { updateProfile } from "@api/data.api";
@@ -24,7 +24,7 @@ import { AutTextField } from "@theme/field-text-styles";
 import { ipfsCIDToHttpUrl } from "@utils/ipfs";
 import { base64toFile, toBase64 } from "@utils/to-base-64";
 import AutOsFileUpload from "./Fields/AutOsFileUpload";
-import { useOAuth } from "src/pages/Oauth2/oauth2";
+import { useOAuth } from "@components/OAuth";
 import { SelectedAutID } from "@store/aut/aut.reducer";
 import { useSelector } from "react-redux";
 import { AutOSAutID } from "@api/models/aut.model";

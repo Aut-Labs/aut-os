@@ -1,9 +1,10 @@
-import { ReactComponent as DiscordIcon } from "@assets/SocialIcons/DiscordIcon.svg";
-import { ReactComponent as GitHubIcon } from "@assets/SocialIcons/GitHubIcon.svg";
-import { ReactComponent as LensfrensIcon } from "@assets/SocialIcons/LensfrensIcon.svg";
-import { ReactComponent as TelegramIcon } from "@assets/SocialIcons/TelegramIcon.svg";
-import { ReactComponent as TwitterIcon } from "@assets/SocialIcons/TwitterIcon.svg";
-import { AutSocial } from "@aut-labs/sdk/dist/models/social";
+import DiscordIcon from "@assets/SocialIcons/DiscordIcon.svg?react";
+import GitHubIcon from "@assets/SocialIcons/GitHubIcon.svg?react";
+import LensfrensIcon from "@assets/SocialIcons/LensfrensIcon.svg?react";
+import TelegramIcon from "@assets/SocialIcons/TelegramIcon.svg?react";
+import TwitterIcon from "@assets/SocialIcons/TwitterIcon.svg?react";
+import { AutSocial } from "@aut-labs/sdk";
+import { FC, SVGProps } from "react";
 
 export const socialIcons = {
   discord: DiscordIcon,
@@ -14,7 +15,7 @@ export const socialIcons = {
 };
 
 export interface SocialWithIcon extends AutSocial {
-  Icon: React.FC<React.SVGProps<SVGSVGElement>>;
+  Icon: FC<SVGProps<SVGSVGElement>>;
 }
 
 export const socialsWithIcons = (socials: AutSocial[]): SocialWithIcon[] => {

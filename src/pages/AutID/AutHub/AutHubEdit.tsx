@@ -1,4 +1,4 @@
-/* eslint-disable max-len */
+ 
 import {
   Avatar,
   Badge,
@@ -38,9 +38,9 @@ import { SelectedNetwork } from "@store/WalletProvider/WalletProvider";
 import CopyAddress from "@components/CopyAddress";
 import { AutOsButton } from "@components/AutButton";
 import { SubtitleWithInfo } from "@components/SubtitleWithInfoIcon";
-import { ReactComponent as ArrowDownIcon } from "@assets/autos/arrow-down-circle.svg";
-import { ReactComponent as CheckmarkIcon } from "@assets/autos/checkmark-icon.svg";
-import { ReactComponent as Check } from "@assets/autos/check.svg";
+import ArrowDownIcon from "@assets/autos/arrow-down-circle.svg?react";
+import CheckmarkIcon from "@assets/autos/checkmark-icon.svg?react";
+import Check from "@assets/autos/check.svg?react";
 import Countdown from "react-countdown";
 import { AutCountdown } from "@components/AutCountdown";
 import { AutChangeCommitmentDialog } from "@components/AutChangeCommitment";
@@ -48,7 +48,6 @@ import { setOpenCommitment } from "@store/ui-reducer";
 import { setOpenWithdraw } from "@store/ui-reducer";
 import { AutConfirmDialog } from "@components/Dialog/AutOsConfirmationDialog";
 import { useAccount } from "wagmi";
-import { SocialUrls } from "@aut-labs/sdk/dist/models/aut.model";
 import { socialsWithIcons } from "@utils/social-icons";
 import { EditContentElements } from "@components/EditContentElements";
 import AutHubTabs from "./AutHubTabs";
@@ -57,6 +56,7 @@ import {
   HubBottomWrapper,
   PropertiesWrapper
 } from "./AutHubList";
+import { SocialUrls } from "@aut-labs/sdk";
 
 const LeftWrapper = styled(Box)(({ theme }) => ({
   display: "flex",

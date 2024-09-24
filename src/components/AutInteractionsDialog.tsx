@@ -17,7 +17,7 @@ import { editCommitment } from "@api/data.api";
 import { setOpenCommitment } from "@store/ui-reducer";
 import AutTabs from "./AutTabs";
 import AutInteractionTabs from "@components/AutInteractionTabs/AutInteractionTabs";
-import { useAutConnector } from "@aut-labs/connector";
+import { useAutConnector, useWalletConnector } from "@aut-labs/connector";
 import axios from "axios";
 import { environment } from "@api/environment";
 
@@ -90,9 +90,9 @@ export function useBackendJwt() {
   //   }
   // }, []);
 
-  const { multiSigner, address } = useAutConnector({
-    defaultChainId: +environment.defaultChainId
-  });
+  const {
+    state: { multiSigner, address }
+  } = useWalletConnector();
 
   async function doAuthenticatedAction(action) {
     const jwt = window.localStorage.getItem("interactions-api-jwt");

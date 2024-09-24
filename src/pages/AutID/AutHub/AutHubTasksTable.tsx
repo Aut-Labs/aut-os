@@ -1,6 +1,6 @@
 import { memo, useMemo } from "react";
 import Box from "@mui/material/Box";
-import { ReactComponent as ArrowIcon } from "@assets/autos/move-right.svg";
+import ArrowIcon from "@assets/autos/move-right.svg?react";
 
 import {
   Paper,

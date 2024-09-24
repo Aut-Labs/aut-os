@@ -1,4 +1,4 @@
-import { ReactComponent as MyAutIDLogo } from "@assets/MyAutIdLogoToolbarPath.svg";
+import MyAutIDLogo from "@assets/MyAutIdLogoToolbarPath.svg?react";
 import {
   Box,
   styled,
@@ -26,8 +26,8 @@ import { AutTextField } from "@theme/field-text-styles";
 import { useNavigate } from "react-router-dom";
 import { DautPlaceholder } from "@components/DAutConnect";
 import { AutButtonVariant } from "@components/AutButton";
-import { SocialUrls } from "@aut-labs/sdk/dist/models/aut.model";
 import { socialIcons } from "@utils/social-icons";
+import { SocialUrls } from "@aut-labs/sdk";
 
 const MiddleWrapper = styled(Box)(() => ({
   display: "flex",

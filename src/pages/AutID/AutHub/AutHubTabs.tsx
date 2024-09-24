@@ -1,7 +1,7 @@
 import { Box, SvgIcon, Typography, useTheme } from "@mui/material";
 import { AutHubTasksTable } from "./AutHubTasksTable";
 import AutTabs from "@components/AutTabs";
-import { ReactComponent as UsersIcon } from "@assets/autos/users.svg";
+import UsersIcon from "@assets/autos/users.svg?react";
 import { AutOsButton } from "@components/AutButton";
 
 const mocktabs = [

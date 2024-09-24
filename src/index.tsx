@@ -17,10 +17,10 @@ import AutTheme from "./theme/theme";
 import CssBaseline from "@mui/material/CssBaseline";
 import { ApolloProvider } from "@apollo/client";
 import { apolloClient } from "@store/graphql";
-import { wagmiConfig } from "@aut-labs/connector";
+import { wagmiConfig, WalletConnectorProvider } from "@aut-labs/connector";
 
 // markerSDK.loadWidget({
-//   destination: `${process.env.REACT_APP_MARKER}`,
+//   destination: `${process.env.VITE_MARKER}`,
 //   reporter: {
 //     email: "frontend@aut.id",
 //     fullName: "My ĀutID"
@@ -28,7 +28,7 @@ import { wagmiConfig } from "@aut-labs/connector";
 // });
 
 // Sentry.init({
-//   dsn: `https://8f91c8136aa64eb294261b7dc8e09929@o1432500.ingest.sentry.io/${process.env.REACT_APP_SENTRY}`,
+//   dsn: `https://8f91c8136aa64eb294261b7dc8e09929@o1432500.ingest.sentry.io/${process.env.VITE_SENTRY}`,
 //   integrations: [new BrowserTracing(), new SentryRRWeb({})],
 //   tracesSampleRate: 1.0,
 //   enabled: false
@@ -43,16 +43,21 @@ root.render(
   <ApolloProvider client={apolloClient}>
     <QueryClientProvider client={queryClient}>
       <WagmiProvider config={wagmiConfig}>
-        <StyledEngineProvider injectFirst>
-          <ThemeProvider theme={AutTheme}>
-            <CssBaseline />
-            <Provider store={store}>
-              <BrowserRouter>
-                <App />
-              </BrowserRouter>
-            </Provider>
-          </ThemeProvider>
-        </StyledEngineProvider>
+        <WalletConnectorProvider
+          defaultChainId={+environment.defaultChainId}
+          requestSig={false}
+        >
+          <StyledEngineProvider injectFirst>
+            <ThemeProvider theme={AutTheme}>
+              <CssBaseline />
+              <Provider store={store}>
+                <BrowserRouter>
+                  <App />
+                </BrowserRouter>
+              </Provider>
+            </ThemeProvider>
+          </StyledEngineProvider>
+        </WalletConnectorProvider>
       </WagmiProvider>
     </QueryClientProvider>
   </ApolloProvider>

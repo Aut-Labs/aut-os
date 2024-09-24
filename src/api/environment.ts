@@ -7,19 +7,19 @@ export enum EnvMode {
 
 export const swEnvVariables = {
   // app config
-  env: "REACT_APP_NODE_ENV",
-  apiUrl: "REACT_APP_API_URL",
-  interactionsApiUrl: "REACT_APP_INTERACTIONS_API",
-  graphApiUrl: "REACT_APP_GRAPH_API_URL",
+  env: "VITE_NODE_ENV",
+  apiUrl: "VITE_API_URL",
+  interactionsApiUrl: "VITE_INTERACTIONS_API",
+  graphApiUrl: "VITE_GRAPH_API_URL",
 
   // Aut networks
-  networkEnv: "REACT_APP_NETWORK_ENV",
-  defaultChainId: "REACT_APP_DEFAULT_CHAIN_ID",
+  networkEnv: "VITE_NETWORK_ENV",
+  defaultChainId: "VITE_DEFAULT_CHAIN_ID",
 
   // IPFS storage
-  ipfsApiKey: "REACT_APP_IPFS_API_KEY",
-  ipfsApiSecret: "REACT_APP_IPFS_API_SECRET",
-  ipfsGatewayUrl: "REACT_APP_IPFS_GATEWAY_URL"
+  ipfsApiKey: "VITE_IPFS_API_KEY",
+  ipfsApiSecret: "VITE_IPFS_API_SECRET",
+  ipfsGatewayUrl: "VITE_IPFS_GATEWAY_URL"
 };
 
 export const environment: typeof swEnvVariables =

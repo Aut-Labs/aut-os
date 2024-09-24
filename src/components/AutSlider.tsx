@@ -83,7 +83,7 @@ const StyledSlider = styled(Slider)<CustomSliderProps>(
     ".MuiSlider-track": {
       borderRight: "0",
       background:
-        // eslint-disable-next-line max-len
+         
         "transparent linear-gradient(45.57deg, #009fe3 0%, #0399de 8%, #0e8bd3 19%, #2072bf 30%, #3a50a4 41%, #5a2583 53%, #453f94 71%, #38519f 88%, #3458a4 100%) 0% 0%"
     },
 
@@ -93,7 +93,7 @@ const StyledSlider = styled(Slider)<CustomSliderProps>(
   })
 );
 
-/* eslint-disable max-len */
+ 
 export function CommitmentMessage({ value, children = null }) {
   const message = CommitmentMessages(value);
   return (

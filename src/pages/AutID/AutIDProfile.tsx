@@ -1,5 +1,4 @@
-import { ReactComponent as CalendarCheckIcon } from "@assets/autos/calendar-check.svg";
-
+import CalendarCheckIcon from "@assets/autos/calendar-check.svg?react";
 import {
   Avatar,
   Box,
@@ -32,7 +31,6 @@ import { AutOsButton } from "@components/AutButton";
 import { SubtitleWithInfo } from "@components/SubtitleWithInfoIcon";
 import { IsEditingProfile, setOpenEditProfile } from "@store/ui-reducer";
 import { useAccount } from "wagmi";
-import { SocialUrls } from "@aut-labs/sdk/dist/models/aut.model";
 import AutEditProfileDialog from "@components/AutEditProfileDialog";
 import AutTabs from "@components/AutTabs";
 import AutMap from "./AutIDMap";
@@ -43,6 +41,7 @@ import { socialsWithIcons } from "@utils/social-icons";
 import AutHubList from "./AutHub/AutHubList";
 import OpenTask from "../Tasks/OpenTask/OpenTask";
 import DiscordTask from "../Tasks/DiscordTask/DiscordTask";
+import { SocialUrls } from "@aut-labs/sdk";
 
 const { FormWrapper, FollowWrapper, IconContainer } = EditContentElements;
 

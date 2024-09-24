@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { FC, useMemo } from "react";
 import { Box, Popover, PopoverProps, Typography } from "@mui/material";
 import { calculateIS } from "./InteractionMap/misc/is-calculator";
 
@@ -13,7 +13,7 @@ interface LinkStatsPopoverProps {
   onMouseLeave?: any;
 }
 
-const LinkStatsPopover: React.FC<LinkStatsPopoverProps> = ({
+const LinkStatsPopover: FC<LinkStatsPopoverProps> = ({
   type,
   anchorPos = null,
   anchorEl,
@@ -54,13 +54,13 @@ const LinkStatsPopover: React.FC<LinkStatsPopoverProps> = ({
     return { link, centralNode };
   }, [data]);
 
+  const getIsStrength = useMemo(() => {
+    return calculateIS(data?.source, data?.target, centralNode) || 0;
+  }, [data, centralNode]);
+
   if (!link || !centralNode) {
     return null;
   }
-
-  const getIsStrength = useMemo(() => {
-    return calculateIS(data?.source, data?.target, centralNode) || 0;
-  }, [data]);
 
   return (
     <Popover

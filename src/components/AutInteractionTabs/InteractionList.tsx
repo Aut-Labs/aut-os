@@ -210,7 +210,7 @@ const InteractionList = ({ isLoading = false, interactions = [] }: any) => {
   const theme = useTheme();
   const dispatch = useAppDispatch();
   const [verifySuccess, setVerifySuccess] = useState(null);
-  const { useAuthenticatedAction } = useAuthenticatedApi();
+  const { authenticatedAction } = useAuthenticatedApi();
 
   const verifyInteraction = async (interaction) => {
     dispatch(
@@ -219,7 +219,7 @@ const InteractionList = ({ isLoading = false, interactions = [] }: any) => {
         status: ResultState.Loading
       })
     );
-    await useAuthenticatedAction(async (jwt) => {
+    await authenticatedAction(async (jwt) => {
       setTimeout(() => {
         setVerifySuccess(true);
         dispatch(
