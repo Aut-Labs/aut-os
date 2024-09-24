@@ -41,6 +41,8 @@ import AutID3DBadgeDialog from "./AutIDBadge/AutID3DBadgeDialog";
 import AutBadge2DDialog from "./AutIDBadge/2DBadge";
 import { socialsWithIcons } from "@utils/social-icons";
 import AutHubList from "./AutHub/AutHubList";
+import OpenTask from "../Tasks/OpenTask/OpenTask";
+import DiscordTask from "../Tasks/DiscordTask/DiscordTask";
 
 const { FormWrapper, FollowWrapper, IconContainer } = EditContentElements;
 
@@ -133,6 +135,21 @@ const AutIDProfile = () => {
           hubs: autID.properties.hubs
         },
         component: PluginList
+      },
+      {
+        label: "Plugins 🔒",
+        // label: (
+        //   <Tooltip title="Coming soon!">
+        //     <Typography>Plugins 🔒</Typography>
+        //   </Tooltip>
+        // ),
+        disabled: false,
+        props: {
+          hubs: autID.properties.hubs
+        },
+        // component: QuizTask
+        // component: OpenTask
+        component: DiscordTask
       }
     ];
     setTabs(tabs);
