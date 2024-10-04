@@ -139,7 +139,7 @@ const HubListItem = memo(({ row }: { row: AutOSHub }) => {
                   textDecoration: "none"
                 }}
                 {...(isAddressTheConnectedUser && {
-                  to: `edit-hub/${row.properties.address}`,
+                  to: `hub/${row.properties.address}`,
                   component: Link
                 })}
               >

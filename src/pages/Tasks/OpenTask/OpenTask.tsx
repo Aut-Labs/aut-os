@@ -1,7 +1,6 @@
 /* eslint-disable no-useless-escape */
 /* eslint-disable max-len */
 
-import { PluginDefinition, Task } from "@aut-labs/sdk";
 import AutLoading from "@components/AutLoading";
 import {
   Box,
@@ -18,26 +17,23 @@ import { memo, useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useSearchParams, useParams, useNavigate } from "react-router-dom";
 import TaskDetails from "../Shared/TaskDetails";
-import { TaskStatus } from "@aut-labs/sdk/dist/models/task";
 import SuccessDialog from "@components/Dialog/SuccessPopup";
-import { StepperButton } from "@components/StepperButton";
 import { useAccount } from "wagmi";
 import { FormHelperText } from "@components/Fields/AutFields";
 import { ipfsCIDToHttpUrl } from "@utils/ipfs";
 import { TaskFileUpload } from "@components/FileUpload";
-import { url } from "inspector";
 import { AutOsButton } from "@components/AutButton";
-
-interface PluginParams {
-  plugin: PluginDefinition;
-}
+import { TaskStatus } from "@store/model";
+import LoadingDialog from "@components/Dialog/LoadingPopup";
+import { updateContributionById } from "@store/contributions/contributions.reducer";
+import { useDispatch } from "react-redux";
+import SubmitDialog from "@components/Dialog/SubmitDialog";
 
 interface UserSubmitContentProps {
-  task: any;
+  contribution: any;
   userAddress: string;
   isLoadingTasks: boolean;
-  submission?: Task;
-  plugin: PluginDefinition;
+  submission?: any;
 }
 
 const errorTypes = {
@@ -45,11 +41,12 @@ const errorTypes = {
 };
 
 const UserSubmitContent = ({
-  task,
+  contribution,
   userAddress,
-  isLoadingTasks,
-  plugin
+  isLoadingTasks
 }: UserSubmitContentProps) => {
+  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
   const [initialized, setInitialized] = useState(false);
   const navigate = useNavigate();
@@ -62,14 +59,14 @@ const UserSubmitContent = ({
     }
   });
 
-  debugger;
+  const { autAddress, hubAddress } = useParams();
 
   useEffect(() => {
-    if (!initialized && task) {
-      setValue("openTask", task.submission?.description);
+    if (!initialized && contribution) {
+      setValue("openTask", contribution.submission?.description);
       setInitialized(true);
     }
-  }, [initialized, task]);
+  }, [initialized, contribution]);
 
   //   const [submitTask, { isSuccess, error, isError, isLoading, reset }] =
   //     useSubmitOpenTaskMutation();
@@ -81,6 +78,20 @@ const UserSubmitContent = ({
   //   }, [isSuccess]);
 
   const onSubmit = async (values) => {
+    setLoading(true);
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    dispatch(
+      updateContributionById({
+        id: contribution.id,
+        data: {
+          ...contribution,
+          status: TaskStatus.Submitted
+        }
+      })
+    );
+    setLoading(false);
+    setOpenSubmitSuccess(true);
+
     // submitTask({
     //   userAddress,
     //   file: values.attachment,
@@ -110,8 +121,8 @@ const UserSubmitContent = ({
   //   return task.metadata.properties.textRequired;
   // }, [task]);
 
-  const textRequired = task.metadata.properties.textRequired;
-  const attachmentType = task.metadata.properties.attachmentType;
+  const textRequired = contribution?.metadata?.properties?.textRequired;
+  const attachmentType = contribution?.metadata?.properties?.attachmentType;
 
   return (
     <Stack
@@ -129,28 +140,38 @@ const UserSubmitContent = ({
       }}
     >
       {/* <ErrorDialog handleClose={() => reset()} open={isError} message={error} />
-      <LoadingDialog open={isLoading} message="Submitting task..." /> */}
-      <SuccessDialog
-        open={openSubmitSuccess}
-        message="Congrats!"
+       */}
+      {/* <LoadingDialog open={true} message="Submitting contribution..." backdropFilter={true} /> */}
+      <SubmitDialog
+        open={openSubmitSuccess || loading}
+        mode={openSubmitSuccess ? "success" : "loading"}
+        backdropFilter={true}
+        message={loading ? "" : "Congratulations!"}
         titleVariant="h2"
-        subtitle="You successfully submitted the task!"
+        subtitle={
+          loading
+            ? "Submitting contribution..."
+            : "Your submission has been successful!"
+        }
         subtitleVariant="subtitle1"
         handleClose={() => {
-          setOpenSubmitSuccess(false);
-          navigate({
-            pathname: "/quest",
-            search: searchParams.toString()
-          });
+          if (!loading) {
+            setOpenSubmitSuccess(false);
+            navigate({
+              pathname: `/${autAddress}/hub/${hubAddress}`,
+              search: searchParams.toString()
+            });
+          }
         }}
-      ></SuccessDialog>
+      ></SubmitDialog>
 
-      {task?.status === TaskStatus.Created ||
-      task?.status === TaskStatus.Taken ? (
+      {contribution?.status === TaskStatus.Created ||
+      contribution?.status === TaskStatus.Taken ? (
         <Card
           sx={{
-            bgcolor: "nightBlack.main",
+            border: "1px solid",
             borderColor: "divider",
+            backgroundColor: "rgba(255, 255, 255, 0.08)",
             borderRadius: "16px",
             boxShadow: 3
           }}
@@ -167,7 +188,7 @@ const UserSubmitContent = ({
               textAlign="center"
               p="20px"
             >
-              {task?.metadata?.description}
+              {contribution?.metadata?.description}
             </Typography>
             {textRequired && (
               <Controller
@@ -182,8 +203,8 @@ const UserSubmitContent = ({
                     <AutTextField
                       name={name}
                       disabled={
-                        task.status === TaskStatus.Submitted ||
-                        task.status === TaskStatus.Finished
+                        contribution.status === TaskStatus.Submitted ||
+                        contribution.status === TaskStatus.Finished
                       }
                       value={value || ""}
                       sx={{ mb: "20px" }}
@@ -221,8 +242,8 @@ const UserSubmitContent = ({
                       <AutTextField
                         name={name}
                         disabled={
-                          task.status === TaskStatus.Submitted ||
-                          task.status === TaskStatus.Finished
+                          contribution.status === TaskStatus.Submitted ||
+                          contribution.status === TaskStatus.Finished
                         }
                         value={value || ""}
                         sx={{ mt: "20px" }}
@@ -308,7 +329,7 @@ const UserSubmitContent = ({
               flexDirection: "column"
             }}
           >
-            {(task as any)?.status === TaskStatus.Finished && (
+            {(contribution as any)?.status === TaskStatus.Finished && (
               <Stack direction="column" alignItems="flex-end" mb="15px">
                 <Chip label="Approved" color="success" size="small" />
               </Stack>
@@ -320,10 +341,10 @@ const UserSubmitContent = ({
                 textAlign="center"
                 p="5px"
               >
-                {task?.metadata?.description}
+                {contribution?.metadata?.description}
               </Typography>
               <Typography variant="caption" className="text-secondary">
-                Task Description
+                Contribution Description
               </Typography>
             </Stack>
 
@@ -346,7 +367,7 @@ const UserSubmitContent = ({
                       variant="body"
                       target="_blank"
                       href={ipfsCIDToHttpUrl(
-                        task?.submission?.properties["fileUri"]
+                        contribution?.submission?.properties["fileUri"]
                       )}
                     >
                       Open attachment
@@ -372,8 +393,8 @@ const UserSubmitContent = ({
           }
         }}
       >
-        {(task?.status === TaskStatus.Created ||
-          task?.status === TaskStatus.Taken) && (
+        {(contribution?.status === TaskStatus.Created ||
+          contribution?.status === TaskStatus.Taken) && (
           <Box
             sx={{
               width: "100%",
@@ -410,7 +431,7 @@ const UserSubmitContent = ({
   );
 };
 
-const OpenTask = ({ plugin }: PluginParams) => {
+const OpenTask = ({ contribution }: any) => {
   const [searchParams] = useSearchParams();
   const { address: userAddress } = useAccount();
 
@@ -450,21 +471,6 @@ const OpenTask = ({ plugin }: PluginParams) => {
   //   );
 
   const isLoading = false;
-
-  const task = {
-    status: TaskStatus.Created,
-    metadata: {
-      name: "Task Name",
-      description: "Task Description",
-      status: TaskStatus.Created,
-      properties: {
-        attachmentType: "text",
-        attachmentRequired: true,
-        textRequired: true
-      }
-    }
-  };
-
   const submission = null;
 
   return (
@@ -479,13 +485,12 @@ const OpenTask = ({ plugin }: PluginParams) => {
         position: "relative"
       }}
     >
-      {task ? (
+      {contribution ? (
         <>
-          <TaskDetails task={submission || task} />
+          <TaskDetails task={submission || contribution} />
           <UserSubmitContent
             // task={submission || task}
-            task={task}
-            plugin={plugin}
+            contribution={contribution}
             isLoadingTasks={isLoading}
             userAddress={userAddress}
           />

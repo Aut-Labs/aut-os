@@ -1,8 +1,7 @@
-import { PluginDefinition } from "@aut-labs/sdk";
 import AutLoading from "@components/AutLoading";
-import { Container, Stack, Typography } from "@mui/material";
+import { Box, Container, Stack, Typography } from "@mui/material";
 import { memo, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   useLocation,
   useNavigate,
@@ -10,42 +9,32 @@ import {
   useSearchParams
 } from "react-router-dom";
 import TaskDetails from "../Shared/TaskDetails";
-import { PluginDefinitionType } from "@aut-labs/sdk/dist/models/plugin";
-import { TaskStatus } from "@aut-labs/sdk/dist/models/task";
 import ErrorDialog from "@components/Dialog/ErrorPopup";
 import LoadingDialog from "@components/Dialog/LoadingPopup";
 import SuccessDialog from "@components/Dialog/SuccessPopup";
 import { StepperButton } from "@components/StepperButton";
 import { useAccount } from "wagmi";
-import { useOAuth } from "src/pages/Oauth2/oauth2";
 import { AutOsButton } from "@components/AutButton";
+import { TaskStatus } from "@store/model";
+import { useOAuth } from "@components/OAuth";
+import { updateContributionById } from "@store/contributions/contributions.reducer";
+import SubmitDialog from "@components/Dialog/SubmitDialog";
 
-interface PluginParams {
-  plugin: PluginDefinition;
-}
-
-const JoinDiscordTask = ({ plugin }: PluginParams) => {
+const JoinDiscordTask = ({ contribution }: any) => {
+  const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
+  const [loading, setLoading] = useState(false);
   const location = useLocation();
   const params = useParams();
   const { address: userAddress } = useAccount();
-  //   const isAdmin = useSelector(IsAdmin);
+  // const isAdmin = useSelector(IsAdmin);
   const isAdmin = false;
   const { getAuthDiscord, authenticating } = useOAuth();
   const [joinClicked, setJoinClicked] = useState(false);
   const [openSubmitSuccess, setOpenSubmitSuccess] = useState(false);
   const navigate = useNavigate();
+  const { autAddress, hubAddress } = useParams();
 
-  const task = {
-    metadata: {
-      name: "Join Discord",
-      description: "Join the discord server",
-      properties: {
-        inviteUrl: "https://discord.gg/invite"
-      }
-    },
-    status: TaskStatus.Created
-  };
 
   //   const { task, isLoading: isLoadingTasks } = useGetAllTasksPerQuestQuery(
   //     {
@@ -77,6 +66,19 @@ const JoinDiscordTask = ({ plugin }: PluginParams) => {
   //   ] = useSubmitJoinDiscordTaskMutation();
 
   const onSubmit = async () => {
+    setLoading(true);
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    dispatch(
+      updateContributionById({
+        id: contribution.id,
+        data: {
+          ...contribution,
+          status: TaskStatus.Submitted
+        }
+      })
+    );
+    setLoading(false);
+    setOpenSubmitSuccess(true);
     // await getAuth(
     //   async (data) => {
     //     const { access_token } = data;
@@ -114,8 +116,14 @@ const JoinDiscordTask = ({ plugin }: PluginParams) => {
       }}
     >
       {/* <ErrorDialog handleClose={() => reset()} open={isError} message={error} />
-      <LoadingDialog open={isLoading} message="Submitting task..." /> */}
+       */}
+      {/* <LoadingDialog
+        open={loading}
+        message="Submitting contribution..."
+        backdropFilter={true}
+      />
       <SuccessDialog
+        backdropFilter={true}
         open={openSubmitSuccess}
         message="Congrats!"
         titleVariant="h2"
@@ -128,11 +136,34 @@ const JoinDiscordTask = ({ plugin }: PluginParams) => {
             search: searchParams.toString()
           });
         }}
-      ></SuccessDialog>
+      ></SuccessDialog> */}
 
-      {task ? (
+      <SubmitDialog
+        open={openSubmitSuccess || loading}
+        mode={openSubmitSuccess ? "success" : "loading"}
+        backdropFilter={true}
+        message={loading ? "" : "Congratulations!"}
+        titleVariant="h2"
+        subtitle={
+          loading
+            ? "Submitting contribution..."
+            : "Your submission has been successful!"
+        }
+        subtitleVariant="subtitle1"
+        handleClose={() => {
+          if (!loading) {
+            setOpenSubmitSuccess(false);
+            navigate({
+              pathname: `/${autAddress}/hub/${hubAddress}`,
+              search: searchParams.toString()
+            });
+          }
+        }}
+      ></SubmitDialog>
+
+      {contribution ? (
         <>
-          <TaskDetails task={task} />
+          <TaskDetails task={contribution} />
           <Stack
             direction="column"
             gap={8}
@@ -165,7 +196,7 @@ const JoinDiscordTask = ({ plugin }: PluginParams) => {
                   sx={{
                     width: "100px"
                   }}
-                  disabled={task?.status !== TaskStatus.Created}
+                  disabled={contribution?.status !== TaskStatus.Created}
                   onClick={() => onSubmit()}
                 >
                   <Typography
@@ -186,13 +217,13 @@ const JoinDiscordTask = ({ plugin }: PluginParams) => {
                     width: "100px"
                   }}
                   disabled={
-                    task?.status !== TaskStatus.Created
+                    contribution?.status !== TaskStatus.Created
                     // || isLoadingTasks
                   }
                   onClick={() => {
                     setJoinClicked(true);
                     window.open(
-                      task.metadata.properties["inviteUrl"],
+                      contribution.metadata.properties["inviteUrl"],
                       "_blank"
                     );
                   }}
@@ -224,7 +255,9 @@ const JoinDiscordTask = ({ plugin }: PluginParams) => {
                   Join Discord
                 </Button> */}
             </Stack>
-            {/* <Box
+            {(contribution?.status === TaskStatus.Created ||
+              contribution?.status === TaskStatus.Taken) && (
+              <Box
                 sx={{
                   width: "100%",
                   display: "flex",
@@ -235,13 +268,27 @@ const JoinDiscordTask = ({ plugin }: PluginParams) => {
                   }
                 }}
               >
-                <StepperButton
-                  label="Confirm"
-                  disabled={task?.status !== TaskStatus.Created}
-                  onClick={handleSubmit(onSubmit)}
-                  sx={{ width: "250px" }}
-                />
-              </Box> */}
+                {" "}
+                <AutOsButton
+                  type="button"
+                  color="primary"
+                  variant="outlined"
+                  sx={{
+                    width: "100px"
+                  }}
+                  onClick={onSubmit}
+                  disabled={!joinClicked}
+                >
+                  <Typography
+                    fontWeight="bold"
+                    fontSize="16px"
+                    lineHeight="26px"
+                  >
+                    Confirm
+                  </Typography>
+                </AutOsButton>
+              </Box>
+            )}
           </Stack>
         </>
       ) : (

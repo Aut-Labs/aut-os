@@ -116,7 +116,7 @@ const AutIDProfile = () => {
         //     </Tooltip>
         //   </>
         // ),
-        disabled: true,
+        disabled: false,
         props: {
           hubs: autID.properties.hubs
         },
@@ -134,21 +134,6 @@ const AutIDProfile = () => {
           hubs: autID.properties.hubs
         },
         component: PluginList
-      },
-      {
-        label: "Plugins 🔒",
-        // label: (
-        //   <Tooltip title="Coming soon!">
-        //     <Typography>Plugins 🔒</Typography>
-        //   </Tooltip>
-        // ),
-        disabled: false,
-        props: {
-          hubs: autID.properties.hubs
-        },
-        // component: QuizTask
-        // component: OpenTask
-        component: DiscordTask
       }
     ];
     setTabs(tabs);

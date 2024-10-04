@@ -4,12 +4,14 @@ import autReducer from "./aut/aut.reducer";
 import walletProvideReducer from "./WalletProvider/WalletProvider";
 import pluginsReducer from "./plugins/plugins.reducer";
 import interactionsReducer from "./interactions/interactions.reducer";
+import contributionsReducer from "./contributions/contributions.reducer";
 
 export const reducers = combineReducers({
   ui: uiSliceReducer,
   aut: autReducer,
   plugin: pluginsReducer,
   interaction: interactionsReducer,
+  contribution: contributionsReducer,
   walletProvider: walletProvideReducer
 });
 

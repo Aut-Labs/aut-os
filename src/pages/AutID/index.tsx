@@ -19,6 +19,8 @@ import PerfectScrollbar from "react-perfect-scrollbar";
 import AutToolBar from "@components/AutToolBar";
 import AutLoading from "@components/AutLoading";
 import { useAccount } from "wagmi";
+import OpenTask from "../Tasks/OpenTask/OpenTask";
+import Contributions from "../Tasks/Contributions/Contributions";
 
 const AutIDProfile = lazy(() => import("./AutIDProfile"));
 const AutHubEdit = lazy(() => import("./AutHub/AutHubEdit"));
@@ -153,8 +155,12 @@ const AutID = () => {
                       {isAddressTheConnectedUser && (
                         <>
                           <Route
-                            path="edit-hub/:hubAddress"
+                            path="hub/:hubAddress"
                             element={<AutHubEdit />}
+                          />
+                            <Route
+                            path="hub/:hubAddress/contribution/:id"
+                            element={<Contributions />}
                           />
                         </>
                       )}

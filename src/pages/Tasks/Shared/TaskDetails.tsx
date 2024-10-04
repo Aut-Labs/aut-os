@@ -1,4 +1,3 @@
-import { Task } from "@aut-labs/sdk";
 import {
   Box,
   Button,
@@ -8,15 +7,18 @@ import {
 } from "@mui/material";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { memo } from "react";
-import { Link, useSearchParams } from "react-router-dom";
-
-interface TaskDetailsParams {
-  task: Task;
-}
+import { Link, useParams, useSearchParams } from "react-router-dom";
+import { format } from "date-fns";
+import { getContributionTypeSubtitle } from "@utils/format-contribution-type";
 
 const TaskDetails = ({ task }: any) => {
   const [searchParams] = useSearchParams();
+  const { hubAddress, autAddress } = useParams();
   const isLoading = false;
+
+  const contributionType = getContributionTypeSubtitle(
+    task?.metadata?.contributionType
+  );
 
   return (
     <>
@@ -45,7 +47,7 @@ const TaskDetails = ({ task }: any) => {
                   sm: "0"
                 }
               }}
-              to={searchParams.get("returnUrl")}
+              to={`/${autAddress}/hub/${hubAddress}`}
               component={Link}
             >
               {/* {searchParams.get("returnUrlLinkName") || "Back"} */}
@@ -59,7 +61,7 @@ const TaskDetails = ({ task }: any) => {
           </Stack>
 
           <Typography
-            mt={2}
+            mt={1}
             mx="auto"
             textAlign="center"
             color="white"
@@ -72,7 +74,7 @@ const TaskDetails = ({ task }: any) => {
             }}
             variant="body"
           >
-            {task?.metadata?.description}
+            {contributionType}
           </Typography>
 
           {/* <OverflowTooltip

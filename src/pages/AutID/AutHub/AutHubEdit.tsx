@@ -221,7 +221,7 @@ const AutHubEdit = () => {
     dispatch(setOpenCommitment(true));
   };
 
-  const nextPeriod = new Date("6/30/2024");
+  const nextPeriod = new Date("11/30/2024");
   const hubRep: number = 100;
   const userRep: number = 100;
 

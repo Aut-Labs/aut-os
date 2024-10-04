@@ -1,4 +1,3 @@
- 
 import {
   Dialog,
   DialogActions,
@@ -20,6 +19,10 @@ const AutStyledDialog = styled(Dialog)(({ theme }) => ({
     width: "420px",
     height: "420px",
     borderRadius: "30px",
+    ".MuiDialogContent-root": {
+      width: "100%",
+      height: "100%"
+    },
     boxShadow:
       "0px 16px 80px 0px #2E90FA, 0px 0px 16px 0px rgba(20, 200, 236, 0.64), 0px 0px 16px 0px rgba(20, 200, 236, 0.32)"
   },
@@ -39,7 +42,8 @@ export const DialogWrapper = ({
   open,
   onClose = null,
   fullScreen = false,
-  height = "280px",
+  backdropFilter = false,
+  height = "420px",
   width = "420px"
 }) => {
   const theme = useTheme();
@@ -51,6 +55,9 @@ export const DialogWrapper = ({
       {...(onClose && {
         onClose
       })}
+      sx={{
+        backdropFilter: backdropFilter ? "blur(30px)" : "none"
+      }}
     >
       <DialogContent
         sx={{

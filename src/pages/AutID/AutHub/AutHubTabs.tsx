@@ -3,40 +3,16 @@ import { AutHubTasksTable } from "./AutHubTasksTable";
 import AutTabs from "@components/AutTabs";
 import UsersIcon from "@assets/autos/users.svg?react";
 import { AutOsButton } from "@components/AutButton";
+import { TaskStatus } from "@store/model";
 
 const mocktabs = [
   {
-    label: "Open tasks",
-    props: {
-      // tasks: [
-      //   {
-      //     name: "Write a Blog Post",
-      //     description:
-      //       "Contribute to our blog by sharing your insights on the latest crypto trends and developments.",
-      //     startDate: new Date("2024-02-01"),
-      //     endDate: new Date("2024-02-05")
-      //   },
-      //   {
-      //     name: "Code Review Session",
-      //     description:
-      //       "Help review and optimize a fellow developer's smart contract. Your expertise is valuable to the community.",
-      //     startDate: new Date("2024-02-01"),
-      //     endDate: new Date("2024-02-10")
-      //   },
-      //   {
-      //     name: "Volunteer for Charity Drive",
-      //     description:
-      //       "Join our charity initiative by offering your time or resources to support a social cause.",
-      //     startDate: new Date("2024-03-01"),
-      //     endDate: new Date("2024-03-10")
-      //   }
-      // ]
-      tasks: []
-    },
+    label: "Contributions",
+    props: {},
     component: AutHubTasksTable
   },
   {
-    label: "Polls",
+    label: "Polls 🔒",
     props: {
       // tasks: [
       //   {
@@ -63,10 +39,12 @@ const mocktabs = [
       // ]
       tasks: []
     },
-    component: AutHubTasksTable
+    component: AutHubTasksTable,
+    disabled: true
   },
   {
-    label: "Events",
+    label: "Events 🔒",
+    disabled: true,
     props: {
       // tasks: [
       //   {

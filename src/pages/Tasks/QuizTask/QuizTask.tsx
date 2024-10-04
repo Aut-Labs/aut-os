@@ -1,5 +1,3 @@
-import { PluginDefinition } from "@aut-labs/sdk";
-import { Task, TaskStatus, TaskType } from "@aut-labs/sdk/dist/models/task";
 import AutLoading from "@components/AutLoading";
 import ErrorDialog from "@components/Dialog/ErrorPopup";
 import LoadingDialog from "@components/Dialog/LoadingPopup";
@@ -16,18 +14,16 @@ import {
 } from "@mui/material";
 import { memo, useEffect, useState } from "react";
 import { Controller, useFieldArray, useForm, useWatch } from "react-hook-form";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import SuccessDialog from "@components/Dialog/SuccessPopup";
 import { useAccount } from "wagmi";
-import { PluginDefinitionType } from "@aut-labs/sdk/dist/models/plugin";
 import TaskDetails from "../Shared/TaskDetails";
 import { StepperButton } from "@components/StepperButton";
 import { AutOsButton } from "@components/AutButton";
-
-interface PluginParams {
-  plugin: PluginDefinition;
-}
+import { TaskStatus } from "@store/model";
+import { updateContributionById } from "@store/contributions/contributions.reducer";
+import SubmitDialog from "@components/Dialog/SubmitDialog";
 
 export const taskStatuses: any = {
   [TaskStatus.Created]: {
@@ -45,25 +41,6 @@ export const taskStatuses: any = {
   [TaskStatus.Taken]: {
     label: "Taken",
     color: "info"
-  }
-};
-
-export const taskTypes = {
-  [TaskType.Open]: {
-    pluginType: PluginDefinitionType.OnboardingOpenTaskPlugin,
-    label: "Open Task"
-  },
-  //   [TaskType.ContractInteraction]: {
-  //     pluginType: PluginDefinitionType.OnboardingTransactionTaskPlugin,
-  //     label: "Contract Interaction"
-  //   },
-  [TaskType.Quiz]: {
-    pluginType: PluginDefinitionType.OnboardingQuizTaskPlugin,
-    label: "Multiple-Choice Quiz"
-  },
-  [TaskType.JoinDiscord]: {
-    pluginType: PluginDefinitionType.OnboardingJoinDiscordTaskPlugin,
-    label: "Join Discord"
   }
 };
 
@@ -201,8 +178,10 @@ const AnswersAdminView = memo(({ questionIndex, answers }: any) => {
   );
 });
 
-const QuizTask = ({ plugin }: PluginParams) => {
+const QuizTask = ({ contribution }: any) => {
   const [searchParams] = useSearchParams();
+  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
   //   const isAdmin = useSelector(IsAdmin);
   const isAdmin = false;
   const { address: userAddress } = useAccount();
@@ -210,6 +189,8 @@ const QuizTask = ({ plugin }: PluginParams) => {
   const [initialized, setInitialized] = useState(false);
   const navigate = useNavigate();
   const [openSubmitSuccess, setOpenSubmitSuccess] = useState(false);
+  const { autAddress, hubAddress } = useParams();
+
 
   //   const { task, isLoading: isLoadingTasks } = useGetAllTasksPerQuestQuery(
   //     {
@@ -235,36 +216,6 @@ const QuizTask = ({ plugin }: PluginParams) => {
   //     }
   //   );
 
-  const task: any = {
-    metadata: {
-      name: "Quiz",
-      description: "Answer the following questions",
-      status: TaskStatus.Created,
-      properties: {
-        questions: [
-          {
-            question: "What is the capital of France?",
-            answers: [
-              { value: "Paris", correct: true },
-              { value: "London", correct: false },
-              { value: "Berlin", correct: false },
-              { value: "Madrid", correct: false }
-            ]
-          },
-          {
-            question: "What is the capital of Germany?",
-            answers: [
-              { value: "Paris", correct: false },
-              { value: "London", correct: false },
-              { value: "Berlin", correct: true },
-              { value: "Madrid", correct: false }
-            ]
-          }
-        ]
-      }
-    }
-  };
-
   const { control, handleSubmit, getValues, setValue, formState } = useForm({
     mode: "onChange",
     defaultValues: {
@@ -278,11 +229,14 @@ const QuizTask = ({ plugin }: PluginParams) => {
   });
 
   useEffect(() => {
-    if (!initialized && task) {
-      setValue("questions", (task as any)?.metadata?.properties?.questions);
+    if (!initialized && contribution) {
+      setValue(
+        "questions",
+        (contribution as any)?.metadata?.properties?.questions
+      );
       setInitialized(true);
     }
-  }, [initialized, task]);
+  }, [initialized, contribution]);
 
   //   const [submitTask, { isSuccess, error, isError, isLoading, reset }] =
   //     useSubmitQuizTaskMutation();
@@ -294,7 +248,19 @@ const QuizTask = ({ plugin }: PluginParams) => {
   //   }, [isSuccess]);
 
   const onSubmit = async () => {
-    const values = getValues();
+    setLoading(true);
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    dispatch(
+      updateContributionById({
+        id: contribution.id,
+        data: {
+          ...contribution,
+          status: TaskStatus.Submitted
+        }
+      })
+    );
+    setLoading(false);
+    setOpenSubmitSuccess(true);
     // submitTask({
     //   userAddress,
     //   task,
@@ -320,8 +286,10 @@ const QuizTask = ({ plugin }: PluginParams) => {
       }}
     >
       {/* <ErrorDialog handleClose={() => reset()} open={isError} message={error} />
-      <LoadingDialog open={isLoading} message="Submitting task..." /> */}
+       */}
+      {/* <LoadingDialog open={loading} message="Submitting contribution..." backdropFilter={true} />
       <SuccessDialog
+      backdropFilter={true}
         open={openSubmitSuccess}
         message="Congrats!"
         titleVariant="h2"
@@ -334,10 +302,32 @@ const QuizTask = ({ plugin }: PluginParams) => {
             search: searchParams.toString()
           });
         }}
-      ></SuccessDialog>
-      {task ? (
+      ></SuccessDialog> */}
+       <SubmitDialog
+        open={openSubmitSuccess || loading}
+        mode={openSubmitSuccess ? "success" : "loading"}
+        backdropFilter={true}
+        message={loading ? "" : "Congratulations!"}
+        titleVariant="h2"
+        subtitle={
+          loading
+            ? "Submitting contribution..."
+            : "Your submission has been successful!"
+        }
+        subtitleVariant="subtitle1"
+        handleClose={() => {
+          if (!loading) {
+            setOpenSubmitSuccess(false);
+            navigate({
+              pathname: `/${autAddress}/hub/${hubAddress}`,
+              search: searchParams.toString()
+            });
+          }
+        }}
+      ></SubmitDialog>
+      {contribution ? (
         <>
-          <TaskDetails task={task} />
+          <TaskDetails task={contribution} />
           <Stack
             direction="column"
             gap={4}
@@ -352,37 +342,37 @@ const QuizTask = ({ plugin }: PluginParams) => {
               }
             }}
           >
-            {((task as any)?.metadata?.properties?.questions as any[])?.map(
-              (question, questionIndex) => (
-                <Card
-                  key={`questions.${questionIndex}.question`}
-                  sx={{
-                    bgcolor: "nightBlack.main",
-                    borderColor: "divider",
-                    borderRadius: "16px",
-                    boxShadow: 3
+            {(
+              (contribution as any)?.metadata?.properties?.questions as any[]
+            )?.map((question, questionIndex) => (
+              <Card
+                key={`questions.${questionIndex}.question`}
+                sx={{
+                  borderRadius: "16px",
+                  border: "1px solid",
+                  borderColor: "divider",
+                  backgroundColor: "rgba(255, 255, 255, 0.08)"
+                }}
+              >
+                <CardHeader
+                  titleTypographyProps={{
+                    fontFamily: "FractulAltBold",
+                    fontWeight: 900,
+                    color: "white",
+                    variant: "subtitle1"
                   }}
-                >
-                  <CardHeader
-                    titleTypographyProps={{
-                      fontFamily: "FractulAltBold",
-                      fontWeight: 900,
-                      color: "white",
-                      variant: "subtitle1"
-                    }}
-                    title={question?.question}
-                  />
-                  <CardContent>
-                    <Answers
-                      control={control}
-                      answers={question?.answers}
-                      questionIndex={questionIndex}
-                      taskStatus={task?.status}
-                    ></Answers>
-                  </CardContent>
-                </Card>
-              )
-            )}
+                  title={question?.question}
+                />
+                <CardContent>
+                  <Answers
+                    control={control}
+                    answers={question?.answers}
+                    questionIndex={questionIndex}
+                    taskStatus={contribution?.status}
+                  ></Answers>
+                </CardContent>
+              </Card>
+            ))}
 
             <Box
               sx={{
@@ -403,7 +393,8 @@ const QuizTask = ({ plugin }: PluginParams) => {
                   width: "100px"
                 }}
                 disabled={
-                  !formState.isValid || task?.status !== TaskStatus.Created
+                  !formState.isValid ||
+                  contribution?.status !== TaskStatus.Created
                   //   ||  isLoadingTasks
                 }
                 onClick={handleSubmit(onSubmit)}
