@@ -11,12 +11,14 @@ export interface AutState {
   selectedAutIDAddress: string;
   autID: AutOSAutID;
   hubs: AutOSHub[];
+  selectedHubAddress: string;
   autIDs: AutOSAutID[];
 }
 
 const initialState: AutState = {
   autIDs: [],
   hubs: [],
+  selectedHubAddress: "",
   autID: null,
   status: ResultState.Idle,
   errorMessage: "",
@@ -111,6 +113,8 @@ export const SelectedAutIDAddress = (state) =>
 export const AutIDs = (state) => state.aut.autIDs as AutOSAutID[];
 export const Hubs = (state) => state.aut.hubs as AutOSHub[];
 export const SelectedAutID = (state) => state.aut.autID as AutOSAutID;
+export const SelectedHubAddress = (state) =>
+  state.aut.selectedHubAddress as string;
 
 export const AutUpdateStatus = (state) => state.aut.status as ResultState;
 export const UpdateErrorMessage = (state) => state.aut.errorMessage as string;

@@ -17,7 +17,7 @@ const TaskDetails = ({ task }: any) => {
   const isLoading = false;
 
   const contributionType = getContributionTypeSubtitle(
-    task?.metadata?.contributionType
+    task?.contributionType
   );
 
   return (
@@ -56,7 +56,7 @@ const TaskDetails = ({ task }: any) => {
               </Typography>
             </Button>
             <Typography textAlign="center" color="white" variant="h3">
-              {task?.metadata?.name}
+              {task?.name}
             </Typography>
           </Stack>
 
@@ -81,7 +81,7 @@ const TaskDetails = ({ task }: any) => {
           typography={{
             maxWidth: "400px"
           }}
-          text={task?.metadata?.description}
+          text={task?.description}
         /> */}
         </Box>
       )}

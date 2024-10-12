@@ -232,7 +232,7 @@ const QuizTask = ({ contribution }: any) => {
     if (!initialized && contribution) {
       setValue(
         "questions",
-        (contribution as any)?.metadata?.properties?.questions
+        (contribution as any)?.properties?.questions
       );
       setInitialized(true);
     }

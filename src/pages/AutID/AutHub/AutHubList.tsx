@@ -33,7 +33,7 @@ export const HubTopWrapper = styled(Box)(({ theme }) => ({
   padding: "24px",
   borderBottom: "1px solid",
   borderColor: "inherit",
-  [theme.breakpoints.down("md")]: {
+  [theme.breakpoints.down("lg")]: {
     flexDirection: "column",
     justifyContent: "center",
     gap: "20px"
@@ -41,10 +41,10 @@ export const HubTopWrapper = styled(Box)(({ theme }) => ({
 }));
 export const HubBottomWrapper = styled(Box)(({ theme }) => ({
   display: "grid",
-  gridTemplateColumns: "4fr 4fr 2fr",
+  gridTemplateColumns: "4fr 4fr 2fr 2fr",
   borderColor: "inherit",
 
-  [theme.breakpoints.down("md")]: {
+  [theme.breakpoints.down("lg")]: {
     display: "flex",
     flexDirection: "column"
   }
@@ -273,7 +273,24 @@ const HubListItem = memo(({ row }: { row: AutOSHub }) => {
             }
           ></SubtitleWithInfo>
         </PropertiesWrapper>
-        <PropertiesWrapper sx={{}}>
+        <PropertiesWrapper sx={{
+            borderRight: {
+              xs: "0",
+              md: "1px solid"
+            },
+            borderBottom: {
+              xs: "1px solid",
+              md: "0"
+            },
+            borderRightColor: {
+              xs: "transparent",
+              md: "inherit"
+            },
+            borderBottomColor: {
+              xs: "inherit",
+              md: "transparent"
+            }
+          }}>
           <Typography
             variant="subtitle2"
             color="offWhite.main"
@@ -282,11 +299,28 @@ const HubListItem = memo(({ row }: { row: AutOSHub }) => {
             1.0
           </Typography>
           <SubtitleWithInfo
-            title="local rep"
+            title="score"
             description={
               isAddressTheConnectedUser
-                ? "This is your local reputation"
-                : `This is ${autID?.name}'s local reputation`
+                ? "This is your participation score"
+                : `This is ${autID?.name}'s participation score`
+            }
+          ></SubtitleWithInfo>
+        </PropertiesWrapper>
+        <PropertiesWrapper sx={{}}>
+          <Typography
+            variant="subtitle2"
+            color="offWhite.main"
+            fontWeight="normal"
+          >
+            100
+          </Typography>
+          <SubtitleWithInfo
+            title="points"
+            description={
+              isAddressTheConnectedUser
+                ? "These are your contribution points"
+                : `These are ${autID?.name}'s contribution points`
             }
           ></SubtitleWithInfo>
         </PropertiesWrapper>
@@ -336,7 +370,7 @@ const AutHubList = ({ isLoading = false, hubs = [] }: TableParamsParams) => {
         sx={{
           minWidth: {
             xs: "unset",
-            md: "700px"
+            lg: "700px"
           },
           display: "grid",
           gap: theme.spacing(2)

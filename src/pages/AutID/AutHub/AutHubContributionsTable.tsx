@@ -29,6 +29,7 @@ import {
 } from "@store/contributions/contributions.reducer";
 import { formatContributionType } from "@utils/format-contribution-type";
 import { TaskStatus } from "@store/model";
+import useQueryContributions from "@utils/hooks/GetContributions";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}, &.${tableCellClasses.body}`]: {
@@ -50,6 +51,14 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   }
 }));
 
+const generateRandomId = () => {
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+    const r = (Math.random() * 16) | 0,
+      v = c === "x" ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+};
+
 const TableListItem = memo((data: any) => {
   const dispatch = useDispatch();
   const { row } = data;
@@ -60,19 +69,23 @@ const TableListItem = memo((data: any) => {
   };
 
   const contributionType = useMemo(
-    () => formatContributionType(row?.metadata?.contributionType),
-    [row?.metadata?.contributionType]
+    () => formatContributionType(row?.contributionType),
+    [row?.contributionType]
   );
 
   const startDate = useMemo(() => {
-    // return format(new Date(row?.startDate), "dd.MM.yy '•' HH:mm").toString();
-    return format(new Date(row?.metadata?.startDate), "dd.MM.yy").toString();
-  }, [row?.metadata?.startDate]);
+    return format(
+      new Date(row?.properties?.startDate * 1000),
+      "dd.MM.yy"
+    ).toString();
+  }, [row?.properties?.startDate]);
 
   const endDate = useMemo(() => {
-    // return format(new Date(row?.endDate), "dd.MM.yy '•' HH:mm").toString();
-    return format(new Date(row?.metadata?.startDate), "dd.MM.yy").toString();
-  }, [row?.metadata?.endDate]);
+    return format(
+      new Date(row?.properties?.endDate * 1000),
+      "dd.MM.yy"
+    ).toString();
+  }, [row?.properties?.endDate]);
 
   return (
     <StyledTableRow
@@ -95,10 +108,10 @@ const TableListItem = memo((data: any) => {
       <StyledTableCell align="left">
         <Stack>
           <Typography variant="subtitle2" fontWeight="normal" color="white">
-            {row?.metadata?.name}
+            {row?.name}
           </Typography>
           <Typography variant="caption" fontWeight="normal" color="white">
-            {row?.metadata?.description}
+            {row?.description}
           </Typography>
         </Stack>
       </StyledTableCell>
@@ -155,7 +168,7 @@ const TableListItem = memo((data: any) => {
                 width: "100px"
               }}
               relative="path"
-              to={`contribution/${row.id}`}
+              to={`contribution/${row?.id}`}
               component={Link}
               onClick={() => handleContributionClick(row)}
             >
@@ -191,15 +204,32 @@ const TableListItem = memo((data: any) => {
 });
 
 export const AutHubTasksTable = ({ header }) => {
-  const tasks = useSelector(AllContributions);
-  // const dispatch = useDispatch();
-  // useEffect(() => {
-  //   dispatch(
-  //     updateContributionState({
-  //       contributions: tasks
-  //     })
-  //   );
-  // }, [dispatch, tasks]);
+  const dispatch = useDispatch();
+  const contributions = useSelector(AllContributions);
+
+  const {
+    data,
+    loading: isLoading,
+    refetch
+  } = useQueryContributions({
+    variables: {
+      skip: 0,
+      take: 1000
+    }
+  });
+  useEffect(() => {
+    if (!contributions.length) {
+      const updatedContributions = data?.map((item) => ({
+        ...item,
+        contributionType: "open",
+        status: TaskStatus.Created,
+        id: generateRandomId()
+      }));
+      dispatch(
+        updateContributionState({ contributions: updatedContributions })
+      );
+    }
+  }, [data]);
 
   const theme = useTheme();
   return (
@@ -250,7 +280,7 @@ export const AutHubTasksTable = ({ header }) => {
                   fontWeight="normal"
                   color="offWhite.dark"
                 >
-                  Contribution Type
+                  Type
                 </Typography>
               </StyledTableCell>
               <StyledTableCell align="left">
@@ -282,9 +312,9 @@ export const AutHubTasksTable = ({ header }) => {
               </StyledTableCell>
             </TableRow>
           </TableHead>
-          {tasks?.length ? (
+          {contributions?.length ? (
             <TableBody>
-              {tasks?.map((row, index) => (
+              {contributions?.map((row, index) => (
                 <TableListItem key={`table-row-${index}`} row={row} />
               ))}
             </TableBody>
