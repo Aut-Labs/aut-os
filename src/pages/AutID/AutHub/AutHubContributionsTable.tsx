@@ -94,14 +94,20 @@ const TableListItem = memo((data: any) => {
         "td, th": {
           padding: theme.spacing(3),
           "&:nth-of-type(1)": {
-            width: "50%"
+            width: "40%"
           },
           "&:nth-of-type(2)": {
-            width: "25%"
+            width: "20%"
           },
           "&:nth-of-type(3)": {
-            width: "25%"
-          }
+            width: "10%"
+          },
+          "&:nth-of-type(4)": {
+            width: "10%"
+          },
+          "&:nth-of-type(5)": {
+            width: "20%"
+          },
         }
       }}
     >
