@@ -36,11 +36,11 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     color: theme.palette.common.white,
     borderColor: "#576176",
     padding: theme.spacing(3),
-    "&:nth-of-type(2)": {
-      padding: `${theme.spacing(3)} 0 ${theme.spacing(3)} ${theme.spacing(3)}`
+    "&:nth-of-type(4)": {
+      padding: `${theme.spacing(3)} ${theme.spacing(1)} ${theme.spacing(3)} ${theme.spacing(3)}`
     },
-    "&:nth-of-type(3)": {
-      padding: `${theme.spacing(3)} ${theme.spacing(3)} ${theme.spacing(3)} 0`
+    "&:nth-of-type(5)": {
+      padding: `${theme.spacing(3)} ${theme.spacing(3)} ${theme.spacing(3)} ${theme.spacing(1)}`
     }
   }
 }));
@@ -106,8 +106,11 @@ const TableListItem = memo((data: any) => {
             width: "10%"
           },
           "&:nth-of-type(5)": {
-            width: "20%"
+            width: "10%"
           },
+          "&:nth-of-type(6)": {
+            width: "10%"
+          }
         }
       }}
     >
@@ -133,6 +136,11 @@ const TableListItem = memo((data: any) => {
             {contributionType}
           </Typography>
         </Box>
+      </StyledTableCell>
+      <StyledTableCell align="left">
+        <Typography variant="body" fontWeight="normal" color="white">
+          {`${row?.properties?.points || 0} ${row?.properties?.points === 1 ? "pt" : "pts"}`}
+        </Typography>
       </StyledTableCell>
       <StyledTableCell align="left">
         <Box
@@ -287,6 +295,15 @@ export const AutHubTasksTable = ({ header }) => {
                   color="offWhite.dark"
                 >
                   Type
+                </Typography>
+              </StyledTableCell>
+              <StyledTableCell align="left">
+                <Typography
+                  variant="body"
+                  fontWeight="normal"
+                  color="offWhite.dark"
+                >
+                  Points
                 </Typography>
               </StyledTableCell>
               <StyledTableCell align="left">
