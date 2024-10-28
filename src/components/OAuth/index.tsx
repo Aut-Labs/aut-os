@@ -128,9 +128,8 @@ export const useOAuthSocials = () => {
           if (error) {
             onFailure(error);
           } else {
-            // TODO: return this to api envs
             const response = await axios.post(
-              `http://localhost:4005/api/aut/config/oauth2AccessTokenDiscord`,
+              `${environment.apiUrl}/aut/config/oauth2AccessTokenDiscord`,
               {
                 code: message.data.payload.code,
                 callbackUrl
@@ -178,7 +177,7 @@ export const useOAuthSocials = () => {
 
     const callbackUrl = encodeURI(`${window.location.origin}/callback`);
     popupRef.current = openPopup(
-      `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=YWRmaEY4LU9aSkRXd2NoZlpiLVU6MTpjaQ&state=state&scope=tweet.read%20offline.access&redirect_uri=${callbackUrl}&code_challenge=challenge&code_challenge_method=plain`
+      `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=${environment.twitterClientId}&state=state&scope=tweet.read%20offline.access&redirect_uri=${callbackUrl}&code_challenge=challenge&code_challenge_method=plain`
     ) as any;
 
     async function handleMessageListener(message) {
@@ -268,7 +267,7 @@ export const useOAuthSocials = () => {
 
     const callbackUrl = encodeURI(`${window.location.origin}/callback`);
     popupRef.current = openPopup(
-      `https://github.com/login/oauth/authorize?response_type=code&client_id=796be80cc5997ad5b9e6&state=state&scope=read:user&redirect_uri=${callbackUrl}`
+      `https://github.com/login/oauth/authorize?response_type=code&client_id=${environment.githubClientId}&state=state&scope=read:user&redirect_uri=${callbackUrl}`
     ) as any;
 
     async function handleMessageListener(message) {
