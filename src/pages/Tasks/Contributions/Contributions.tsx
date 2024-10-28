@@ -8,6 +8,7 @@ import OpenTask from "../OpenTask/OpenTask";
 import DiscordTask from "../DiscordTask/DiscordTask";
 import QuizTask from "../QuizTask/QuizTask";
 import { useParams } from "react-router-dom";
+import useQueryContributions from "@utils/hooks/GetContributions";
 
 const Contributions = () => {
   let contribution = useSelector(SelectedContribution);
@@ -17,15 +18,18 @@ const Contributions = () => {
   if (!contribution) {
     contribution = contributions.find((c) => c.id === id);
   }
-
-  console.log(contribution);
   return (
     <>
-      {contribution?.metadata?.contributionType === "open" && <OpenTask contribution={contribution} />}
-      {contribution?.metadata?.contributionType === "discord" && <DiscordTask contribution={contribution} />}
-      {contribution?.metadata?.contributionType === "quiz" && <QuizTask contribution={contribution} />}
+      {contribution?.contributionType === "open" && (
+        <OpenTask contribution={contribution} />
+      )}
+      {contribution?.contributionType === "discord" && (
+        <DiscordTask contribution={contribution} />
+      )}
+      {contribution?.contributionType === "quiz" && (
+        <QuizTask contribution={contribution} />
+      )}
     </>
-   
   );
 };
 

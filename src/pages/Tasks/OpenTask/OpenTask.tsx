@@ -82,7 +82,7 @@ const UserSubmitContent = ({
     await new Promise((resolve) => setTimeout(resolve, 3000));
     dispatch(
       updateContributionById({
-        id: contribution.id,
+        id: contribution?.id,
         data: {
           ...contribution,
           status: TaskStatus.Submitted
@@ -113,16 +113,16 @@ const UserSubmitContent = ({
 
   // const attachmentType = useMemo(() => {
   //   // @ts-ignore
-  //   return task.metadata.properties.attachmentType;
+  //   return task.properties.attachmentType;
   // }, [task]);
 
   // const textRequired = useMemo(() => {
   //   // @ts-ignore
-  //   return task.metadata.properties.textRequired;
+  //   return task.properties.textRequired;
   // }, [task]);
 
-  const textRequired = contribution?.metadata?.properties?.textRequired;
-  const attachmentType = contribution?.metadata?.properties?.attachmentType;
+  const textRequired = contribution?.properties?.textRequired;
+  const attachmentType = contribution?.properties?.attachmentType;
 
   return (
     <Stack
@@ -188,7 +188,7 @@ const UserSubmitContent = ({
               textAlign="center"
               p="20px"
             >
-              {contribution?.metadata?.description}
+              {contribution?.description}
             </Typography>
             {textRequired && (
               <Controller
@@ -341,7 +341,7 @@ const UserSubmitContent = ({
                 textAlign="center"
                 p="5px"
               >
-                {contribution?.metadata?.description}
+                {contribution?.description}
               </Typography>
               <Typography variant="caption" className="text-secondary">
                 Contribution Description
@@ -350,7 +350,7 @@ const UserSubmitContent = ({
 
             {
               // @ts-ignore
-              task?.metadata?.properties?.attachmentRequired && (
+              task?.properties?.attachmentRequired && (
                 <Stack direction="column" alignItems="center">
                   <Typography
                     color="white"

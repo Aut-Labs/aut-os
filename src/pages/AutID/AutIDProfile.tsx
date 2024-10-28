@@ -108,7 +108,7 @@ const AutIDProfile = () => {
         component: AutMap
       },
       {
-        label: "Hubs 🔒",
+        label: "Hubs",
         // label: (
         //   <>
         //     <Tooltip title="Coming soon!" key="hub-label-tooltip">

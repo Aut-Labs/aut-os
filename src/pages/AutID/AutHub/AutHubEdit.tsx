@@ -1,4 +1,3 @@
- 
 import {
   Avatar,
   Badge,
@@ -123,6 +122,8 @@ const AutHubEdit = () => {
     autAddress: string;
     hubAddress: string;
   }>();
+
+  const { hubAddress } = params;
   const navigate = useNavigate();
   const status = useSelector(AutUpdateStatus);
   const errorMessage = useSelector(UpdateErrorMessage);
@@ -130,10 +131,18 @@ const AutHubEdit = () => {
   const selectedNetwork = useSelector(SelectedNetwork);
   const { address } = useAccount();
   const autID = useSelector(SelectedAutID);
-  const selectedHub = useSelector(SelectedHub(params.hubAddress));
-  const autIdHubState = useSelector(AutIdHubState(params.hubAddress));
+  const selectedHub = useSelector(SelectedHub(hubAddress));
+  const autIdHubState = useSelector(AutIdHubState(hubAddress));
   const roleName = useSelector(RoleName(params.hubAddress));
-  const commitmentTemplate = useSelector(CommitmentTemplate(params.hubAddress));
+  const commitmentTemplate = useSelector(CommitmentTemplate(hubAddress));
+
+  useEffect(() => {
+    dispatch(updateAutState({ selectedHubAddress: params.hubAddress }));
+    console.log(
+      "I dispatch updateAutState with selectedHubAddress: ",
+      hubAddress
+    );
+  }, [hubAddress]);
 
   const isAddressTheConnectedUser = useMemo(() => {
     return autID.isAutIDOwner(address);
@@ -792,8 +801,8 @@ const AutHubEdit = () => {
                                   zIndex: 5
                                 }}
                               >
-                                You’ve secured current Reputation! Now boost it
-                                up 💪
+                                You’ve secured your current Contribution! Now
+                                boost it up 💪
                               </Typography>
                             </Box>
                           )}
@@ -914,7 +923,26 @@ const AutHubEdit = () => {
                           description="This is your commitment"
                         ></SubtitleWithInfo>
                       </PropertiesWrapper>
-                      <PropertiesWrapper>
+                      <PropertiesWrapper
+                        sx={{
+                          borderRight: {
+                            xs: "0",
+                            md: "1px solid"
+                          },
+                          borderBottom: {
+                            xs: "1px solid",
+                            md: "0"
+                          },
+                          borderRightColor: {
+                            xs: "transparent",
+                            md: "inherit"
+                          },
+                          borderBottomColor: {
+                            xs: "inherit",
+                            md: "transparent"
+                          }
+                        }}
+                      >
                         <Typography
                           variant="subtitle2"
                           color="offWhite.main"
@@ -923,8 +951,21 @@ const AutHubEdit = () => {
                           1.0
                         </Typography>
                         <SubtitleWithInfo
-                          title="local rep"
-                          description="This is your local reputation."
+                          title="score"
+                          description="This is your participation score."
+                        ></SubtitleWithInfo>
+                      </PropertiesWrapper>
+                      <PropertiesWrapper>
+                        <Typography
+                          variant="subtitle2"
+                          color="offWhite.main"
+                          fontWeight="normal"
+                        >
+                          100
+                        </Typography>
+                        <SubtitleWithInfo
+                          title="points"
+                          description="These are your contribution points."
                         ></SubtitleWithInfo>
                       </PropertiesWrapper>
                     </HubBottomWrapper>

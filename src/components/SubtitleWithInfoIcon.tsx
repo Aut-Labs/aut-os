@@ -16,7 +16,8 @@ export const SubtitleWithInfo = ({ title, description }) => {
         sx={{
           display: "flex",
           justifyContent: "center",
-          alignItems: "center"
+          alignItems: "center",
+          textAlign: "center",
         }}
       >
         {title}

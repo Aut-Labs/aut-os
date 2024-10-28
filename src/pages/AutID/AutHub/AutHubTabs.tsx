@@ -1,5 +1,5 @@
 import { Box, SvgIcon, Typography, useTheme } from "@mui/material";
-import { AutHubTasksTable } from "./AutHubTasksTable";
+import { AutHubTasksTable } from "./AutHubContributionsTable";
 import AutTabs from "@components/AutTabs";
 import UsersIcon from "@assets/autos/users.svg?react";
 import { AutOsButton } from "@components/AutButton";
