@@ -16,7 +16,7 @@ import { StepperButton } from "@components/StepperButton";
 import { useAccount } from "wagmi";
 import { AutOsButton } from "@components/AutButton";
 import { TaskStatus } from "@store/model";
-import { useOAuth } from "@components/OAuth";
+import { useOAuth, useOAuthSocials } from "@components/OAuth";
 import { updateContributionById } from "@store/contributions/contributions.reducer";
 import SubmitDialog from "@components/Dialog/SubmitDialog";
 
@@ -29,12 +29,11 @@ const JoinDiscordTask = ({ contribution }: any) => {
   const { address: userAddress } = useAccount();
   // const isAdmin = useSelector(IsAdmin);
   const isAdmin = false;
-  const { getAuthDiscord, authenticating } = useOAuth();
+  const { getAuthDiscord, authenticating } = useOAuthSocials();
   const [joinClicked, setJoinClicked] = useState(false);
   const [openSubmitSuccess, setOpenSubmitSuccess] = useState(false);
   const navigate = useNavigate();
   const { autAddress, hubAddress } = useParams();
-
 
   //   const { task, isLoading: isLoadingTasks } = useGetAllTasksPerQuestQuery(
   //     {

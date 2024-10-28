@@ -24,7 +24,7 @@ import { AutTextField } from "@theme/field-text-styles";
 import { ipfsCIDToHttpUrl } from "@utils/ipfs";
 import { base64toFile, toBase64 } from "@utils/to-base-64";
 import AutOsFileUpload from "./Fields/AutOsFileUpload";
-import { useOAuth } from "@components/OAuth";
+import { useOAuth, useOAuthSocials } from "@components/OAuth";
 import { SelectedAutID } from "@store/aut/aut.reducer";
 import { useSelector } from "react-redux";
 import { AutOSAutID } from "@api/models/aut.model";
@@ -143,7 +143,7 @@ export enum SocialLinkPrefixes {
 
 function AutEditProfileDialog(props: EditDialogProps) {
   const { getAuthGithub, getAuthX, getAuthDiscord, authenticating } =
-    useOAuth();
+    useOAuthSocials();
   const theme = useTheme();
   const desktop = useMediaQuery(theme.breakpoints.up("md"));
   const dispatch = useAppDispatch();
@@ -207,6 +207,14 @@ function AutEditProfileDialog(props: EditDialogProps) {
   };
 
   const onEditProfile = async (data: any) => {
+    // const updatedSocials = data.socials.map((social) => {
+    //   if (social.type === "discord") {
+    //     return { link: "", type: "discord" };
+    //   }
+    //   return social;
+    // });
+    // // eslint-disable-next-line no-debugger
+    // debugger;
     await dispatch(
       updateProfile({
         ...autID,
@@ -432,13 +440,17 @@ function AutEditProfileDialog(props: EditDialogProps) {
                                       );
                                       const responseData =
                                         await response.json();
-                                      const username = responseData.username;
+                                      const { username, id } = responseData;
                                       onChange(username);
                                       const fullLink = `${SocialLinkPrefixes.Discord}${username}`;
                                       setValue(
                                         `socials.${index}.link`,
                                         fullLink
                                       );
+                                      setValue(`socials.${index}.metadata`, {
+                                        userId: id,
+                                        username
+                                      });
                                     },
                                     () => {
                                       // setLoading(false);
