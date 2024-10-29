@@ -19,7 +19,11 @@ export const swEnvVariables = {
   // IPFS storage
   ipfsApiKey: "VITE_IPFS_API_KEY",
   ipfsApiSecret: "VITE_IPFS_API_SECRET",
-  ipfsGatewayUrl: "VITE_IPFS_GATEWAY_URL"
+  ipfsGatewayUrl: "VITE_IPFS_GATEWAY_URL",
+
+  discordClientId: "VITE_DISCORD_CLIENT_ID",
+  twitterClientId: "VITE_TWITTER_CLIENT_ID",
+  githubClientId: "VITE_GITHUB_CLIENT_ID"
 };
 
 export const environment: typeof swEnvVariables =
