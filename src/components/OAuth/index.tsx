@@ -189,8 +189,6 @@ export const useOAuthSocials = () => {
           if (error) {
             onFailure(error);
           } else {
-            // eslint-disable-next-line no-debugger
-            debugger;
             xCleanUp(xIntervalRef);
             const response = await axios.post(
               `${environment.apiUrl}/aut/config/oauth2AccessTokenX`,
@@ -208,8 +206,6 @@ export const useOAuthSocials = () => {
           }
         }
       } catch (genericError) {
-        // eslint-disable-next-line no-debugger
-        debugger;
         onFailure(genericError);
         console.error(genericError);
       }
@@ -247,8 +243,6 @@ export const useOAuthSocials = () => {
               }
             );
 
-            // eslint-disable-next-line no-debugger
-            debugger;
             setAuthenticating(false);
             popupRef.current.close();
             onSuccess(response.data);
