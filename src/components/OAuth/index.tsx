@@ -178,7 +178,7 @@ export const useOAuthSocials = () => {
 
     const callbackUrl = encodeURI(`${window.location.origin}/callback`);
     popupRef.current = openPopup(
-      `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=${environment.twitterClientId}&state=state&scope=tweet.read%20offline.access&redirect_uri=${callbackUrl}&code_challenge=challenge&code_challenge_method=plain`
+      `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=${environment.twitterClientId}&state=state&scope=tweet.read%20users.read%20offline.access&redirect_uri=${callbackUrl}&code_challenge=challenge&code_challenge_method=plain`
     ) as any;
 
     async function handleMessageListener(message) {
