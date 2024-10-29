@@ -1,9 +1,10 @@
-import { memo, useState } from 'react';
+import { memo, useState } from "react";
 import {
   Box,
   Card,
   CardContent,
   Container,
+  Link,
   Stack,
   Typography
 } from "@mui/material";
@@ -15,8 +16,11 @@ import { AutOsButton } from "@components/AutButton";
 import TaskDetails from "../Shared/TaskDetails";
 import SubmitDialog from "@components/Dialog/SubmitDialog";
 import AutLoading from "@components/AutLoading";
-import { useOAuthSocials } from '@components/OAuth';
-import { useAccount } from 'wagmi';
+import { useOAuthSocials } from "@components/OAuth";
+import { useAccount } from "wagmi";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import { environment } from "@api/environment";
 
 const TwitterSubmitContent = ({ contribution, userAddress }) => {
   const [loading, setLoading] = useState(false);
@@ -27,37 +31,58 @@ const TwitterSubmitContent = ({ contribution, userAddress }) => {
   const { autAddress, hubAddress } = useParams();
   const { getAuthX } = useOAuthSocials();
 
+  const { mutateAsync: verifyTetweetTask } = useMutation<any, void, any>({
+    mutationFn: (verifyRetweetRequest) => {
+      return axios
+        .post(
+          `${environment.apiUrl}/task/twitter/retweet`,
+          verifyRetweetRequest
+        )
+        .then((res) => res.data);
+    }
+  });
+
   const handleSubmit = async () => {
     await getAuthX(
       async (data) => {
         const { access_token } = data;
         setLoading(true);
-        
         try {
-          // Here you would typically make your API call to verify the twitter action
-          await new Promise((resolve) => setTimeout(resolve, 3000)); // Simulating API call
-          
-          dispatch(
-            updateContributionById({
-              id: contribution?.id,
-              data: {
-                ...contribution,
-                status: TaskStatus.Submitted,
-                submission: {
-                  properties: {
-                    twitterToken: access_token
-                  }
-                }
+          await verifyTetweetTask(
+            {
+              accessToken: access_token,
+              contributionId: contribution?.id,
+              tweetUrl: contribution.properties?.tweetUrl
+            },
+            {
+              onSuccess: (response) => {
+                dispatch(
+                  updateContributionById({
+                    id: contribution?.id,
+                    data: {
+                      ...contribution,
+                      status: TaskStatus.Submitted,
+                      submission: {
+                        properties: {
+                          twitterToken: access_token
+                        }
+                      }
+                    }
+                  })
+                );
+
+                setOpenSubmitSuccess(true);
+                setLoading(false);
+              },
+              onError: (res) => {
+                console.error("Failed to submit contribution:", res);
               }
-            })
+            }
           );
-          
-          setLoading(false);
-          setOpenSubmitSuccess(true);
         } catch (error) {
           setLoading(false);
           // Handle error case
-          console.error('Failed to submit contribution:', error);
+          console.error("Failed to submit contribution:", error);
         }
       },
       () => {
@@ -132,7 +157,23 @@ const TwitterSubmitContent = ({ contribution, userAddress }) => {
             >
               {contribution?.description}
             </Typography>
-            
+
+            <Link
+              href={contribution.properties?.tweetUrl}
+              target="_blank"
+              color="primary"
+              underline="none"
+            >
+              <Typography
+                color="primary"
+                variant="body2"
+                textAlign="center"
+                marginBottom="16px"
+              >
+                {contribution.properties?.tweetUrl}
+              </Typography>
+            </Link>
+
             <Typography
               color="white"
               variant="body2"
@@ -152,7 +193,7 @@ const TwitterSubmitContent = ({ contribution, userAddress }) => {
               }}
             >
               <Typography fontWeight="bold" fontSize="16px" lineHeight="26px">
-                Verify with Twitter
+                Claim
               </Typography>
             </AutOsButton>
           </CardContent>

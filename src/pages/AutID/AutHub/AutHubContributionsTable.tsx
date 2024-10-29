@@ -231,19 +231,22 @@ export const AutHubTasksTable = ({ header }) => {
       take: 1000
     }
   });
-  useEffect(() => {
-    if (!contributions.length) {
-      const updatedContributions = data?.map((item) => ({
-        ...item,
-        contributionType: "open",
-        status: TaskStatus.Created,
-        id: generateRandomId()
-      }));
-      dispatch(
-        updateContributionState({ contributions: updatedContributions })
-      );
-    }
-  }, [data]);
+    useEffect(() => {
+      if (!contributions.length) {
+        const updatedContributions = data?.map((item) => ({
+          ...item,
+          contributionType: (item.properties as any)
+            .tweetUrl
+            ? "retweet"
+            : "open",
+          status: TaskStatus.Created,
+          id: generateRandomId()
+        }));
+        dispatch(
+          updateContributionState({ contributions: updatedContributions })
+        );
+      }
+    }, [data]);
 
   const theme = useTheme();
   return (

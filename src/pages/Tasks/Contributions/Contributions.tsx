@@ -30,7 +30,7 @@ const Contributions = () => {
       {contribution?.contributionType === "quiz" && (
         <QuizTask contribution={contribution} />
       )}
-        {contribution?.contributionType === "twitter" && (
+        {contribution?.contributionType === "retweet" && (
         <TwitterTask contribution={contribution} />
       )}
     </>
