@@ -3,6 +3,7 @@ import { Route, Routes, Navigate } from "react-router-dom";
 import { Box, useMediaQuery, useTheme } from "@mui/material";
 import { useAppDispatch } from "@store/store.model";
 import { updateWalletProviderState } from "@store/WalletProvider/WalletProvider";
+import useQueryTaskTypes from "@utils/hooks/useQueryTaskTypes";
 import AutLoading from "@components/AutLoading";
 import Web3DautConnect from "@components/DAutConnect";
 import SWSnackbar from "./components/snackbar";
@@ -21,6 +22,13 @@ function App() {
   const [isLoading, setLoading] = useState(false);
   const theme = useTheme();
   const mobile = useMediaQuery(theme.breakpoints.down("md"));
+
+  const { refetch } = useQueryTaskTypes({
+    variables: {
+      skip: 0,
+      take: 1000
+    }
+  });
 
   useEffect(() => {
     getAppConfig()

@@ -214,7 +214,6 @@ function AutEditProfileDialog(props: EditDialogProps) {
     //   return social;
     // });
     // // eslint-disable-next-line no-debugger
-    // debugger;
     await dispatch(
       updateProfile({
         ...autID,

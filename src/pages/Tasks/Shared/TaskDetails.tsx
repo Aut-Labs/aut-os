@@ -9,16 +9,11 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { memo } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { format } from "date-fns";
-import { getContributionTypeSubtitle } from "@utils/format-contribution-type";
 
 const TaskDetails = ({ task }: any) => {
   const [searchParams] = useSearchParams();
   const { hubAddress, autAddress } = useParams();
   const isLoading = false;
-
-  const contributionType = getContributionTypeSubtitle(
-    task?.contributionType
-  );
 
   return (
     <>
@@ -74,7 +69,7 @@ const TaskDetails = ({ task }: any) => {
             }}
             variant="body"
           >
-            {contributionType}
+            {task?.contributionType}
           </Typography>
 
           {/* <OverflowTooltip
