@@ -4,7 +4,7 @@ import {
   TaskContributionProperties
 } from "@aut-labs/sdk";
 
-interface QuizQuestionsAndAnswers {
+export interface QuizQuestionsAndAnswers {
   question: string;
   questionType: string;
   answers: {

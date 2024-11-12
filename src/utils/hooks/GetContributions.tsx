@@ -11,13 +11,14 @@ import {
   QueryResult,
   useQuery
 } from "@apollo/client";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { environment } from "@api/environment";
 import { useSelector } from "react-redux";
 import { SelectedHubAddress, SelectedHub } from "@store/aut/aut.reducer";
 import { TaskType } from "@api/models/task-type";
 import { TaskTypes } from "@store/contributions/contributions.reducer";
 import { ContributionFactory } from "@api/models/contribution.model";
+import { useParams } from "react-router-dom";
 
 const GET_HUB_CONTRIBUTIONS = gql`
   query GetContributions($skip: Int, $first: Int, $where: Contribution_filter) {
@@ -55,14 +56,19 @@ const contributionsMetadata = (
 const useQueryContributions = (props: QueryFunctionOptions<any, any> = {}) => {
   const taskTypes = useSelector(TaskTypes);
   const selectedHubAddress = useSelector(SelectedHubAddress);
-  const hubData = useSelector(SelectedHub(selectedHubAddress));
+  const { hubAddress: _hubAddress } = useParams<{ hubAddress: string }>();
+
+  const hubAddress = useMemo(() => {
+    return selectedHubAddress || _hubAddress;
+  }, [_hubAddress, selectedHubAddress]);
+
   const { data, loading, ...rest } = useQuery(GET_HUB_CONTRIBUTIONS, {
-    skip: !hubData?.properties?.address || !taskTypes.length,
+    skip: !hubAddress || !taskTypes.length,
     fetchPolicy: "cache-and-network",
     variables: {
       ...props.variables,
       where: {
-        hubAddress: hubData?.properties?.address,
+        hubAddress: hubAddress,
         ...(props.variables?.where || {})
       }
     },
@@ -74,7 +80,7 @@ const useQueryContributions = (props: QueryFunctionOptions<any, any> = {}) => {
 
   useEffect(() => {
     if (
-      hubData?.properties?.address &&
+      hubAddress &&
       data?.contributions?.length &&
       taskTypes.length
     ) {
@@ -82,7 +88,7 @@ const useQueryContributions = (props: QueryFunctionOptions<any, any> = {}) => {
         const sdk = await AutSDK.getInstance();
         const hubService: Hub = sdk.initService<Hub>(
           Hub,
-          hubData.properties.address
+          hubAddress
         );
         const taskFactory = await hubService.getTaskFactory();
         setLoadingMetadata(true);
@@ -94,7 +100,7 @@ const useQueryContributions = (props: QueryFunctionOptions<any, any> = {}) => {
       };
       fetch();
     }
-  }, [hubData?.properties?.address, data, taskTypes]);
+  }, [hubAddress, data, taskTypes]);
 
   return {
     data: contributions || [],

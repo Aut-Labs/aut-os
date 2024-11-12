@@ -45,7 +45,7 @@ root.render(
       <WagmiProvider config={wagmiConfig}>
         <WalletConnectorProvider
           defaultChainId={+environment.defaultChainId}
-          requestSig={false}
+          requestSig
         >
           <StyledEngineProvider injectFirst>
             <ThemeProvider theme={AutTheme}>

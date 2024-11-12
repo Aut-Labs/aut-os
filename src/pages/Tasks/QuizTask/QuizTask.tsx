@@ -1,6 +1,5 @@
 import AutLoading from "@components/AutLoading";
 import ErrorDialog from "@components/Dialog/ErrorPopup";
-import LoadingDialog from "@components/Dialog/LoadingPopup";
 import {
   Box,
   Card,
@@ -12,18 +11,20 @@ import {
   styled,
   Typography
 } from "@mui/material";
-import { memo, useEffect, useState } from "react";
-import { Controller, useFieldArray, useForm, useWatch } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
+import { Fragment, memo, useEffect, useMemo, useState } from "react";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import SuccessDialog from "@components/Dialog/SuccessPopup";
-import { useAccount } from "wagmi";
 import TaskDetails from "../Shared/TaskDetails";
-import { StepperButton } from "@components/StepperButton";
 import { AutOsButton } from "@components/AutButton";
 import { TaskStatus } from "@store/model";
-import { updateContributionById } from "@store/contributions/contributions.reducer";
 import SubmitDialog from "@components/Dialog/SubmitDialog";
+import {
+  QuizQuestionsAndAnswers,
+  QuizTaskContribution
+} from "@api/models/contribution-types/quiz.model.model";
+import { ContributionCommit } from "@utils/hooks/useQueryContributionCommits";
+import { useCommitAnyContributionMutation } from "@api/contributions.api";
+import { useWalletConnector } from "@aut-labs/connector";
 
 export const taskStatuses: any = {
   [TaskStatus.Created]: {
@@ -63,11 +64,12 @@ const GridRow = styled(Box)({
   gridGap: "8px"
 });
 
-const Row = styled(Box)({
-  display: "flex",
-  justifyContent: "flex-end",
-  width: "100%"
-});
+const alphabetize = {
+  0: "A",
+  1: "B",
+  2: "C",
+  3: "D"
+};
 
 const Answers = memo(({ control, questionIndex, answers, taskStatus }: any) => {
   const values = useWatch({
@@ -75,18 +77,11 @@ const Answers = memo(({ control, questionIndex, answers, taskStatus }: any) => {
     control
   });
 
-  const alphabetize = {
-    0: "A",
-    1: "B",
-    2: "C",
-    3: "D"
-  };
-
   return (
     <GridBox>
       {answers.map((answer, index) => {
         return (
-          <>
+          <Fragment key={`questions[${questionIndex}].answers[${index}]`}>
             {answer?.value && (
               <GridRow key={`questions[${questionIndex}].answers[${index}]`}>
                 <Stack
@@ -135,86 +130,25 @@ const Answers = memo(({ control, questionIndex, answers, taskStatus }: any) => {
                 />
               </GridRow>
             )}
-          </>
+          </Fragment>
         );
       })}
     </GridBox>
   );
 });
 
-const AnswersAdminView = memo(({ questionIndex, answers }: any) => {
-  return (
-    <GridBox>
-      {answers.map((answer, index) => {
-        return (
-          <GridRow
-            key={`questions[${questionIndex}].answers[${index}]`}
-            style={{ gridTemplateColumns: "40px 1fr" }}
-          >
-            <Checkbox
-              sx={{
-                color: "white",
-                "&.Mui-checked": {
-                  color: "primary"
-                },
-                "&.Mui-disabled": {
-                  color: "nightBlack.light"
-                }
-              }}
-              checked={!!answer?.correct}
-              disabled={true}
-            />
-            <Typography
-              color={answer?.correct ? "success.main" : "error.main"}
-              variant="body"
-              lineHeight="40px"
-            >
-              {answer?.value}
-            </Typography>
-          </GridRow>
-        );
-      })}
-    </GridBox>
-  );
-});
-
-const QuizTask = ({ contribution }: any) => {
-  const [searchParams] = useSearchParams();
-  const [loading, setLoading] = useState(false);
-  const dispatch = useDispatch();
-  //   const isAdmin = useSelector(IsAdmin);
-  const isAdmin = false;
-  const { address: userAddress } = useAccount();
-  const params = useParams();
-  const [initialized, setInitialized] = useState(false);
+const QuizTask = ({
+  contribution,
+  commit
+}: {
+  contribution: QuizTaskContribution;
+  commit: ContributionCommit;
+}) => {
   const navigate = useNavigate();
-  const [openSubmitSuccess, setOpenSubmitSuccess] = useState(false);
+  const { state } = useWalletConnector();
+  const [searchParams] = useSearchParams();
+  const [initialized, setInitialized] = useState(false);
   const { autAddress, hubAddress } = useParams();
-
-
-  //   const { task, isLoading: isLoadingTasks } = useGetAllTasksPerQuestQuery(
-  //     {
-  //       userAddress,
-  //       isAdmin,
-  //       pluginAddress: searchParams.get(
-  //         RequiredQueryParams.OnboardingQuestAddress
-  //       ),
-  //       questId: +searchParams.get(RequiredQueryParams.QuestId)
-  //     },
-  //     {
-  //       selectFromResult: ({ data, isLoading, isFetching }) => ({
-  //         isLoading: isLoading || isFetching,
-  //         task: (data?.tasks || []).find((t) => {
-  //           const [pluginType] = location.pathname.split("/").splice(-2);
-  //           return (
-  //             t.taskId === +params?.taskId &&
-  //             PluginDefinitionType[pluginType] ===
-  //               taskTypes[t.taskType].pluginType
-  //           );
-  //         })
-  //       })
-  //     }
-  //   );
 
   const { control, handleSubmit, getValues, setValue, formState } = useForm({
     mode: "onChange",
@@ -223,54 +157,52 @@ const QuizTask = ({ contribution }: any) => {
     }
   });
 
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: "questions"
-  });
+  const questionsWithUserAnswers = useMemo(() => {
+    let answers: QuizQuestionsAndAnswers[] = [];
+    try {
+      answers = JSON.parse(commit.data);
+    } catch (e) {
+      // pass
+    }
+    if (answers.length === 0 || !commit)
+      return contribution.properties.questions;
+    return contribution.properties.questions.map((question) => {
+      const userAnswer = answers.find(
+        (answer) => answer.question === question.question
+      );
+      return {
+        ...question,
+        answers: question.answers.map((answer) => {
+          const userAnswerValue = userAnswer.answers.find(
+            (a) => a.value === answer.value
+          );
+          return {
+            ...answer,
+            correct: userAnswerValue?.correct
+          };
+        })
+      };
+    });
+  }, [contribution, commit]);
 
   useEffect(() => {
-    if (!initialized && contribution) {
-      setValue(
-        "questions",
-        (contribution as any)?.properties?.questions
-      );
+    if (!initialized && questionsWithUserAnswers?.length) {
+      setValue("questions", questionsWithUserAnswers);
       setInitialized(true);
     }
-  }, [initialized, contribution]);
+  }, [initialized, questionsWithUserAnswers]);
 
-  //   const [submitTask, { isSuccess, error, isError, isLoading, reset }] =
-  //     useSubmitQuizTaskMutation();
+  const [commitContribution, { error, isError, isSuccess, isLoading, reset }] =
+    useCommitAnyContributionMutation();
 
-  //   useEffect(() => {
-  //     if (isSuccess) {
-  //       setOpenSubmitSuccess(true);
-  //     }
-  //   }, [isSuccess]);
-
-  const onSubmit = async () => {
-    setLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-    dispatch(
-      updateContributionById({
-        id: contribution.id,
-        data: {
-          ...contribution,
-          status: TaskStatus.Submitted
-        }
-      })
-    );
-    setLoading(false);
-    setOpenSubmitSuccess(true);
-    // submitTask({
-    //   userAddress,
-    //   task,
-    //   questionsAndAnswers: values.questions,
-    //   onboardingQuestAddress: searchParams.get(
-    //     RequiredQueryParams.OnboardingQuestAddress
-    //   ),
-    //   pluginAddress: plugin.pluginAddress,
-    //   pluginDefinitionId: plugin.pluginDefinitionId
-    // });
+  const onSubmit = () => {
+    const answers = getValues("questions");
+    commitContribution({
+      autSig: state.authSig,
+      contribution,
+      message: JSON.stringify(answers),
+      hubAddress
+    });
   };
 
   return (
@@ -285,39 +217,26 @@ const QuizTask = ({ contribution }: any) => {
         position: "relative"
       }}
     >
-      {/* <ErrorDialog handleClose={() => reset()} open={isError} message={error} />
-       */}
-      {/* <LoadingDialog open={loading} message="Submitting contribution..." backdropFilter={true} />
-      <SuccessDialog
-      backdropFilter={true}
-        open={openSubmitSuccess}
-        message="Congrats!"
-        titleVariant="h2"
-        subtitle="You successfully submitted the task!"
-        subtitleVariant="subtitle1"
-        handleClose={() => {
-          setOpenSubmitSuccess(false);
-          navigate({
-            pathname: "/quest",
-            search: searchParams.toString()
-          });
-        }}
-      ></SuccessDialog> */}
-       <SubmitDialog
-        open={openSubmitSuccess || loading}
-        mode={openSubmitSuccess ? "success" : "loading"}
+      <ErrorDialog
+        handleClose={() => reset()}
+        open={isError}
+        message={error || "An error occurred"}
+      />
+      <SubmitDialog
+        open={isSuccess || isLoading}
+        mode={isSuccess ? "success" : "loading"}
         backdropFilter={true}
-        message={loading ? "" : "Congratulations!"}
+        message={isLoading ? "" : "Congratulations!"}
         titleVariant="h2"
         subtitle={
-          loading
+          isLoading
             ? "Submitting contribution..."
             : "Your submission has been successful!"
         }
         subtitleVariant="subtitle1"
         handleClose={() => {
-          if (!loading) {
-            setOpenSubmitSuccess(false);
+          if (!isLoading) {
+            reset();
             navigate({
               pathname: `/${autAddress}/hub/${hubAddress}`,
               search: searchParams.toString()
@@ -327,7 +246,7 @@ const QuizTask = ({ contribution }: any) => {
       ></SubmitDialog>
       {contribution ? (
         <>
-          <TaskDetails task={contribution} />
+          <TaskDetails contribution={contribution} />
           <Stack
             direction="column"
             gap={4}
@@ -342,9 +261,7 @@ const QuizTask = ({ contribution }: any) => {
               }
             }}
           >
-            {(
-              (contribution as any)?.metadata?.properties?.questions as any[]
-            )?.map((question, questionIndex) => (
+            {questionsWithUserAnswers.map((question, questionIndex) => (
               <Card
                 key={`questions.${questionIndex}.question`}
                 sx={{
@@ -368,7 +285,7 @@ const QuizTask = ({ contribution }: any) => {
                     control={control}
                     answers={question?.answers}
                     questionIndex={questionIndex}
-                    taskStatus={contribution?.status}
+                    // taskStatus={contribution?.status}
                   ></Answers>
                 </CardContent>
               </Card>
@@ -392,11 +309,7 @@ const QuizTask = ({ contribution }: any) => {
                 sx={{
                   width: "100px"
                 }}
-                disabled={
-                  !formState.isValid ||
-                  contribution?.status !== TaskStatus.Created
-                  //   ||  isLoadingTasks
-                }
+                disabled={!formState.isValid}
                 onClick={handleSubmit(onSubmit)}
               >
                 <Typography fontWeight="bold" fontSize="16px" lineHeight="26px">

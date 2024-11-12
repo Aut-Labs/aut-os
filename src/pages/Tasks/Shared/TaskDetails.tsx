@@ -1,85 +1,90 @@
-import {
-  Box,
-  Button,
-  CircularProgress,
-  Stack,
-  Typography
-} from "@mui/material";
+import { Box, Button, Stack, Typography } from "@mui/material";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { memo } from "react";
-import { Link, useParams, useSearchParams } from "react-router-dom";
-import { format } from "date-fns";
+import { Link, useParams } from "react-router-dom";
+import { TaskContributionNFT } from "@aut-labs/sdk";
+import OverflowTooltip from "@components/OverflowTooltip";
 
-const TaskDetails = ({ task }: any) => {
-  const [searchParams] = useSearchParams();
+const TaskDetails = ({
+  contribution
+}: {
+  contribution: TaskContributionNFT & { contributionType?: string };
+}) => {
   const { hubAddress, autAddress } = useParams();
-  const isLoading = false;
 
   return (
     <>
-      {isLoading ? (
-        <CircularProgress className="spinner-center" size="60px" />
-      ) : (
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            mb: 4,
-            position: "relative",
-            mx: "auto",
-            width: "100%"
-          }}
-        >
-          <Stack alignItems="center" justifyContent="center">
-            <Button
-              startIcon={<ArrowBackIosNewIcon />}
-              color="offWhite"
-              sx={{
-                position: {
-                  sm: "absolute"
-                },
-                left: {
-                  sm: "0"
-                }
-              }}
-              to={`/${autAddress}/hub/${hubAddress}`}
-              component={Link}
-            >
-              {/* {searchParams.get("returnUrlLinkName") || "Back"} */}
-              <Typography color="white" variant="body">
-                Back
-              </Typography>
-            </Button>
-            <Typography textAlign="center" color="white" variant="h3">
-              {task?.name}
-            </Typography>
-          </Stack>
-
-          <Typography
-            mt={1}
-            mx="auto"
-            textAlign="center"
-            color="white"
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          mb: 4,
+          position: "relative",
+          mx: "auto",
+          width: "100%"
+        }}
+      >
+        <Stack alignItems="center" justifyContent="center">
+          <Button
+            startIcon={<ArrowBackIosNewIcon />}
+            color="offWhite"
             sx={{
-              width: {
-                xs: "100%",
-                sm: "700px",
-                xxl: "1000px"
+              position: {
+                sm: "absolute"
+              },
+              left: {
+                sm: "0"
               }
             }}
-            variant="body"
+            to={`/${autAddress}/hub/${hubAddress}`}
+            component={Link}
           >
-            {task?.contributionType}
+            <Typography color="white" variant="body">
+              Back
+            </Typography>
+          </Button>
+          <Typography textAlign="center" color="white" variant="h3">
+            {contribution?.name}
           </Typography>
+        </Stack>
 
-          {/* <OverflowTooltip
-          typography={{
-            maxWidth: "400px"
+        <Typography
+          mt={1}
+          mx="auto"
+          textAlign="center"
+          color="white"
+          sx={{
+            width: {
+              xs: "100%",
+              sm: "700px",
+              xxl: "1000px"
+            }
           }}
-          text={task?.description}
-        /> */}
-        </Box>
-      )}
+          variant="body"
+        >
+          {contribution?.contributionType}
+        </Typography>
+
+        {/* <Box
+          sx={{
+            mt: 2,
+            mx: "auto",
+            textAlign: "center",
+            width: {
+              xs: "100%",
+              sm: "700px",
+              xxl: "1000px"
+            }
+          }}
+        >
+          <OverflowTooltip
+            typography={{
+              maxWidth: "400px"
+            }}
+            text={contribution?.description}
+          />
+        </Box> */}
+      </Box>
     </>
   );
 };

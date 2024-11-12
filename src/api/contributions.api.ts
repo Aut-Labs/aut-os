@@ -1,10 +1,6 @@
 import { TaskContributionNFT } from "@aut-labs/sdk";
 import { BaseQueryApi, createApi } from "@reduxjs/toolkit/query/react";
 import { AuthSig } from "@aut-labs/connector/lib/esm/aut-sig";
-import { DiscordGatheringContribution } from "./models/contribution-types/discord-gathering.model";
-import { OpenTaskContribution } from "./models/contribution-types/open-task.model";
-import { QuizTaskContribution } from "./models/contribution-types/quiz.model.model";
-import { RetweetContribution } from "./models/contribution-types/retweet.model";
 import axios from "axios";
 import { environment } from "./environment";
 
@@ -29,11 +25,10 @@ const commitContribution = async (
   autSig: AuthSig,
   contribution: TaskContributionNFT,
   message: string,
+  hubAddress: string,
   api: BaseQueryApi
 ) => {
   try {
-    const state: any = api.getState() as any;
-    const hubAddress = state.aut.selectedHubAddress;
     const response = _commitContribution({
       autSig: autSig,
       message: message,
@@ -50,86 +45,27 @@ const commitContribution = async (
   }
 };
 
-const commitOpenTaskContribution = async (
-  {
-    contribution,
-    autSig
-  }: { contribution: OpenTaskContribution; autSig: AuthSig },
-  api: BaseQueryApi
-) => {
-  const secredMessage = "secred";
-  return commitContribution(autSig, contribution, secredMessage, api);
-};
-
-const commitTwitterRetweetContribution = async (
-  {
-    contribution,
-    autSig
-  }: { contribution: RetweetContribution; autSig: AuthSig },
-  api: BaseQueryApi
-) => {
-  const secredMessage = "secred";
-  return commitContribution(autSig, contribution, secredMessage, api);
-};
-
-const commitDiscordGatheringContribution = async (
-  {
-    contribution,
-    autSig
-  }: { contribution: DiscordGatheringContribution; autSig: AuthSig },
-  api: BaseQueryApi
-) => {
-  const secredMessage = "secred";
-  return commitContribution(autSig, contribution, secredMessage, api);
-};
-
-const commitQuizContribution = async (
-  {
-    contribution,
-    autSig
-  }: { contribution: QuizTaskContribution; autSig: AuthSig },
-  api: BaseQueryApi
-) => {
-  const secredMessage = "secred";
-  return commitContribution(autSig, contribution, secredMessage, api);
-};
-
 const commitAnyContribution = async (
   {
     contribution,
-    autSig
-  }: { contribution: TaskContributionNFT; autSig: AuthSig },
+    autSig,
+    message,
+    hubAddress
+  }: {
+    contribution: TaskContributionNFT;
+    autSig: AuthSig;
+    message: string;
+    hubAddress: string;
+  },
   api: BaseQueryApi
 ) => {
-  if (contribution instanceof OpenTaskContribution) {
-    return commitOpenTaskContribution({ contribution, autSig }, api);
-  } else if (contribution instanceof DiscordGatheringContribution) {
-    return commitDiscordGatheringContribution({ contribution, autSig }, api);
-  } else if (contribution instanceof RetweetContribution) {
-    return commitTwitterRetweetContribution({ contribution, autSig }, api);
-  } else if (contribution instanceof QuizTaskContribution) {
-    return commitQuizContribution({ contribution, autSig }, api);
-  } else {
-    throw new Error("Unknown contribution type");
-  }
+  return commitContribution(autSig, contribution, message, hubAddress, api);
 };
 
 export const contributionsApi = createApi({
   reducerPath: "contributionsApi",
-  baseQuery: (args, api, extraOptions) => {
+  baseQuery: (args, api) => {
     const { url, body } = args;
-    if (url === "commitOpenTaskContribution") {
-      return commitOpenTaskContribution(body, api);
-    }
-    if (url === "commitDiscordGatheringContribution") {
-      return commitDiscordGatheringContribution(body, api);
-    }
-    if (url === "commitTwitterRetweetContribution") {
-      return commitTwitterRetweetContribution(body, api);
-    }
-    if (url === "commitQuizContribution") {
-      return commitQuizContribution(body, api);
-    }
     if (url === "commitAnyContribution") {
       return commitAnyContribution(body, api);
     }
@@ -137,69 +73,15 @@ export const contributionsApi = createApi({
       data: "Test"
     };
   },
-  tagTypes: ["Contributions"],
+  tagTypes: [],
   endpoints: (builder) => ({
-    commitOpenTaskContribution: builder.mutation<
-      void,
-      {
-        autSig: AuthSig;
-        contribution: OpenTaskContribution;
-      }
-    >({
-      query: (body) => {
-        return {
-          body,
-          url: "commitOpenTaskContribution"
-        };
-      }
-    }),
-    commitDiscordGatheringContribution: builder.mutation<
-      void,
-      {
-        autSig: AuthSig;
-        contribution: DiscordGatheringContribution;
-      }
-    >({
-      query: (body) => {
-        return {
-          body,
-          url: "commitDiscordGatheringContribution"
-        };
-      }
-    }),
-    commitTwitterRetweetContribution: builder.mutation<
-      void,
-      {
-        autSig: AuthSig;
-        contribution: RetweetContribution;
-      }
-    >({
-      query: (body) => {
-        return {
-          body,
-          url: "commitTwitterRetweetContribution"
-        };
-      }
-    }),
-    commitQuizContribution: builder.mutation<
-      void,
-      {
-        autSig: AuthSig;
-        contribution: QuizTaskContribution;
-      }
-    >({
-      query: (body) => {
-        return {
-          body,
-          url: "commitQuizContribution"
-        };
-      }
-    }),
     commitAnyContribution: builder.mutation<
       void,
       {
         autSig: AuthSig;
         contribution: TaskContributionNFT;
+        message: string;
+        hubAddress: string;
       }
     >({
       query: (body) => {
@@ -212,10 +94,4 @@ export const contributionsApi = createApi({
   })
 });
 
-export const {
-  useCommitAnyContributionMutation,
-  useCommitTwitterRetweetContributionMutation,
-  useCommitOpenTaskContributionMutation,
-  useCommitDiscordGatheringContributionMutation,
-  useCommitQuizContributionMutation
-} = contributionsApi;
+export const { useCommitAnyContributionMutation } = contributionsApi;
