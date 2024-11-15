@@ -71,7 +71,7 @@ const alphabetize = {
   3: "D"
 };
 
-const Answers = memo(({ control, questionIndex, answers, taskStatus }: any) => {
+const Answers = memo(({ control, questionIndex, answers, disabled }: any) => {
   const values = useWatch({
     name: `questions[${questionIndex}].answers`,
     control
@@ -98,36 +98,49 @@ const Answers = memo(({ control, questionIndex, answers, taskStatus }: any) => {
                     {answer?.value}
                   </Typography>
                 </Stack>
-                <Controller
-                  name={`questions[${questionIndex}].answers[${index}].correct`}
-                  control={control}
-                  rules={{
-                    required: !values?.some((v) => v.correct)
-                  }}
-                  render={({ field: { name, value, onChange } }) => {
-                    return (
-                      <Checkbox
-                        name={name}
-                        sx={{
-                          color: "white",
-                          "&.Mui-checked": {
-                            color: "primary"
-                          },
-                          "&.Mui-disabled": {
-                            color: "nightBlack.light"
-                          }
-                        }}
-                        value={value}
-                        tabIndex={-1}
-                        onChange={onChange}
-                        disabled={
-                          taskStatus === TaskStatus.Submitted ||
-                          taskStatus === TaskStatus.Finished
-                        }
-                      />
-                    );
-                  }}
-                />
+                {disabled ? (
+                  <Checkbox
+                    sx={{
+                      color: "white",
+                      "&.Mui-checked": {
+                        color: "primary"
+                      },
+                      "&.Mui-disabled": {
+                        color: "nightBlack.light"
+                      }
+                    }}
+                    checked={answer.correct}
+                    disabled
+                  />
+                ) : (
+                  <Controller
+                    name={`questions[${questionIndex}].answers[${index}].correct`}
+                    control={control}
+                    rules={{
+                      required: !values?.some((v) => v.correct)
+                    }}
+                    render={({ field: { name, value, onChange } }) => {
+                      return (
+                        <Checkbox
+                          name={name}
+                          sx={{
+                            color: "white",
+                            "&.Mui-checked": {
+                              color: "primary"
+                            },
+                            "&.Mui-disabled": {
+                              color: "nightBlack.light"
+                            }
+                          }}
+                          value={value}
+                          tabIndex={-1}
+                          onChange={onChange}
+                          disabled={disabled}
+                        />
+                      );
+                    }}
+                  />
+                )}
               </GridRow>
             )}
           </Fragment>
@@ -247,6 +260,7 @@ const QuizTask = ({
       {contribution ? (
         <>
           <TaskDetails contribution={contribution} />
+
           <Stack
             direction="column"
             gap={4}
@@ -286,37 +300,44 @@ const QuizTask = ({
                     answers={question?.answers}
                     questionIndex={questionIndex}
                     // taskStatus={contribution?.status}
+                    disabled={!!commit}
                   ></Answers>
                 </CardContent>
               </Card>
             ))}
 
-            <Box
-              sx={{
-                width: "100%",
-                display: "flex",
-                mb: 4,
-                justifyContent: {
-                  xs: "center",
-                  sm: "flex-end"
-                }
-              }}
-            >
-              <AutOsButton
-                type="button"
-                color="primary"
-                variant="outlined"
+            {!commit && (
+              <Box
                 sx={{
-                  width: "100px"
+                  width: "100%",
+                  display: "flex",
+                  mb: 4,
+                  justifyContent: {
+                    xs: "center",
+                    sm: "flex-end"
+                  }
                 }}
-                disabled={!formState.isValid}
-                onClick={handleSubmit(onSubmit)}
               >
-                <Typography fontWeight="bold" fontSize="16px" lineHeight="26px">
-                  Confirm
-                </Typography>
-              </AutOsButton>
-            </Box>
+                <AutOsButton
+                  type="button"
+                  color="primary"
+                  variant="outlined"
+                  sx={{
+                    width: "100px"
+                  }}
+                  disabled={!formState.isValid}
+                  onClick={handleSubmit(onSubmit)}
+                >
+                  <Typography
+                    fontWeight="bold"
+                    fontSize="16px"
+                    lineHeight="26px"
+                  >
+                    Confirm
+                  </Typography>
+                </AutOsButton>
+              </Box>
+            )}
           </Stack>
         </>
       ) : (
