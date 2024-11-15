@@ -10,6 +10,7 @@ import QuizTask from "../QuizTask/QuizTask";
 import { useParams } from "react-router-dom";
 import useQueryContributions from "@utils/hooks/GetContributions";
 import TwitterTask from "../TwitterTask/TwitterTask";
+import GithubCommitTask from "../GithubTask/GithubCommitTask";
 
 const Contributions = () => {
   let contribution = useSelector(SelectedContribution);
@@ -30,8 +31,11 @@ const Contributions = () => {
       {contribution?.contributionType === "quiz" && (
         <QuizTask contribution={contribution} />
       )}
-        {contribution?.contributionType === "retweet" && (
+      {contribution?.contributionType === "retweet" && (
         <TwitterTask contribution={contribution} />
+      )}
+      {contribution?.contributionType === "commit" && (
+        <GithubCommitTask contribution={contribution} />
       )}
     </>
   );

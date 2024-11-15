@@ -10,6 +10,8 @@ export const formatContributionType = (type: string) => {
       return "GitHub";
     case "retweet":
       return "Retweet";
+    case "commit":
+      return "Commit";
     default:
       return type;
   }
@@ -27,6 +29,8 @@ export const getContributionTypeSubtitle = (type: string) => {
       return "GitHub Task";
     case "retweet":
       return "Retweet Task";
+    case "commit":
+      return "Commit Task";
     default:
       return type;
   }

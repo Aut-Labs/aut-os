@@ -235,9 +235,10 @@ export const AutHubTasksTable = ({ header }) => {
       if (!contributions.length) {
         const updatedContributions = data?.map((item) => ({
           ...item,
-          contributionType: (item.properties as any)
-            .tweetUrl
+          contributionType: (item.properties as any).tweetUrl
             ? "retweet"
+            : (item.properties as any).repository && (item.properties as any).branch
+            ? "commit"
             : "open",
           status: TaskStatus.Created,
           id: generateRandomId()
