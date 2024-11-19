@@ -1,7 +1,3 @@
-/* eslint-disable no-useless-escape */
-/* eslint-disable max-len */
-
-import AutLoading from "@components/AutLoading";
 import {
   Box,
   Card,
@@ -16,24 +12,22 @@ import { AutTextField } from "@theme/field-text-styles";
 import { memo, useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useSearchParams, useParams, useNavigate } from "react-router-dom";
-import TaskDetails from "../Shared/TaskDetails";
-import SuccessDialog from "@components/Dialog/SuccessPopup";
-import { useAccount } from "wagmi";
 import { FormHelperText } from "@components/Fields/AutFields";
 import { ipfsCIDToHttpUrl } from "@utils/ipfs";
 import { TaskFileUpload } from "@components/FileUpload";
 import { AutOsButton } from "@components/AutButton";
 import { TaskStatus } from "@store/model";
-import LoadingDialog from "@components/Dialog/LoadingPopup";
-import { updateContributionById } from "@store/contributions/contributions.reducer";
-import { useDispatch } from "react-redux";
 import SubmitDialog from "@components/Dialog/SubmitDialog";
+import { OpenTaskContribution } from "@api/models/contribution-types/open-task.model";
+import { ContributionCommit } from "@utils/hooks/useQueryContributionCommits";
+import { useCommitAnyContributionMutation } from "@api/contributions.api";
+import { useWalletConnector } from "@aut-labs/connector";
+import ErrorDialog from "@components/Dialog/ErrorPopup";
+import TaskDetails from "../Shared/TaskDetails";
 
 interface UserSubmitContentProps {
-  contribution: any;
-  userAddress: string;
-  isLoadingTasks: boolean;
-  submission?: any;
+  contribution: OpenTaskContribution;
+  commit: ContributionCommit;
 }
 
 const errorTypes = {
@@ -42,87 +36,179 @@ const errorTypes = {
 
 const UserSubmitContent = ({
   contribution,
-  userAddress,
-  isLoadingTasks
+  commit
 }: UserSubmitContentProps) => {
-  const [loading, setLoading] = useState(false);
-  const dispatch = useDispatch();
+  const { state } = useWalletConnector();
   const [searchParams] = useSearchParams();
   const [initialized, setInitialized] = useState(false);
   const navigate = useNavigate();
-  const [openSubmitSuccess, setOpenSubmitSuccess] = useState(false);
-  const { control, handleSubmit, formState, setValue } = useForm({
+  const { control, handleSubmit, formState, setValue, getValues } = useForm({
     mode: "onChange",
     defaultValues: {
-      openTask: null,
-      attachment: null
+      description: "",
+      attachment: ""
     }
   });
 
   const { autAddress, hubAddress } = useParams();
 
+  const contributionSubmitContent = useMemo(() => {
+    let userSubmit = null;
+    try {
+      userSubmit = JSON.parse(commit.data);
+    } catch (e) {
+      // pass
+    }
+    return userSubmit;
+  }, [commit]);
+
   useEffect(() => {
-    if (!initialized && contribution) {
-      setValue("openTask", contribution.submission?.description);
+    if (!initialized && contributionSubmitContent) {
+      let userSubmit = {
+        description: "",
+        attachment: ""
+      };
+      try {
+        userSubmit = JSON.parse(commit.data);
+      } catch (e) {
+        // pass
+      }
+      setValue("description", userSubmit.description);
+      setValue("attachment", userSubmit.attachment);
       setInitialized(true);
     }
-  }, [initialized, contribution]);
+  }, [initialized, contributionSubmitContent]);
 
-  //   const [submitTask, { isSuccess, error, isError, isLoading, reset }] =
-  //     useSubmitOpenTaskMutation();
+  const [commitContribution, { error, isError, isSuccess, isLoading, reset }] =
+    useCommitAnyContributionMutation();
 
-  //   useEffect(() => {
-  //     if (isSuccess) {
-  //       setOpenSubmitSuccess(true);
-  //     }
-  //   }, [isSuccess]);
-
-  const onSubmit = async (values) => {
-    setLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-    dispatch(
-      updateContributionById({
-        id: contribution?.id,
-        data: {
-          ...contribution,
-          status: TaskStatus.Submitted
-        }
-      })
-    );
-    setLoading(false);
-    setOpenSubmitSuccess(true);
-
-    // submitTask({
-    //   userAddress,
-    //   file: values.attachment,
-    //   task: {
-    //     ...task,
-    //     submission: {
-    //       name: "Open task submission",
-    //       description: values.openTask,
-    //       properties: {} as any
-    //     }
-    //   },
-    //   onboardingQuestAddress: searchParams.get(
-    //     RequiredQueryParams.OnboardingQuestAddress
-    //   ),
-    //   pluginAddress: plugin.pluginAddress,
-    //   pluginDefinitionId: plugin.pluginDefinitionId
-    // });
+  const onSubmit = () => {
+    const description = getValues("description");
+    const attachment = getValues("attachment");
+    commitContribution({
+      autSig: state.authSig,
+      contribution,
+      message: JSON.stringify({ description, attachment }),
+      hubAddress
+    });
   };
 
-  // const attachmentType = useMemo(() => {
-  //   // @ts-ignore
-  //   return task.properties.attachmentType;
-  // }, [task]);
+  const textRequiredTemplate = useMemo(() => {
+    if (!contribution.properties.textRequired) return null;
+    return (
+      <Controller
+        name="description"
+        control={control}
+        rules={{
+          required: true,
+          maxLength: 257
+        }}
+        render={({ field: { name, value, onChange } }) => {
+          return (
+            <AutTextField
+              name={name}
+              value={value || ""}
+              sx={{ mb: "20px" }}
+              onChange={onChange}
+              variant="outlined"
+              color="offWhite"
+              multiline
+              rows={5}
+              placeholder={`Enter text here (required)`}
+            />
+          );
+        }}
+      />
+    );
+  }, [contribution.properties.textRequired]);
 
-  // const textRequired = useMemo(() => {
-  //   // @ts-ignore
-  //   return task.properties.textRequired;
-  // }, [task]);
+  const attachmentTypeTemplate = useMemo(() => {
+    const attachmentType = contribution.properties.attachmentType;
+    if (!attachmentType) return null;
 
-  const textRequired = contribution?.properties?.textRequired;
-  const attachmentType = contribution?.properties?.attachmentType;
+    if (attachmentType === "url") {
+      return (
+        <>
+          <Typography color="white" variant="body" textAlign="center" p="20px">
+            URL
+          </Typography>
+          <Controller
+            name="attachment"
+            control={control}
+            rules={{
+              required: true,
+              pattern:
+                /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&/=]*)$/
+            }}
+            render={({ field: { name, value, onChange } }) => {
+              return (
+                <AutTextField
+                  name={name}
+                  value={value || ""}
+                  sx={{ mt: "20px" }}
+                  onChange={onChange}
+                  variant="outlined"
+                  color="offWhite"
+                  required
+                  rows={1}
+                  placeholder="URL Link Here"
+                  helperText={
+                    <FormHelperText
+                      value={value}
+                      name={name}
+                      errors={formState.errors}
+                      errorTypes={errorTypes}
+                    />
+                  }
+                />
+              );
+            }}
+          />
+        </>
+      );
+    } else if (attachmentType === "image" || attachmentType === "text") {
+      return (
+        <>
+          <Typography color="white" variant="body" textAlign="center" p="20px">
+            {`Upload a file ${
+              attachmentType === "image"
+                ? "(.png, .jpg, .jpeg)"
+                : "(.doc, .docx, .txt, .pdf)"
+            }`}
+          </Typography>
+          <Controller
+            name="attachment"
+            control={control}
+            rules={{
+              required: true
+            }}
+            render={({ field: { onChange } }) => {
+              return (
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column"
+                  }}
+                >
+                  <TaskFileUpload
+                    attachmentType={attachmentType}
+                    color="offWhite"
+                    fileChange={async (file) => {
+                      if (file) {
+                        onChange(file);
+                      } else {
+                        onChange(null);
+                      }
+                    }}
+                  />
+                </div>
+              );
+            }}
+          />
+        </>
+      );
+    }
+  }, [contribution.properties.attachmentType]);
 
   return (
     <Stack
@@ -139,24 +225,26 @@ const UserSubmitContent = ({
         }
       }}
     >
-      {/* <ErrorDialog handleClose={() => reset()} open={isError} message={error} />
-       */}
-      {/* <LoadingDialog open={true} message="Submitting contribution..." backdropFilter={true} /> */}
+      <ErrorDialog
+        handleClose={() => reset()}
+        open={isError}
+        message={error || "An error occurred"}
+      />
       <SubmitDialog
-        open={openSubmitSuccess || loading}
-        mode={openSubmitSuccess ? "success" : "loading"}
+        open={isSuccess || isLoading}
+        mode={isSuccess ? "success" : "loading"}
         backdropFilter={true}
-        message={loading ? "" : "Congratulations!"}
+        message={isLoading ? "" : "Congratulations!"}
         titleVariant="h2"
         subtitle={
-          loading
+          isLoading
             ? "Submitting contribution..."
             : "Your submission has been successful!"
         }
         subtitleVariant="subtitle1"
         handleClose={() => {
-          if (!loading) {
-            setOpenSubmitSuccess(false);
+          if (!isLoading) {
+            reset();
             navigate({
               pathname: `/${autAddress}/hub/${hubAddress}`,
               search: searchParams.toString()
@@ -165,8 +253,7 @@ const UserSubmitContent = ({
         }}
       ></SubmitDialog>
 
-      {contribution?.status === TaskStatus.Created ||
-      contribution?.status === TaskStatus.Taken ? (
+      {!commit ? (
         <Card
           sx={{
             border: "1px solid",
@@ -190,128 +277,8 @@ const UserSubmitContent = ({
             >
               {contribution?.description}
             </Typography>
-            {textRequired && (
-              <Controller
-                name="openTask"
-                control={control}
-                rules={{
-                  required: true,
-                  maxLength: 257
-                }}
-                render={({ field: { name, value, onChange } }) => {
-                  return (
-                    <AutTextField
-                      name={name}
-                      disabled={
-                        contribution.status === TaskStatus.Submitted ||
-                        contribution.status === TaskStatus.Finished
-                      }
-                      value={value || ""}
-                      sx={{ mb: "20px" }}
-                      onChange={onChange}
-                      variant="outlined"
-                      color="offWhite"
-                      multiline
-                      rows={5}
-                      placeholder={`Enter text here (required)`}
-                    />
-                  );
-                }}
-              />
-            )}
-            {attachmentType === "url" && (
-              <>
-                <Typography
-                  color="white"
-                  variant="body"
-                  textAlign="center"
-                  p="20px"
-                >
-                  URL
-                </Typography>
-                <Controller
-                  name="attachment"
-                  control={control}
-                  rules={{
-                    required: true,
-                    pattern:
-                      /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/
-                  }}
-                  render={({ field: { name, value, onChange } }) => {
-                    return (
-                      <AutTextField
-                        name={name}
-                        disabled={
-                          contribution.status === TaskStatus.Submitted ||
-                          contribution.status === TaskStatus.Finished
-                        }
-                        value={value || ""}
-                        sx={{ mt: "20px" }}
-                        onChange={onChange}
-                        variant="outlined"
-                        color="offWhite"
-                        required
-                        rows={1}
-                        placeholder="URL Link Here"
-                        helperText={
-                          <FormHelperText
-                            value={value}
-                            name={name}
-                            errors={formState.errors}
-                            errorTypes={errorTypes}
-                          />
-                        }
-                      />
-                    );
-                  }}
-                />
-              </>
-            )}
-            {(attachmentType === "image" || attachmentType === "text") && (
-              <>
-                <Typography
-                  color="white"
-                  variant="body"
-                  textAlign="center"
-                  p="20px"
-                >
-                  {`Upload a file ${
-                    attachmentType === "image"
-                      ? "(.png, .jpg, .jpeg)"
-                      : "(.doc, .docx, .txt, .pdf)"
-                  }`}
-                </Typography>
-                <Controller
-                  name="attachment"
-                  control={control}
-                  rules={{
-                    required: true
-                  }}
-                  render={({ field: { onChange } }) => {
-                    return (
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "column"
-                        }}
-                      >
-                        <TaskFileUpload
-                          attachmentType={attachmentType}
-                          color="offWhite"
-                          fileChange={async (file) => {
-                            if (file) {
-                              onChange(file);
-                            } else {
-                              onChange(null);
-                            }
-                          }}
-                        />
-                      </div>
-                    );
-                  }}
-                />
-              </>
-            )}
+            {textRequiredTemplate}
+            {attachmentTypeTemplate}
           </CardContent>
         </Card>
       ) : (
@@ -329,11 +296,12 @@ const UserSubmitContent = ({
               flexDirection: "column"
             }}
           >
-            {(contribution as any)?.status === TaskStatus.Finished && (
+            {/* this will be implemented once give contribution is completed */}
+            {/* {contribution?.status === TaskStatus.Finished && (
               <Stack direction="column" alignItems="flex-end" mb="15px">
                 <Chip label="Approved" color="success" size="small" />
               </Stack>
-            )}
+            )} */}
             <Stack direction="column" alignItems="center" mb="15px">
               <Typography
                 color="white"
@@ -341,44 +309,41 @@ const UserSubmitContent = ({
                 textAlign="center"
                 p="5px"
               >
-                {contribution?.description}
+                {contributionSubmitContent?.description}
               </Typography>
               <Typography variant="caption" className="text-secondary">
                 Contribution Description
               </Typography>
             </Stack>
 
-            {
-              // @ts-ignore
-              task?.properties?.attachmentRequired && (
-                <Stack direction="column" alignItems="center">
-                  <Typography
-                    color="white"
+            {contribution?.properties?.attachmentRequired && (
+              <Stack direction="column" alignItems="center">
+                <Typography
+                  color="white"
+                  variant="body"
+                  textAlign="center"
+                  p="5px"
+                >
+                  <Link
+                    color="primary"
+                    sx={{
+                      mt: 1,
+                      cursor: "pointer"
+                    }}
                     variant="body"
-                    textAlign="center"
-                    p="5px"
+                    target="_blank"
+                    href={ipfsCIDToHttpUrl(
+                      contributionSubmitContent?.attachment
+                    )}
                   >
-                    <Link
-                      color="primary"
-                      sx={{
-                        mt: 1,
-                        cursor: "pointer"
-                      }}
-                      variant="body"
-                      target="_blank"
-                      href={ipfsCIDToHttpUrl(
-                        contribution?.submission?.properties["fileUri"]
-                      )}
-                    >
-                      Open attachment
-                    </Link>
-                  </Typography>
-                  <Typography variant="caption" className="text-secondary">
-                    Attachment File
-                  </Typography>
-                </Stack>
-              )
-            }
+                    Open attachment
+                  </Link>
+                </Typography>
+                <Typography variant="caption" className="text-secondary">
+                  Attachment File
+                </Typography>
+              </Stack>
+            )}
           </CardContent>
         </Card>
       )}
@@ -393,8 +358,7 @@ const UserSubmitContent = ({
           }
         }}
       >
-        {(contribution?.status === TaskStatus.Created ||
-          contribution?.status === TaskStatus.Taken) && (
+        {!commit && (
           <Box
             sx={{
               width: "100%",
@@ -406,7 +370,6 @@ const UserSubmitContent = ({
               }
             }}
           >
-            {" "}
             <AutOsButton
               type="button"
               color="primary"
@@ -414,14 +377,11 @@ const UserSubmitContent = ({
               sx={{
                 width: "100px"
               }}
-              disabled={
-                !formState.isValid
-                //   ||  isLoadingTasks
-              }
+              disabled={!formState.isValid}
               onClick={handleSubmit(onSubmit)}
             >
               <Typography fontWeight="bold" fontSize="16px" lineHeight="26px">
-                Confirm
+                Submit
               </Typography>
             </AutOsButton>
           </Box>
@@ -431,48 +391,13 @@ const UserSubmitContent = ({
   );
 };
 
-const OpenTask = ({ contribution }: any) => {
-  const [searchParams] = useSearchParams();
-  const { address: userAddress } = useAccount();
-
-  const params = useParams();
-
-  //   const { task, submission, isLoading } = useGetAllTasksPerQuestQuery(
-  //     {
-  //       userAddress,
-  //       isAdmin: false,
-  //       pluginAddress: searchParams.get(
-  //         RequiredQueryParams.OnboardingQuestAddress
-  //       ),
-  //       questId: +searchParams.get(RequiredQueryParams.QuestId)
-  //     },
-  //     {
-  //       selectFromResult: ({ data, isLoading, isFetching }) => ({
-  //         isLoading: isLoading || isFetching,
-  //         submission: (data?.submissions || []).find((t) => {
-  //           const [pluginType] = location.pathname.split("/").splice(-2);
-  //           return (
-  //             t.submitter === userAddress &&
-  //             t.taskId === +params?.taskId &&
-  //             PluginDefinitionType[pluginType] ===
-  //               taskTypes[t.taskType].pluginType
-  //           );
-  //         }),
-  //         task: (data?.tasks || []).find((t) => {
-  //           const [pluginType] = location.pathname.split("/").splice(-2);
-  //           return (
-  //             t.taskId === +params?.taskId &&
-  //             PluginDefinitionType[pluginType] ===
-  //               taskTypes[t.taskType].pluginType
-  //           );
-  //         })
-  //       })
-  //     }
-  //   );
-
-  const isLoading = false;
-  const submission = null;
-
+const OpenTask = ({
+  contribution,
+  commit
+}: {
+  contribution: OpenTaskContribution;
+  commit: ContributionCommit;
+}) => {
   return (
     <Container
       maxWidth="lg"
@@ -485,19 +410,8 @@ const OpenTask = ({ contribution }: any) => {
         position: "relative"
       }}
     >
-      {contribution ? (
-        <>
-          <TaskDetails task={submission || contribution} />
-          <UserSubmitContent
-            // task={submission || task}
-            contribution={contribution}
-            isLoadingTasks={isLoading}
-            userAddress={userAddress}
-          />
-        </>
-      ) : (
-        <AutLoading width="130px" height="130px"></AutLoading>
-      )}
+      <TaskDetails contribution={contribution} />
+      <UserSubmitContent contribution={contribution} commit={commit} />
     </Container>
   );
 };

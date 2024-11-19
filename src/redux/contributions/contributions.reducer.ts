@@ -3,6 +3,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { set } from "date-fns";
 import { TaskStatus } from "@store/model";
 import { attach } from "@react-three/fiber/dist/declarations/src/core/utils";
+import { TaskType } from "@api/models/task-type";
 
 export const createLink = createAsyncThunk(
   "contributions/create",
@@ -137,13 +138,15 @@ export interface ContributionState {
   errorMessage: string;
   selectedContribution: any;
   contributions: any[];
+  taskTypes: TaskType[];
 }
 
 const initialState: ContributionState = {
   status: ResultState.Idle,
   errorMessage: "",
   selectedContribution: null,
-  contributions: []
+  contributions: [],
+  taskTypes: [],
 };
 
 export const contributionSlice = createSlice({
@@ -199,5 +202,7 @@ export const AllContributions = (state) =>
   state.contribution.contributions as any[];
 export const ContributionErrorMessage = (state) =>
   state.contribution.errorMessage as string;
+
+export const TaskTypes = (state) => state.contribution.taskTypes as TaskType[];
 
 export default contributionSlice.reducer;

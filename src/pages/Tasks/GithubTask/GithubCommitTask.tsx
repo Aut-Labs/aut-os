@@ -21,12 +21,16 @@ import { useAccount } from "wagmi";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { environment } from "@api/environment";
+import { ContributionCommit } from "@utils/hooks/useQueryContributionCommits";
+import { GithubCommitContribution } from "@api/models/contribution-types/github-commit.model";
 
-const GithubCommitContent = ({ contribution, userAddress }) => {
-  if (contribution) {
-    // eslint-disable-next-line no-debugger
-    debugger;
-  }
+const GithubCommitContent = ({
+  contribution,
+  commit
+}: {
+  contribution: GithubCommitContribution;
+  commit: ContributionCommit;
+}) => {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const [searchParams] = useSearchParams();

@@ -21,8 +21,16 @@ import { useAccount } from "wagmi";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { environment } from "@api/environment";
+import { GithubPullRequestContribution } from "@api/models/contribution-types/github-pr.model";
+import { ContributionCommit } from "@utils/hooks/useQueryContributionCommits";
 
-const GithubPRContent = ({ contribution, userAddress }) => {
+const GithubPRContent = ({
+  contribution,
+  commit
+}: {
+  contribution: GithubPullRequestContribution;
+  commit: ContributionCommit;
+}) => {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
@@ -234,7 +242,7 @@ const GithubPRContent = ({ contribution, userAddress }) => {
   );
 };
 
-const GithubPRTask = ({ contribution }) => {
+const GithubPRTask = ({ contribution , commit }) => {
   const { address: userAddress } = useAccount();
 
   return (
@@ -254,7 +262,7 @@ const GithubPRTask = ({ contribution }) => {
           <TaskDetails task={contribution} />
           <GithubPRContent
             contribution={contribution}
-            userAddress={userAddress}
+            commit={commit}
           />
         </>
       ) : (
