@@ -62,6 +62,8 @@ const UserSubmitContent = ({
     return userSubmit;
   }, [commit]);
 
+  console.log(contributionSubmitContent, 'contributionSubmitContent');
+
   useEffect(() => {
     if (!initialized && contributionSubmitContent) {
       let userSubmit = {
@@ -284,8 +286,9 @@ const UserSubmitContent = ({
       ) : (
         <Card
           sx={{
-            bgcolor: "nightBlack.main",
+            border: "1px solid",
             borderColor: "divider",
+            backgroundColor: "rgba(255, 255, 255, 0.08)",
             borderRadius: "16px",
             boxShadow: 3
           }}
@@ -305,7 +308,7 @@ const UserSubmitContent = ({
             <Stack direction="column" alignItems="center" mb="15px">
               <Typography
                 color="white"
-                variant="body"
+                variant="subtitle2"
                 textAlign="center"
                 p="5px"
               >
@@ -330,7 +333,7 @@ const UserSubmitContent = ({
                       mt: 1,
                       cursor: "pointer"
                     }}
-                    variant="body"
+                    variant="subtitle2"
                     target="_blank"
                     href={ipfsCIDToHttpUrl(
                       contributionSubmitContent?.attachment

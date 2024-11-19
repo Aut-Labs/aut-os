@@ -187,10 +187,11 @@ const TableListItem = memo(
                   },
                   width: "100px"
                 }}
-                disabled
+                to={`contribution/${contribution?.properties?.id}`}
+                component={Link}
               >
-                <Typography fontWeight="bold" fontSize="16px" lineHeight="26px">
-                  Claimed
+                <Typography fontWeight="bold" fontSize="16px" lineHeight="26px" >
+                  See Commit
                 </Typography>
               </AutOsButton>
             )}
@@ -235,18 +236,19 @@ export const AutHubTasksTable = ({ header }) => {
     });
   }, [data, commits]);
 
+
   const [
     commit,
     { error, isError, isSuccess, isLoading: commitingContribution, reset }
   ] = useCommitAnyContributionMutation();
 
-  const commitContribution = (row) => {
-    commit({
-      autSig: state.authSig,
-      contribution: row,
-      message: "secret"
-    });
-  };
+  // const commitContribution = (row) => {
+  //   commit({
+  //     autSig: state.authSig,
+  //     contribution: row,
+  //     message: "secret"
+  //   });
+  // };
 
   const theme = useTheme();
   return (
