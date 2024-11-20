@@ -282,7 +282,7 @@ export const useOAuthSocials = () => {
             onFailure(error);
           } else {
             const response = await axios.post(
-              `http://localhost:4005/api/aut/config/oauth2AccessTokenGithub`,
+              `${environment.apiUrl}/aut/config/oauth2AccessTokenGithub`,
               {
                 code: message.data.payload.code,
                 callbackUrl

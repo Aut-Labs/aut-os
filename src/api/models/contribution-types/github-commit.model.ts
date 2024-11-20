@@ -39,4 +39,5 @@ export class GithubCommitContribution<
       data.properties as GithubCommitContributionProperties
     ) as T;
   }
+  contributionType? = "Commit";
 }

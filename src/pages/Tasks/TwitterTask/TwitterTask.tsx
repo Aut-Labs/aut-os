@@ -1,6 +1,5 @@
-import { memo, useState } from "react";
+import { memo } from "react";
 import {
-  Box,
   Card,
   CardContent,
   Container,
@@ -9,84 +8,62 @@ import {
   Typography
 } from "@mui/material";
 import { useSearchParams, useParams, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
 import { TaskStatus } from "@store/model";
-import { updateContributionById } from "@store/contributions/contributions.reducer";
 import { AutOsButton } from "@components/AutButton";
 import TaskDetails from "../Shared/TaskDetails";
 import SubmitDialog from "@components/Dialog/SubmitDialog";
 import AutLoading from "@components/AutLoading";
 import { useOAuthSocials } from "@components/OAuth";
-import { useAccount } from "wagmi";
-import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
-import { environment } from "@api/environment";
+import { useWalletConnector } from "@aut-labs/connector";
+import { ContributionCommit } from "@utils/hooks/useQueryContributionCommits";
+import { useCommitAnyContributionMutation } from "@api/contributions.api";
+import ErrorDialog from "@components/Dialog/ErrorPopup";
+import { RetweetContribution } from "@api/models/contribution-types/retweet.model";
 
-const TwitterSubmitContent = ({ contribution, userAddress }) => {
-  const [loading, setLoading] = useState(false);
-  const dispatch = useDispatch();
+const TwitterSubmitContent = ({
+  contribution,
+  commit
+}: {
+  contribution: RetweetContribution;
+  commit: ContributionCommit;
+}) => {
+  const { state } = useWalletConnector();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const [openSubmitSuccess, setOpenSubmitSuccess] = useState(false);
   const { autAddress, hubAddress } = useParams();
   const { getAuthX } = useOAuthSocials();
 
-  const { mutateAsync: verifyTetweetTask } = useMutation<any, void, any>({
-    mutationFn: (verifyRetweetRequest) => {
-      return axios
-        .post(
-          `${environment.apiUrl}/task/twitter/retweet`,
-          verifyRetweetRequest
-        )
-        .then((res) => res.data);
+  const [commitContribution, { error, isError, isSuccess, isLoading, reset }] =
+    useCommitAnyContributionMutation();
+
+  const contributionSubmitContent = (() => {
+    let userSubmit = null;
+    try {
+      userSubmit = JSON.parse(commit?.data || "{}");
+    } catch (e) {
+      // pass
     }
-  });
+    return userSubmit;
+  })();
 
   const handleSubmit = async () => {
     await getAuthX(
       async (data) => {
         const { access_token } = data;
-        setLoading(true);
-        try {
-          await verifyTetweetTask(
-            {
-              accessToken: access_token,
-              contributionId: contribution?.id,
-              tweetUrl: contribution.properties?.tweetUrl
-            },
-            {
-              onSuccess: (response) => {
-                dispatch(
-                  updateContributionById({
-                    id: contribution?.id,
-                    data: {
-                      ...contribution,
-                      status: TaskStatus.Submitted,
-                      submission: {
-                        properties: {
-                          twitterToken: access_token
-                        }
-                      }
-                    }
-                  })
-                );
 
-                setOpenSubmitSuccess(true);
-                setLoading(false);
-              },
-              onError: (res) => {
-                console.error("Failed to submit contribution:", res);
-              }
-            }
-          );
-        } catch (error) {
-          setLoading(false);
-          // Handle error case
-          console.error("Failed to submit contribution:", error);
-        }
+        const tweetMessage = {
+          accessToken: access_token,
+          tweetUrl: contribution.properties?.tweetUrl
+        };
+
+        commitContribution({
+          autSig: state.authSig,
+          contribution,
+          message: JSON.stringify(tweetMessage),
+          hubAddress
+        });
       },
       () => {
-        setLoading(false);
         // Handle auth failure
       }
     );
@@ -107,21 +84,27 @@ const TwitterSubmitContent = ({ contribution, userAddress }) => {
         }
       }}
     >
+      <ErrorDialog
+        handleClose={() => reset()}
+        open={isError}
+        message={(error as { message: string })?.message || "An error occurred"}
+      />
+
       <SubmitDialog
-        open={openSubmitSuccess || loading}
-        mode={openSubmitSuccess ? "success" : "loading"}
+        open={isSuccess || isLoading}
+        mode={isSuccess ? "success" : "loading"}
         backdropFilter={true}
-        message={loading ? "" : "Congratulations!"}
+        message={isLoading ? "" : "Congratulations!"}
         titleVariant="h2"
         subtitle={
-          loading
+          isLoading
             ? "Submitting contribution..."
             : "Your submission has been successful!"
         }
         subtitleVariant="subtitle1"
         handleClose={() => {
-          if (!loading) {
-            setOpenSubmitSuccess(false);
+          if (!isLoading) {
+            reset();
             navigate({
               pathname: `/${autAddress}/hub/${hubAddress}`,
               search: searchParams.toString()
@@ -130,8 +113,7 @@ const TwitterSubmitContent = ({ contribution, userAddress }) => {
         }}
       />
 
-      {contribution?.status === TaskStatus.Created ||
-      contribution?.status === TaskStatus.Taken ? (
+      {!commit ? (
         <Card
           sx={{
             border: "1px solid",
@@ -193,7 +175,7 @@ const TwitterSubmitContent = ({ contribution, userAddress }) => {
               }}
             >
               <Typography fontWeight="bold" fontSize="16px" lineHeight="26px">
-                Claim
+                Submit
               </Typography>
             </AutOsButton>
           </CardContent>
@@ -223,8 +205,16 @@ const TwitterSubmitContent = ({ contribution, userAddress }) => {
               >
                 {contribution?.description}
               </Typography>
+              <Typography
+                color="white"
+                variant="subtitle2"
+                textAlign="center"
+                p="5px"
+              >
+                Tweet URL: {contributionSubmitContent?.tweetUrl}
+              </Typography>
               <Typography variant="caption" className="text-secondary">
-                Contribution Description
+                Twitter Retweet Contribution
               </Typography>
             </Stack>
           </CardContent>
@@ -234,9 +224,13 @@ const TwitterSubmitContent = ({ contribution, userAddress }) => {
   );
 };
 
-const TwitterTask = ({ contribution }) => {
-  const { address: userAddress } = useAccount();
-
+const TwitterTask = ({
+  contribution,
+  commit
+}: {
+  contribution: RetweetContribution;
+  commit: ContributionCommit;
+}) => {
   return (
     <Container
       maxWidth="lg"
@@ -251,11 +245,8 @@ const TwitterTask = ({ contribution }) => {
     >
       {contribution ? (
         <>
-          <TaskDetails task={contribution} />
-          <TwitterSubmitContent
-            contribution={contribution}
-            userAddress={userAddress}
-          />
+          <TaskDetails contribution={contribution} />
+          <TwitterSubmitContent contribution={contribution} commit={commit} />
         </>
       ) : (
         <AutLoading width="130px" height="130px" />

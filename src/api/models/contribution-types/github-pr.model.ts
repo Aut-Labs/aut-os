@@ -43,4 +43,5 @@ export class GithubPullRequestContribution<
       data.properties as GithubPullRequestContributionProperties
     ) as T;
   }
+  contributionType? = "Pull Request";
 }
