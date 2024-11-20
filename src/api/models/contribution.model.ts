@@ -5,6 +5,8 @@ import { RetweetContribution } from "./contribution-types/retweet.model";
 import { JoinDiscordContribution } from "./contribution-types/join-discord.model";
 import { QuizTaskContribution } from "./contribution-types/quiz.model.model";
 import { TaskType } from "./task-type";
+import { GithubCommitContribution } from "./contribution-types/github-commit.model";
+import { GithubPullRequestContribution } from "./contribution-types/github-pr.model";
 
 export const ContributionFactory = (
   metadata: BaseNFTModel<any>,
@@ -39,7 +41,9 @@ export const ContributionFactory = (
       return new QuizTaskContribution(data);
     case "TwitterLike":
     case "GitHubCommit":
+      return new GithubCommitContribution(data);
     case "GitHubOpenPR":
+      return new GithubPullRequestContribution(data);
     case "DiscordPolls":
     case "TwitterFollow":
     case "TwitterComment":
