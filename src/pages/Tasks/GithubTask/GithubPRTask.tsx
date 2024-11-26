@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useState } from "react";
 import {
   Card,
   CardContent,
@@ -16,25 +16,29 @@ import AutLoading from "@components/AutLoading";
 import { useOAuthSocials } from "@components/OAuth";
 import { useWalletConnector } from "@aut-labs/connector";
 import { ContributionCommit } from "@utils/hooks/useQueryContributionCommits";
+import { GithubPullRequestContribution } from "@api/models/contribution-types/github-pr.model";
 import { useCommitAnyContributionMutation } from "@api/contributions.api";
 import ErrorDialog from "@components/Dialog/ErrorPopup";
-import { RetweetContribution } from "@api/models/contribution-types/retweet.model";
 
-const TwitterSubmitContent = ({
+const GithubPRContent = ({
   contribution,
   commit
 }: {
-  contribution: RetweetContribution;
+  contribution: GithubPullRequestContribution;
   commit: ContributionCommit;
 }) => {
   const { state } = useWalletConnector();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { autAddress, hubAddress } = useParams();
-  const { getAuthX } = useOAuthSocials();
+  const { getAuthGithub } = useOAuthSocials();
 
   const [commitContribution, { error, isError, isSuccess, isLoading, reset }] =
     useCommitAnyContributionMutation();
+
+  if (error || isError) {
+    debugger;
+  }
 
   const contributionSubmitContent = (() => {
     let userSubmit = null;
@@ -47,19 +51,21 @@ const TwitterSubmitContent = ({
   })();
 
   const handleSubmit = async () => {
-    await getAuthX(
+    await getAuthGithub(
       async (data) => {
         const { access_token } = data;
 
-        const tweetMessage = {
+        const commitMessage = {
           accessToken: access_token,
-          tweetUrl: contribution.properties?.tweetUrl
+          owner: contribution?.properties?.organisation,
+          branch: contribution?.properties?.branch,
+          repo: contribution?.properties?.repository
         };
 
         commitContribution({
           autSig: state.authSig,
           contribution,
-          message: JSON.stringify(tweetMessage),
+          message: JSON.stringify(commitMessage),
           hubAddress
         });
       },
@@ -140,29 +146,13 @@ const TwitterSubmitContent = ({
               {contribution?.description}
             </Typography>
 
-            <Link
-              href={contribution.properties?.tweetUrl}
-              target="_blank"
-              color="primary"
-              underline="none"
-            >
-              <Typography
-                color="primary"
-                variant="body2"
-                textAlign="center"
-                marginBottom="16px"
-              >
-                {contribution.properties?.tweetUrl}
-              </Typography>
-            </Link>
-
             <Typography
               color="white"
               variant="body2"
               textAlign="center"
               marginBottom="32px"
             >
-              Please authenticate with Twitter to verify your contribution
+              Please authenticate with Github to verify your contribution
             </Typography>
 
             <AutOsButton
@@ -211,10 +201,11 @@ const TwitterSubmitContent = ({
                 textAlign="center"
                 p="5px"
               >
-                Tweet URL: {contributionSubmitContent?.tweetUrl}
+                Pull Request submitted to repository:{" "}
+                {contributionSubmitContent?.repo}
               </Typography>
               <Typography variant="caption" className="text-secondary">
-                Twitter Retweet Contribution
+                Github Pull Request Contribution
               </Typography>
             </Stack>
           </CardContent>
@@ -224,11 +215,11 @@ const TwitterSubmitContent = ({
   );
 };
 
-const TwitterTask = ({
+const GithubPRTask = ({
   contribution,
   commit
 }: {
-  contribution: RetweetContribution;
+  contribution: GithubPullRequestContribution;
   commit: ContributionCommit;
 }) => {
   return (
@@ -246,7 +237,7 @@ const TwitterTask = ({
       {contribution ? (
         <>
           <TaskDetails contribution={contribution} />
-          <TwitterSubmitContent contribution={contribution} commit={commit} />
+          <GithubPRContent contribution={contribution} commit={commit} />
         </>
       ) : (
         <AutLoading width="130px" height="130px" />
@@ -255,4 +246,4 @@ const TwitterTask = ({
   );
 };
 
-export default memo(TwitterTask);
+export default memo(GithubPRTask);

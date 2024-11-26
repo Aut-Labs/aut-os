@@ -27,6 +27,7 @@ import useQueryContributionCommits, {
 } from "@utils/hooks/useQueryContributionCommits";
 import { TaskContributionNFT } from "@aut-labs/sdk";
 import { Link } from "react-router-dom";
+import { GithubCommitContribution } from "@api/models/contribution-types/github-commit.model";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}, &.${tableCellClasses.body}`]: {
@@ -53,154 +54,152 @@ interface TableListItemProps {
   commit: ContributionCommit;
 }
 
-const TableListItem = memo(
-  ({ contribution, commit }: TableListItemProps) => {
-    const theme = useTheme();
+const TableListItem = memo(({ contribution, commit }: TableListItemProps) => {
+  const theme = useTheme();
 
-    const startDate = useMemo(() => {
-      return format(
-        new Date(contribution?.properties?.startDate * 1000),
-        "dd.MM.yy"
-      ).toString();
-    }, [contribution?.properties?.startDate]);
+  const startDate = useMemo(() => {
+    return format(
+      new Date(contribution?.properties?.startDate * 1000),
+      "dd.MM.yy"
+    ).toString();
+  }, [contribution?.properties?.startDate]);
 
-    const endDate = useMemo(() => {
-      return format(
-        new Date(contribution?.properties?.endDate * 1000),
-        "dd.MM.yy"
-      ).toString();
-    }, [contribution?.properties?.endDate]);
+  const endDate = useMemo(() => {
+    return format(
+      new Date(contribution?.properties?.endDate * 1000),
+      "dd.MM.yy"
+    ).toString();
+  }, [contribution?.properties?.endDate]);
 
-    return (
-      <StyledTableRow
-        sx={{
-          "&:last-child td, &:last-child th": { border: 0 },
-          "td, th": {
-            padding: theme.spacing(3),
-            "&:nth-of-type(1)": {
-              width: "40%"
-            },
-            "&:nth-of-type(2)": {
-              width: "20%"
-            },
-            "&:nth-of-type(3)": {
-              width: "10%"
-            },
-            "&:nth-of-type(4)": {
-              width: "10%"
-            },
-            "&:nth-of-type(5)": {
-              width: "10%"
-            },
-            "&:nth-of-type(6)": {
-              width: "10%"
-            }
+  return (
+    <StyledTableRow
+      sx={{
+        "&:last-child td, &:last-child th": { border: 0 },
+        "td, th": {
+          padding: theme.spacing(3),
+          "&:nth-of-type(1)": {
+            width: "40%"
+          },
+          "&:nth-of-type(2)": {
+            width: "20%"
+          },
+          "&:nth-of-type(3)": {
+            width: "10%"
+          },
+          "&:nth-of-type(4)": {
+            width: "10%"
+          },
+          "&:nth-of-type(5)": {
+            width: "10%"
+          },
+          "&:nth-of-type(6)": {
+            width: "10%"
           }
-        }}
-      >
-        <StyledTableCell align="left">
-          <Stack>
-            <Typography variant="subtitle2" fontWeight="normal" color="white">
-              {contribution?.name}
-            </Typography>
-            <Typography variant="caption" fontWeight="normal" color="white">
-              {contribution?.description}
-            </Typography>
-          </Stack>
-        </StyledTableCell>
-        <StyledTableCell align="left">
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "flex-start",
-              alignItems: "center"
-            }}
-          >
-            <Typography variant="body" fontWeight="normal" color="white">
-              {contribution?.contributionType}
-            </Typography>
-          </Box>
-        </StyledTableCell>
-        <StyledTableCell align="left">
-          <Typography variant="body" fontWeight="normal" color="white">
-            {`${contribution?.properties?.points || 0} ${contribution?.properties?.points === 1 ? "pt" : "pts"}`}
+        }
+      }}
+    >
+      <StyledTableCell align="left">
+        <Stack>
+          <Typography variant="subtitle2" fontWeight="normal" color="white">
+            {contribution?.name}
           </Typography>
-        </StyledTableCell>
-        <StyledTableCell align="left">
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "flex-start",
-              alignItems: "center"
-            }}
-          >
-            <Typography variant="body" fontWeight="normal" color="white">
-              {startDate}
-            </Typography>
-            <SvgIcon
-              sx={{ fill: "transparent", ml: theme.spacing(4) }}
-              component={ArrowIcon}
-            />
-          </Box>
-        </StyledTableCell>
-        <StyledTableCell align="left">
-          <Typography variant="body" fontWeight="normal" color="white">
-            {endDate}
+          <Typography variant="caption" fontWeight="normal" color="white">
+            {contribution?.description}
           </Typography>
-        </StyledTableCell>
+        </Stack>
+      </StyledTableCell>
+      <StyledTableCell align="left">
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "flex-start",
+            alignItems: "center"
+          }}
+        >
+          <Typography variant="body" fontWeight="normal" color="white">
+            {contribution?.contributionType}
+          </Typography>
+        </Box>
+      </StyledTableCell>
+      <StyledTableCell align="left">
+        <Typography variant="body" fontWeight="normal" color="white">
+          {`${contribution?.properties?.points || 0} ${contribution?.properties?.points === 1 ? "pt" : "pts"}`}
+        </Typography>
+      </StyledTableCell>
+      <StyledTableCell align="left">
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "flex-start",
+            alignItems: "center"
+          }}
+        >
+          <Typography variant="body" fontWeight="normal" color="white">
+            {startDate}
+          </Typography>
+          <SvgIcon
+            sx={{ fill: "transparent", ml: theme.spacing(4) }}
+            component={ArrowIcon}
+          />
+        </Box>
+      </StyledTableCell>
+      <StyledTableCell align="left">
+        <Typography variant="body" fontWeight="normal" color="white">
+          {endDate}
+        </Typography>
+      </StyledTableCell>
 
-        <StyledTableCell align="left">
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "flex-start",
-              alignItems: "center"
-            }}
-          >
-            {!commit ? (
-              <AutOsButton
-                type="button"
-                color="primary"
-                variant="outlined"
-                sx={{
-                  width: "100px"
-                }}
-                relative="path"
-                to={`contribution/${contribution?.properties?.id}`}
-                component={Link}
-              >
-                <Typography fontWeight="bold" fontSize="16px" lineHeight="26px">
-                  Claim
-                </Typography>
-              </AutOsButton>
-            ) : (
-              <AutOsButton
-                type="button"
-                color="success"
-                variant="contained"
-                sx={{
-                  "&.MuiButton-root": {
-                    backgroundColor: "#12B76A"
-                  },
-                  "&.Mui-disabled": {
-                    color: `${theme.palette.offWhite.light} !important`
-                  },
-                  width: "100px"
-                }}
-                to={`contribution/${contribution?.properties?.id}`}
-                component={Link}
-              >
-                <Typography fontWeight="bold" fontSize="16px" lineHeight="26px" >
-                  See Commit
-                </Typography>
-              </AutOsButton>
-            )}
-          </Box>
-        </StyledTableCell>
-      </StyledTableRow>
-    );
-  }
-);
+      <StyledTableCell align="left">
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "flex-start",
+            alignItems: "center"
+          }}
+        >
+          {!commit ? (
+            <AutOsButton
+              type="button"
+              color="primary"
+              variant="outlined"
+              sx={{
+                width: "100px"
+              }}
+              relative="path"
+              to={`contribution/${contribution?.properties?.id}`}
+              component={Link}
+            >
+              <Typography fontWeight="bold" fontSize="16px" lineHeight="26px">
+                Claim
+              </Typography>
+            </AutOsButton>
+          ) : (
+            <AutOsButton
+              type="button"
+              color="success"
+              variant="contained"
+              sx={{
+                "&.MuiButton-root": {
+                  backgroundColor: "#12B76A"
+                },
+                "&.Mui-disabled": {
+                  color: `${theme.palette.offWhite.light} !important`
+                },
+                width: "100px"
+              }}
+              to={`contribution/${contribution?.properties?.id}`}
+              component={Link}
+            >
+              <Typography fontWeight="bold" fontSize="16px" lineHeight="26px">
+                See Commit
+              </Typography>
+            </AutOsButton>
+          )}
+        </Box>
+      </StyledTableCell>
+    </StyledTableRow>
+  );
+});
 
 export const AutHubTasksTable = ({ header }) => {
   const { state } = useWalletConnector();
@@ -236,7 +235,11 @@ export const AutHubTasksTable = ({ header }) => {
     });
   }, [data, commits]);
 
-
+  if (data?.length) {
+    data.map((contribution) => {
+      console.log(contribution as GithubCommitContribution);
+    })
+  }
   const [
     commit,
     { error, isError, isSuccess, isLoading: commitingContribution, reset }

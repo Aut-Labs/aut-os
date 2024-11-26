@@ -63,9 +63,8 @@ const useQueryContributions = (props: QueryFunctionOptions<any, any> = {}) => {
   const hubAddress = useMemo(() => {
     return selectedHubAddress || _hubAddress;
   }, [_hubAddress, selectedHubAddress]);
-
   const { data, loading, ...rest } = useQuery(GET_HUB_CONTRIBUTIONS, {
-    skip: !hubAddress || !taskTypes.length,
+    skip: !hubAddress &&  !taskTypes.length,
     fetchPolicy: "cache-and-network",
     variables: {
       ...props.variables,
