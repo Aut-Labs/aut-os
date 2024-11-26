@@ -40,17 +40,19 @@ const contributionsMetadata = (
   taskFactory: TaskFactoryContract,
   taskTypes: TaskType[]
 ) => {
-  return contributions.map(async (contribution) => {
-    const { uri } = await taskFactory.functions.getDescriptionById(
-      contribution?.descriptionId
-    );
-    let metadata = await fetchMetadata<BaseNFTModel<any>>(
-      uri,
-      environment.ipfsGatewayUrl
-    );
-    metadata = metadata || ({ properties: {} } as BaseNFTModel<any>);
-    return ContributionFactory(metadata, contribution, taskTypes);
-  });
+  return contributions
+    .filter((contribution) => contribution?.descriptionId)
+    .map(async (contribution) => {
+      const { uri } = await taskFactory.functions.getDescriptionById(
+        contribution?.descriptionId
+      );
+      let metadata = await fetchMetadata<BaseNFTModel<any>>(
+        uri,
+        environment.ipfsGatewayUrl
+      );
+      metadata = metadata || ({ properties: {} } as BaseNFTModel<any>);
+      return ContributionFactory(metadata, contribution, taskTypes);
+    });
 };
 
 const useQueryContributions = (props: QueryFunctionOptions<any, any> = {}) => {
@@ -72,24 +74,17 @@ const useQueryContributions = (props: QueryFunctionOptions<any, any> = {}) => {
         ...(props.variables?.where || {})
       }
     },
-    ...props
+    // ...props
   });
 
   const [contributions, setContributions] = useState<TaskContributionNFT[]>([]);
   const [loadingMetadata, setLoadingMetadata] = useState(true);
 
   useEffect(() => {
-    if (
-      hubAddress &&
-      data?.contributions?.length &&
-      taskTypes.length
-    ) {
+    if (hubAddress && data?.contributions?.length && taskTypes.length) {
       const fetch = async () => {
         const sdk = await AutSDK.getInstance();
-        const hubService: Hub = sdk.initService<Hub>(
-          Hub,
-          hubAddress
-        );
+        const hubService: Hub = sdk.initService<Hub>(Hub, hubAddress);
         const taskFactory = await hubService.getTaskFactory();
         setLoadingMetadata(true);
         const contributions = await Promise.all(
