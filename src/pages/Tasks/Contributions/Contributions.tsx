@@ -13,6 +13,8 @@ import GithubPRTask from "../GithubTask/GithubPRTask";
 import { GithubPullRequestContribution } from "@api/models/contribution-types/github-pr.model";
 import { RetweetContribution } from "@api/models/contribution-types/retweet.model";
 import TwitterTask from "../TwitterTask/TwitterTask";
+import { JoinDiscordContribution } from "@api/models/contribution-types/join-discord.model";
+import JoinDiscordTask from "../DiscordTask/JoinDiscordTask";
 
 const Contributions = () => {
   const { state } = useWalletConnector();
@@ -61,8 +63,10 @@ const Contributions = () => {
       return <GithubCommitTask contribution={contribution} commit={commit} />;
     } else if (contribution instanceof GithubPullRequestContribution) {
       return <GithubPRTask contribution={contribution} commit={commit} />;
-    }else if (contribution instanceof RetweetContribution) {
+    } else if (contribution instanceof RetweetContribution) {
       return <TwitterTask contribution={contribution} commit={commit} />;
+    } else if (contribution instanceof JoinDiscordContribution) {
+      return <JoinDiscordTask contribution={contribution} commit={commit} />;
     } else {
       return "Contribution type not supported";
     }
