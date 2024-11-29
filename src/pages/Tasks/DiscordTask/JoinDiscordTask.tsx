@@ -182,8 +182,9 @@ const DiscordJoinContent = ({
       ) : (
         <Card
           sx={{
-            bgcolor: "nightBlack.main",
+            border: "1px solid",
             borderColor: "divider",
+            backgroundColor: "rgba(255, 255, 255, 0.08)",
             borderRadius: "16px",
             boxShadow: 3
           }}
@@ -195,25 +196,30 @@ const DiscordJoinContent = ({
               alignItems: "center"
             }}
           >
-            <Stack direction="column" alignItems="center" mb="15px">
-              <Typography
-                color="white"
-                variant="body"
-                textAlign="center"
-                p="5px"
-              >
-                {contribution?.description}
-              </Typography>
+          <Stack direction="column" alignItems="center" mb="15px">
               <Typography
                 color="white"
                 variant="subtitle2"
                 textAlign="center"
                 p="5px"
               >
-                Successfully joined Discord server
+                {contributionSubmitContent?.discordServer}
               </Typography>
               <Typography variant="caption" className="text-secondary">
-                Discord Join Contribution
+                Discord Server
+              </Typography>
+            </Stack>
+            <Stack direction="column" alignItems="center" mb="15px">
+              <Typography
+                color="white"
+                variant="subtitle2"
+                textAlign="center"
+                p="5px"
+              >
+                {contributionSubmitContent?.authenticatedUser}
+              </Typography>
+              <Typography variant="caption" className="text-secondary">
+                Authenticated User
               </Typography>
             </Stack>
           </CardContent>

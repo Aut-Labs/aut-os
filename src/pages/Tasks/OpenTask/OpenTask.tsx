@@ -81,6 +81,8 @@ const UserSubmitContent = ({
     }
   }, [initialized, contributionSubmitContent]);
 
+  console.log(contributionSubmitContent, 'contributionSubmitContent');
+
   const [commitContribution, { error, isError, isSuccess, isLoading, reset }] =
     useCommitAnyContributionMutation();
 
@@ -315,7 +317,7 @@ const UserSubmitContent = ({
                 {contributionSubmitContent?.description}
               </Typography>
               <Typography variant="caption" className="text-secondary">
-                Contribution Description
+                Description
               </Typography>
             </Stack>
 
@@ -335,9 +337,10 @@ const UserSubmitContent = ({
                     }}
                     variant="subtitle2"
                     target="_blank"
-                    href={ipfsCIDToHttpUrl(
-                      contributionSubmitContent?.attachment
-                    )}
+                    //TODO: To uncomment when attachment ipfs url is correctly added to the metadata
+                    // href={ipfsCIDToHttpUrl(
+                    //   contributionSubmitContent?.attachment
+                    // )}
                   >
                     Open attachment
                   </Link>

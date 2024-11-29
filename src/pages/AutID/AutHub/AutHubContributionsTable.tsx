@@ -332,7 +332,7 @@ export const AutHubTasksTable = ({ header }) => {
                   End Date
                 </Typography>
               </StyledTableCell>
-              <StyledTableCell align="left">
+              <StyledTableCell align="center">
                 <Typography
                   variant="body"
                   fontWeight="normal"

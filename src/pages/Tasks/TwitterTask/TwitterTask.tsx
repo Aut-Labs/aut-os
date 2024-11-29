@@ -46,6 +46,8 @@ const TwitterSubmitContent = ({
     return userSubmit;
   })();
 
+  console.log(contributionSubmitContent);
+
   const handleSubmit = async () => {
     await getAuthX(
       async (data) => {
@@ -131,14 +133,14 @@ const TwitterSubmitContent = ({
               padding: "32px"
             }}
           >
-            <Typography
+            {/* <Typography
               color="white"
               variant="body"
               textAlign="center"
               marginBottom="24px"
             >
               {contribution?.description}
-            </Typography>
+            </Typography> */}
 
             <Link
               href={contribution.properties?.tweetUrl}
@@ -148,7 +150,7 @@ const TwitterSubmitContent = ({
             >
               <Typography
                 color="primary"
-                variant="body2"
+                variant="subtitle2"
                 textAlign="center"
                 marginBottom="16px"
               >
@@ -158,11 +160,11 @@ const TwitterSubmitContent = ({
 
             <Typography
               color="white"
-              variant="body2"
+              variant="body"
               textAlign="center"
               marginBottom="32px"
             >
-              Please authenticate with Twitter to verify your contribution
+              Please authenticate with Twitter to verify your contribution.
             </Typography>
 
             <AutOsButton
@@ -183,8 +185,9 @@ const TwitterSubmitContent = ({
       ) : (
         <Card
           sx={{
-            bgcolor: "nightBlack.main",
+            border: "1px solid",
             borderColor: "divider",
+            backgroundColor: "rgba(255, 255, 255, 0.08)",
             borderRadius: "16px",
             boxShadow: 3
           }}
@@ -197,24 +200,36 @@ const TwitterSubmitContent = ({
             }}
           >
             <Stack direction="column" alignItems="center" mb="15px">
-              <Typography
-                color="white"
-                variant="body"
-                textAlign="center"
-                p="5px"
+              <Link
+                href={contribution.properties?.tweetUrl}
+                target="_blank"
+                color="primary"
+                underline="none"
               >
-                {contribution?.description}
+                <Typography
+                  color="primary"
+                  variant="subtitle2"
+                  textAlign="center"
+                  p="5px"
+                >
+                  {contribution.properties?.tweetUrl}
+                </Typography>
+              </Link>
+              <Typography variant="caption" className="text-secondary">
+                Tweet Url
               </Typography>
+            </Stack>
+            <Stack direction="column" alignItems="center" mb="15px">
               <Typography
                 color="white"
                 variant="subtitle2"
                 textAlign="center"
                 p="5px"
               >
-                Tweet URL: {contributionSubmitContent?.tweetUrl}
+                {contributionSubmitContent?.authenticatedUser}
               </Typography>
               <Typography variant="caption" className="text-secondary">
-                Twitter Retweet Contribution
+                Authenticated User
               </Typography>
             </Stack>
           </CardContent>

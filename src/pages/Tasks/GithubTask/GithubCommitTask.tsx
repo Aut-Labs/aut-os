@@ -162,8 +162,9 @@ const GithubCommitContent = ({
       ) : (
         <Card
           sx={{
-            bgcolor: "nightBlack.main",
+            border: "1px solid",
             borderColor: "divider",
+            backgroundColor: "rgba(255, 255, 255, 0.08)",
             borderRadius: "16px",
             boxShadow: 3
           }}
@@ -178,23 +179,27 @@ const GithubCommitContent = ({
             <Stack direction="column" alignItems="center" mb="15px">
               <Typography
                 color="white"
-                variant="body"
+                variant="subtitle2"
                 textAlign="center"
                 p="5px"
               >
-                {contribution?.description}
+                {contributionSubmitContent?.repo}
               </Typography>
+              <Typography variant="caption" className="text-secondary">
+                Repository
+              </Typography>
+            </Stack>
+            <Stack direction="column" alignItems="center" mb="15px">
               <Typography
                 color="white"
                 variant="subtitle2"
                 textAlign="center"
                 p="5px"
               >
-                Contribution submitted to repository:{" "}
-                {contributionSubmitContent?.repo}
+                {contributionSubmitContent?.authenticatedUser}
               </Typography>
               <Typography variant="caption" className="text-secondary">
-                Github Commit Contribution
+                Authenticated User
               </Typography>
             </Stack>
           </CardContent>
