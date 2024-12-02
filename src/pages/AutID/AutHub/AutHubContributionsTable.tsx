@@ -28,6 +28,7 @@ import useQueryContributionCommits, {
 import { TaskContributionNFT } from "@aut-labs/sdk";
 import { Link } from "react-router-dom";
 import { GithubCommitContribution } from "@api/models/contribution-types/github-commit.model";
+import useQueryHubPeriod from "@utils/hooks/useQueryHubPeriod";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}, &.${tableCellClasses.body}`]: {
@@ -238,7 +239,7 @@ export const AutHubTasksTable = ({ header }) => {
   if (data?.length) {
     data.map((contribution) => {
       console.log(contribution as GithubCommitContribution);
-    })
+    });
   }
   const [
     commit,

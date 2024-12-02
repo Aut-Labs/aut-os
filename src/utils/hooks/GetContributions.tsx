@@ -30,7 +30,7 @@ const GET_HUB_CONTRIBUTIONS = gql`
       endDate
       points
       quantity
-      descriptionId
+      uri
     }
   }
 `;
@@ -40,19 +40,14 @@ const contributionsMetadata = (
   taskFactory: TaskFactoryContract,
   taskTypes: TaskType[]
 ) => {
-  return contributions
-    .filter((contribution) => contribution?.descriptionId)
-    .map(async (contribution) => {
-      const { uri } = await taskFactory.functions.getDescriptionById(
-        contribution?.descriptionId
-      );
-      let metadata = await fetchMetadata<BaseNFTModel<any>>(
-        uri,
-        environment.ipfsGatewayUrl
-      );
-      metadata = metadata || ({ properties: {} } as BaseNFTModel<any>);
-      return ContributionFactory(metadata, contribution, taskTypes);
-    });
+  return contributions.map(async (contribution) => {
+    let metadata = await fetchMetadata<BaseNFTModel<any>>(
+      contribution.uri,
+      environment.ipfsGatewayUrl
+    );
+    metadata = metadata || ({ properties: {} } as BaseNFTModel<any>);
+    return ContributionFactory(metadata, contribution, taskTypes);
+  });
 };
 
 const useQueryContributions = (props: QueryFunctionOptions<any, any> = {}) => {
@@ -64,7 +59,7 @@ const useQueryContributions = (props: QueryFunctionOptions<any, any> = {}) => {
     return selectedHubAddress || _hubAddress;
   }, [_hubAddress, selectedHubAddress]);
   const { data, loading, ...rest } = useQuery(GET_HUB_CONTRIBUTIONS, {
-    skip: !hubAddress &&  !taskTypes.length,
+    skip: !hubAddress && !taskTypes.length,
     fetchPolicy: "cache-and-network",
     variables: {
       ...props.variables,
@@ -72,7 +67,7 @@ const useQueryContributions = (props: QueryFunctionOptions<any, any> = {}) => {
         hubAddress: hubAddress,
         ...(props.variables?.where || {})
       }
-    },
+    }
     // ...props
   });
 

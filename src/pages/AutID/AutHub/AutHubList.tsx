@@ -26,6 +26,7 @@ import { useSelector } from "react-redux";
 import { EditContentElements } from "@components/EditContentElements";
 import { socialsWithIcons } from "@utils/social-icons";
 import { SocialUrls } from "@aut-labs/sdk";
+import useQueryHubPeriod from "@utils/hooks/useQueryHubPeriod";
 
 export const HubTopWrapper = styled(Box)(({ theme }) => ({
   display: "flex",
@@ -336,6 +337,9 @@ interface TableParamsParams {
 
 const AutHubList = ({ isLoading = false, hubs = [] }: TableParamsParams) => {
   const theme = useTheme();
+  const { data: periodData } = useQueryHubPeriod();
+  console.log(periodData, "periodData");
+
 
   return (
     <Box
