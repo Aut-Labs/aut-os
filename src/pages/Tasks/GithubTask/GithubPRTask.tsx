@@ -40,7 +40,7 @@ const GithubPRContent = ({
     // debugger;
   }
 
-  const contributionSubmitContent = (() => {
+  const contributionSubmissionContent = (() => {
     let userSubmit = null;
     try {
       userSubmit = JSON.parse(commit?.data || "{}");
@@ -194,7 +194,7 @@ const GithubPRContent = ({
                 textAlign="center"
                 p="5px"
               >
-                {contributionSubmitContent?.repo}
+                {contributionSubmissionContent?.repo}
               </Typography>
               <Typography variant="caption" className="text-secondary">
                 Repository
@@ -207,7 +207,7 @@ const GithubPRContent = ({
                 textAlign="center"
                 p="5px"
               >
-                {contributionSubmitContent?.authenticatedUser}
+                {contributionSubmissionContent?.authenticatedUser}
               </Typography>
               <Typography variant="caption" className="text-secondary">
                 Authenticated User

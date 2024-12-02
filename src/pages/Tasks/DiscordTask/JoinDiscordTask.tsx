@@ -29,7 +29,7 @@ const DiscordJoinContent = ({
   const [commitContribution, { error, isError, isSuccess, isLoading, reset }] =
     useCommitAnyContributionMutation();
 
-  const contributionSubmitContent = (() => {
+  const contributionSubmissionContent = (() => {
     let userSubmit = null;
     try {
       userSubmit = JSON.parse(commit?.data || "{}");
@@ -203,7 +203,7 @@ const DiscordJoinContent = ({
                 textAlign="center"
                 p="5px"
               >
-                {contributionSubmitContent?.discordServer}
+                {contributionSubmissionContent?.discordServer}
               </Typography>
               <Typography variant="caption" className="text-secondary">
                 Discord Server
@@ -216,7 +216,7 @@ const DiscordJoinContent = ({
                 textAlign="center"
                 p="5px"
               >
-                {contributionSubmitContent?.authenticatedUser}
+                {contributionSubmissionContent?.authenticatedUser}
               </Typography>
               <Typography variant="caption" className="text-secondary">
                 Authenticated User

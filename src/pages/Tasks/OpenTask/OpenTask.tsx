@@ -52,7 +52,7 @@ const UserSubmitContent = ({
 
   const { autAddress, hubAddress } = useParams();
 
-  const contributionSubmitContent = useMemo(() => {
+  const contributionSubmissionContent = useMemo(() => {
     let userSubmit = null;
     try {
       userSubmit = JSON.parse(commit.data);
@@ -62,10 +62,10 @@ const UserSubmitContent = ({
     return userSubmit;
   }, [commit]);
 
-  console.log(contributionSubmitContent, 'contributionSubmitContent');
+  console.log(contributionSubmissionContent, 'contributionSubmissionContent');
 
   useEffect(() => {
-    if (!initialized && contributionSubmitContent) {
+    if (!initialized && contributionSubmissionContent) {
       let userSubmit = {
         description: "",
         attachment: ""
@@ -79,9 +79,9 @@ const UserSubmitContent = ({
       setValue("attachment", userSubmit.attachment);
       setInitialized(true);
     }
-  }, [initialized, contributionSubmitContent]);
+  }, [initialized, contributionSubmissionContent]);
 
-  console.log(contributionSubmitContent, 'contributionSubmitContent');
+  console.log(contributionSubmissionContent, 'contributionSubmissionContent');
 
   const [commitContribution, { error, isError, isSuccess, isLoading, reset }] =
     useCommitAnyContributionMutation();
@@ -314,7 +314,7 @@ const UserSubmitContent = ({
                 textAlign="center"
                 p="5px"
               >
-                {contributionSubmitContent?.description}
+                {contributionSubmissionContent?.description}
               </Typography>
               <Typography variant="caption" className="text-secondary">
                 Description
@@ -339,7 +339,7 @@ const UserSubmitContent = ({
                     target="_blank"
                     //TODO: To uncomment when attachment ipfs url is correctly added to the metadata
                     // href={ipfsCIDToHttpUrl(
-                    //   contributionSubmitContent?.attachment
+                    //   contributionSubmissionContent?.attachment
                     // )}
                   >
                     Open attachment

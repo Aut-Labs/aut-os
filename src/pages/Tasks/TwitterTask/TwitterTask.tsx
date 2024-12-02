@@ -36,7 +36,7 @@ const TwitterSubmitContent = ({
   const [commitContribution, { error, isError, isSuccess, isLoading, reset }] =
     useCommitAnyContributionMutation();
 
-  const contributionSubmitContent = (() => {
+  const contributionSubmissionContent = (() => {
     let userSubmit = null;
     try {
       userSubmit = JSON.parse(commit?.data || "{}");
@@ -46,7 +46,7 @@ const TwitterSubmitContent = ({
     return userSubmit;
   })();
 
-  console.log(contributionSubmitContent);
+  console.log(contributionSubmissionContent);
 
   const handleSubmit = async () => {
     await getAuthX(
@@ -226,7 +226,7 @@ const TwitterSubmitContent = ({
                 textAlign="center"
                 p="5px"
               >
-                {contributionSubmitContent?.authenticatedUser}
+                {contributionSubmissionContent?.authenticatedUser}
               </Typography>
               <Typography variant="caption" className="text-secondary">
                 Authenticated User

@@ -62,6 +62,8 @@ export const PropertiesWrapper = styled(Box)(({ theme }) => ({
 const { IconContainer } = EditContentElements;
 
 const HubListItem = memo(({ row }: { row: AutOSHub }) => {
+  const { data: periodData } = useQueryHubPeriod();
+  const initialScore = 100;
   const theme = useTheme();
   const { address } = useAccount();
   const autID = useSelector(SelectedAutID);
@@ -274,7 +276,8 @@ const HubListItem = memo(({ row }: { row: AutOSHub }) => {
             }
           ></SubtitleWithInfo>
         </PropertiesWrapper>
-        <PropertiesWrapper sx={{
+        <PropertiesWrapper
+          sx={{
             borderRight: {
               xs: "0",
               md: "1px solid"
@@ -291,13 +294,14 @@ const HubListItem = memo(({ row }: { row: AutOSHub }) => {
               xs: "inherit",
               md: "transparent"
             }
-          }}>
+          }}
+        >
           <Typography
             variant="subtitle2"
             color="offWhite.main"
             fontWeight="normal"
           >
-            1.0
+            {initialScore}
           </Typography>
           <SubtitleWithInfo
             title="score"
@@ -314,7 +318,7 @@ const HubListItem = memo(({ row }: { row: AutOSHub }) => {
             color="offWhite.main"
             fontWeight="normal"
           >
-            100
+            {periodData?.pointsGiven || 0}
           </Typography>
           <SubtitleWithInfo
             title="points"
@@ -337,9 +341,6 @@ interface TableParamsParams {
 
 const AutHubList = ({ isLoading = false, hubs = [] }: TableParamsParams) => {
   const theme = useTheme();
-  const { data: periodData } = useQueryHubPeriod();
-  console.log(periodData, "periodData");
-
 
   return (
     <Box
