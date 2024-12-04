@@ -1,12 +1,5 @@
-import { memo } from "react";
-import {
-  Card,
-  CardContent,
-  Container,
-  Link,
-  Stack,
-  Typography
-} from "@mui/material";
+import { memo, useState } from "react";
+import { Card, CardContent, Container, Stack, Typography } from "@mui/material";
 import { useSearchParams, useParams, useNavigate } from "react-router-dom";
 import { TaskStatus } from "@store/model";
 import { AutOsButton } from "@components/AutButton";
@@ -18,20 +11,20 @@ import { useWalletConnector } from "@aut-labs/connector";
 import { ContributionCommit } from "@utils/hooks/useQueryContributionCommits";
 import { useCommitAnyContributionMutation } from "@api/contributions.api";
 import ErrorDialog from "@components/Dialog/ErrorPopup";
-import { RetweetContribution } from "@api/models/contribution-types/retweet.model";
+import { JoinDiscordContribution } from "@api/models/contribution-types/join-discord.model";
 
-const TwitterSubmitContent = ({
+const DiscordJoinContent = ({
   contribution,
   commit
 }: {
-  contribution: RetweetContribution;
+  contribution: JoinDiscordContribution;
   commit: ContributionCommit;
 }) => {
   const { state } = useWalletConnector();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { autAddress, hubAddress } = useParams();
-  const { getAuthX } = useOAuthSocials();
+  const { getAuthDiscord } = useOAuthSocials();
 
   const [commitContribution, { error, isError, isSuccess, isLoading, reset }] =
     useCommitAnyContributionMutation();
@@ -46,22 +39,20 @@ const TwitterSubmitContent = ({
     return userSubmit;
   })();
 
-  console.log(contributionSubmissionContent);
-
   const handleSubmit = async () => {
-    await getAuthX(
+    await getAuthDiscord(
       async (data) => {
         const { access_token } = data;
 
-        const tweetMessage = {
+        const discordMessage = {
           accessToken: access_token,
-          tweetUrl: contribution.properties?.tweetUrl
+          guildId: contribution?.properties?.guildId
         };
 
         commitContribution({
           autSig: state.authSig,
           contribution,
-          message: JSON.stringify(tweetMessage),
+          message: JSON.stringify(discordMessage),
           hubAddress
         });
       },
@@ -133,53 +124,59 @@ const TwitterSubmitContent = ({
               padding: "32px"
             }}
           >
-            {/* <Typography
+            <Typography
               color="white"
               variant="body"
               textAlign="center"
               marginBottom="24px"
             >
               {contribution?.description}
-            </Typography> */}
-
-            <Link
-              href={contribution.properties?.tweetUrl}
-              target="_blank"
-              color="primary"
-              underline="none"
-            >
-              <Typography
-                color="primary"
-                variant="subtitle2"
-                textAlign="center"
-                marginBottom="16px"
-              >
-                {contribution.properties?.tweetUrl}
-              </Typography>
-            </Link>
+            </Typography>
 
             <Typography
               color="white"
-              variant="body"
+              variant="body2"
               textAlign="center"
               marginBottom="32px"
             >
-              Please authenticate with Twitter to verify your contribution.
+              Please join the Discord server and authenticate to verify your
+              contribution
             </Typography>
 
-            <AutOsButton
-              type="button"
-              color="primary"
-              variant="outlined"
-              onClick={handleSubmit}
-              sx={{
-                width: "160px"
-              }}
-            >
-              <Typography fontWeight="bold" fontSize="16px" lineHeight="26px">
-                Submit
-              </Typography>
-            </AutOsButton>
+            <Stack direction="column" spacing={2} alignItems="center">
+              <AutOsButton
+                type="button"
+                color="primary"
+                variant="outlined"
+                onClick={() =>
+                  window.open(
+                    contribution?.properties?.inviteUrl,
+                    "_blank"
+                  )
+                }
+                sx={{
+                  width: "160px"
+                }}
+              >
+                <Typography fontWeight="bold" fontSize="16px" lineHeight="26px">
+                  Join Discord
+                </Typography>
+              </AutOsButton>
+
+              <AutOsButton
+                type="button"
+                color="primary"
+                variant="outlined"
+                onClick={handleSubmit}
+                sx={{
+                  width: "160px"
+                }}
+              >
+                <Typography fontWeight="bold" fontSize="16px" lineHeight="26px">
+                  Submit
+                </Typography>
+              </AutOsButton>
+            </Stack>
           </CardContent>
         </Card>
       ) : (
@@ -199,24 +196,17 @@ const TwitterSubmitContent = ({
               alignItems: "center"
             }}
           >
-            <Stack direction="column" alignItems="center" mb="15px">
-              <Link
-                href={contribution.properties?.tweetUrl}
-                target="_blank"
-                color="primary"
-                underline="none"
+          <Stack direction="column" alignItems="center" mb="15px">
+              <Typography
+                color="white"
+                variant="subtitle2"
+                textAlign="center"
+                p="5px"
               >
-                <Typography
-                  color="primary"
-                  variant="subtitle2"
-                  textAlign="center"
-                  p="5px"
-                >
-                  {contribution.properties?.tweetUrl}
-                </Typography>
-              </Link>
+                {contributionSubmissionContent?.discordServer}
+              </Typography>
               <Typography variant="caption" className="text-secondary">
-                Tweet Url
+                Discord Server
               </Typography>
             </Stack>
             <Stack direction="column" alignItems="center" mb="15px">
@@ -239,11 +229,11 @@ const TwitterSubmitContent = ({
   );
 };
 
-const TwitterTask = ({
+const JoinDiscordTask = ({
   contribution,
   commit
 }: {
-  contribution: RetweetContribution;
+  contribution: JoinDiscordContribution;
   commit: ContributionCommit;
 }) => {
   return (
@@ -261,7 +251,7 @@ const TwitterTask = ({
       {contribution ? (
         <>
           <TaskDetails contribution={contribution} />
-          <TwitterSubmitContent contribution={contribution} commit={commit} />
+          <DiscordJoinContent contribution={contribution} commit={commit} />
         </>
       ) : (
         <AutLoading width="130px" height="130px" />
@@ -270,4 +260,4 @@ const TwitterTask = ({
   );
 };
 
-export default memo(TwitterTask);
+export default memo(JoinDiscordTask);

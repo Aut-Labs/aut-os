@@ -5,6 +5,7 @@ import walletProvideReducer from "./WalletProvider/WalletProvider";
 import pluginsReducer from "./plugins/plugins.reducer";
 import interactionsReducer from "./interactions/interactions.reducer";
 import contributionsReducer from "./contributions/contributions.reducer";
+import { contributionsApi } from "@api/contributions.api";
 
 export const reducers = combineReducers({
   ui: uiSliceReducer,
@@ -12,7 +13,8 @@ export const reducers = combineReducers({
   plugin: pluginsReducer,
   interaction: interactionsReducer,
   contribution: contributionsReducer,
-  walletProvider: walletProvideReducer
+  walletProvider: walletProvideReducer,
+  [contributionsApi.reducerPath]: contributionsApi.reducer,
 });
 
 const rootReducer = (state, action) => {

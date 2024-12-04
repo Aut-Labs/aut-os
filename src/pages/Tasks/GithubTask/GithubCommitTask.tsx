@@ -1,12 +1,5 @@
-import { memo } from "react";
-import {
-  Card,
-  CardContent,
-  Container,
-  Link,
-  Stack,
-  Typography
-} from "@mui/material";
+import { memo, useState } from "react";
+import { Card, CardContent, Container, Stack, Typography } from "@mui/material";
 import { useSearchParams, useParams, useNavigate } from "react-router-dom";
 import { TaskStatus } from "@store/model";
 import { AutOsButton } from "@components/AutButton";
@@ -16,22 +9,22 @@ import AutLoading from "@components/AutLoading";
 import { useOAuthSocials } from "@components/OAuth";
 import { useWalletConnector } from "@aut-labs/connector";
 import { ContributionCommit } from "@utils/hooks/useQueryContributionCommits";
+import { GithubCommitContribution } from "@api/models/contribution-types/github-commit.model";
 import { useCommitAnyContributionMutation } from "@api/contributions.api";
 import ErrorDialog from "@components/Dialog/ErrorPopup";
-import { RetweetContribution } from "@api/models/contribution-types/retweet.model";
 
-const TwitterSubmitContent = ({
+const GithubCommitContent = ({
   contribution,
   commit
 }: {
-  contribution: RetweetContribution;
+  contribution: GithubCommitContribution;
   commit: ContributionCommit;
 }) => {
   const { state } = useWalletConnector();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { autAddress, hubAddress } = useParams();
-  const { getAuthX } = useOAuthSocials();
+  const { getAuthGithub } = useOAuthSocials();
 
   const [commitContribution, { error, isError, isSuccess, isLoading, reset }] =
     useCommitAnyContributionMutation();
@@ -46,22 +39,22 @@ const TwitterSubmitContent = ({
     return userSubmit;
   })();
 
-  console.log(contributionSubmissionContent);
-
   const handleSubmit = async () => {
-    await getAuthX(
+    await getAuthGithub(
       async (data) => {
         const { access_token } = data;
 
-        const tweetMessage = {
+        const commitMessage = {
           accessToken: access_token,
-          tweetUrl: contribution.properties?.tweetUrl
+          owner: contribution?.properties?.organisation,
+          branch: contribution?.properties?.branch,
+          repo: contribution?.properties?.repository
         };
 
         commitContribution({
           autSig: state.authSig,
           contribution,
-          message: JSON.stringify(tweetMessage),
+          message: JSON.stringify(commitMessage),
           hubAddress
         });
       },
@@ -133,38 +126,22 @@ const TwitterSubmitContent = ({
               padding: "32px"
             }}
           >
-            {/* <Typography
+            <Typography
               color="white"
               variant="body"
               textAlign="center"
               marginBottom="24px"
             >
               {contribution?.description}
-            </Typography> */}
-
-            <Link
-              href={contribution.properties?.tweetUrl}
-              target="_blank"
-              color="primary"
-              underline="none"
-            >
-              <Typography
-                color="primary"
-                variant="subtitle2"
-                textAlign="center"
-                marginBottom="16px"
-              >
-                {contribution.properties?.tweetUrl}
-              </Typography>
-            </Link>
+            </Typography>
 
             <Typography
               color="white"
-              variant="body"
+              variant="body2"
               textAlign="center"
               marginBottom="32px"
             >
-              Please authenticate with Twitter to verify your contribution.
+              Please authenticate with Github to verify your contribution
             </Typography>
 
             <AutOsButton
@@ -200,23 +177,16 @@ const TwitterSubmitContent = ({
             }}
           >
             <Stack direction="column" alignItems="center" mb="15px">
-              <Link
-                href={contribution.properties?.tweetUrl}
-                target="_blank"
-                color="primary"
-                underline="none"
+              <Typography
+                color="white"
+                variant="subtitle2"
+                textAlign="center"
+                p="5px"
               >
-                <Typography
-                  color="primary"
-                  variant="subtitle2"
-                  textAlign="center"
-                  p="5px"
-                >
-                  {contribution.properties?.tweetUrl}
-                </Typography>
-              </Link>
+                {contributionSubmissionContent?.repo}
+              </Typography>
               <Typography variant="caption" className="text-secondary">
-                Tweet Url
+                Repository
               </Typography>
             </Stack>
             <Stack direction="column" alignItems="center" mb="15px">
@@ -239,11 +209,11 @@ const TwitterSubmitContent = ({
   );
 };
 
-const TwitterTask = ({
+const GithubCommitTask = ({
   contribution,
   commit
 }: {
-  contribution: RetweetContribution;
+  contribution: GithubCommitContribution;
   commit: ContributionCommit;
 }) => {
   return (
@@ -261,7 +231,7 @@ const TwitterTask = ({
       {contribution ? (
         <>
           <TaskDetails contribution={contribution} />
-          <TwitterSubmitContent contribution={contribution} commit={commit} />
+          <GithubCommitContent contribution={contribution} commit={commit} />
         </>
       ) : (
         <AutLoading width="130px" height="130px" />
@@ -270,4 +240,4 @@ const TwitterTask = ({
   );
 };
 
-export default memo(TwitterTask);
+export default memo(GithubCommitTask);

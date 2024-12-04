@@ -56,6 +56,7 @@ import {
   PropertiesWrapper
 } from "./AutHubList";
 import { SocialUrls } from "@aut-labs/sdk";
+import useQueryHubPeriod from "@utils/hooks/useQueryHubPeriod";
 
 const LeftWrapper = styled(Box)(({ theme }) => ({
   display: "flex",
@@ -135,6 +136,11 @@ const AutHubEdit = () => {
   const autIdHubState = useSelector(AutIdHubState(hubAddress));
   const roleName = useSelector(RoleName(params.hubAddress));
   const commitmentTemplate = useSelector(CommitmentTemplate(hubAddress));
+
+  const { data: periodData } = useQueryHubPeriod();
+
+  const { pointsGiven, expectedPoints, endDate } = periodData || {};
+  const initialScore = 100;
 
   useEffect(() => {
     dispatch(updateAutState({ selectedHubAddress: params.hubAddress }));
@@ -229,10 +235,6 @@ const AutHubEdit = () => {
   const openCommitmentModal = () => {
     dispatch(setOpenCommitment(true));
   };
-
-  const nextPeriod = new Date("11/30/2024");
-  const hubRep: number = 100;
-  const userRep: number = 100;
 
   const socials = useMemo(() => {
     if (!selectedHub) return [];
@@ -615,7 +617,7 @@ const AutHubEdit = () => {
                               >
                                 Current Period Contribution
                               </Typography>
-                              {userRep < hubRep ? (
+                              {pointsGiven < expectedPoints ? (
                                 <SvgIcon
                                   sx={{
                                     fill: "transparent",
@@ -647,7 +649,7 @@ const AutHubEdit = () => {
                                 period ends in
                               </Typography>
                               <Countdown
-                                date={nextPeriod}
+                                date={endDate}
                                 renderer={AutCountdown}
                               />
                             </Box>
@@ -684,7 +686,7 @@ const AutHubEdit = () => {
                               lineHeight="48px"
                               color="offWhite.main"
                             >
-                              {userRep}
+                              {pointsGiven}
                             </Typography>
                             <Typography
                               lineHeight="48px"
@@ -708,11 +710,11 @@ const AutHubEdit = () => {
                               }}
                               color="offWhite.dark"
                             >
-                              {hubRep}
+                              {expectedPoints}
                             </Typography>
                           </Box>
 
-                          {userRep < hubRep && (
+                          {pointsGiven < expectedPoints && (
                             <Box
                               sx={{
                                 width: "100%",
@@ -743,7 +745,9 @@ const AutHubEdit = () => {
                                     }
                                   }}
                                   variant="determinate"
-                                  value={(userRep / hubRep) * 100}
+                                  value={
+                                    (pointsGiven / (expectedPoints || 1)) * 100
+                                  }
                                 />
                               </Box>
                               <Typography
@@ -757,7 +761,8 @@ const AutHubEdit = () => {
                               </Typography>
                             </Box>
                           )}
-                          {userRep === hubRep && (
+                          {pointsGiven ===
+                            expectedPoints && (
                             <Box
                               sx={{
                                 width: "100%",
@@ -806,7 +811,7 @@ const AutHubEdit = () => {
                               </Typography>
                             </Box>
                           )}
-                          {userRep > hubRep && (
+                          {pointsGiven > expectedPoints && (
                             <Box
                               sx={{
                                 width: "100%",
@@ -948,7 +953,7 @@ const AutHubEdit = () => {
                           color="offWhite.main"
                           fontWeight="normal"
                         >
-                          1.0
+                          {initialScore}
                         </Typography>
                         <SubtitleWithInfo
                           title="score"
@@ -961,7 +966,7 @@ const AutHubEdit = () => {
                           color="offWhite.main"
                           fontWeight="normal"
                         >
-                          100
+                          {pointsGiven}
                         </Typography>
                         <SubtitleWithInfo
                           title="points"

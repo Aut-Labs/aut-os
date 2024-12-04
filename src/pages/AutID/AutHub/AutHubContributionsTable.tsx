@@ -1,9 +1,8 @@
-import { memo, useEffect, useMemo } from "react";
+import { memo, useMemo } from "react";
 import Box from "@mui/material/Box";
 import ArrowIcon from "@assets/autos/move-right.svg?react";
 
 import {
-  Link as BtnLink,
   Paper,
   Stack,
   SvgIcon,
@@ -20,16 +19,16 @@ import {
 } from "@mui/material";
 import { format } from "date-fns";
 import { AutOsButton } from "@components/AutButton";
-import { Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  AllContributions,
-  setSelectedContribution,
-  updateContributionState
-} from "@store/contributions/contributions.reducer";
-import { formatContributionType } from "@utils/format-contribution-type";
-import { TaskStatus } from "@store/model";
 import useQueryContributions from "@utils/hooks/GetContributions";
+import { useCommitAnyContributionMutation } from "@api/contributions.api";
+import { useWalletConnector } from "@aut-labs/connector";
+import useQueryContributionCommits, {
+  ContributionCommit
+} from "@utils/hooks/useQueryContributionCommits";
+import { TaskContributionNFT } from "@aut-labs/sdk";
+import { Link } from "react-router-dom";
+import { GithubCommitContribution } from "@api/models/contribution-types/github-commit.model";
+import useQueryHubPeriod from "@utils/hooks/useQueryHubPeriod";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}, &.${tableCellClasses.body}`]: {
@@ -51,41 +50,27 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   }
 }));
 
-const generateRandomId = () => {
-  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
-    const r = (Math.random() * 16) | 0,
-      v = c === "x" ? r : (r & 0x3) | 0x8;
-    return v.toString(16);
-  });
-};
+interface TableListItemProps {
+  contribution: TaskContributionNFT & { contributionType?: string };
+  commit: ContributionCommit;
+}
 
-const TableListItem = memo((data: any) => {
-  const dispatch = useDispatch();
-  const { row } = data;
+const TableListItem = memo(({ contribution, commit }: TableListItemProps) => {
   const theme = useTheme();
-
-  const handleContributionClick = (contribution) => {
-    dispatch(setSelectedContribution(contribution));
-  };
-
-  const contributionType = useMemo(
-    () => formatContributionType(row?.contributionType),
-    [row?.contributionType]
-  );
 
   const startDate = useMemo(() => {
     return format(
-      new Date(row?.properties?.startDate * 1000),
+      new Date(contribution?.properties?.startDate * 1000),
       "dd.MM.yy"
     ).toString();
-  }, [row?.properties?.startDate]);
+  }, [contribution?.properties?.startDate]);
 
   const endDate = useMemo(() => {
     return format(
-      new Date(row?.properties?.endDate * 1000),
+      new Date(contribution?.properties?.endDate * 1000),
       "dd.MM.yy"
     ).toString();
-  }, [row?.properties?.endDate]);
+  }, [contribution?.properties?.endDate]);
 
   return (
     <StyledTableRow
@@ -117,10 +102,10 @@ const TableListItem = memo((data: any) => {
       <StyledTableCell align="left">
         <Stack>
           <Typography variant="subtitle2" fontWeight="normal" color="white">
-            {row?.name}
+            {contribution?.name}
           </Typography>
           <Typography variant="caption" fontWeight="normal" color="white">
-            {row?.description}
+            {contribution?.description}
           </Typography>
         </Stack>
       </StyledTableCell>
@@ -133,13 +118,13 @@ const TableListItem = memo((data: any) => {
           }}
         >
           <Typography variant="body" fontWeight="normal" color="white">
-            {contributionType}
+            {contribution?.contributionType}
           </Typography>
         </Box>
       </StyledTableCell>
       <StyledTableCell align="left">
         <Typography variant="body" fontWeight="normal" color="white">
-          {`${row?.properties?.points || 0} ${row?.properties?.points === 1 ? "pt" : "pts"}`}
+          {`${contribution?.properties?.points || 0} ${contribution?.properties?.points === 1 ? "pt" : "pts"}`}
         </Typography>
       </StyledTableCell>
       <StyledTableCell align="left">
@@ -173,7 +158,7 @@ const TableListItem = memo((data: any) => {
             alignItems: "center"
           }}
         >
-          {row?.status === TaskStatus.Created ? (
+          {!commit ? (
             <AutOsButton
               type="button"
               color="primary"
@@ -182,9 +167,8 @@ const TableListItem = memo((data: any) => {
                 width: "100px"
               }}
               relative="path"
-              to={`contribution/${row?.id}`}
+              to={`contribution/${contribution?.properties?.id}`}
               component={Link}
-              onClick={() => handleContributionClick(row)}
             >
               <Typography fontWeight="bold" fontSize="16px" lineHeight="26px">
                 Claim
@@ -204,10 +188,11 @@ const TableListItem = memo((data: any) => {
                 },
                 width: "100px"
               }}
-              disabled
+              to={`contribution/${contribution?.properties?.id}`}
+              component={Link}
             >
               <Typography fontWeight="bold" fontSize="16px" lineHeight="26px">
-                Completed
+                See Commit
               </Typography>
             </AutOsButton>
           )}
@@ -218,35 +203,56 @@ const TableListItem = memo((data: any) => {
 });
 
 export const AutHubTasksTable = ({ header }) => {
-  const dispatch = useDispatch();
-  const contributions = useSelector(AllContributions);
+  const { state } = useWalletConnector();
 
-  const {
-    data,
-    loading: isLoading,
-    refetch
-  } = useQueryContributions({
+  const { data, loading: isLoading } = useQueryContributions({
     variables: {
       skip: 0,
       take: 1000
     }
   });
-    useEffect(() => {
-      if (!contributions.length) {
-        const updatedContributions = data?.map((item) => ({
-          ...item,
-          contributionType: (item.properties as any)
-            .tweetUrl
-            ? "retweet"
-            : "open",
-          status: TaskStatus.Created,
-          id: generateRandomId()
-        }));
-        dispatch(
-          updateContributionState({ contributions: updatedContributions })
-        );
+
+  const { data: commits, loading: isLoadingCommits } =
+    useQueryContributionCommits({
+      skip: !state?.address,
+      variables: {
+        skip: 0,
+        take: 1000,
+        where: {
+          who: state?.address?.toLowerCase()
+        }
       }
-    }, [data]);
+    });
+
+  const contributionWithCommits = useMemo(() => {
+    return (data || []).map((contribution) => {
+      const commit = (commits || []).find(
+        (commit) => commit?.contribution?.id === contribution.properties.id
+      );
+      return {
+        contribution,
+        commit
+      };
+    });
+  }, [data, commits]);
+
+  if (data?.length) {
+    data.map((contribution) => {
+      console.log(contribution as GithubCommitContribution);
+    });
+  }
+  const [
+    commit,
+    { error, isError, isSuccess, isLoading: commitingContribution, reset }
+  ] = useCommitAnyContributionMutation();
+
+  // const commitContribution = (row) => {
+  //   commit({
+  //     autSig: state.authSig,
+  //     contribution: row,
+  //     message: "secret"
+  //   });
+  // };
 
   const theme = useTheme();
   return (
@@ -327,7 +333,7 @@ export const AutHubTasksTable = ({ header }) => {
                   End Date
                 </Typography>
               </StyledTableCell>
-              <StyledTableCell align="left">
+              <StyledTableCell align="center">
                 <Typography
                   variant="body"
                   fontWeight="normal"
@@ -338,11 +344,17 @@ export const AutHubTasksTable = ({ header }) => {
               </StyledTableCell>
             </TableRow>
           </TableHead>
-          {contributions?.length ? (
+          {contributionWithCommits?.length ? (
             <TableBody>
-              {contributions?.map((row, index) => (
-                <TableListItem key={`table-row-${index}`} row={row} />
-              ))}
+              {contributionWithCommits?.map(
+                ({ contribution, commit }, index) => (
+                  <TableListItem
+                    key={`table-row-${index}`}
+                    contribution={contribution}
+                    commit={commit}
+                  />
+                )
+              )}
             </TableBody>
           ) : (
             <Box

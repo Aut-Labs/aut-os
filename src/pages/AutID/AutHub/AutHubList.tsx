@@ -26,6 +26,7 @@ import { useSelector } from "react-redux";
 import { EditContentElements } from "@components/EditContentElements";
 import { socialsWithIcons } from "@utils/social-icons";
 import { SocialUrls } from "@aut-labs/sdk";
+import useQueryHubPeriod from "@utils/hooks/useQueryHubPeriod";
 
 export const HubTopWrapper = styled(Box)(({ theme }) => ({
   display: "flex",
@@ -61,6 +62,8 @@ export const PropertiesWrapper = styled(Box)(({ theme }) => ({
 const { IconContainer } = EditContentElements;
 
 const HubListItem = memo(({ row }: { row: AutOSHub }) => {
+  const { data: periodData } = useQueryHubPeriod();
+  const initialScore = 100;
   const theme = useTheme();
   const { address } = useAccount();
   const autID = useSelector(SelectedAutID);
@@ -273,7 +276,8 @@ const HubListItem = memo(({ row }: { row: AutOSHub }) => {
             }
           ></SubtitleWithInfo>
         </PropertiesWrapper>
-        <PropertiesWrapper sx={{
+        <PropertiesWrapper
+          sx={{
             borderRight: {
               xs: "0",
               md: "1px solid"
@@ -290,13 +294,14 @@ const HubListItem = memo(({ row }: { row: AutOSHub }) => {
               xs: "inherit",
               md: "transparent"
             }
-          }}>
+          }}
+        >
           <Typography
             variant="subtitle2"
             color="offWhite.main"
             fontWeight="normal"
           >
-            1.0
+            {initialScore}
           </Typography>
           <SubtitleWithInfo
             title="score"
@@ -313,7 +318,7 @@ const HubListItem = memo(({ row }: { row: AutOSHub }) => {
             color="offWhite.main"
             fontWeight="normal"
           >
-            100
+            {periodData?.pointsGiven || 0}
           </Typography>
           <SubtitleWithInfo
             title="points"
