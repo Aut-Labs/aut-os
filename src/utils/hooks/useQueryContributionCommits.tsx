@@ -10,10 +10,23 @@ import { environment } from "@api/environment";
 import axios from "axios";
 import { useWalletConnector } from "@aut-labs/connector";
 
+export enum ContributionStatus {
+  Pending = 1,
+  Rejected = 2,
+  Complete = 3
+}
+
+export const ContributionStatusMap = {
+  [ContributionStatus.Pending]: "Pending",
+  [ContributionStatus.Rejected]: "Rejected",
+  [ContributionStatus.Complete]: "Complete"
+};
+
 export interface ContributionCommit {
   id: string;
   hub: Hub;
   data: any;
+  status: ContributionStatus;
   who: string;
   contribution: Partial<TaskContributionProperties>;
   dataDecrypted?: boolean;
@@ -35,6 +48,7 @@ const GET_CONTRIBUTION_COMMITS = gql`
       id
       hub
       data
+      status
       who
       contribution {
         id

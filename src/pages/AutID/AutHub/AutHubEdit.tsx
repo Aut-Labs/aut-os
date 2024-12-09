@@ -139,9 +139,6 @@ const AutHubEdit = () => {
 
   const { data: periodData } = useQueryHubPeriod();
 
-  const { pointsGiven, expectedPoints, endDate } = periodData || {};
-  const initialScore = 100;
-
   useEffect(() => {
     dispatch(updateAutState({ selectedHubAddress: params.hubAddress }));
     console.log(
@@ -617,7 +614,7 @@ const AutHubEdit = () => {
                               >
                                 Current Period Contribution
                               </Typography>
-                              {pointsGiven < expectedPoints ? (
+                              {periodData?.pointsGiven < periodData?.expectedPoints ? (
                                 <SvgIcon
                                   sx={{
                                     fill: "transparent",
@@ -649,7 +646,7 @@ const AutHubEdit = () => {
                                 period ends in
                               </Typography>
                               <Countdown
-                                date={endDate}
+                                date={periodData?.endDate}
                                 renderer={AutCountdown}
                               />
                             </Box>
@@ -686,7 +683,7 @@ const AutHubEdit = () => {
                               lineHeight="48px"
                               color="offWhite.main"
                             >
-                              {pointsGiven}
+                              {periodData?.pointsGiven}
                             </Typography>
                             <Typography
                               lineHeight="48px"
@@ -710,11 +707,11 @@ const AutHubEdit = () => {
                               }}
                               color="offWhite.dark"
                             >
-                              {expectedPoints}
+                              {periodData?.expectedPoints}
                             </Typography>
                           </Box>
 
-                          {pointsGiven < expectedPoints && (
+                          {periodData?.pointsGiven < periodData?.expectedPoints && (
                             <Box
                               sx={{
                                 width: "100%",
@@ -746,7 +743,7 @@ const AutHubEdit = () => {
                                   }}
                                   variant="determinate"
                                   value={
-                                    (pointsGiven / (expectedPoints || 1)) * 100
+                                    (periodData?.pointsGiven / (periodData?.expectedPoints || 1)) * 100
                                   }
                                 />
                               </Box>
@@ -761,8 +758,8 @@ const AutHubEdit = () => {
                               </Typography>
                             </Box>
                           )}
-                          {pointsGiven ===
-                            expectedPoints && (
+                          {periodData?.pointsGiven ===
+                            periodData?.expectedPoints && (
                             <Box
                               sx={{
                                 width: "100%",
@@ -811,7 +808,7 @@ const AutHubEdit = () => {
                               </Typography>
                             </Box>
                           )}
-                          {pointsGiven > expectedPoints && (
+                          {periodData?.pointsGiven > periodData?.expectedPoints && (
                             <Box
                               sx={{
                                 width: "100%",
@@ -953,7 +950,7 @@ const AutHubEdit = () => {
                           color="offWhite.main"
                           fontWeight="normal"
                         >
-                          {initialScore}
+                          {periodData?.score}
                         </Typography>
                         <SubtitleWithInfo
                           title="score"
@@ -966,7 +963,7 @@ const AutHubEdit = () => {
                           color="offWhite.main"
                           fontWeight="normal"
                         >
-                          {pointsGiven}
+                          {periodData?.pointsGiven}
                         </Typography>
                         <SubtitleWithInfo
                           title="points"

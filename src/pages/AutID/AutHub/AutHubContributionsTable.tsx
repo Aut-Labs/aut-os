@@ -3,6 +3,7 @@ import Box from "@mui/material/Box";
 import ArrowIcon from "@assets/autos/move-right.svg?react";
 
 import {
+  Alert,
   Paper,
   Stack,
   SvgIcon,
@@ -23,12 +24,14 @@ import useQueryContributions from "@utils/hooks/GetContributions";
 import { useCommitAnyContributionMutation } from "@api/contributions.api";
 import { useWalletConnector } from "@aut-labs/connector";
 import useQueryContributionCommits, {
-  ContributionCommit
+  ContributionCommit,
+  ContributionStatus,
+  ContributionStatusMap
 } from "@utils/hooks/useQueryContributionCommits";
 import { TaskContributionNFT } from "@aut-labs/sdk";
 import { Link } from "react-router-dom";
 import { GithubCommitContribution } from "@api/models/contribution-types/github-commit.model";
-import useQueryHubPeriod from "@utils/hooks/useQueryHubPeriod";
+import OverflowTooltip from "@components/OverflowTooltip";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}, &.${tableCellClasses.body}`]: {
@@ -72,6 +75,25 @@ const TableListItem = memo(({ contribution, commit }: TableListItemProps) => {
     ).toString();
   }, [contribution?.properties?.endDate]);
 
+  const status = useMemo(() => {
+    if (!commit?.status) {
+      return {
+        state: "Open",
+        severity: "info"
+      };
+    }
+    let severity = "warning";
+    if (commit?.status === ContributionStatus.Rejected) {
+      severity = "error";
+    } else if (commit?.status === ContributionStatus.Complete) {
+      severity = "success";
+    }
+    return {
+      state: ContributionStatusMap[commit?.status],
+      severity
+    };
+  }, [commit?.status]);
+
   return (
     <StyledTableRow
       sx={{
@@ -101,12 +123,24 @@ const TableListItem = memo(({ contribution, commit }: TableListItemProps) => {
     >
       <StyledTableCell align="left">
         <Stack>
-          <Typography variant="subtitle2" fontWeight="normal" color="white">
-            {contribution?.name}
-          </Typography>
-          <Typography variant="caption" fontWeight="normal" color="white">
-            {contribution?.description}
-          </Typography>
+          <OverflowTooltip
+            typography={{
+              variant: "subtitle2",
+              fontWeight: "400",
+              letterSpacing: "0.66px"
+            }}
+            maxLine={1}
+            text={contribution?.name}
+          />
+          <OverflowTooltip
+            typography={{
+              variant: "caption",
+              fontWeight: "400",
+              letterSpacing: "0.66px"
+            }}
+            maxLine={2}
+            text={contribution?.description}
+          />
         </Stack>
       </StyledTableCell>
       <StyledTableCell align="left">
@@ -151,6 +185,32 @@ const TableListItem = memo(({ contribution, commit }: TableListItemProps) => {
       </StyledTableCell>
 
       <StyledTableCell align="left">
+        <Alert
+          variant="filled"
+          sx={{
+            borderRadius: "8px",
+            border: 0,
+            height: "40px",
+            width: "134px",
+            display: "flex",
+            color: "white",
+            fontFamily: "FractulRegular",
+            fontWeight: "bold",
+            alignItems: "center",
+            ".MuiAlert-message": {
+              overflow: "hidden"
+            },
+            ".MuiAlert-icon": {
+              marginRight: theme.spacing(1)
+            }
+          }}
+          severity={status?.severity as any}
+        >
+          {status?.state}
+        </Alert>
+      </StyledTableCell>
+
+      <StyledTableCell align="left">
         <Box
           sx={{
             display: "flex",
@@ -177,15 +237,9 @@ const TableListItem = memo(({ contribution, commit }: TableListItemProps) => {
           ) : (
             <AutOsButton
               type="button"
-              color="success"
+              color="primary"
               variant="contained"
               sx={{
-                "&.MuiButton-root": {
-                  backgroundColor: "#12B76A"
-                },
-                "&.Mui-disabled": {
-                  color: `${theme.palette.offWhite.light} !important`
-                },
                 width: "100px"
               }}
               to={`contribution/${contribution?.properties?.id}`}
@@ -331,6 +385,15 @@ export const AutHubTasksTable = ({ header }) => {
                   color="offWhite.dark"
                 >
                   End Date
+                </Typography>
+              </StyledTableCell>
+              <StyledTableCell align="center">
+                <Typography
+                  variant="body"
+                  fontWeight="normal"
+                  color="offWhite.dark"
+                >
+                  Status
                 </Typography>
               </StyledTableCell>
               <StyledTableCell align="center">

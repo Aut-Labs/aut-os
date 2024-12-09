@@ -63,7 +63,6 @@ const { IconContainer } = EditContentElements;
 
 const HubListItem = memo(({ row }: { row: AutOSHub }) => {
   const { data: periodData } = useQueryHubPeriod();
-  const initialScore = 100;
   const theme = useTheme();
   const { address } = useAccount();
   const autID = useSelector(SelectedAutID);
@@ -301,7 +300,7 @@ const HubListItem = memo(({ row }: { row: AutOSHub }) => {
             color="offWhite.main"
             fontWeight="normal"
           >
-            {initialScore}
+            {periodData?.score}
           </Typography>
           <SubtitleWithInfo
             title="score"

@@ -36,8 +36,8 @@ const fetchHubPeriodData = async (
       taskManager.functions.currentPeriodStart(),
       taskManager.functions.currentPeriodEnd(),
       taskManager.functions.getMemberPointsGiven(who, Number(periodId)),
-      participationScore.functions.memberParticipations(who, Number(periodId)), // {score: number; performance: number}
-      participationScore.functions.calcExpectedPoints(
+      participationScore.functions.memberActivities(who, Number(periodId)), // {participationScore: number; performance: number}
+      participationScore.functions.calcExpectedContributionPoints(
         +selectedHub.commitment,
         Number(periodId)
       )
@@ -50,7 +50,7 @@ const fetchHubPeriodData = async (
     startDate: new Date(Number(startDate) * 1000),
     endDate: new Date(Number(endDate) * 1000),
     pointsGiven: Number(pointsGiven),
-    score: Number(participation.score),
+    score: Number(participation.participationScore) || 100,
     performance: Number(participation.performance),
     expectedPoints: Number(expectedPoints)
   };

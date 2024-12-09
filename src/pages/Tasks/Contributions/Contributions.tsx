@@ -54,7 +54,6 @@ const Contributions = () => {
   const contributionTemplate = useMemo(() => {
     const contribution = data?.[0];
     if (!contribution) return null;
-    debugger;
     if (contribution instanceof OpenTaskContribution) {
       return <OpenTask contribution={contribution} commit={commit} />;
     } else if (contribution instanceof QuizTaskContribution) {
