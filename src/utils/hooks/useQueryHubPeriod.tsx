@@ -56,15 +56,16 @@ const fetchHubPeriodData = async (
   };
 };
 
-const useQueryHubPeriod = () => {
+const useQueryHubPeriod = (address?: any) => {
+
   const selectedHubAddress = useSelector(SelectedHubAddress);
   const autID = useSelector(SelectedAutID);
   const { state } = useWalletConnector();
   const { hubAddress: _hubAddress } = useParams<{ hubAddress: string }>();
 
   const hubAddress = useMemo(() => {
-    return selectedHubAddress || _hubAddress;
-  }, [_hubAddress, selectedHubAddress]);
+    return selectedHubAddress || _hubAddress || address;
+  }, [_hubAddress, selectedHubAddress, address]);
 
   const {
     data: periodData,

@@ -950,11 +950,11 @@ const AutHubEdit = () => {
                           color="offWhite.main"
                           fontWeight="normal"
                         >
-                          {periodData?.score}
+                          {periodData?.score || 100}
                         </Typography>
                         <SubtitleWithInfo
-                          title="score"
-                          description="This is your participation score."
+                          title="participation score"
+                          description=""
                         ></SubtitleWithInfo>
                       </PropertiesWrapper>
                       <PropertiesWrapper>
@@ -966,8 +966,8 @@ const AutHubEdit = () => {
                           {periodData?.pointsGiven}
                         </Typography>
                         <SubtitleWithInfo
-                          title="points"
-                          description="These are your contribution points."
+                          title="contribution points"
+                          description=""
                         ></SubtitleWithInfo>
                       </PropertiesWrapper>
                     </HubBottomWrapper>

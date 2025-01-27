@@ -56,16 +56,18 @@ export const PropertiesWrapper = styled(Box)(({ theme }) => ({
   flexDirection: "column",
   justifyContent: "center",
   alignItems: "center",
-  padding: "16px 0"
+  padding: "16px 8px"
 }));
 
 const { IconContainer } = EditContentElements;
 
 const HubListItem = memo(({ row }: { row: AutOSHub }) => {
-  const { data: periodData } = useQueryHubPeriod();
+  const { data: periodData } = useQueryHubPeriod(row?.properties?.address);
+  console.log("periodData", periodData); 
   const theme = useTheme();
   const { address } = useAccount();
   const autID = useSelector(SelectedAutID);
+  console.log("autID", autID);
   const roleName = useSelector(RoleName(row.properties.address));
   const commitmentTemplate = useSelector(
     CommitmentTemplate(row.properties.address)
@@ -300,15 +302,16 @@ const HubListItem = memo(({ row }: { row: AutOSHub }) => {
             color="offWhite.main"
             fontWeight="normal"
           >
-            {periodData?.score}
+            {periodData?.score || 100}
           </Typography>
           <SubtitleWithInfo
-            title="score"
-            description={
-              isAddressTheConnectedUser
-                ? "This is your participation score"
-                : `This is ${autID?.name}'s participation score`
-            }
+           title="participation score"
+           description=""
+            // description={
+            //   isAddressTheConnectedUser
+            //     ? "This is your participation score"
+            //     : `This is ${autID?.name}'s participation score`
+            // }
           ></SubtitleWithInfo>
         </PropertiesWrapper>
         <PropertiesWrapper sx={{}}>
@@ -320,12 +323,13 @@ const HubListItem = memo(({ row }: { row: AutOSHub }) => {
             {periodData?.pointsGiven || 0}
           </Typography>
           <SubtitleWithInfo
-            title="points"
-            description={
-              isAddressTheConnectedUser
-                ? "These are your contribution points"
-                : `These are ${autID?.name}'s contribution points`
-            }
+            title="contribution points"
+            description=""
+            // description={
+            //   isAddressTheConnectedUser
+            //     ? "These are your contribution points"
+            //     : `These are ${autID?.name}'s contribution points`
+            // }
           ></SubtitleWithInfo>
         </PropertiesWrapper>
       </HubBottomWrapper>
